@@ -2,7 +2,7 @@
 python finetune_deepseekcoder2.py \
     --model_name_or_path deepseek-ai/deepseek-coder-1.3b-instruct \
     --data_path ./train_data.json \
-    --output_dir /LoRa \
+    --output_dir ./LoRa \
     --num_train_epochs 10 \
     --per_device_train_batch_size 16 \
     --gradient_accumulation_steps 4 \
