@@ -1,47 +1,7 @@
 [
   {
-    "instruction": "Create a function to format float number by replacing comma with dot",
-    "output": "function FormatFloatNumber(s: string): string;\nbegin\n  Result := s.Replace(',', '.');\nend;"
-  },
-  {
-    "instruction": "Implement Diapason (Range) class with constructors for integer and object bounds",
-    "output": "constructor Diapason.Create(_low, _high: integer);\nbegin\n  low := _low;high := _high;\nend;\n\nconstructor Diapason.Create(_low, _high: object);\nbegin\n  clow := _low;chigh := _high;\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet class with basic constructor and element inclusion methods",
-    "output": "constructor TypedSet.Create;\nbegin\n  ht := new Hashtable({new TypedSetComparer()});\nend;\n\nconstructor TypedSet.Create(len: integer);\nbegin\n  ht := new Hashtable({new TypedSetComparer()});\n  Self.len := len;\nend;\n\nconstructor TypedSet.Create(low_bound, upper_bound: object);\nbegin\n  ht := new Hashtable({new TypedSetComparer()});\n  Self.low_bound := low_bound;\n  Self.upper_bound := upper_bound;\nend;\n\nprocedure TypedSet.CreateIfNeed;\nbegin\n  if ht = nil then ht := new Hashtable({new TypedSetComparer()});\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet cloning and byte array conversion methods",
-    "output": "[System.Diagnostics.DebuggerStepThrough]\nfunction TypedSet.CloneSet: TypedSet;\nbegin\n  Result := new TypedSet();\n  Result.ht := ht.Clone() as Hashtable;\n  Result.low_bound := low_bound;\n  Result.upper_bound := upper_bound;\nend;\n\nfunction TypedSet.GetBytes: array of byte;\nvar\n  ba: System.Collections.BitArray;\n  i: integer;\nbegin\n  ba := new BitArray(256);\n  Result := nil;\n  foreach o: object in ht.Keys do\n  begin\n    try\n      i := Convert.ToInt32(o);\n      if (i < 0) and (i >= -128) and (i <= 127) then\n        ba[i + 128] := true\n      else if (i >= 0) and (i <= 255) then\n        ba[i] := true;\n    \n    except \n      on e: System.Exception do\n      begin\n        Result := nil;\n      end;\n    end;\n  end;\n  SetLength(Result, 256 div 8);\n  i := 0;\n  while i < 256 div 8 do\n  begin\n    Result[i] := Convert.ToByte(ba[i * 8 + 7]) or (Convert.ToByte(ba[i * 8 + 6]) shl 1) or (Convert.ToByte(ba[i * 8 + 5]) shl 2) or (Convert.ToByte(ba[i * 8 + 4]) shl 3)\n    or (Convert.ToByte(ba[i * 8 + 3]) shl 4) or (Convert.ToByte(ba[i * 8 + 2]) shl 5) or (Convert.ToByte(ba[i * 8 + 1]) shl 6) or (Convert.ToByte(ba[i * 8]) shl 7);\n    i := i + 1;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement set operations (union, subtract, intersect) for TypedSet",
-    "output": "function TypedSet.UnionSet(s: TypedSet): TypedSet;\nbegin\n  Result := Union(Self, s);\nend;\n\nfunction TypedSet.SubtractSet(s: TypedSet): TypedSet;\nbegin\n  Result := Subtract(Self, s);\nend;\n\nfunction TypedSet.IntersectSet(s: TypedSet): TypedSet;\nbegin\n  Result := Intersect(Self, s);\nend;\n\n[System.Diagnostics.DebuggerStepThrough]  \nfunction Union(s1, s2: TypedSet): TypedSet;\nbegin\n  Result := s1.CloneSet;\n  var en := s2.ht.GetEnumerator();\n  while en.MoveNext do\n    Result.ht[en.Key] := en.Key;\nend;\n\n[System.Diagnostics.DebuggerStepThrough]\nfunction Subtract(s1, s2: TypedSet): TypedSet;\nbegin\n  Result := s1.CloneSet;\n  var en := s2.ht.GetEnumerator();\n  while en.MoveNext do\n  begin\n    if s1.Contains(en.Key) then \n      Result.ht.Remove(en.Key);\n  end;\nend;\n\n[System.Diagnostics.DebuggerStepThrough]  \nfunction Intersect(s1, s2: TypedSet): TypedSet;\nvar\n  en: System.Collections.IEnumerator;\nbegin\n  Result := new TypedSet();\n  en := s1.ht.GetEnumerator();\n  while en.MoveNext do\n    if s2.Contains((en as IDictionaryEnumerator).Key) then \n      Result.ht[(en as IDictionaryEnumerator).Key] := (en as IDictionaryEnumerator).Key;\nend;"
-  },
-  {
-    "instruction": "Implement element inclusion and exclusion methods for TypedSet",
-    "output": "procedure TypedSet.IncludeElement(elem: object);\nvar\n  diap: Diapason;\nbegin\n  if elem = nil then exit;\n  elem := convert_elem(elem);\n  if not IsInDiapason(elem) then Exit;\n  if elem.GetType().IsEnum then\n  begin\n    ht[elem] := elem;\n  end\n  else\n  if not (elem is Diapason) then\n  begin\n    ht[elem] := elem;\n  end\n  else\n  begin\n    diap := Diapason(elem);\n    if diap.clow = nil then\n    begin\n      for var i := diap.low to diap.high do\n      begin\n        ht[i] := i;\n      end\n    end\n    else \n    begin\n      if diap.clow is char then\n      begin\n        for var c := char(diap.clow) to char(diap.chigh) do\n        begin\n          ht[c] := c;\n        end\n      end\n      else if diap.clow is boolean then\n      begin\n        for var b := boolean(diap.clow) to boolean(diap.chigh) do\n          ht[b] := b;\n      end\n      else if diap.clow.GetType().IsEnum then\n      begin\n        for var i := integer(diap.clow) to integer(diap.chigh) do\n        begin\n          var obj := Enum.ToObject(diap.clow.GetType(), i);\n          ht[obj] := obj;\n        end;\n      end;\n    end;\n  end;\nend;\n\nprocedure TypedSet.ExcludeElement(elem: object);\nbegin\n  if elem.GetType().IsEnum then\n  begin\n    ht.Remove(elem);\n  end\n  else\n  begin\n    elem := convert_elem(elem);\n    ht.Remove(elem);\n  end\nend;"
-  },
-  {
-    "instruction": "Implement set comparison operations (equals, not equals, subset, superset) for TypedSet",
-    "output": "[System.Diagnostics.DebuggerStepThrough]  \nfunction CompareSetEquals(s1, s2: TypedSet): boolean;\nvar\n  en: System.Collections.IEnumerator;\n  equals: boolean := true;\nbegin\n  if s1.ht.Count <> s2.ht.Count then\n  begin\n    Result := false;\n    Exit;\n  end;\n  en := s1.ht.GetEnumerator();\n  while en.MoveNext do\n  begin\n    var is_in_s1 := s1.Contains((en as IDictionaryEnumerator).Key);\n    var is_in_s2 := s2.Contains((en as IDictionaryEnumerator).Key);\n    if is_in_s1 and not is_in_s2 then \n    begin\n      equals := false;\n      break;\n    end\n    else if not is_in_s1 and is_in_s2 then\n    begin\n      equals := false;\n      break;\n    end\n  end;\n  if equals <> false then \n  begin\n    en := s2.ht.GetEnumerator();\n    en.Reset();\n    while en.MoveNext do\n    begin\n      var is_in_s1 := s1.Contains((en as IDictionaryEnumerator).Key);\n      var is_in_s2 := s2.Contains((en as IDictionaryEnumerator).Key);\n      if is_in_s2 and not is_in_s1 then\n      begin\n        equals := false;\n        break;\n      end\n      else if not is_in_s2 and is_in_s1 then\n      begin\n        equals := false;\n        break;\n      end\n    end;\n  end;\n  Result := equals;\nend;\n\n[System.Diagnostics.DebuggerStepThrough]  \nfunction CompareSetInEquals(s1, s2: TypedSet): boolean;\nbegin\n  Result := not CompareSetEquals(s1, s2);\nend;\n\n[System.Diagnostics.DebuggerStepThrough]  \nfunction CompareSetLess(s1, s2: TypedSet): boolean;\nvar\n  en: System.Collections.IEnumerator;\n  less: boolean := true;\nbegin\n  en := s1.ht.GetEnumerator();\n  en.Reset();\n  while en.MoveNext do\n  begin\n    if not s2.Contains((en as IDictionaryEnumerator).Key) then \n    begin\n      less := false;\n      break;\n    end;\n  end;\n  if less <> false then\n  begin\n    en := s2.ht.GetEnumerator();\n    en.Reset();\n    var b: boolean := false;\n    while en.MoveNext do\n    begin\n      if not s1.Contains((en as IDictionaryEnumerator).Key) then \n      begin\n        b := true;\n        break;\n      end;\n    end;\n    less := b;\n  end;\n  Result := less;\nend;"
-  },
-  {
-    "instruction": "Implement string multiplication operator (string * integer) for repeating strings",
+    "instruction": "Implement string multiplication operators (string * integer and integer * string) for repeating strings",
     "output": "function string.operator*(str: string; n: integer): string;\nbegin\n  var sb := new StringBuilder;\n  loop n do\n    sb.Append(str);\n  Result := sb.ToString;\nend;\n\nfunction string.operator*(n: integer; str: string): string;\nbegin\n  var sb := new StringBuilder;\n  loop n do\n    sb.Append(str);\n  Result := sb.ToString;\nend;"
-  },
-  {
-    "instruction": "Implement char multiplication operator (char * integer) for repeating characters",
-    "output": "function char.operator*(c: char; n: integer): string;\nbegin\n  if n <= 0 then\n  begin\n    Result := '';\n    exit;\n  end;\n  var sb := new StringBuilder(n, n);\n  loop n do\n    sb.Append(c);\n  Result := sb.ToString;\nend;\n\nfunction char.operator*(n: integer; c: char): string;\nbegin\n  if n <= 0 then\n  begin\n    Result := '';\n    exit;\n  end;\n  var sb := new StringBuilder(n, n);\n  loop n do\n    sb.Append(c);\n  Result := sb.ToString;\nend;"
-  },
-  {
-    "instruction": "Implement array concatenation and multiplication operations",
-    "output": "function operator+<T>(a, b: array of T): array of T; extensionmethod;\nbegin\n  Result := new T[a.Length + b.Length];\n  a.CopyTo(Result, 0);\n  b.CopyTo(Result, a.Length);\nend;\n\nfunction operator*<T>(a: array of T; n: integer): array of T; extensionmethod;\nbegin\n  if a.Length=1 then\n    Result := ArrFill(n,a[0])\n  else  \n  begin  \n    Result := new T[a.Length * n];\n    for var i := 0 to n - 1 do\n      a.CopyTo(Result, a.Length * i);\n  end;  \nend;\n\nfunction operator*<T>(n: integer; a: array of T): array of T; extensionmethod := a * n;"
-  },
-  {
-    "instruction": "Implement power operator (**) for various numeric types",
-    "output": "function operator**(x: real; n: integer): real; extensionmethod := Power(x, n);\n\nfunction operator**(x: single; n: integer): real; extensionmethod := Power(x, n);\n\nfunction operator**(x, y: integer): real; extensionmethod := Power(real(x), y);\n\nfunction operator**(x, y: real): real; extensionmethod := Power(x, y);\n\nfunction operator**(x, y: Complex): Complex; extensionmethod := Power(x, y);\n\nfunction operator**(x: BigInteger; y: integer): BigInteger; extensionmethod := Power(x, y);"
   },
   {
     "instruction": "Implement Range functions for generating sequences of integers and characters",
@@ -50,234 +10,6 @@
   {
     "instruction": "Implement functions for generating random arrays and sequences",
     "output": "function ArrRandom(n: integer; a: integer; b: integer): array of integer;\nbegin\n  Result := new integer[n];\n  for var i := 0 to Result.Length - 1 do\n    Result[i] := Random(a, b);\nend;\n\nfunction ArrRandomReal(n: integer; a: real; b: real): array of real;\nbegin\n  Result := new real[n];\n  for var i := 0 to Result.Length - 1 do\n    Result[i] := Random() * (b - a) + a;\nend;\n\nfunction SeqRandom(n: integer; a: integer; b: integer): sequence of integer;\nbegin\n  loop n do\n    yield Random(a, b)\nend;\n\nfunction SeqRandomReal(n: integer; a: real; b: real): sequence of real;\nbegin\n  loop n do\n    yield Random() * (b - a) + a\nend;"
-  },
-  {
-    "instruction": "Implement HashSet operations for union, intersection, difference, and set comparison",
-    "output": "function operator+<T>(x, y: HashSet<T>): HashSet<T>; extensionmethod;\nbegin\n  var v := new HashSet<T>(x);\n  v.UnionWith(y);\n  Result := v;\nend;\n\nfunction operator-<T>(x, y: HashSet<T>): HashSet<T>; extensionmethod;\nbegin\n  var v := new HashSet<T>(x);\n  v.ExceptWith(y);\n  Result := v;\nend;\n\nfunction operator*<T>(x,y: HashSet<T>): HashSet<T>; extensionmethod;\nbegin\n  var v := new HashSet<T>(x);\n  v.IntersectWith(y);\n  Result := v;\nend;\n\nfunction operator< <T>(x, y: HashSet<T>); extensionmethod := x.IsProperSubsetOf(y);\n\nfunction operator<= <T>(x, y: HashSet<T>); extensionmethod := x.IsSubsetOf(y);\n\nfunction operator> <T>(x, y: HashSet<T>); extensionmethod := x.IsProperSupersetOf(y);\n\nfunction operator>= <T>(x, y: HashSet<T>); extensionmethod := x.IsSupersetOf(y);"
-  },
-  {
-    "instruction": "Implement SortedSet operations with union, intersection, difference and set comparisons",
-    "output": "function operator+<T>(x, y: SortedSet<T>): SortedSet<T>; extensionmethod;\nbegin\n  var v := new SortedSet<T>(x);\n  v.UnionWith(y);\n  Result := v;\nend;\n\nfunction operator-<T>(x, y: SortedSet<T>): SortedSet<T>; extensionmethod;\nbegin\n  var v := new SortedSet<T>(x);\n  v.ExceptWith(y);\n  Result := v;\nend;\n\nfunction operator*<T>(x,y: SortedSet<T>): SortedSet<T>; extensionmethod;\nbegin\n  var v := new SortedSet<T>(x);\n  v.IntersectWith(y);\n  Result := v;\nend;\n\nfunction operator< <T>(x, y: SortedSet<T>); extensionmethod := x.IsProperSubsetOf(y);\n\nfunction operator<= <T>(x, y: SortedSet<T>); extensionmethod := x.IsSubsetOf(y);\n\nfunction operator> <T>(x, y: SortedSet<T>); extensionmethod := x.IsProperSupersetOf(y);\n\nfunction operator>= <T>(x, y: SortedSet<T>): boolean; extensionmethod := x.IsSupersetOf(y);"
-  },
-  {
-    "instruction": "Implement List collection operations with concatenation and repetition",
-    "output": "function operator+<T>(a, b: List<T>): List<T>; extensionmethod;\nbegin\n  Result := new List<T>(a);\n  Result.AddRange(b);\nend;\n\nfunction operator+=<T>(a, b: List<T>): List<T>; extensionmethod;\nbegin\n  a.AddRange(b);\n  Result := a;\nend;\n\nfunction operator+=<T>(a: List<T>; x: T): List<T>; extensionmethod;\nbegin\n  a.Add(x);\n  Result := a;\nend;\n\nfunction operator*<T>(a: List<T>; n: integer): List<T>; extensionmethod;\nbegin\n  Result := new List<T>();\n  for var i := 1 to n do\n    Result.AddRange(a);\nend;"
-  },
-  {
-    "instruction": "Implement Stack and Queue collection operations with element addition",
-    "output": "function operator+=<T>(s: Stack<T>; x: T): Stack<T>; extensionmethod;\nbegin\n  s.Push(x);\n  Result := s;\nend;\n\nfunction operator+=<T>(q: Queue<T>; x: T): Queue<T>; extensionmethod;\nbegin\n  q.Enqueue(x);\n  Result := q;\nend;"
-  },
-  {
-    "instruction": "Implement BigInteger comparison operators with integer values",
-    "output": "function BigInteger.operator>(p: BigInteger; q: integer) := p > BigInteger.Create(q);\n\nfunction BigInteger.operator>(p: integer; q: BigInteger) := BigInteger.Create(p) > q;\n\nfunction BigInteger.operator<(p: BigInteger; q: integer) := p < BigInteger.Create(q);\n\nfunction BigInteger.operator<(p: integer; q: BigInteger) := BigInteger.Create(p) < q;\n\nfunction BigInteger.operator>=(p: BigInteger; q: integer) := p >= BigInteger.Create(q);\n\nfunction BigInteger.operator>=(p: integer; q: BigInteger) := BigInteger.Create(p) >= q;\n\nfunction BigInteger.operator<=(p: BigInteger; q: integer) := p <= BigInteger.Create(q);\n\nfunction BigInteger.operator<=(p: integer; q: BigInteger) := BigInteger.Create(p) <= q;"
-  },
-  {
-    "instruction": "Implement Complex number operations with assignment operators",
-    "output": "function operator-(Self: Complex): Complex; extensionmethod := Complex.Negate(Self);\n\nprocedure operator+=(var c: Complex; x: Complex); extensionmethod := c := c + x;\n\nprocedure operator*=(var c: Complex; x: Complex); extensionmethod := c := c * x;\n\nprocedure operator-=(var c: Complex; x: Complex); extensionmethod := c := c - x;\n\nprocedure operator/=(var c: Complex; x: Complex); extensionmethod := c := c / x;"
-  },
-  {
-    "instruction": "Implement sequence concatenation operations for generic sequences",
-    "output": "function operator+<T>(a, b: sequence of T): sequence of T; extensionmethod;\nbegin\n  Result := a.Concat(b);\nend;\n\nfunction operator+<T>(a: sequence of T; b: T): sequence of T; extensionmethod;\nbegin\n  Result := a.Concat(new T[1](b));\nend;\n\nfunction operator+<T>(b: T; a: sequence of T): sequence of T; extensionmethod;\nbegin\n  Result := new T[1](b);\n  Result := Result.Concat(a);\nend;"
-  },
-  {
-    "instruction": "Implement TypedFile class constructors for file operations with element types",
-    "output": "constructor TypedFile.Create(ElementType: System.Type);\nbegin\n  Self.ElementType := ElementType;\n  ElementSize := RuntimeSizeOf(ElementType);\nend;\n\nconstructor TypedFile.Create(ElementType: System.Type; offs: integer; params offsets: array of integer);\nbegin\n  Self.ElementType := ElementType;\n  ElementSize := RuntimeSizeOf(ElementType);\n  Self.offsets := offsets;\n  if offs <> 0 then\n  begin\n    ElementSize := ElementSize + offs;\n    offset := offs;\n  end;\nend;\n\nfunction TypedFile.ToString := Format('file of {0}', ElementType);"
-  },
-  {
-    "instruction": "Implement BinaryFile class with ToString method",
-    "output": "function BinaryFile.ToString: string := 'file';"
-  },
-  {
-    "instruction": "Implement structured object to string conversion with recursive formatting",
-    "output": "function StructuredObjectToString(o: Object; n: integer := 0): string;\nconst\n  nmax = 100;\n  nmax1 = 30;\nbegin\n  if o = nil then\n    Result := 'nil' \n  else if o is System.Reflection.Pointer then\n    Result := PointerToString(System.Reflection.Pointer.Unbox(o))\n  else if (o.GetType = typeof(real)) or (o.GetType = typeof(decimal)) or (o.GetType = typeof(single)) then\n    Result := FormatFloatNumber(o.ToString)\n  else if (o.GetType = typeof(Complex)) then \n  begin\n    var c := Complex(o);\n    Result := '(' + StructuredObjectToString(c.Real) + ',' + StructuredObjectToString(c.Imaginary) + ')';\n  end\n  else if (o.GetType.IsPrimitive) or (o.GetType = typeof(string)) then\n    Result := o.ToString\n  else if o is System.Array then\n  begin\n    var a := o as System.Array;  \n    Result := ArrNToString(a, new integer[a.Rank], 0); \n  end\n  else if ((o.GetType = typeof(IntRange)) or (o.GetType = typeof(CharRange)) or (o.GetType = typeof(RealRange))) then \n  begin\n    Result := o.ToString\n  end\n  else if o is System.Collections.IEnumerable then\n  begin\n    var sb := new StringBuilder();\n    var g := (o as System.Collections.IEnumerable).GetEnumerator();\n    \n    var otype := o.GetType;\n    var isdictorset := o.GetType.IsGenericType and \n      ((otype.GetGenericTypeDefinition = typeof(Dictionary<,>))\n      or (otype.GetGenericTypeDefinition = typeof(SortedDictionary<,>))\n      or (otype.GetGenericTypeDefinition = typeof(HashSet<>))\n      or (otype.GetGenericTypeDefinition = typeof(SortedSet<>)));\n    isdictorset := isdictorset or (otype = typeof(TypedSet));\n    \n    if isdictorset then\n      sb.Append('{')\n    else sb.Append('[');\n    if g.MoveNext() then\n    begin  \n      sb.Append(StructuredObjectToString(g.Current, n + 1));\n      var cnt := 1;  \n      while g.MoveNext() and (cnt < nmax) do \n      begin\n        sb.Append(',');\n        sb.Append(StructuredObjectToString(g.Current, n + 1));\n        cnt += 1;\n      end;\n      if cnt >= nmax then \n        sb.Append(',...');\n    end;    \n    \n    if isdictorset then\n      sb.Append('}')\n    else sb.Append(']');\n    Result := sb.ToString;\n  end\n  else if o.GetType.GetField('NullBasedArray') <> nil then\n  begin\n    var f := o.GetType.GetField('NullBasedArray');\n    Result := StructuredObjectToString(f.GetValue(o));\n  end\n  else\n  begin\n    var q := RedefinedToString(o);\n    var gg := o.GetType.FullName.StartsWith('System.Tuple');\n    var gg1 := o.GetType.Name.StartsWith('KeyValuePair');\n    if (q <> nil) and q.IsVirtual and not gg and not gg1 then\n      Result := o.ToString\n    else \n    begin\n      var t := o.GetType;\n      var sb := new System.Text.StringBuilder();\n      sb.Append('(');\n      if n > nmax1 then\n        sb.Append('....')\n      else \n        while t <> typeof(object) do\n        begin\n          var ff := t.GetFields(System.Reflection.BindingFlags.Public or System.Reflection.BindingFlags.Instance or System.Reflection.BindingFlags.DeclaredOnly);\n          var pp := t.GetProperties(System.Reflection.BindingFlags.Public or System.Reflection.BindingFlags.Instance or System.Reflection.BindingFlags.DeclaredOnly);\n          \n          for var i := ff.Length - 1 downto 0 do\n            sb.Insert(1, StructuredObjectToString(ff[i].GetValue(o), n + 1) + ',');\n          \n          for var i := pp.Length - 1 downto 0 do\n            if pp[i].GetIndexParameters.Length = 0 then\n              sb.Insert(1, StructuredObjectToString(pp[i].GetValue(o, nil), n + 1) + ',');\n          \n          t := t.BaseType;\n        end; \n      if sb.Length > 1 then \n        sb.Length := sb.Length - 1;\n      sb.Append(')');\n      Result := sb.ToString;\n    end;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement array to string conversion with nested array support",
-    "output": "function ArrNToString(a: System.Array; indexes: array of integer; i: integer): string;\nconst\n  nmax = 100;\nbegin\n  var sb := new StringBuilder;\n  if i = a.Rank then\n    sb.Append(StructuredObjectToString(a.GetValue(indexes)))\n  else\n  begin\n    sb.Append('[');\n    for var k := 0 to a.GetLength(i) - 1 do\n    begin\n      indexes[i] := k;\n      sb.Append(ArrNToString(a, indexes, i + 1));\n      if (k >= nmax - 1) and (k < a.GetLength(i) - 1) then \n      begin\n        sb.Append(',...');\n        break\n      end\n      else if k < a.GetLength(i) - 1 then\n        sb.Append(',');            \n    end;\n    sb.Append(']');\n  end;\n  Result := sb.ToString;\nend;"
-  },
-  {
-    "instruction": "Implement IntRange and CharRange methods for sequence generation",
-    "output": "function IntRange.GetEnumerator(): IEnumerator<integer> := Range(l,h).GetEnumerator;\n\nfunction IntRange.Step(n: integer): sequence of integer := Range(l,h,n);\n\nfunction IntRange.Reverse: sequence of integer := Range(l,h).Reverse;\n\nfunction CharRange.GetEnumerator(): IEnumerator<char> := Range(l,h).GetEnumerator;\n\nfunction CharRange.Step(n: integer): sequence of char := Range(l,h,n);\n\nfunction CharRange.Reverse: sequence of char := Range(l,h).Reverse;"
-  },
-  {
-    "instruction": "Implement string comparison operators for lexicographical ordering",
-    "output": "function string.operator<(left, right: string) := string.CompareOrdinal(left, right) < 0;\n\nfunction string.operator<=(left, right: string) := string.CompareOrdinal(left, right) <= 0;\n\nfunction string.operator>(left, right: string) := string.CompareOrdinal(left, right) > 0;\n\nfunction string.operator>=(left, right: string) := string.CompareOrdinal(left, right) >= 0;"
-  },
-  {
-    "instruction": "Implement string repetition assignment operator",
-    "output": "procedure string.operator*=(var left: string; n: integer);\nbegin\n  var sb := new StringBuilder;\n  loop n do\n    sb.Append(left);\n  left := sb.ToString;\nend;"
-  },
-  {
-    "instruction": "Implement StringBuilder extension methods for string concatenation",
-    "output": "procedure operator+=(var left: StringBuilder; right: string); extensionmethod := left.Append(right);\n\nfunction operator implicit(s: string): StringBuilder; extensionmethod := new StringBuilder(s);"
-  },
-  {
-    "instruction": "Implement element existence check for arrays and collections",
-    "output": "function operator in<T>(x: T; a: array of T): boolean; extensionmethod := a.Contains(x);\n\nfunction List<T>.operator in(x: T; Self: List<T>): boolean;\nbegin\n  Result := Self.Contains(x);\nend;\n\nfunction operator in<T>(x: T; Self: HashSet<T>): boolean; extensionmethod := Self.Contains(x);\n\nfunction operator in<T>(x: T; Self: SortedSet<T>): boolean; extensionmethod := Self.Contains(x);\n\nfunction Dictionary<K, V>.operator in(key: K; d: Dictionary<K, V>): boolean;\nbegin\n  Result := d.ContainsKey(key);\nend;"
-  },
-  {
-    "instruction": "Implement set creation functions with different parameters",
-    "output": "[System.Diagnostics.DebuggerStepThrough]\nfunction CreateSet: TypedSet;\nbegin\n  Result := new TypedSet();\nend;\n\n[System.Diagnostics.DebuggerStepThrough]\nfunction CreateBoundedSet(low, high: object): TypedSet;\nbegin\n  Result := new TypedSet(low, high);\nend;\n\n[System.Diagnostics.DebuggerStepThrough]\nfunction CreateSet(params elems: array of object): TypedSet;\nbegin\n  var chars := false;\n  var strings := false;\n  var others := false;\n  foreach var x in elems do\n  begin\n    if (x is char) or (x is Diapason) and (Diapason(x).clow is char) then\n      chars := true\n    else if x is string then\n      strings := true\n    else \n    begin\n      others := true;\n      break\n    end;  \n  end;\n  \n  Result := new TypedSet();\n  \n  if chars and strings and not others then\n    foreach var x in elems do\n      if x is char then\n        Result.IncludeElement(x.ToString)\n      else if (x is Diapason) and (Diapason(x).clow is char) then\n      begin\n        var c1 := char(Diapason(x).clow);\n        var c2 := char(Diapason(x).chigh);\n        for var cc := c1 to c2 do\n          Result.IncludeElement(cc.ToString)\n      end\n      else Result.IncludeElement(x)\n  else    \n    foreach var x in elems do\n      Result.IncludeElement(x);\nend;"
-  },
-  {
-    "instruction": "Implement range creation functions for different data types",
-    "output": "[System.Diagnostics.DebuggerStepThrough]\nfunction CreateDiapason(low, high: integer): Diapason;\nbegin\n  Result.low := low;\n  Result.high := high;\nend;\n\nfunction CreateObjDiapason(low, high: object): Diapason;\nbegin\n  Result.clow := low;\n  Result.chigh := high;\nend;"
-  },
-  {
-    "instruction": "Implement set element inclusion and exclusion procedures",
-    "output": "[System.Diagnostics.DebuggerStepThrough]\nprocedure Include(var s: TypedSet; el: object);\nbegin\n  s.IncludeElement(el);\nend;\n\n[System.Diagnostics.DebuggerStepThrough]\nprocedure Exclude(var s: TypedSet; el: object);\nbegin\n  s.ExcludeElement(el);\nend;"
-  },
-  {
-    "instruction": "Implement element existence check in TypedSet",
-    "output": "[System.Diagnostics.DebuggerStepThrough]  \nfunction InSet(obj: object; s: TypedSet): boolean;\nbegin\n  Result := (obj <> nil) and s.Contains(obj);\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet comparison methods for equality and inequality",
-    "output": "function TypedSet.CompareEquals(s: TypedSet): boolean;\nbegin\n  Result := CompareSetEquals(Self, s);\nend;\n\nfunction TypedSet.CompareInEquals(s: TypedSet): boolean;\nbegin\n  Result := CompareSetInEquals(Self, s);\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet comparison methods for ordering relations",
-    "output": "function TypedSet.CompareLess(s: TypedSet): boolean;\nbegin\n  Result := CompareSetLess(Self, s);\nend;\n\nfunction TypedSet.CompareLessEqual(s: TypedSet): boolean;\nbegin\n  Result := CompareSetLessEqual(Self, s);\nend;\n\nfunction TypedSet.CompareGreater(s: TypedSet): boolean;\nbegin\n  Result := CompareSetGreater(Self, s);\nend;\n\nfunction TypedSet.CompareGreaterEqual(s: TypedSet): boolean;\nbegin\n  Result := CompareSetGreaterEqual(Self, s);\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet printing methods with delimiter support",
-    "output": "procedure TypedSet.Print(delim: string);\nbegin\n  foreach var x in ht.Keys do\n    Write(x,delim)\nend;\n\nprocedure TypedSet.Println(delim: string);\nbegin\n  var fst := True;\n  foreach var x in ht.Keys do\n  begin\n    if fst then\n    begin\n      fst := False;\n      Write(x);\n    end\n    else Write(delim,x);\n  end;\n  Writeln;  \nend;"
-  },
-  {
-    "instruction": "Implement TypedSet initialization procedures with different bounds",
-    "output": "procedure TypedSetInit(var st: TypedSet);\nbegin\n  if st = nil then\n    st := new TypedSet;\nend;\n\nprocedure TypedSetInitWithBounds(var st: TypedSet; low, high: object);\nbegin\n  if st = nil then\n    st := new TypedSet(low, high);\nend;\n\nprocedure TypedSetInitWithShortString(var st: TypedSet; len: integer);\nbegin\n  if st = nil then\n    st := new TypedSet(len);\nend;"
-  },
-  {
-    "instruction": "Implement set assignment procedures with bounds copying",
-    "output": "procedure AssignSet(var left: TypedSet; right: TypedSet);\nbegin\n  left := right.CloneSet();\nend;\n\nprocedure AssignSetWithBounds(var left: TypedSet; right: TypedSet; low, high: object);\nbegin\n  left := right.CloneSet();\n  left.low_bound := low;\n  right.upper_bound := high;\nend;"
-  },
-  {
-    "instruction": "Implement set clipping procedures for different bounds",
-    "output": "procedure ClipSet(var s: TypedSet; low, high: object);\nbegin\n  s.low_bound := low;\n  s.upper_bound := high;\n  s.Clip;\nend;\n\nfunction ClipSetFunc(s: TypedSet; low, high: object): TypedSet;\nbegin\n  s.low_bound := low;\n  s.upper_bound := high;\n  s.Clip();\n  Result := s;\nend;\n\nfunction ClipShortStringInSet(s: TypedSet; len: integer): TypedSet;\nbegin\n  s.len := len;\n  s.Clip;\n  Result := s;\nend;\n\nprocedure ClipShortStringInSetProcedure(var s: TypedSet; len: integer);\nbegin\n  s.len := len;\n  s.Clip;\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet element conversion helper function",
-    "output": "function convert_elem(obj: object): object;\nbegin\n  var t := obj.GetType;\n  if t.IsEnum then\n  begin\n    Result := obj;\n    exit;\n  end;\n  case System.Type.GetTypeCode(t) of\n    TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32:\n    Result := Convert.ToInt32(obj);\n    TypeCode.UInt32:\n      begin\n        var tmp: longword := longword(obj);\n        if tmp <= integer.MaxValue then\n          Result := integer(tmp)\n        else\n          Result := Convert.ToInt64(obj);\n      end;\n    TypeCode.Int64:\n      begin\n        var tmp: int64 := int64(obj);\n        if tmp <= integer.MaxValue then\n          Result := integer(tmp)\n        else\n          Result := obj;\n      end;\n    TypeCode.UInt64:\n      begin\n        var tmp: uint64 := uint64(obj);\n        if tmp <= integer.MaxValue then\n          Result := integer(tmp)\n        else\n        if tmp <= int64.MaxValue then\n          Result := int64(tmp)\n        else\n          Result := obj;\n      end\n  else\n    Result := obj;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet element containment check with type conversion",
-    "output": "function TypedSet.Contains(elem: object): boolean;\nbegin\n  if elem.GetType().IsEnum then\n  begin\n    Result := ht[elem] <> nil\n  end\n  else \n  begin\n    elem := convert_elem(elem);\n    Result := ht.ContainsKey(elem);\n    if not Result and (elem is char) then\n      Result := ht.ContainsKey(Convert.ToString(elem));\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet range validation method for elements",
-    "output": "function TypedSet.IsInDiapason(elem: object): boolean;\nbegin\n  if (low_bound <> nil) and (upper_bound <> nil) and (elem is System.IComparable) then\n  begin\n    case System.Type.GetTypeCode(elem.GetType) of\n      TypeCode.Char:\n        begin\n          if ((elem as System.IComparable).CompareTo(Convert.ToChar(low_bound)) >= 0) and ((elem as System.IComparable).CompareTo(Convert.ToChar(upper_bound)) <= 0) then\n            Result := true\n          else Result := false\n        end;\n      TypeCode.Int32:\n        begin\n          if not (elem is integer) then elem := Convert.ToInt32(elem);\n          if ((elem as System.IComparable).CompareTo(Convert.ToInt32(low_bound)) >= 0) and ((elem as System.IComparable).CompareTo(Convert.ToInt32(upper_bound)) <= 0) then\n            Result := true\n          else Result := false\n        end;\n      TypeCode.Byte:\n        begin\n          if ((elem as System.IComparable).CompareTo(Convert.ToByte(low_bound)) >= 0) and ((elem as System.IComparable).CompareTo(Convert.ToByte(upper_bound)) <= 0) then\n            Result := true\n          else Result := false\n        end;\n      TypeCode.SByte:\n        begin\n          if ((elem as System.IComparable).CompareTo(Convert.ToSByte(low_bound)) >= 0) and ((elem as System.IComparable).CompareTo(Convert.ToSByte(upper_bound)) <= 0) then\n            Result := true\n          else Result := false\n        end;\n      TypeCode.Int16:\n        begin\n          if ((elem as System.IComparable).CompareTo(Convert.ToInt16(low_bound)) >= 0) and ((elem as System.IComparable).CompareTo(Convert.ToInt16(upper_bound)) <= 0) then\n            Result := true\n          else Result := false\n        end;\n      TypeCode.UInt16:\n        begin\n          if ((elem as System.IComparable).CompareTo(Convert.ToUint16(low_bound)) >= 0) and ((elem as System.IComparable).CompareTo(Convert.ToUInt16(upper_bound)) <= 0) then\n            Result := true\n          else Result := false\n        end;\n      TypeCode.UInt32:\n        begin\n          if ((elem as System.IComparable).CompareTo(Convert.ToUInt32(low_bound)) >= 0) and ((elem as System.IComparable).CompareTo(Convert.ToUInt32(upper_bound)) <= 0) then\n            Result := true\n          else Result := false\n        end;\n      TypeCode.Int64:\n        begin\n          if ((elem as System.IComparable).CompareTo(Convert.ToInt64(low_bound)) >= 0) and ((elem as System.IComparable).CompareTo(Convert.ToInt64(upper_bound)) <= 0) then\n            Result := true\n          else Result := false\n        end;\n      TypeCode.UInt64:\n        begin\n          if ((elem as System.IComparable).CompareTo(Convert.ToUInt64(low_bound)) >= 0) and ((elem as System.IComparable).CompareTo(Convert.ToUInt64(upper_bound)) <= 0) then\n            Result := true\n          else Result := false\n        end;\n    else\n      if elem.GetType().IsEnum then \n      begin\n        if ((Convert.ToInt32(elem)).CompareTo(Convert.ToInt32(low_bound)) >= 0) and ((Convert.ToInt32(elem)).CompareTo(Convert.ToInt32(upper_bound)) <= 0) then\n          Result := true\n        else Result := false\n      end\n      else Result := true;\n    end\n  end\n  else Result := true;\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet clipping methods for bounds and string length",
-    "output": "procedure TypedSet.Clip;\nbegin\n  if Self.len > 0 then\n  begin\n    Clip(Self.len);\n    exit;\n  end;\n  var tmp_ht := new Hashtable();\n  foreach el: object in ht.Keys do\n  begin\n    if IsInDiapason(el) then \n    begin\n      if (Self.low_bound <> nil) then\n      begin\n        var tmp := convert_elem(el);\n        tmp_ht.Add(tmp, tmp)\n      end\n      else\n        tmp_ht.Add(el, el);\n    end;\n  end;\n  ht := tmp_ht;\nend;\n\nprocedure TypedSet.Clip(len: integer);\nbegin\n  var tmp_ht := new Hashtable();\n  foreach el: object in ht.Keys do\n  begin\n    var str_el := Convert.ToString(el);\n    if str_el.Length > len then\n    begin\n      var s := str_el.Substring(0, len);\n      tmp_ht.Add(s, s);\n    end\n    else\n      tmp_ht.Add(str_el, str_el);\n  end;\n  ht := tmp_ht;\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet initialization from array of objects",
-    "output": "procedure TypedSet.Init(params elems: array of object);\nbegin\n  for var i := 0 to elems.Length - 1 do\n    ht[elems[i]] := elems[i];\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet assignment from another set",
-    "output": "[System.Diagnostics.DebuggerStepThrough]\nprocedure TypedSet.AssignSetFrom(s: TypedSet);\nbegin\n  ht := s.ht.Clone() as Hashtable;\n  Clip;\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet enumerator for iteration",
-    "output": "function TypedSet.GetEnumerator: System.Collections.IEnumerator;\nbegin\n  Result := ht.Keys.GetEnumerator; \nend;"
-  },
-  {
-    "instruction": "Implement string formatting helper for set elements",
-    "output": "function FormatStr(obj: object): string;\nbegin\n  if (obj.GetType = typeof(char)) or (obj.GetType = typeof(string)) then\n    Result := '''' + string.Format(System.Globalization.NumberFormatInfo.InvariantInfo, '{0}', new object[](obj)) + ''''\n  else\n    Result := string.Format(System.Globalization.NumberFormatInfo.InvariantInfo, '{0}', new object[](obj))\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet to string conversion with sorted formatting",
-    "output": "function TypedSet.ToString: string;\nvar\n  i: System.Collections.IEnumerator;\n  lst: ArrayList;\nbegin\n  i := GetEnumerator;\n  lst := new ArrayList();\n  var t: &Type; \n  var added := false;\n  if i.MoveNext then\n    if not (i.Current is System.IComparable) then\n    begin\n      result := '' + FormatStr(i.Current) + '';\n      added := true;\n    end\n    else \n    begin\n      lst.Add(i.Current);\n      t := i.Current.GetType;\n    end;\n  while i.MoveNext do\n    if not (i.Current is System.IComparable) then\n    begin\n      result := (added ? result + ',' : '') + FormatStr(i.Current);\n      added := true;\n    end\n    else\n    begin\n      if (t <> nil) and (t <> i.Current.GetType) then\n      begin\n        result := (added ? result + ',' : '') + FormatStr(i.Current);\n        added := true;\n      end\n      else\n      begin\n        t := i.Current.GetType;\n        lst.Add(i.Current);\n      end;  \n    end;\n  \n  if lst.Count > 0 then\n  begin\n    lst.Sort;\n    var ind := 1;\n    if not added then\n      result := '' + FormatStr(lst[0]) + ''\n    else\n      ind := 0;\n    for j: integer := ind to lst.Count - 1 do\n    begin\n      result := result + ',' + FormatStr(lst[j]);\n    end;\n  end;\n  result := '[' + result + ']';\nend;"
-  },
-  {
-    "instruction": "Implement BigInteger division and modulus operations with integers",
-    "output": "function BigInteger.operator/(p: BigInteger; q: real) := real(p)/q;\n\nfunction BigInteger.operator/(q: real; p: BigInteger) := q/real(p);\n\nfunction BigInteger.operator div(p: BigInteger; q: integer) := BigInteger.Divide(p,q);\n\nfunction BigInteger.operator mod(p: BigInteger; q: integer) := BigInteger.Remainder(p,q);\n\nfunction BigInteger.operator-(p: BigInteger) := BigInteger.Negate(p);"
-  },
-  {
-    "instruction": "Implement BigInteger compound assignment operators",
-    "output": "procedure BigInteger.operator+=(var p: BigInteger; q: BigInteger) := p := p + q;\n\nprocedure BigInteger.operator*=(var p: BigInteger; q: BigInteger) := p := p * q;\n\nprocedure BigInteger.operator-=(var p: BigInteger; q: BigInteger) := p := p - q;"
-  },
-  {
-    "instruction": "Implement Complex number implicit conversions from tuples",
-    "output": "function operator implicit(c: (real,real)): Complex; extensionmethod := Cplx(c[0],c[1]);\n\nfunction operator implicit(c: (real,integer)): Complex; extensionmethod := Cplx(c[0],c[1]);\n\nfunction operator implicit(c: (integer,real)): Complex; extensionmethod := Cplx(c[0],c[1]);\n\nfunction operator implicit(c: (integer,integer)): Complex; extensionmethod := Cplx(c[0],c[1]);"
-  },
-  {
-    "instruction": "Implement HashSet compound assignment operators for elements and sequences",
-    "output": "function operator+=<T>(var Self: HashSet<T>; x: T): HashSet<T>; extensionmethod;\nbegin\n  Self.Add(x);\n  Result := Self;\nend;\n\nfunction operator+=<T>(var Self: HashSet<T>; x: sequence of T): HashSet<T>; extensionmethod;\nbegin\n  Self.UnionWith(x);\n  Result := Self;\nend;\n\nfunction operator-=<T>(var Self: HashSet<T>; x: T): HashSet<T>; extensionmethod;\nbegin\n  Self.Remove(x);\n  Result := Self;\nend;\n\nfunction operator-=<T>(var Self: HashSet<T>; x: sequence of T): HashSet<T>; extensionmethod;\nbegin\n  Self.ExceptWith(x);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement SortedSet compound assignment operators for elements and sequences",
-    "output": "function operator+=<T>(var Self: SortedSet<T>; x: T): SortedSet<T>; extensionmethod;\nbegin\n  Self.Add(x);\n  Result := Self;\nend;\n\nfunction operator+=<T>(var Self: SortedSet<T>; x: sequence of T): SortedSet<T>; extensionmethod;\nbegin\n  Self.UnionWith(x);\n  Result := Self;\nend;\n\nfunction operator-=<T>(var Self: SortedSet<T>; x: T): SortedSet<T>; extensionmethod;\nbegin\n  Self.Remove(x);\n  Result := Self;\nend;\n\nfunction operator-=<T>(var Self: SortedSet<T>; x: sequence of T): SortedSet<T>; extensionmethod;\nbegin\n  Self.ExceptWith(x);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement BigInteger equality and inequality operators with integer values",
-    "output": "function BigInteger.operator=(p: BigInteger; q: integer) := p = BigInteger.Create(q);\n\nfunction BigInteger.operator=(p: integer; q: BigInteger) := BigInteger.Create(p) = q;\n\nfunction BigInteger.operator<>(p: BigInteger; q: integer) := p <> BigInteger.Create(q);\n\nfunction BigInteger.operator<>(p: integer; q: BigInteger) := BigInteger.Create(p) <> q;"
-  },
-  {
-    "instruction": "Implement HashSet equality and inequality comparison operators",
-    "output": "function operator=<T>(x,y: HashSet<T>): boolean; extensionmethod := InternalEqual(x,y);\n\nfunction operator<><T>(x,y: HashSet<T>); extensionmethod := not InternalEqual(x,y);"
-  },
-  {
-    "instruction": "Implement SortedSet equality and inequality comparison operators",
-    "output": "function operator=<T>(x,y: SortedSet<T>): boolean; extensionmethod := InternalEqual(x,y);\n\nfunction operator<><T>(x, y: SortedSet<T>); extensionmethod := not InternalEqual(x,y);"
-  },
-  {
-    "instruction": "Implement HashSet element addition and removal operations",
-    "output": "function operator+<T>(x: HashSet<T>; y: T): HashSet<T>; extensionmethod;\nbegin\n  var v := new HashSet<T>(x);\n  v.Add(y);\n  Result := v;\nend;\n\nfunction operator-<T>(x: HashSet<T>; y: T): HashSet<T>; extensionmethod;\nbegin\n  var v := new HashSet<T>(x);\n  v.Remove(y);\n  Result := v;\nend;"
-  },
-  {
-    "instruction": "Implement SortedSet element addition and removal operations",
-    "output": "function operator+<T>(x: SortedSet<T>; y: T): SortedSet<T>; extensionmethod;\nbegin\n  var v := new SortedSet<T>(x);\n  v.Add(y);\n  Result := v;\nend;\n\nfunction operator-<T>(x: SortedSet<T>; y: T): SortedSet<T>; extensionmethod;\nbegin\n  var v := new SortedSet<T>(x);\n  v.Remove(y);\n  Result := v;\nend;"
-  },
-  {
-    "instruction": "Implement sequence concatenation with single elements",
-    "output": "function operator+<T>(a: sequence of T; b: T): sequence of T; extensionmethod;\nbegin\n  Result := a.Concat(new T[1](b));\nend;\n\nfunction operator+<T>(b: T; a: sequence of T): sequence of T; extensionmethod;\nbegin\n  Result := new T[1](b);\n  Result := Result.Concat(a);\nend;"
-  },
-  {
-    "instruction": "Implement sequence element existence check",
-    "output": "function operator in<T>(x: T; Self: sequence of T): boolean; extensionmethod;\nbegin\n  Result := Self.Contains(x);\nend;"
-  },
-  {
-    "instruction": "Implement string substring existence check operator",
-    "output": "function string.operator in(substr: string; str: string) := str.Contains(substr);"
-  },
-  {
-    "instruction": "Implement method to find overridden ToString method in class hierarchy",
-    "output": "function RedefinedToString(o: object): System.Reflection.MethodInfo;\nbegin\n  var t := o.GetType;\n  var meth: System.Reflection.MethodInfo := nil;\n  while t <> typeof(Object) do\n  begin\n    meth := t.GetMethod('ToString', System.Reflection.BindingFlags.Public or\n                System.Reflection.BindingFlags.Instance or \n                System.Reflection.BindingFlags.DeclaredOnly, nil, new System.Type[0], nil);\n    if meth <> nil then \n      break;\n    t := t.BaseType;            \n  end;\n  if (t = typeof(Object)) or (t = typeof(System.ValueType)) then\n    Result := nil\n  else Result := meth;   \nend;"
-  },
-  {
-    "instruction": "Implement TypedSet constructors with initialization values",
-    "output": "constructor TypedSet.Create(initValue: TypedSet);\nbegin\n  ht := new Hashtable({new TypedSetComparer()});\n  Self.AssignSetFrom(initValue);\n  Self.len := initValue.len;\nend;\n\nconstructor TypedSet.Create(low_bound, upper_bound: object; initValue: TypedSet);\nbegin\n  ht := new Hashtable({new TypedSetComparer()});\n  Self.low_bound := low_bound;\n  Self.upper_bound := upper_bound;\n  Self.AssignSetFrom(initValue);\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet constructor from byte array for bit representation",
-    "output": "constructor TypedSet.Create(vals: array of byte);\nvar\n  i: integer;\nbegin\n  ht := new Hashtable({new TypedSetComparer()});\n  i := 0;\n  while i < 256 div 8 do\n  begin\n    if vals[i] and 128 = 128 then ht.Add(i * 8, i * 8);\n    if vals[i] and 64 = 64 then ht.Add(i * 8 + 1, i * 8 + 1);\n    if vals[i] and 32 = 32 then ht.Add(i * 8 + 2, i * 8 + 2);\n    if vals[i] and 16 = 16 then ht.Add(i * 8 + 3, i * 8 + 3);\n    if vals[i] and 8 = 8 then ht.Add(i * 8 + 4, i * 8 + 4);\n    if vals[i] and 4 = 4 then ht.Add(i * 8 + 5, i * 8 + 5);\n    if vals[i] and 2 = 2 then ht.Add(i * 8 + 6, i * 8 + 6);\n    if vals[i] and 1 = 1 then ht.Add(i * 8 + 7, i * 8 + 7);\n    i := i + 1;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement set comparison functions for greater than or equal and less than or equal",
-    "output": "[System.Diagnostics.DebuggerStepThrough]  \nfunction CompareSetGreaterEqual(s1, s2: TypedSet): boolean;\nvar\n  en: System.Collections.IEnumerator;\n  greater: boolean := true;\nbegin\n  en := s2.ht.GetEnumerator();\n  en.Reset();\n  while en.MoveNext do\n  begin\n    if not s1.Contains((en as IDictionaryEnumerator).Key) then \n    begin\n      greater := false;\n      break;\n    end;\n  end;\n  Result := greater;\nend;\n\n[System.Diagnostics.DebuggerStepThrough]  \nfunction CompareSetLessEqual(s1, s2: TypedSet): boolean;\nvar\n  en: System.Collections.IEnumerator;\n  less: boolean := true;\nbegin\n  en := s1.ht.GetEnumerator();\n  en.Reset();\n  while en.MoveNext do\n  begin\n    if not s2.Contains((en as IDictionaryEnumerator).Key) then \n    begin\n      less := false;\n      break;\n    end;\n  end;\n  Result := less;\nend;"
-  },
-  {
-    "instruction": "Implement set comparison function for greater than (proper superset)",
-    "output": "[System.Diagnostics.DebuggerStepThrough]  \nfunction CompareSetGreater(s1, s2: TypedSet): boolean;\nvar\n  greater: boolean := true;\n  en: System.Collections.IEnumerator;\nbegin\n  en := s2.ht.GetEnumerator();\n  en.Reset();\n  while en.MoveNext do\n  begin\n    if not s1.Contains((en as IDictionaryEnumerator).Key) then \n    begin\n      greater := false;\n      break;\n    end;\n  end;\n  if greater <> false then\n  begin\n    en := s1.ht.GetEnumerator();\n    en.Reset();\n    var b: boolean := false;\n    while en.MoveNext do\n    begin\n      if not s2.Contains((en as IDictionaryEnumerator).Key) then \n      begin\n        b := true;\n        break;\n      end;\n    end;\n    greater := b;\n  end;\n  Result := greater;\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet implicit conversion operators for HashSet",
-    "output": "class function TypedSet.operator implicit<T>(s: TypedSet): HashSet<T>;\nbegin\n  var hs := new HashSet<T>();\n  foreach var key in s.ht.Keys do\n  begin\n    hs.Add(T(key));  \n  end;\n  Result := hs; \nend;\n\nclass function TypedSet.operator implicit<T>(s: HashSet<T>): TypedSet;\nbegin\n  var ts := new TypedSet();\n  foreach key: T in s.ToArray() do\n  begin\n    ts.ht[key] := key;  \n  end;\n  Result := ts; \nend;"
-  },
-  {
-    "instruction": "Implement string compound assignment with concatenation",
-    "output": "procedure string.operator+=(var left: string; right: string);\nbegin\n  left := left + right;\nend;"
-  },
-  {
-    "instruction": "Implement SortedDictionary key existence check operator",
-    "output": "function SortedDictionary<K, V>.operator in(key: K; d: SortedDictionary<K, V>): boolean;\nbegin\n  Result := d.ContainsKey(key);\nend;"
-  },
-  {
-    "instruction": "Implement SortedList key existence check operator",
-    "output": "function SortedList<K, V>.operator in(key: K; d: SortedList<K, V>): boolean;\nbegin\n  Result := d.ContainsKey(key);\nend;"
   },
   {
     "instruction": "Implement BigInteger range generator function",
@@ -316,108 +48,16 @@
     "output": "function Range(a, b, step: BigInteger): sequence of BigInteger;\nbegin\n  if step = 0 then\n    raise new System.ArgumentException('step=0');\n  if step > 0 then\n    while a<=b do\n    begin\n      yield a;\n      a += step;\n    end\n  else  \n    while a>=b do\n    begin\n      yield a;\n      a += step;\n    end\nend;"
   },
   {
-    "instruction": "Implement TypedSet assignment from another set with bounds",
-    "output": "procedure AssignSetWithBounds(var left: TypedSet; right: TypedSet; low, high: object);\nbegin\n  left := right.CloneSet();\n  left.low_bound := low;\n  right.upper_bound := high;\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet clipping function for short strings",
-    "output": "function ClipShortStringInSet(s: TypedSet; len: integer): TypedSet;\nbegin\n  s.len := len;\n  s.Clip;\n  Result := s;\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet clipping procedure for short strings",
-    "output": "procedure ClipShortStringInSetProcedure(var s: TypedSet; len: integer);\nbegin\n  s.len := len;\n  s.Clip;\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet initialization with short string length",
-    "output": "procedure TypedSetInitWithShortString(var st: TypedSet; len: integer);\nbegin\n  if st = nil then\n    st := new TypedSet(len);\nend;"
-  },
-  {
-    "instruction": "Implement element conversion helper for TypedSet with enum support",
-    "output": "function convert_elem(obj: object): object;\nbegin\n  var t := obj.GetType;\n  if t.IsEnum then\n  begin\n    Result := obj;\n    exit;\n  end;\n  case System.Type.GetTypeCode(t) of\n    TypeCode.Byte, TypeCode.SByte, TypeCode.Int16, TypeCode.UInt16, TypeCode.Int32:\n    Result := Convert.ToInt32(obj);\n    TypeCode.UInt32:\n      begin\n        var tmp: longword := longword(obj);\n        if tmp <= integer.MaxValue then\n          Result := integer(tmp)\n        else\n          Result := Convert.ToInt64(obj);\n      end;\n    TypeCode.Int64:\n      begin\n        var tmp: int64 := int64(obj);\n        if tmp <= integer.MaxValue then\n          Result := integer(tmp)\n        else\n          Result := obj;\n      end;\n    TypeCode.UInt64:\n      begin\n        var tmp: uint64 := uint64(obj);\n        if tmp <= integer.MaxValue then\n          Result := integer(tmp)\n        else\n        if tmp <= int64.MaxValue then\n          Result := int64(tmp)\n        else\n          Result := obj;\n      end\n  else\n    Result := obj;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet element inclusion with range support for enums",
-    "output": "procedure TypedSet.IncludeElement(elem: object);\nvar\n  diap: Diapason;\nbegin\n  if elem = nil then exit;\n  elem := convert_elem(elem);\n  if not IsInDiapason(elem) then Exit;\n  if elem.GetType().IsEnum then\n  begin\n    ht[elem] := elem;\n  end\n  else\n  if not (elem is Diapason) then\n  begin\n    ht[elem] := elem;\n  end\n  else\n  begin\n    diap := Diapason(elem);\n    if diap.clow = nil then\n    begin\n      for var i := diap.low to diap.high do\n      begin\n        ht[i] := i;\n      end\n    end\n    else \n    begin\n      if diap.clow is char then\n      begin\n        for var c := char(diap.clow) to char(diap.chigh) do\n        begin\n          ht[c] := c;\n        end\n      end\n      else if diap.clow is boolean then\n      begin\n        for var b := boolean(diap.clow) to boolean(diap.chigh) do\n          ht[b] := b;\n      end\n      else if diap.clow.GetType().IsEnum then\n      begin\n        for var i := integer(diap.clow) to integer(diap.chigh) do\n        begin\n          var obj := Enum.ToObject(diap.clow.GetType(), i);\n          ht[obj] := obj;\n        end;\n      end;\n    end;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement TypedSet string representation with sorted formatting",
-    "output": "function TypedSet.ToString: string;\nvar\n  i: System.Collections.IEnumerator;\n  lst: ArrayList;\nbegin\n  i := GetEnumerator;\n  lst := new ArrayList();\n  var t: &Type; \n  var added := false;\n  if i.MoveNext then\n    if not (i.Current is System.IComparable) then\n    begin\n      result := '' + FormatStr(i.Current) + '';\n      added := true;\n    end\n    else \n    begin\n      lst.Add(i.Current);\n      t := i.Current.GetType;\n    end;\n  while i.MoveNext do\n    if not (i.Current is System.IComparable) then\n    begin\n      result := (added ? result + ',' : '') + FormatStr(i.Current);\n      added := true;\n    end\n    else\n    begin\n      if (t <> nil) and (t <> i.Current.GetType) then\n      begin\n        result := (added ? result + ',' : '') + FormatStr(i.Current);\n        added := true;\n      end\n      else\n      begin\n        t := i.Current.GetType;\n        lst.Add(i.Current);\n      end;  \n    end;\n  \n  if lst.Count > 0 then\n  begin\n    lst.Sort;\n    var ind := 1;\n    if not added then\n      result := '' + FormatStr(lst[0]) + ''\n    else\n      ind := 0;\n    for j: integer := ind to lst.Count - 1 do\n    begin\n      result := result + ',' + FormatStr(lst[j]);\n    end;\n  end;\n  result := '[' + result + ']';\nend;"
-  },
-  {
-    "instruction": "Implement structured object to string conversion for nested arrays",
-    "output": "function ArrNToString(a: System.Array; indexes: array of integer; i: integer): string;\nconst\n  nmax = 100;\nbegin\n  var sb := new StringBuilder;\n  if i = a.Rank then\n    sb.Append(StructuredObjectToString(a.GetValue(indexes)))\n  else\n  begin\n    sb.Append('[');\n    for var k := 0 to a.GetLength(i) - 1 do\n    begin\n      indexes[i] := k;\n      sb.Append(ArrNToString(a, indexes, i + 1));\n      if (k >= nmax - 1) and (k < a.GetLength(i) - 1) then \n      begin\n        sb.Append(',...');\n        break\n      end\n      else if k < a.GetLength(i) - 1 then\n        sb.Append(',');            \n    end;\n    sb.Append(']');\n  end;\n  Result := sb.ToString;\nend;"
-  },
-  {
     "instruction": "Implement range generation with arithmetic sequence helper",
     "output": "function Range(a, b, step: integer): sequence of integer;\nbegin\n  if step = 0 then\n    raise new System.ArgumentException('step=0');\n  if (step > 0) and (b < a) or (step < 0) and (b > a) then\n  begin\n    Result := System.Linq.Enumerable.Empty&<integer>;\n    exit;\n  end;\n  var n := abs((b - a) div step) + 1;\n  var ar: ArithmSeq;\n  ar := new ArithmSeq(a, step);\n  Result := System.Linq.Enumerable.Range(0, n).Select(ar.f);\nend;"
   },
   {
-    "instruction": "Implement complex number negation operator",
-    "output": "function operator-(Self: Complex): Complex; extensionmethod := Complex.Negate(Self);"
-  },
-  {
-    "instruction": "Implement complex number compound assignment operators",
-    "output": "procedure operator+=(var c: Complex; x: Complex); extensionmethod := c := c + x;\n\nprocedure operator*=(var c: Complex; x: Complex); extensionmethod := c := c * x;\n\nprocedure operator-=(var c: Complex; x: Complex); extensionmethod := c := c - x;\n\nprocedure operator/=(var c: Complex; x: Complex); extensionmethod := c := c / x;"
-  },
-  {
-    "instruction": "Implement string repetition with compound assignment",
-    "output": "procedure string.operator*=(var left: string; n: integer);\nbegin\n  var sb := new StringBuilder;\n  loop n do\n    sb.Append(left);\n  left := sb.ToString;\nend;"
-  },
-  {
-    "instruction": "Implement StringBuilder implicit conversion from string",
-    "output": "function operator implicit(s: string): StringBuilder; extensionmethod := new StringBuilder(s);"
-  },
-  {
-    "instruction": "Implement StringBuilder concatenation assignment operator",
-    "output": "procedure operator+=(var left: StringBuilder; right: string); extensionmethod := left.Append(right);"
-  },
-  {
-    "instruction": "Implement array element existence check operator",
-    "output": "function operator in<T>(x: T; a: array of T): boolean; extensionmethod := a.Contains(x);"
-  },
-  {
-    "instruction": "Implement List element existence check operator",
+    "instruction": "Implement List element existence check operator (operator in)",
     "output": "function List<T>.operator in(x: T; Self: List<T>): boolean;\nbegin\n  Result := Self.Contains(x);\nend;"
-  },
-  {
-    "instruction": "Implement HashSet element existence check operator",
-    "output": "function operator in<T>(x: T; Self: HashSet<T>): boolean; extensionmethod := Self.Contains(x);"
-  },
-  {
-    "instruction": "Implement SortedSet element existence check operator",
-    "output": "function operator in<T>(x: T; Self: SortedSet<T>): boolean; extensionmethod := Self.Contains(x);"
-  },
-  {
-    "instruction": "Implement Dictionary key existence check operator",
-    "output": "function Dictionary<K, V>.operator in(key: K; d: Dictionary<K, V>): boolean;\nbegin\n  Result := d.ContainsKey(key);\nend;"
-  },
-  {
-    "instruction": "Implement SortedDictionary key existence check operator",
-    "output": "function SortedDictionary<K, V>.operator in(key: K; d: SortedDictionary<K, V>): boolean;\nbegin\n  Result := d.ContainsKey(key);\nend;"
-  },
-  {
-    "instruction": "Implement SortedList key existence check operator",
-    "output": "function SortedList<K, V>.operator in(key: K; d: SortedList<K, V>): boolean;\nbegin\n  Result := d.ContainsKey(key);\nend;"
-  },
-  {
-    "instruction": "Implement power operator for single precision numbers",
-    "output": "function operator**(x: single; n: integer): real; extensionmethod := Power(x, n);"
   },
   {
     "instruction": "Implement power operator for integer numbers",
     "output": "function operator**(x, y: integer): real; extensionmethod := Power(real(x), y);"
-  },
-  {
-    "instruction": "Implement power operator for real numbers",
-    "output": "function operator**(x, y: real): real; extensionmethod := Power(x, y);"
-  },
-  {
-    "instruction": "Implement power operator for complex numbers",
-    "output": "function operator**(x, y: Complex): Complex; extensionmethod := Power(x, y);"
-  },
-  {
-    "instruction": "Implement power operator for BigInteger with integer exponent",
-    "output": "function operator**(x: BigInteger; y: integer): BigInteger; extensionmethod := Power(x, y);"
   },
   {
     "instruction": "Implement a generic function to create an array from parameters",
@@ -426,14 +66,6 @@
   {
     "instruction": "Implement a function to create an array from a sequence",
     "output": "function Arr<T>(a: sequence of T): array of T;\nbegin\n  Result := a.ToArray;\nend;"
-  },
-  {
-    "instruction": "Implement a function to create an array from an integer range",
-    "output": "function Arr(a: IntRange): array of integer := a.ToArray;"
-  },
-  {
-    "instruction": "Implement a function to create an array from a character range",
-    "output": "function Arr(a: CharRange): array of char;\nbegin\n  var n := integer(a.High) - integer(a.Low) + 1;\n  Result := new char[n];\n  var x := a.Low;\n  for var i := 0 to n-1 do\n  begin\n    Result[i] := x;\n    Inc(x)\n  end;  \nend;"
   },
   {
     "instruction": "Implement a function to create a sequence from parameters",
@@ -576,10 +208,6 @@
     "output": "function IntToStr(a: integer): string;\nbegin\n  Result := a.ToString;\nend;"
   },
   {
-    "instruction": "Implement function to convert string to integer",
-    "output": "function StrToInt(s: string): integer;\nbegin\n  var j := 1;\n  while (j <= s.Length) and char.IsWhiteSpace(s[j]) do\n    j += 1;\n  if (j > s.Length) then \n    raise new System.FormatException(ErrorStringFromResource('Format_InvalidString'));\n  var sign := 0;  \n  if s[j] = '-' then\n  begin\n    sign := -1;\n    j += 1;\n  end  \n  else if s[j] = '+' then\n  begin\n    sign := 1;\n    j += 1;\n  end;\n  if (j > s.Length) then \n    raise new System.FormatException(ErrorStringFromResource('Format_InvalidString'));\n  var c := integer(s[j]);\n  if (c < 48) or (c > 57) then\n    raise new System.FormatException(ErrorStringFromResource('Format_InvalidString'));\n  Result := c - 48;\n  j += 1;  \n  while j <= s.Length do\n  begin\n    c := integer(s[j]);\n    if c > 57 then\n      break;\n    if c < 48 then\n      break;\n    if Result > 214748364 then\n      raise new System.OverflowException(ErrorStringFromResource('Overflow_Int32'));\n    Result := Result * 10 + (c - 48);\n    j += 1;\n  end;\n  if Result < 0 then \n    if (Result = -2147483648) and (sign = -1) then\n      exit\n    else raise new System.OverflowException(ErrorStringFromResource('Overflow_Int32'));\n  if sign = -1 then\n    Result := -Result;\n  while (j <= s.Length) and char.IsWhiteSpace(s[j]) do\n    j += 1;\n  if j <= s.Length then  \n    raise new System.FormatException(ErrorStringFromResource('Format_InvalidString'));\nend;"
-  },
-  {
     "instruction": "Implement increment procedure for integer",
     "output": "procedure Inc(var i: integer);\nbegin\n  i += 1;\nend;"
   },
@@ -672,18 +300,6 @@
     "output": "function FileExists(name: string): boolean;\nbegin\n  Result := System.IO.File.Exists(name);\nend;"
   },
   {
-    "instruction": "Implement file deletion function",
-    "output": "function DeleteFile(fname: string): boolean;\nbegin\n  if not &File.Exists(fname) then\n  begin\n    Result := False;\n    exit\n  end;\n  try\n    Result := True;\n    &File.Delete(fname);\n  except\n    Result := False;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement directory creation function",
-    "output": "function CreateDir(s: string): boolean;\nbegin\n  try\n    Result := True;\n    Directory.CreateDirectory(s);\n  except\n    Result := False;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement file rename function",
-    "output": "function RenameFile(name, newname: string): boolean;\nbegin\n  try\n    Result := True;\n    &File.Move(name, newname);\n  except\n    Result := False;\n  end;\nend;"
-  },
-  {
     "instruction": "Implement current directory getter function",
     "output": "function GetCurrentDir: string;\nbegin\n  Result := Environment.CurrentDirectory;\nend;"
   },
@@ -692,20 +308,8 @@
     "output": "function SetCurrentDir(s: string): boolean;\nbegin\n  try\n    Result := True;\n    Environment.CurrentDirectory := s;\n  except\n    Result := False;\n  end;\nend;"
   },
   {
-    "instruction": "Implement file name extraction function",
-    "output": "function ExtractFileName(fname: string): string;\nbegin\n  var fi := new System.IO.FileInfo(fname);\n  Result := fi.Name;\nend;"
-  },
-  {
-    "instruction": "Implement file extension extraction function",
-    "output": "function ExtractFileExt(fname: string): string;\nbegin\n  var fi := new System.IO.FileInfo(fname);\n  Result := fi.Extension;\nend;"
-  },
-  {
     "instruction": "Implement file path extraction function",
     "output": "function ExtractFilePath(fname: string): string;\nbegin\n  var fi := new System.IO.FileInfo(fname);\n  Result := fi.DirectoryName;\n  if (Result.Length > 0) and (Result[Result.Length] <> '\\') and (Result[Result.Length] <> '/') then\n    Result += '\\';\nend;"
-  },
-  {
-    "instruction": "Implement program halt with exit code procedure",
-    "output": "procedure Halt(exitCode: integer);\nbegin\n  System.Environment.Exit(exitCode);\nend;"
   },
   {
     "instruction": "Implement sleep procedure",
@@ -888,22 +492,6 @@
     "output": "function ReadString(f: Text): string;\nbegin\n  Read(f, Result);\n  Readln(f);\nend;"
   },
   {
-    "instruction": "Implement disk free space function",
-    "output": "function DiskFree(diskname: string): int64;\nbegin\n  try\n    var d := new System.IO.DriveInfo(diskname);\n    Result := d.TotalFreeSpace;\n  except\n    Result := -1;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement disk size function",
-    "output": "function DiskSize(diskname: string): int64;\nbegin\n  try\n    var d := new System.IO.DriveInfo(diskname);\n    Result := d.TotalSize;\n  except\n    Result := -1;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement process execution procedure",
-    "output": "procedure Exec(filename: string);\nbegin\n  System.Diagnostics.Process.Start(filename)\nend;"
-  },
-  {
-    "instruction": "Implement process execution with arguments procedure",
-    "output": "procedure Exec(filename: string; args: string);\nbegin\n  System.Diagnostics.Process.Start(filename, args)\nend;"
-  },
-  {
     "instruction": "Implement file enumeration function",
     "output": "function EnumerateFiles(path: string; searchPattern: string): sequence of string;\nbegin\n  Result := System.IO.Directory.EnumerateFiles(path, searchPattern, System.IO.SearchOption.TopDirectoryOnly)\nend;"
   },
@@ -988,48 +576,12 @@
     "output": "procedure Println(params args: array of object);\nbegin\n  Print(args);\n  Writeln;\nend;"
   },
   {
-    "instruction": "Implement formatted write procedure",
-    "output": "procedure WriteFormat(formatstr: string; params args: array of object);\nbegin\n  var s := Format(formatstr, args);\n  write(s);\nend;"
-  },
-  {
-    "instruction": "Implement formatted writeln procedure",
-    "output": "procedure WritelnFormat(formatstr: string; params args: array of object);\nbegin\n  var s := Format(formatstr, args);\n  writeln(s);\nend;"
-  },
-  {
     "instruction": "Implement object serialization procedure",
     "output": "procedure Serialize(filename: string; obj: object);\nbegin\n  var fs := new System.IO.FileStream(filename,System.IO.FileMode.Create);\n  var formatter := new BinaryFormatter;\n  formatter.Serialize(fs,obj);\n  fs.Close;\nend;"
   },
   {
     "instruction": "Implement object deserialization function",
     "output": "function Deserialize(filename: string): object;\nbegin\n  var fs := new System.IO.FileStream(filename,System.IO.FileMode.Open);\n  var formatter := new BinaryFormatter;\n  Result := formatter.Deserialize(fs);\n  fs.Close;\nend;"
-  },
-  {
-    "instruction": "Implement binary file read bytes function",
-    "output": "function BinaryFile.ReadBytes(count: integer): array of byte;\nbegin\n  InternalCheck;\n  Result := Self.br.ReadBytes(count)\nend;"
-  },
-  {
-    "instruction": "Implement binary file write bytes procedure",
-    "output": "procedure BinaryFile.WriteBytes(a: array of byte);\nbegin\n  InternalCheck;\n  Self.bw.Write(a);\nend;"
-  },
-  {
-    "instruction": "Implement binary file read integer function",
-    "output": "function BinaryFile.ReadInteger: integer;\nbegin\n  InternalCheck;\n  Result := Self.br.ReadInt32;  \nend;"
-  },
-  {
-    "instruction": "Implement binary file read real number function",
-    "output": "function BinaryFile.ReadReal: real;\nbegin\n  InternalCheck;\n  Result := Self.br.ReadDouble;  \nend;"
-  },
-  {
-    "instruction": "Implement binary file read string function",
-    "output": "function BinaryFile.ReadString: string;\nbegin\n  InternalCheck;\n  Result := Self.br.ReadString;  \nend;"
-  },
-  {
-    "instruction": "Implement binary file serialize procedure",
-    "output": "procedure BinaryFile.Serialize(obj: object);\nbegin\n  var formatter := new BinaryFormatter;\n  formatter.Serialize(fs,obj);\nend;"
-  },
-  {
-    "instruction": "Implement binary file deserialize function",
-    "output": "function BinaryFile.Deserialize: object;\nbegin\n  var formatter := new BinaryFormatter;\n  Result := formatter.Deserialize(fs);\nend;"
   },
   {
     "instruction": "Implement function to get executable file name",
@@ -1042,10 +594,6 @@
   {
     "instruction": "Implement procedure to swap two values",
     "output": "procedure Swap<T>(var a, b: T);\nbegin\n  var v := a;\n  a := b;\n  b := v;\nend;"
-  },
-  {
-    "instruction": "Implement function to read integer from string with position tracking",
-    "output": "function ReadIntegerFromString(s: string; var from: integer): integer;\nbegin\n  while (from <= s.Length) and char.IsWhiteSpace(s[from]) do\n    from += 1;\n  if (from > s.Length) then \n    raise new System.FormatException(ErrorStringFromResource('Format_InvalidString'));\n  var sign := 0;  \n  if s[from] = '-' then\n  begin\n    sign := -1;\n    from += 1;\n  end  \n  else if s[from] = '+' then\n  begin\n    sign := 1;\n    from += 1;\n  end;\n  if (from > s.Length) then \n    raise new System.FormatException(ErrorStringFromResource('Format_InvalidString'));\n  var c := integer(s[from]);\n  if (c < 48) or (c > 57) then\n    raise new System.FormatException(ErrorStringFromResource('Format_InvalidString'));\n  Result := c - 48;\n  from += 1;  \n  while from <= s.Length do\n  begin\n    c := integer(s[from]);\n    if c > 57 then\n      break;\n    if c < 48 then\n      break;\n    if Result > 214748364 then\n      raise new System.OverflowException(ErrorStringFromResource('Overflow_Int32'));\n    Result := Result * 10 + (c - 48);\n    from += 1;\n  end;\n  if Result < 0 then \n    if (Result = -2147483648) and (sign = -1) then\n      exit\n    else raise new System.OverflowException(ErrorStringFromResource('Overflow_Int32'));\n  if sign = -1 then\n    Result := -Result;\nend;"
   },
   {
     "instruction": "Implement function to read word from string with position tracking",
@@ -1144,14 +692,6 @@
     "output": "function Min<T>(params a: array of T): T := a.Min;"
   },
   {
-    "instruction": "Implement function to convert ANSI character to byte",
-    "output": "function OrdAnsi(a: char): byte;\nbegin\n  if a < #128 then\n    Result := byte(a)\n  else\n  begin\n    Result := Encoding.GetEncoding(1251).GetBytes(new char[1](a))[0];\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement function to convert byte to ANSI character",
-    "output": "function ChrAnsi(a: Byte): char;\nbegin\n  if a < 128 then\n    Result := char(a)\n  else\n  begin\n    Result := Encoding.GetEncoding(1251).GetChars(new byte[1](a))[0];\n  end;\nend;"
-  },
-  {
     "instruction": "Implement function to convert character to Unicode code point",
     "output": "function OrdUnicode(a: char): word;\nbegin\n  Result := word(a);\nend;"
   },
@@ -1210,10 +750,6 @@
   {
     "instruction": "Implement text file writeln procedure for object",
     "output": "procedure Writeln(f: Text; val: object);\nbegin\n  write(f, val);\n  writeln(f);\nend;"
-  },
-  {
-    "instruction": "Implement text file lines property as sequence",
-    "output": "function Text.Lines: sequence of string;\nbegin\n  Self.sr.BaseStream.Position := 0;\n  while not Eof do\n    yield ReadlnString;\nend;"
   },
   {
     "instruction": "Implement function to read boolean from text file",
@@ -1564,14 +1100,6 @@
     "output": "function ReadlnBigInteger(prompt: string): BigInteger;\nbegin\n  Print(prompt);\n  Result := ReadlnBigInteger;\nend;"
   },
   {
-    "instruction": "Implement function to create sequence from integer range",
-    "output": "function Seq(a: IntRange): sequence of integer := a;"
-  },
-  {
-    "instruction": "Implement function to create sequence from character range",
-    "output": "function Seq(a: CharRange): sequence of char := a;"
-  },
-  {
     "instruction": "Implement function to create LinkedList from parameters",
     "output": "function LLst<T>(params a: array of T): LinkedList<T> := new LinkedList<T>(a);"
   },
@@ -1580,36 +1108,12 @@
     "output": "function LLst<T>(a: sequence of T): LinkedList<T> := new LinkedList<T>(a);"
   },
   {
-    "instruction": "Implement function to create LinkedList from integer range",
-    "output": "function LLst(a: IntRange): LinkedList<integer> := a.ToLinkedList;"
-  },
-  {
-    "instruction": "Implement function to create LinkedList from character range",
-    "output": "function LLst(a: CharRange): LinkedList<char> := a.ToLinkedList;"
-  },
-  {
     "instruction": "Implement function to create HashSet from sequence",
     "output": "function HSet<T>(a: sequence of T): HashSet<T> := new HashSet<T>(a);"
   },
   {
     "instruction": "Implement function to create SortedSet from sequence",
     "output": "function SSet<T>(a: sequence of T): SortedSet<T> := new SortedSet<T>(a);"
-  },
-  {
-    "instruction": "Implement function to create HashSet from integer range",
-    "output": "function HSet(a: IntRange): HashSet<integer> := a.ToHashSet;"
-  },
-  {
-    "instruction": "Implement function to create HashSet from character range",
-    "output": "function HSet(a: CharRange): HashSet<char> := a.ToHashSet;"
-  },
-  {
-    "instruction": "Implement function to create SortedSet from integer range",
-    "output": "function SSet(a: IntRange): SortedSet<integer> := a.ToSortedSet;"
-  },
-  {
-    "instruction": "Implement function to create SortedSet from character range",
-    "output": "function SSet(a: CharRange): SortedSet<char> := a.ToSortedSet;"
   },
   {
     "instruction": "Implement function to create Dictionary from tuple pairs",
@@ -1622,42 +1126,6 @@
   {
     "instruction": "Implement function to create string-integer Dictionary from tuple pairs",
     "output": "function DictStrInt(params pairs: array of (string, integer)): Dictionary<string, integer>\n  := Dict&<string, integer>(pairs);"
-  },
-  {
-    "instruction": "Implement function for type checking and assignment",
-    "output": "function __TypeCheckAndAssignForIsMatch<T>(obj: object; var res: T): boolean;\nbegin\n  if obj is T then\n  begin\n    res := T(obj);\n    Result := true;\n  end\n  else\n  begin\n    res := default(T);\n    Result := false;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement function for wildcard tuple equality comparison with two elements",
-    "output": "function __WildCardsTupleEqual<T1, T2, T3, T4>(\n    first: Tuple<T1, T2>; \n    second: Tuple<T3, T4>;\n    elemsToCompare: sequence of integer): boolean;\nbegin\nResult := True;\nforeach var ind in elemsToCompare do\nbegin\n  case ind of\n  0: Result := Result and first.Item1.Equals(second.Item1);\n  1: Result := Result and first.Item2.Equals(second.Item2);\n  end;\nend;\nend;"
-  },
-  {
-    "instruction": "Implement function for wildcard tuple equality comparison with three elements",
-    "output": "function __WildCardsTupleEqual<T1, T2, T3, T4, T5, T6>(\n    first: Tuple<T1, T2, T3>; \n    second: Tuple<T4, T5, T6>;\n    elemsToCompare: sequence of integer): boolean;\nbegin\nResult := True;\nforeach var ind in elemsToCompare do\nbegin\n  case ind of\n  0: Result := Result and first.Item1.Equals(second.Item1);\n  1: Result := Result and first.Item2.Equals(second.Item2);\n  2: Result := Result and first.Item3.Equals(second.Item3);\n  end;\nend;\nend;"
-  },
-  {
-    "instruction": "Implement function for wildcard tuple equality comparison with four elements",
-    "output": "function __WildCardsTupleEqual<T1, T2, T3, T4, T5, T6, T7, T8>(\n    first: Tuple<T1, T2, T3, T4>; \n    second: Tuple<T5, T6, T7, T8>;\n    elemsToCompare: sequence of integer): boolean;\nbegin\nResult := True;\nforeach var ind in elemsToCompare do\nbegin\n  case ind of\n  0: Result := Result and first.Item1.Equals(second.Item1);\n  1: Result := Result and first.Item2.Equals(second.Item2);\n  2: Result := Result and first.Item3.Equals(second.Item3);\n  3: Result := Result and first.Item4.Equals(second.Item4);\n  end;\nend;\nend;"
-  },
-  {
-    "instruction": "Implement function for wildcard tuple equality comparison with five elements",
-    "output": "function __WildCardsTupleEqual<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(\n    first: Tuple<T1, T2, T3, T4, T5>; \n    second: Tuple<T6, T7, T8, T9, T10>;\n    elemsToCompare: sequence of integer): boolean;\nbegin\nResult := True;\nforeach var ind in elemsToCompare do\nbegin\n  case ind of\n  0: Result := Result and first.Item1.Equals(second.Item1);\n  1: Result := Result and first.Item2.Equals(second.Item2);\n  2: Result := Result and first.Item3.Equals(second.Item3);\n  3: Result := Result and first.Item4.Equals(second.Item4);\n  4: Result := Result and first.Item5.Equals(second.Item5);\n  end;\nend;\nend;"
-  },
-  {
-    "instruction": "Implement function for wildcard tuple equality comparison with six elements",
-    "output": "function __WildCardsTupleEqual<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(\n    first: Tuple<T1, T2, T3, T4, T5, T6>; \n    second: Tuple<T7, T8, T9, T10, T11, T12>;\n    elemsToCompare: sequence of integer): boolean;\nbegin\nResult := True;\nforeach var ind in elemsToCompare do\nbegin\n  case ind of\n  0: Result := Result and first.Item1.Equals(second.Item1);\n  1: Result := Result and first.Item2.Equals(second.Item2);\n  2: Result := Result and first.Item3.Equals(second.Item3);\n  3: Result := Result and first.Item4.Equals(second.Item4);\n  4: Result := Result and first.Item5.Equals(second.Item5);\n  5: Result := Result and first.Item6.Equals(second.Item6);\n  end;\nend;\nend;"
-  },
-  {
-    "instruction": "Implement function for wildcard tuple equality comparison with seven elements",
-    "output": "function __WildCardsTupleEqual<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(\n    first: Tuple<T1, T2, T3, T4, T5, T6, T7>; \n    second: Tuple<T8, T9, T10, T11, T12, T13, T14>;\n    elemsToCompare: sequence of integer): boolean;\nbegin\nResult := True;\nforeach var ind in elemsToCompare do\nbegin\n  case ind of\n  0: Result := Result and first.Item1.Equals(second.Item1);\n  1: Result := Result and first.Item2.Equals(second.Item2);\n  2: Result := Result and first.Item3.Equals(second.Item3);\n  3: Result := Result and first.Item4.Equals(second.Item4);\n  4: Result := Result and first.Item5.Equals(second.Item5);\n  5: Result := Result and first.Item6.Equals(second.Item6);\n  6: Result := Result and first.Item7.Equals(second.Item7);\n  end;\nend;\nend;"
-  },
-  {
-    "instruction": "Implement extension method for deconstructing single value",
-    "output": "procedure Deconstruct<T>(self: T; var res: T); extensionmethod;\nbegin\n  res := self;\nend;"
-  },
-  {
-    "instruction": "Implement function to convert object to string representation",
-    "output": "function _ObjectToString(o: object): string;\nbegin\n  Result := StructuredObjectToString(o);\nend;"
   },
   {
     "instruction": "Implement function to create array generator with starting index",
@@ -1784,160 +1252,12 @@
     "output": "procedure Println(f: Text; params args: array of object);\nbegin\n  Print(f, args);\n  Writeln(f);\nend;"
   },
   {
-    "instruction": "Implement function to read word from text file",
-    "output": "function Text.ReadWord := ReadLexem(Self);"
-  },
-  {
-    "instruction": "Implement procedure to reset text file with encoding",
-    "output": "procedure Text.Reset(en: Encoding) := PABCSystem.Reset(Self,en);"
-  },
-  {
-    "instruction": "Implement procedure to rewrite text file with encoding",
-    "output": "procedure Text.Rewrite(en: Encoding) := PABCSystem.Rewrite(Self,en);"
-  },
-  {
-    "instruction": "Implement procedure to append text file with encoding",
-    "output": "procedure Text.Append(en: Encoding) := PABCSystem.Append(Self,en);"
-  },
-  {
-    "instruction": "Implement function to get text file name",
-    "output": "function Text.Name := fi.Name;"
-  },
-  {
-    "instruction": "Implement function to get text file full name",
-    "output": "function Text.FullName := fi.FullName;"
-  },
-  {
-    "instruction": "Implement function to read entire text file content",
-    "output": "function Text.ReadToEnd := sr.ReadToEnd;"
-  },
-  {
-    "instruction": "Implement procedure to reset text file to beginning",
-    "output": "procedure Text.Reset := PABCSystem.Reset(Self);"
-  },
-  {
-    "instruction": "Implement procedure to rewrite text file",
-    "output": "procedure Text.Rewrite := PABCSystem.Rewrite(Self);"
-  },
-  {
-    "instruction": "Implement procedure to append to text file",
-    "output": "procedure Text.Append := PABCSystem.Append(Self);"
-  },
-  {
-    "instruction": "Implement procedure to close abstract binary file",
-    "output": "procedure AbstractBinaryFile.Close := PABCSystem.Close(Self);"
-  },
-  {
-    "instruction": "Implement procedure to truncate abstract binary file",
-    "output": "procedure AbstractBinaryFile.Truncate := PABCSystem.Truncate(Self);"
-  },
-  {
-    "instruction": "Implement function to check end of abstract binary file",
-    "output": "function AbstractBinaryFile.Eof := PABCSystem.Eof(Self);"
-  },
-  {
-    "instruction": "Implement procedure to erase abstract binary file",
-    "output": "procedure AbstractBinaryFile.Erase := PABCSystem.Erase(Self);"
-  },
-  {
-    "instruction": "Implement procedure to rename abstract binary file",
-    "output": "procedure AbstractBinaryFile.Rename(newname: string) := PABCSystem.Rename(Self, newname);"
-  },
-  {
-    "instruction": "Implement procedure to write to abstract binary file",
-    "output": "procedure AbstractBinaryFile.Write(params vals: array of object) := PABCSystem.Write(Self, vals);"
-  },
-  {
-    "instruction": "Implement procedure to reset abstract binary file",
-    "output": "procedure AbstractBinaryFile.Reset := PABCSystem.Reset(Self);"
-  },
-  {
-    "instruction": "Implement procedure to rewrite abstract binary file",
-    "output": "procedure AbstractBinaryFile.Rewrite := PABCSystem.Rewrite(Self);"
-  },
-  {
-    "instruction": "Implement function to get abstract binary file name",
-    "output": "function AbstractBinaryFile.Name := fi.Name;"
-  },
-  {
-    "instruction": "Implement function to get abstract binary file full name",
-    "output": "function AbstractBinaryFile.FullName := fi.FullName;"
-  },
-  {
-    "instruction": "Implement procedure to reset binary file with encoding",
-    "output": "procedure BinaryFile.Reset(en: Encoding) := PABCSystem.Reset(Self,en);"
-  },
-  {
-    "instruction": "Implement procedure to rewrite binary file with encoding",
-    "output": "procedure BinaryFile.Rewrite(en: Encoding) := PABCSystem.Rewrite(Self,en);"
-  },
-  {
-    "instruction": "Implement function to get binary file position",
-    "output": "function BinaryFile.GetFilePos: int64 := PABCSystem.FilePos(Self);"
-  },
-  {
-    "instruction": "Implement function to get binary file size",
-    "output": "function BinaryFile.Size: int64 := PABCSystem.FileSize(Self);"
-  },
-  {
-    "instruction": "Implement procedure to seek in binary file",
-    "output": "procedure BinaryFile.Seek(n: int64) := PABCSystem.Seek(Self, n);"
-  },
-  {
-    "instruction": "Implement function to read boolean from binary file",
-    "output": "function BinaryFile.ReadBoolean: boolean;\nbegin\n  InternalCheck;\n  Result := Self.br.ReadBoolean;  \nend;"
-  },
-  {
-    "instruction": "Implement function to read byte from binary file",
-    "output": "function BinaryFile.ReadByte: byte;\nbegin\n  InternalCheck;\n  Result := Self.br.ReadByte;  \nend;"
-  },
-  {
-    "instruction": "Implement function to read character from binary file",
-    "output": "function BinaryFile.ReadChar: char;\nbegin\n  InternalCheck;\n  Result := Self.br.ReadChar;  \nend;"
-  },
-  {
-    "instruction": "Implement procedure to assign file with alternative name",
-    "output": "procedure AssignFile(f: Text; name: string) := Assign(f, name);"
-  },
-  {
-    "instruction": "Implement procedure to close file with alternative name",
-    "output": "procedure CloseFile(f: Text) := Close(f);"
-  },
-  {
     "instruction": "Implement procedure to reset file with name and encoding",
     "output": "procedure Reset(f: Text; name: string; en: Encoding);\nbegin\n  Assign(f, name);\n  Reset(f, en);\nend;"
   },
   {
     "instruction": "Implement procedure to rewrite file with name and encoding",
     "output": "procedure Rewrite(f: Text; name: string; en: Encoding);\nbegin\n  Assign(f, name);\n  Rewrite(f, en);\nend;"
-  },
-  {
-    "instruction": "Implement procedure to append file with name and encoding",
-    "output": "procedure Append(f: Text; name: string; en: Encoding);\nbegin\n  Assign(f, name);\n  Append(f, en);\nend;"
-  },
-  {
-    "instruction": "Implement procedure to assign binary file with alternative name",
-    "output": "procedure AssignFile(f: AbstractBinaryFile; name: string) := Assign(f, name);"
-  },
-  {
-    "instruction": "Implement procedure to close binary file with alternative name",
-    "output": "procedure CloseFile(f: AbstractBinaryFile) := Close(f);"
-  },
-  {
-    "instruction": "Implement procedure to reset binary file with name",
-    "output": "procedure Reset(f: AbstractBinaryFile; name: string);\nbegin\n  Assign(f, name);\n  Reset(f);\nend;"
-  },
-  {
-    "instruction": "Implement procedure to reset binary file with name and encoding",
-    "output": "procedure Reset(f: AbstractBinaryFile; name: string; en: Encoding);\nbegin\n  Assign(f, name);\n  Reset(f,en);\nend;"
-  },
-  {
-    "instruction": "Implement procedure to rewrite binary file with name",
-    "output": "procedure Rewrite(f: AbstractBinaryFile; name: string);\nbegin\n  Assign(f, name);\n  Rewrite(f);\nend;"
-  },
-  {
-    "instruction": "Implement procedure to rewrite binary file with name and encoding",
-    "output": "procedure Rewrite(f: AbstractBinaryFile; name: string; en: Encoding);\nbegin\n  Assign(f, name);\n  Rewrite(f,en);\nend;"
   },
   {
     "instruction": "Implement function to open read with encoding",
@@ -1950,66 +1270,6 @@
   {
     "instruction": "Implement function to open append with encoding",
     "output": "function OpenAppend(fname: string; en: Encoding): Text;\nbegin\n  var f: Text := new Text;\n  Append(f, fname, en);\n  Result := f;\nend;"
-  },
-  {
-    "instruction": "Implement function to read lines from file with encoding",
-    "output": "function ReadLines(path: string; en: Encoding): sequence of string;\nbegin\n  Result := System.IO.File.ReadLines(path, en);\nend;"
-  },
-  {
-    "instruction": "Implement function to read all lines from file with encoding",
-    "output": "function ReadAllLines(path: string; en: Encoding): array of string;\nbegin\n  Result := System.IO.File.ReadAllLines(path, en);\nend;"
-  },
-  {
-    "instruction": "Implement function to read all text from file with encoding",
-    "output": "function ReadAllText(path: string; en: Encoding): string;\nbegin\n  Result := System.IO.File.ReadAllText(path, en);\nend;"
-  },
-  {
-    "instruction": "Implement procedure to write lines to file with encoding",
-    "output": "procedure WriteLines(path: string; ss: sequence of string; en: Encoding);\nbegin\n  System.IO.File.WriteAllLines(path, ss, en);\nend;"
-  },
-  {
-    "instruction": "Implement procedure to write all lines to file with encoding",
-    "output": "procedure WriteAllLines(path: string; ss: array of string; en: Encoding);\nbegin\n  System.IO.File.WriteAllLines(path, ss, en);\nend;"
-  },
-  {
-    "instruction": "Implement procedure to write all text to file with encoding",
-    "output": "procedure WriteAllText(path: string; s: string; en: Encoding);\nbegin\n  System.IO.File.WriteAllText(path, s, en);\nend;"
-  },
-  {
-    "instruction": "Implement procedure for typed file initialization with element type",
-    "output": "procedure TypedFileInit(var f: TypedFile; ElementType: System.Type);\nbegin\n  f := new TypedFile(ElementType, 0, new integer[0]);\nend;"
-  },
-  {
-    "instruction": "Implement procedure for typed file initialization with offsets",
-    "output": "procedure TypedFileInit(var f: TypedFile; ElementType: System.Type; off: integer; params offs: array of integer);\nbegin\n  f := new TypedFile(ElementType, off, offs);\nend;"
-  },
-  {
-    "instruction": "Implement procedure for typed file initialization with short string support",
-    "output": "procedure TypedFileInitWithShortString(var f: TypedFile; ElementType: System.Type; off: integer; params offs: array of integer);\nbegin\n  f := new TypedFile(ElementType, off, offs);\nend;"
-  },
-  {
-    "instruction": "Implement procedure for binary file initialization",
-    "output": "procedure BinaryFileInit(var f: BinaryFile);\nbegin\n  f := new BinaryFile();\nend;"
-  },
-  {
-    "instruction": "Implement function to convert disk number to disk name",
-    "output": "function ConvertDiskToDiskName(disk: integer): string;\nbegin\n  if disk = 0 then\n  begin\n    var s := Paramstr(0);\n    var p := Pos(':', s);\n    if p > 0 then \n      Result := Copy(s, 1, p)\n    else Result := 'C:';\n  end\n  else\n  begin\n    if disk < 0 then disk := 0;\n    if disk > 26 then disk := 26;\n    var ch := 'A';\n    Inc(ch, disk - 1);\n    Result := ch + ':';\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement function to get disk free space by disk number",
-    "output": "function DiskFree(disk: integer): int64;\nbegin\n  Result := DiskFree(ConvertDiskToDiskName(disk));\nend;"
-  },
-  {
-    "instruction": "Implement function to get disk size by disk number",
-    "output": "function DiskSize(disk: integer): int64;\nbegin\n  Result := DiskSize(ConvertDiskToDiskName(disk));\nend;"
-  },
-  {
-    "instruction": "Implement function to get milliseconds delta",
-    "output": "function MillisecondsDelta: integer;\nbegin\n  var t := DateTime.Now;\n  Result := Convert.ToInt32((t - curr_time).TotalMilliseconds);\n  curr_time := DateTime.Now;\nend;"
-  },
-  {
-    "instruction": "Implement procedure to execute process with filename",
-    "output": "procedure Execute(filename: string);\nbegin\n  System.Diagnostics.Process.Start(filename)\nend;"
   },
   {
     "instruction": "Implement procedure to execute process with filename and arguments",
@@ -2428,14 +1688,6 @@
     "output": "function Incremental(Self: sequence of integer): sequence of integer; extensionmethod;\nbegin\n  Result := IncrementalSeq(Self);\nend;"
   },
   {
-    "instruction": "Implement an extension method that groups consecutive identical elements",
-    "output": "function AdjacentGroup<T>(Self: sequence of T): sequence of array of T; extensionmethod;\nbegin\n  var c := new AdjGroupClass<T>(Self);\n  while c.fin do\n    yield c.TakeGroup().ToArray;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns count of elements equal to specified value",
-    "output": "function CountOf<T>(Self: sequence of T; x: T): integer; extensionmethod;\nbegin\n  Result := 0;\n  foreach var y in Self do\n    if y = x then\n      Result += 1;\nend;"
-  },
-  {
     "instruction": "Implement an extension method that shuffles list elements randomly",
     "output": "function Shuffle<T>(Self: List<T>): List<T>; extensionmethod;\nbegin\n  var n := Self.Count;\n  for var i := 0 to n - 1 do\n  begin\n    var r := Random(n);\n    var v := Self[i];\n    Self[i] := Self[r];\n    Self[r] := v;\n  end;\n  Result := Self;  \nend;"
   },
@@ -2744,18 +1996,6 @@
     "output": "function OrderDescending<T>(Self: sequence of T): sequence of T; extensionmethod;\nbegin\n  Result := Self.OrderByDescending(x -> x);\nend;"
   },
   {
-    "instruction": "Implement an extension method that converts sequence to HashSet",
-    "output": "function ToHashSet<T>(Self: sequence of T): HashSet<T>; extensionmethod;\nbegin\n  Result := new HashSet<T>(Self);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that converts sequence to SortedSet",
-    "output": "function ToSortedSet<T>(Self: sequence of T): SortedSet<T>; extensionmethod;\nbegin\n  Result := new SortedSet<T>(Self);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that converts sequence to LinkedList",
-    "output": "function ToLinkedList<T>(Self: sequence of T): LinkedList<T>; extensionmethod;\nbegin\n  Result := new LinkedList<T>(Self);\nend;"
-  },
-  {
     "instruction": "Implement an extension method that returns last element of sequence with minimal key value",
     "output": "function LastMinBy<T, TKey>(Self: sequence of T; selector: T->TKey): T; extensionmethod;\nbegin\n  if selector = nil then\n    raise new ArgumentNullException('selector');\n  \n  var comp := Comparer&<TKey>.Default;\n  Result := Self.Aggregate((min, x)-> comp.Compare(selector(x), selector(min)) <= 0 ? x : min);\nend;"
   },
@@ -2828,10 +2068,6 @@
     "output": "function Batch<T, Res>(Self: sequence of T; size: integer; proj: Func<IEnumerable<T>, Res>): sequence of Res; extensionmethod;\nbegin\n  Result := SeqWhile(Self, v -> v.Skip(size), v -> v.Count > 0).Select(v -> v.Take(size)).Select(ss -> proj(ss));\nend;"
   },
   {
-    "instruction": "Implement an extension method that returns slice of sequence from specified index with step",
-    "output": "function Slice<T>(Self: sequence of T; from, step: integer): sequence of T; extensionmethod;\nbegin\n  if step <= 0 then\n    raise new ArgumentException(GetTranslation(PARAMETER_STEP_MUST_BE_GREATER_0));\n  \n  if from < 0 then\n    raise new ArgumentException(GetTranslation(PARAMETER_FROM_OUT_OF_RANGE));\n  \n  Result := Self.Skip(from).Where((x, i)-> i mod step = 0)\nend;"
-  },
-  {
     "instruction": "Implement an extension method that returns slice of sequence from specified index with step and maximum count",
     "output": "function Slice<T>(Self: sequence of T; from, step, count: integer): sequence of T; extensionmethod;\nbegin\n  if step <= 0 then\n    raise new ArgumentException(GetTranslation(PARAMETER_STEP_MUST_BE_GREATER_0));\n  \n  if from < 0 then\n    raise new ArgumentException(GetTranslation(PARAMETER_FROM_OUT_OF_RANGE));\n  \n  Result := Self.Skip(from).Where((x, i)-> i mod step = 0).Take(count)\nend;"
   },
@@ -2892,24 +2128,12 @@
     "output": "procedure Fill<T>(Self: List<T>; f: integer->T); extensionmethod;\nbegin\n  for var i := 0 to Self.Count - 1 do\n    Self[i] := f(i);\nend;"
   },
   {
-    "instruction": "Implement an extension method that returns slice of list from index with step",
-    "output": "function Slice<T>(Self: List<T>; from, step: integer): List<T>; extensionmethod;\nbegin\n  Result := SliceListImpl(Self, from, step, integer.MaxValue);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns slice of list from index with step and maximum count",
-    "output": "function Slice<T>(Self: List<T>; from, step, count: integer): List<T>; extensionmethod;\nbegin\n  Result := SliceListImpl(Self, from, step, count);\nend;"
-  },
-  {
     "instruction": "Implement an extension method that removes last element from list",
     "output": "function RemoveLast<T>(Self: List<T>): List<T>; extensionmethod;\nbegin\n  Self.RemoveAt(Self.Count - 1);\n  Result := Self;\nend;"
   },
   {
     "instruction": "Implement an extension method that returns size of 2D array as tuple (rows, columns)",
     "output": "function Size<T>(Self: array [,] of T): (integer,integer); extensionmethod;\nbegin\n  Result := (Self.GetLength(0),Self.GetLength(1));\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that checks if element exists in 2D array",
-    "output": "function operator in<T>(x: T; a: array[,] of T): boolean; extensionmethod;\nbegin\n  var (m,n) := a.Size;\n  Result := False;\n  for var i:=0 to m-1 do\n  for var j:=0 to n-1 do\n    if a[i,j]=x then\n    begin\n      Result := True;\n      exit;\n    end;\nend;"
   },
   {
     "instruction": "Implement an extension method that prints 2D array with specified width and moves to new line",
@@ -3152,14 +2376,6 @@
     "output": "function Cartesian<T>(Self: array of T; n: integer): sequence of array of T; extensionmethod;\nbegin\n  var r := new integer[n];\n  var ar1 := new T[n];\n  for var i:=0 to n-1 do\n    ar1[i] := Self[r[i]];\n  yield ar1;\n  \n  var m := Self.Length;\n  while True do\n  begin\n    var i := n-1;  \n    r[i] += 1;\n    while r[i]>=m do\n    begin\n      r[i] := 0;\n      i -= 1;\n      if i<0 then\n        exit;\n      r[i] += 1;\n    end;\n    \n    var ar := new T[n];\n    for var j:=0 to n-1 do\n      ar[j] := Self[r[j]];\n    yield ar;\n  end;  \nend;"
   },
   {
-    "instruction": "Implement an extension method that returns slice of array from index with step",
-    "output": "function Slice<T>(Self: array of T; from, step: integer): array of T; extensionmethod;\nbegin\n  Result := SliceArrayImpl(Self, from, step, integer.MaxValue);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns slice of array from index with step and maximum count",
-    "output": "function Slice<T>(Self: array of T; from, step, count: integer): array of T; extensionmethod;\nbegin\n  Result := SliceArrayImpl(Self, from, step, count);\nend;"
-  },
-  {
     "instruction": "Implement an extension method that checks if integer is not divisible by specified value",
     "output": "function NotDivs(Self,d: integer): boolean; extensionmethod := Self mod d <> 0;"
   },
@@ -3242,10 +2458,6 @@
   {
     "instruction": "Implement an extension method that truncates real number to BigInteger",
     "output": "function TruncBigInteger(Self: real): BigInteger; extensionmethod;\nbegin\n  Result := TruncBigInteger(Self);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that formats real number to string with specified decimal places",
-    "output": "function ToString(Self: real; frac: integer): string; extensionmethod;\nbegin\n  if frac < 0 then\n    raise new System.ArgumentOutOfRangeException('frac', 'frac<0');\n  if frac >= 100 then\n    raise new System.ArgumentOutOfRangeException('frac', 'frac>=100');\n  Result := Format('{0:f' + frac + '}', Self)\nend;"
   },
   {
     "instruction": "Implement an extension method that clamps real value between bottom and top inclusive",
@@ -3392,16 +2604,8 @@
     "output": "function Left(Self: string; length: integer): string; extensionmethod;\nbegin\n  length := Max(length, 0);\n  \n  if Self.Length > length then\n    Result := Self.Substring(0, length)\n  else Result := Self;\nend;"
   },
   {
-    "instruction": "Implement an extension method that returns sequence of substring occurrence indices in string",
+    "instruction": "Implement an extension method that returns sequence of substring occurrence indices in string. Use KMP-algorithm.",
     "output": "function IndicesOf(Self, SubS: string; overlay: boolean := False): sequence of integer; extensionmethod;\nbegin\n  var L := new List<integer>;\n  var (n, m) := (Self.Length, SubS.Length);\n  var border := PrefixFunction(SubS);\n  var temp := 0;\n  for var i := 1 to n do\n  begin\n    while (temp > 0) and (SubS[temp + 1] <> Self[i]) do\n      temp := border[temp];\n    if SubS[temp + 1] = Self[i] then\n      temp += 1;\n    if temp = m then\n    begin\n      var pos := i - m + 1;\n      if overlay or (L.Count = 0) or (pos >= L[L.Count - 1] + m) then \n        L.Add(pos);\n      temp := border[m]\n    end;\n  end;\n  Result := L.Select(i -> i - 1)\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns slice of string from index with step",
-    "output": "function Slice(Self: string; from, step: integer): string; extensionmethod;\nbegin\n  Result := SliceStringImpl(Self, from, step, integer.MaxValue);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns slice of string from index with step and maximum count",
-    "output": "function Slice(Self: string; from, step, count: integer): string; extensionmethod;\nbegin\n  Result := SliceStringImpl(Self, from, step, count);\nend;"
   },
   {
     "instruction": "Implement an extension method that returns complex conjugate of complex number",
@@ -3414,10 +2618,6 @@
   {
     "instruction": "Implement an extension method that returns dictionary mapping group key to result of group operation",
     "output": "function Each<Key,Source,Res>(Self: sequence of System.Linq.IGrouping<Key,Source>; grOperation: System.Linq.IGrouping<Key,Source> -> Res): Dictionary<Key,Res>; extensionmethod;\nbegin\n  Result := Self.ToDictionary(g -> g.Key, g -> grOperation(g));\nend;"
-  },
-  {
-    "instruction": "Implement an extension operator that removes key-value pair from dictionary",
-    "output": "procedure operator-=<Key,Value>(Self: IDictionary<Key,Value>; k: Key); extensionmethod;\nbegin\n  Self.Remove(k);\nend;"
   },
   {
     "instruction": "Implement a function that creates 2D array with specified dimensions and data",
@@ -3472,7 +2672,7 @@
     "output": "function MatrEqual<T>(a, b: array [,] of T): boolean;\nbegin\n  var (m1,n1) := a.Size;\n  var (m2,n2) := b.Size;\n  Result := True;\n  if (m1<>m2) or (n1<>n2) then\n    Result := False\n  else\n    for var i:=0 to m1-1 do\n    for var j:=0 to n1-1 do\n      if a[i,j]<>b[i,j] then\n      begin\n        Result := False;\n        exit;\n      end;\nend;"
   },
   {
-    "instruction": "Implement a helper class for adjacent grouping of sequence elements",
+    "instruction": "Implement a helper class for adjacent grouping of generic sequence elements",
     "output": "type\n  AdjGroupClass<T> = class\n  private \n    cur: T;\n    enm: IEnumerator<T>;\n    fin: boolean;\n  public \n    constructor Create(a: sequence of T);\n    begin\n      enm := a.GetEnumerator();\n      fin := enm.MoveNext;\n      if fin then\n        cur := enm.Current;\n    end;\n    \n    function TakeGroup: sequence of T;\n    begin\n      yield cur;\n      fin := enm.movenext;\n      while fin do\n      begin\n        if enm.current = cur then\n          yield enm.current\n        else\n        begin\n          cur := enm.Current;\n          break;\n        end;\n        fin := enm.movenext;\n      end;  \n    end;\n  end;"
   },
   {
@@ -3485,75 +2685,15 @@
   },
   {
     "instruction": "Implement a helper function for creating slice from list with internal implementation",
-    "output": "function CreateSliceFromListInternal<T>(Self: List<T>; from, step, count: integer): List<T>;\nbegin\n  Result := new List<T>(count);\n  \n  var f := from;\n  loop count do\n  begin\n    Result.Add(Self[f]);\n    f += step;\n  end;\nend;"
+    "output": "function CreateSliceFromList<T>(Self: List<T>; from, step, count: integer): List<T>;\nbegin\n  Result := new List<T>(count);\n  \n  var f := from;\n  loop count do\n  begin\n    Result.Add(Self[f]);\n    f += step;\n  end;\nend;"
   },
   {
     "instruction": "Implement a helper function to correct count for slice operations",
     "output": "procedure CorrectCountForSlice(Len, from, step: integer; var count: integer);\nbegin\n  if step = 0 then\n    raise new ArgumentException(GetTranslation(PARAMETER_STEP_MUST_BE_NOT_EQUAL_0));\n  \n  if count < 0 then\n    raise new System.ArgumentOutOfRangeException('count', count, GetTranslation(PARAMETER_MUST_BE_GREATER_EQUAL_0));\n  \n  if (from < 0) or (from > Len - 1) then\n    raise new ArgumentException(GetTranslation(PARAMETER_FROM_OUT_OF_RANGE));\n  \n  var cnt := step > 0 ? Len - from : from + 1; \n  var cntstep := (cnt - 1) div abs(step) + 1;\n  if count > cntstep then \n    count := cntstep;\nend;"
   },
   {
-    "instruction": "Implement a helper function for slice list implementation",
-    "output": "function SliceListImpl<T>(Self: List<T>; from, step, count: integer): List<T>;\nbegin\n  CorrectCountForSlice(Self.Count, from, step, count);\n  Result := CreateSliceFromListInternal(Self, from, step, count);\nend;"
-  },
-  {
     "instruction": "Implement a helper procedure to correct from and to parameters for slice operations",
     "output": "procedure CorrectFromTo(situation: integer; Len: integer; var from, &to: integer; step: integer);\nbegin\n  if situation=0 then exit;\n  if step > 0 then\n  begin\n    case situation of\n      1: from := 0;\n      2: &to := Len;\n      3: (from, &to) := (0, Len)\n    end;  \n  end\n  else\n  begin\n    case situation of\n      1: from := Len - 1;\n      2: &to := -1;\n      3: (from, &to) := (Len - 1, -1);\n    end;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to correct from/to and calculate count for system slice with question syntax",
-    "output": "function CorrectFromToAndCalcCountForSystemSliceQuestion(situation: integer; Len: integer; var from, &to: integer; step: integer): integer;\nbegin\n  if step = 0 then\n    raise new ArgumentException(GetTranslation(PARAMETER_STEP_MUST_BE_NOT_EQUAL_0));\n  \n  CorrectFromTo(situation, Len, from, &to, step);\n  \n  if step > 0 then\n  begin\n    if from < 0 then\n      from += (step - from - 1) div step * step;\n    var m := Min(Len,&to);\n    if from >= m then \n      Result := 0\n    else Result := (m - from - 1) div step + 1\n  end\n  else\n  begin\n    if from > Len - 1 then\n      from -= (from - Len - step) div step * step;\n    var m := Max(&to,-1);\n    if from <= m then\n      Result := 0\n    else Result := (from - m - 1) div (-step) + 1\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to check and correct from/to parameters and calculate count for system slice",
-    "output": "function CheckAndCorrectFromToAndCalcCountForSystemSlice(situation: integer; Len: integer; var from, &to: integer; step: integer): integer;\nbegin\n  if step = 0 then\n    raise new ArgumentException(GetTranslation(PARAMETER_STEP_MUST_BE_NOT_EQUAL_0));\n  \n  if (situation = 0) or (situation = 2) then\n    if (from < 0) or (from > Len - 1) then\n      raise new ArgumentException(GetTranslation(PARAMETER_FROM_OUT_OF_RANGE));\n  \n  if (situation = 0) or (situation = 1) then\n    if (&to < -1) or (&to > Len) then\n      raise new ArgumentException(GetTranslation(PARAMETER_TO_OUT_OF_RANGE));\n  \n  if situation > 0 then\n    CorrectFromTo(situation, Len, from, &to, step);\n  \n  if step = 1 then\n  begin\n    Result := &to - from;\n    if Result<0 then \n      Result := 0;\n    exit;  \n  end;\n  \n  var count: integer;\n  \n  if step > 0 then\n  begin\n    var cnt := &to - from;\n    if cnt <= 0 then \n      count := 0\n    else count := (cnt - 1) div step + 1;\n  end\n  else\n  begin\n    var cnt := from - &to;\n    if cnt <= 0 then \n      count := 0\n    else count := (cnt - 1) div (-step) + 1;\n  end;\n  \n  Result := count;\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for system slice list implementation",
-    "output": "function SystemSliceListImpl<T>(Self: List<T>; situation: integer; from, &to: integer; step: integer := 1): List<T>;\nbegin\n  var count := CheckAndCorrectFromToAndCalcCountForSystemSlice(situation, Self.Count, from, &to, step);\n  if step=1 then \n    Result := Self.GetRange(from,count)\n  else Result := CreateSliceFromListInternal(Self, from, step, count);\nend;"
-  },
-  {
-    "instruction": "Implement a helper procedure for system slice assignment in lists",
-    "output": "procedure SystemSliceAssignmentListImpl<T>(Self: List<T>; rightValue: List<T>; situation: integer; from, &to: integer; step: integer := 1);\nbegin\n  var count := CheckAndCorrectFromToAndCalcCountForSystemSlice(situation, Self.Count, from, &to, step);\n  if count <> rightValue.Count then\n    raise new System.ArgumentException(GetTranslation(SLICE_SIZE_AND_RIGHT_VALUE_SIZE_MUST_BE_EQUAL));\n  var f := from;\n  for var i:=0 to count-1 do\n  begin\n    Self[f] := rightValue[i];\n    f += step;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for system slice list implementation with question syntax",
-    "output": "function SystemSliceListImplQuestion<T>(Self: List<T>; situation: integer; from, &to: integer; step: integer := 1): List<T>;\nbegin\n  var count := CorrectFromToAndCalcCountForSystemSliceQuestion(situation, Self.Count, from, &to, step);\n  \n  Result := CreateSliceFromListInternal(Self, from, step, count);\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for creating slice from array with internal implementation",
-    "output": "function CreateSliceFromArrayInternal<T>(Self: array of T; from, step, count: integer): array of T;\nbegin\n  Result := new T[count];\n  \n  var f := from;\n  for var i := 0 to count - 1 do\n  begin\n    Result[i] := Self[f];\n    f += step;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for slice array implementation",
-    "output": "function SliceArrayImpl<T>(Self: array of T; from, step, count: integer): array of T;\nbegin\n  CorrectCountForSlice(Self.Length, from, step, count);  \n  Result := CreateSliceFromArrayInternal(Self, from, step, count)\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for system slice array implementation",
-    "output": "function SystemSliceArrayImpl<T>(Self: array of T; situation: integer; from, &to: integer; step: integer := 1): array of T;\nbegin\n  var count := CheckAndCorrectFromToAndCalcCountForSystemSlice(situation, Self.Length, from, &to, step);\n  Result := CreateSliceFromArrayInternal(Self, from, step, count)\nend;"
-  },
-  {
-    "instruction": "Implement a helper procedure for system slice assignment in arrays",
-    "output": "procedure SystemSliceAssignmentArrayImpl<T>(Self: array of T; rightValue: array of T; situation: integer; from, &to: integer; step: integer := 1);\nbegin\n  var count := CheckAndCorrectFromToAndCalcCountForSystemSlice(situation, Self.Length, from, &to, step);\n  if count <> rightValue.Length then\n    raise new System.ArgumentException(GetTranslation(SLICE_SIZE_AND_RIGHT_VALUE_SIZE_MUST_BE_EQUAL));\n  var f := from;\n  var i := 0;\n  loop count do\n  begin\n    Self[f] := rightValue[i];\n    f += step;\n    i += 1;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for system slice array implementation with question syntax",
-    "output": "function SystemSliceArrayImplQuestion<T>(Self: array of T; situation: integer; from, &to: integer; step: integer := 1): array of T;\nbegin\n  var count := CorrectFromToAndCalcCountForSystemSliceQuestion(situation, Self.Length, from, &to, step);\n  \n  Result := CreateSliceFromArrayInternal(Self, from, step, count);\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for creating slice from string with internal implementation",
-    "output": "function CreateSliceFromStringInternal(Self: string; from, step, count: integer): string;\nbegin\n  var res := new StringBuilder(count);\n  \n  loop count do\n  begin\n    res.Append(Self[from]);\n    from += step;\n  end;\n  Result := res.ToString;\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for slice string implementation",
-    "output": "function SliceStringImpl(Self: string; from, step, count: integer): string;\nbegin\n  CorrectCountForSlice(Self.Length, from, step, count);\n  \n  Result := CreateSliceFromStringInternal(Self, from + 1, step, count);\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for system slice string implementation",
-    "output": "function SystemSliceStringImpl(Self: string; situation: integer; from, &to: integer; step: integer := 1): string;\nbegin\n  var fromv := from - 1;\n  var tov := &to - 1;\n  var count := CheckAndCorrectFromToAndCalcCountForSystemSlice(situation, Self.Length, fromv, tov, step);\n  \n  if step = 1 then\n    Result := Self.Substring(fromv,count) \n  else Result := CreateSliceFromStringInternal(Self, fromv + 1, step, count)\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for system slice string implementation with question syntax",
-    "output": "function SystemSliceStringImplQuestion(Self: string; situation: integer; from, &to: integer; step: integer := 1): string;\nbegin\n  var fromv := from - 1;\n  var tov := &to - 1;\n  \n  var count := CorrectFromToAndCalcCountForSystemSliceQuestion(situation, Self.Length, fromv, tov, step);\n  \n  Result := CreateSliceFromStringInternal(Self, fromv + 1, step, count);\nend;"
   },
   {
     "instruction": "Implement a helper function for next combination generation",
@@ -3616,10 +2756,6 @@
     "output": "function InternalEqual<T1, T2, T3, T4, T5, T6, T7> (x: (T1,T2,T3,T4,T5,T6,T7); y: (T1,T2,T3,T4,T5,T6,T7)): boolean; \nbegin\n  var xn := Object.ReferenceEquals(x,nil);\n  var yn := Object.ReferenceEquals(y,nil);\n  if xn then\n    Result := yn\n  else if yn then \n    Result := xn\n  else Result := x.Equals(y);\nend;"
   },
   {
-    "instruction": "Implement a helper function for slice sequence implementation",
-    "output": "function SliceSeqImpl<T>(Self: sequence of T; from, step, count: integer): sequence of T;\nbegin\n  if step <= 0 then\n    raise new ArgumentException(GetTranslation(PARAMETER_STEP_MUST_BE_GREATER_0));\n  \n  if from < 0 then\n    raise new ArgumentException(GetTranslation(PARAMETER_FROM_OUT_OF_RANGE));\n  \n  Result := Self.Skip(from).Where((x, i)-> i mod step = 0)\nend;"
-  },
-  {
     "instruction": "Implement a helper function for internal range check",
     "output": "function InRangeInternal(x: integer; a,b: integer): boolean; \nbegin\n  Result := (a <= x) and (x <= b)\nend;"
   },
@@ -3630,26 +2766,6 @@
   {
     "instruction": "Implement a helper function for internal range check for characters",
     "output": "function InRangeInternal(x: char; a,b: char): boolean; \nbegin\n  Result := (a <= x) and (x <= b)\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to get sizes of multidimensional array",
-    "output": "function get_sizes(a: &Array): array of integer;\nbegin\n  var rank := a.Rank;\n  Result := Result;\n  SetLength(Result, rank);\n  for var i := 0 to rank - 1 do\n    Result[i] := a.GetLength(i);  \nend;"
-  },
-  {
-    "instruction": "Implement a helper procedure for internal array copying with size consideration",
-    "output": "procedure internal_copy(source, dest: &Array; source_sizes, dest_sizes: array of integer; i: integer; var src_ind, dest_ind: integer; flag: byte);\nbegin\n  if i <> source_sizes.Length - 1 then\n  begin\n    for var j := 0 to min(source_sizes[i], dest_sizes[i]) - 1 do\n      internal_copy(source, dest, source_sizes, dest_sizes, i + 1, src_ind, dest_ind, flag);\n    if dest_sizes[i] > source_sizes[i] then\n      for var j := source_sizes[i] to dest_sizes[i] - 1 do\n      begin\n        internal_copy(source, dest, source_sizes, dest_sizes, i + 1, src_ind, dest_ind, 1);\n      end\n    else\n    if dest_sizes[i] < source_sizes[i] then\n      for var j := dest_sizes[i] to source_sizes[i] - 1 do\n      begin\n        internal_copy(source, dest, source_sizes, dest_sizes, i + 1, src_ind, dest_ind, 2);\n      end\n  end\n  else\n  begin\n    if flag = 0 then\n    begin\n      System.Array.Copy(source, src_ind, dest, dest_ind, min(source_sizes[source_sizes.Length - 1], dest_sizes[source_sizes.Length - 1]));\n      src_ind += source_sizes[source_sizes.Length - 1];\n      dest_ind += dest_sizes[source_sizes.Length - 1];\n    end\n    else if flag = 1 then\n      dest_ind += dest_sizes[source_sizes.Length - 1]\n    else\n      src_ind += source_sizes[source_sizes.Length - 1];\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to copy array with size consideration",
-    "output": "function CopyWithSize(source, dest: &Array): &Array;\nbegin\n  if source <> nil then\n  begin\n    var source_sizes := get_sizes(source);\n    var dest_sizes := get_sizes(dest);\n    var src_ind := 0;\n    var dest_ind := 0;\n    internal_copy(source, dest, source_sizes, dest_sizes, 0, src_ind, dest_ind, 0);\n  end;\n  Result := dest;\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to check integer range with bounds",
-    "output": "function check_in_range(val: int64; low, up: int64): int64;\nbegin\n  if (val < low) or (val > up) then\n    raise new RangeException(GetTranslation(RANGE_ERROR_MESSAGE));\n  Result := val;\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to check character range with bounds",
-    "output": "function check_in_range_char(val: char; low, up: char): char;\nbegin\n  if (val < low) or (val > up) then\n    raise new RangeException(GetTranslation(RANGE_ERROR_MESSAGE));\n  Result := val;\nend;"
   },
   {
     "instruction": "Implement a helper function to get character in short string with bounds checking",
@@ -3668,22 +2784,6 @@
     "output": "function GetResourceStream(ResourceFileName: string): Stream;\nbegin\n  Result := System.Reflection.Assembly.GetEntryAssembly().GetManifestResourceStream(ResourceFileName);\nend;"
   },
   {
-    "instruction": "Implement a helper function to format value as string with specified width",
-    "output": "function FormatValue(value: object; NumOfChars: integer): string;\nbegin\n  if value <> nil then\n    Result := StructuredObjectToString(value)\n  else\n    Result := 'nil';\n  Result := Result.PadLeft(NumOfChars);\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to format integer value with specified width",
-    "output": "function FormatValue(value: integer; NumOfChars: integer): string;\nbegin\n  Result := value.ToString;\n  Result := Result.PadLeft(NumOfChars);\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to format int64 value with specified width",
-    "output": "function FormatValue(value: int64; NumOfChars: integer): string;\nbegin\n  Result := value.ToString;\n  Result := Result.PadLeft(NumOfChars);\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to format real value with specified width and decimal places",
-    "output": "function FormatValue(value: real; NumOfChars, NumOfSignesAfterDot: integer): string;\nbegin\n  var FmtStr := '{0,' + NumOfChars.ToString + ':f' + abs(NumOfSignesAfterDot).ToString + '}';\n  Result := Format(FmtStr, value);\nend;"
-  },
-  {
     "instruction": "Implement a helper procedure to set string default property",
     "output": "procedure StringDefaultPropertySet(var s: string; index: integer; c: char);\nbegin\n  var chars := s.ToCharArray;\n  chars[index] := c;\n  s := new String(chars);\nend;"
   },
@@ -3692,60 +2792,8 @@
     "output": "procedure ChangeChar(var c: char; val: char);\nbegin\n  c := val;\nend;"
   },
   {
-    "instruction": "Implement a helper procedure to check if type can be used for pointers",
-    "output": "procedure CheckCanUsePointerOnType(T: System.Type);\nbegin\n  if T.IsPointer then\n  begin\n    CheckCanUsePointerOnType(T.GetElementType());\n    exit;\n  end;\n  if T.IsValueType then\n  begin\n    var fields := T.GetFields();\n    foreach var fi in fields do\n      if not fi.IsStatic then\n        CheckCanUsePointerOnType(fi.FieldType);\n    exit;\n  end;\n  raise new CanNotUseTypeForPointersException(T);\nend;"
-  },
-  {
-    "instruction": "Implement a helper procedure to check if type can be used for files",
-    "output": "procedure CheckCanUseTypeForFiles(T: System.Type; FileIsBinary: boolean);\nvar\n  fields: array of System.Reflection.FieldInfo;\nbegin\n  if T.IsPrimitive or T.IsEnum then\n    exit;\n  if T = typeof(TypedSet) then\n  begin\n    raise new CanNotUseTypeForFilesException(T);\n  end;\n  if T = typeof(string) then\n    if FileIsBinary then\n      exit\n    else\n      raise new CanNotUseTypeForTypedFilesException(T);\n  if T.IsValueType then\n  begin\n    fields := T.GetFields();\n    foreach var fi in fields do\n      if not fi.IsStatic then\n        CheckCanUseTypeForFiles(fi.FieldType, FileIsBinary);\n    exit;\n  end;\n  raise new CanNotUseTypeForFilesException(T);\nend;"
-  },
-  {
-    "instruction": "Implement a helper procedure to check if type can be used for binary files",
-    "output": "procedure CheckCanUseTypeForBinaryFiles(T: System.Type);\nbegin\n  CheckCanUseTypeForFiles(T, true);\nend;"
-  },
-  {
-    "instruction": "Implement a helper procedure to check if type can be used for typed files",
-    "output": "procedure CheckCanUseTypeForTypedFiles(T: System.Type);\nbegin\n  CheckCanUseTypeForFiles(T, false);\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to determine type at runtime",
-    "output": "function RuntimeDetermineType(T: System.Type): byte;\nbegin\n  result := 0;\n  if T.IsValueType and (T.GetMethod('$Init$') <> nil) then\n  begin\n    result := 1;\n    exit;\n  end;\n  if T = typeof(string) then\n  begin\n    result := 2;\n    exit;\n  end;\n  if T = typeof(TypedSet) then\n  begin\n    result := 3;\n    exit;\n  end;\n  if T = typeof(Text) then\n  begin\n    result := 4;\n    exit;\n  end;\n  if T = typeof(BinaryFile) then\n  begin\n    result := 5;\n    exit;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to initialize runtime objects",
-    "output": "function RuntimeInitialize(kind: byte; variable: object): object;\nbegin\n  case kind of\n    1: \n      begin\n        variable.GetType.InvokeMember('$Init$',\n        System.Reflection.BindingFlags.InvokeMethod or\n        System.Reflection.BindingFlags.Instance or\n        System.Reflection.BindingFlags.Public, nil, variable, nil);\n        result := variable;\n      end;\n    2: result := '';\n    3: result := new TypedSet;\n    4: result := new Text;\n    5: result := new BinaryFile;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to get runtime size of generic type",
-    "output": "function GetRuntimeSize<T>: integer;\nvar\n  val: T;\nbegin\n  result := System.Runtime.InteropServices.Marshal.SizeOf(val);\nend;"
-  },
-  {
     "instruction": "Implement a helper function to convert to nullable value type",
     "output": "function DQNToNullable<T>(v: T): System.Nullable<T>; where T: record;\nbegin\n  Result := new System.Nullable<T>(v);\nend;"
-  },
-  {
-    "instruction": "Implement a SliceType class for multidimensional array slicing operations",
-    "output": "type\n  SliceType = class\n    situation,from, &to, step, count: integer;\n    fromInverted, toInverted: boolean;\n    function oneelem: boolean := step = integer.MaxValue;\n    constructor (sit,f,t: integer; st: integer := 1);\n    begin\n      situation := sit;\n      from := f;\n      &to := t;\n      fromInverted := False;\n      toInverted := False;\n      step := st;\n      count := -1;\n    end;\n    procedure CorrectSliceAndCalcCount(len: integer);\n    begin\n      if fromInverted then\n        from := len - from;\n      if toInverted then\n        &to := len - &to;\n\n      if oneelem then\n        count := 1 \n      else count := CheckAndCorrectFromToAndCalcCountForSystemSlice(situation, len, from, &to, step);\n    end;\n    static function operator implicit(i: integer): SliceType;\n    static function operator implicit(ir: IntRange): SliceType;\n    static function operator implicit(sl: (integer,integer,integer)): SliceType;\n    static function operator implicit(sl: (SystemIndex,SystemIndex,integer)): SliceType;\n    static function operator implicit(sl: (integer,SystemIndex,integer)): SliceType;\n    static function operator implicit(sl: (SystemIndex,integer,integer)): SliceType;\n  end;"
-  },
-  {
-    "instruction": "Implement helper functions for creating slice type instances",
-    "output": "function Diap(f, t: integer) := new SliceType(0, f, t, 1);\nfunction Elem(ind: integer) := new SliceType(0, ind, ind+1, integer.MaxValue);\nfunction Slice(f, t: integer; st: integer := 1): SliceType;\nbegin\n  var sit := 0;\n  if f = integer.MaxValue then\n    sit += 1;\n  if t = integer.MaxValue then\n    sit += 2;\n  Result := new SliceType(sit, f, t, st);\nend;"
-  },
-  {
-    "instruction": "Implement implicit conversion operators for SliceType class",
-    "output": "static function SliceType.operator implicit(i: integer): SliceType;\nbegin\n  Result := Elem(i);\nend;\n\nstatic function SliceType.operator implicit(ir: IntRange): SliceType;\nbegin\n  Result := Diap(ir.Low,ir.High);\nend;\n\nstatic function SliceType.operator implicit(sl: (integer,integer,integer)): SliceType;\nbegin\n  Result := Slice(sl[0],sl[1],sl[2]);\nend;\n\nstatic function SliceType.operator implicit(sl: (SystemIndex,SystemIndex,integer)): SliceType;\nbegin\n  Result := Slice(sl[0].IndexValue,sl[1].IndexValue,sl[2]);\n  Result.fromInverted := sl[0].IsInverted;\n  Result.toInverted := sl[1].IsInverted;\nend;\n\nstatic function SliceType.operator implicit(sl: (integer,SystemIndex,integer)): SliceType;\nbegin\n  Result := Slice(sl[0],sl[1].IndexValue,sl[2]);\n  Result.toInverted := sl[1].IsInverted;\nend;\n\nstatic function SliceType.operator implicit(sl: (SystemIndex,integer,integer)): SliceType;\nbegin\n  Result := Slice(sl[0].IndexValue,sl[1],sl[2]);\n  Result.fromInverted := sl[0].IsInverted;\nend;"
-  },
-  {
-    "instruction": "Implement helper functions for converting multidimensional arrays to one-dimensional arrays",
-    "output": "function ToOneDim<T>(a: array [,] of T; l: array of SliceType): array of T;\nbegin\n  for var i:=0 to l.Length-1 do\n    l[i].CorrectSliceAndCalcCount(a.GetLength(i));\n  var onedimsz := l[0].count * l[1].count;\n  var res := new T[onedimsz];\n  if onedimsz>0 then\n  begin\n    var cur := 0;\n    var i0 := l[0].from;\n    loop l[0].count do\n    begin\n      var i1:=l[1].from;\n      loop l[1].count do\n      begin\n        res[cur] := a[i0,i1];\n        cur += 1;\n        i1 += l[1].step;\n      end;\n      i0 += l[0].step;\n    end;\n  end;\n  Result := res;\nend;"
-  },
-  {
-    "instruction": "Implement helper function for converting 3D arrays to one-dimensional arrays",
-    "output": "function ToOneDim<T>(a: array [,,] of T; l: array of SliceType): array of T;\nbegin\n  for var i:=0 to l.Length-1 do\n    l[i].CorrectSliceAndCalcCount(a.GetLength(i));\n  var onedimsz := l[0].count * l[1].count * l[2].count;\n  var res := new T[onedimsz];\n  if onedimsz>0 then\n  begin\n    var cur := 0;\n    var i0 := l[0].from;\n    loop l[0].count do\n    begin\n      var i1:=l[1].from;\n      loop l[1].count do\n      begin\n        var i2 := l[2].from;\n        loop l[2].count do\n        begin\n          res[cur] := a[i0,i1,i2];\n          cur += 1;\n          i2 += l[2].step;\n        end;\n        i1 += l[1].step;\n      end;\n      i0 += l[0].step;\n    end;\n  end;\n  Result := res;\nend;"
-  },
-  {
-    "instruction": "Implement helper function for converting 4D arrays to one-dimensional arrays",
-    "output": "function ToOneDim<T>(a: array [,,,] of T; l: array of SliceType): array of T;\nbegin\n  for var i:=0 to l.Length-1 do\n    l[i].CorrectSliceAndCalcCount(a.GetLength(i));\n  var onedimsz := l[0].count * l[1].count * l[2].count * l[3].count;\n  var res := new T[onedimsz];\n  if onedimsz>0 then\n  begin\n    var cur := 0;\n    var i0 := l[0].from;\n    loop l[0].count do\n    begin\n      var i1:=l[1].from;\n      loop l[1].count do\n      begin\n        var i2 := l[2].from;\n        loop l[2].count do\n        begin\n          var i3 := l[3].from;\n          loop l[3].count do\n          begin\n            res[cur] := a[i0,i1,i2,i3];\n            cur += 1;\n            i3 += l[3].step;\n          end;  \n          i2 += l[2].step;\n        end;\n        i1 += l[1].step;\n      end;\n      i0 += l[0].step;\n    end;\n  end;\n  Result := res;\nend;"
   },
   {
     "instruction": "Implement helper functions for converting one-dimensional arrays back to multidimensional arrays",
@@ -3774,38 +2822,6 @@
   {
     "instruction": "Implement extension method for system slicing of 4D arrays returning 4D arrays",
     "output": "function SystemSliceN4<T>(Self: array[,,,] of T; params l: array of SliceType): array[,,,] of T; extensionmethod \n  := SliceN(Self,l) as array [,,,] of T;"
-  },
-  {
-    "instruction": "Implement extension methods for system slicing of lists with SystemIndex parameters",
-    "output": "function SystemSlice<T>(Self: List<T>; situation: integer; from, &to: SystemIndex; step: integer := 1): List<T>; extensionmethod;\nbegin\n  if from.IsInverted then\n    from.IndexValue := Self.Count - from.IndexValue;\n  if &to.IsInverted then\n    &to.IndexValue := Self.Count - &to.IndexValue;\n  Result := SystemSliceListImpl(Self, situation, from.IndexValue, &to.IndexValue, step);\nend;"
-  },
-  {
-    "instruction": "Implement extension methods for system slice assignment in lists with SystemIndex parameters",
-    "output": "procedure SystemSliceAssignment<T>(Self: List<T>; rightValue: List<T>; situation: integer; from, &to: SystemIndex; step: integer := 1); extensionmethod;\nbegin\n  if from.IsInverted then\n    from.IndexValue := Self.Count - from.IndexValue;\n  if &to.IsInverted then\n    &to.IndexValue := Self.Count - &to.IndexValue;\n  SystemSliceAssignmentListImpl(Self, rightValue, situation, from.IndexValue, &to.IndexValue, step);\nend;"
-  },
-  {
-    "instruction": "Implement extension methods for system slicing of lists with question syntax and SystemIndex parameters",
-    "output": "function SystemSliceQuestion<T>(Self: List<T>; situation: integer; from, &to: SystemIndex; step: integer := 1): List<T>; extensionmethod;\nbegin\n  if from.IsInverted then\n    from.IndexValue := Self.Count - from.IndexValue;\n  if &to.IsInverted then\n    &to.IndexValue := Self.Count - &to.IndexValue;\n  Result := SystemSliceListImplQuestion(Self, situation, from.IndexValue, &to.IndexValue, step);\nend;"
-  },
-  {
-    "instruction": "Implement extension methods for system slicing of arrays with SystemIndex parameters",
-    "output": "function SystemSlice<T>(Self: array of T; situation: integer; from, &to: SystemIndex; step: integer := 1): array of T; extensionmethod;\nbegin\n  if from.IsInverted then\n    from.IndexValue := Self.Count - from.IndexValue;\n  if &to.IsInverted then\n    &to.IndexValue := Self.Count - &to.IndexValue;\n  Result := SystemSliceArrayImpl(Self, situation, from.IndexValue, &to.IndexValue, step);\nend;"
-  },
-  {
-    "instruction": "Implement extension methods for system slice assignment in arrays with SystemIndex parameters",
-    "output": "procedure SystemSliceAssignment<T>(Self: array of T; rightValue: array of T; situation: integer; from, &to: SystemIndex; step: integer := 1); extensionmethod;\nbegin\n  if from.IsInverted then\n    from.IndexValue := Self.Count - from.IndexValue;\n  if &to.IsInverted then\n    &to.IndexValue := Self.Count - &to.IndexValue;\n  SystemSliceAssignmentArrayImpl(Self, rightValue, situation, from.IndexValue, &to.IndexValue, step);\nend;"
-  },
-  {
-    "instruction": "Implement extension methods for system slicing of arrays with question syntax and SystemIndex parameters",
-    "output": "function SystemSliceQuestion<T>(Self: array of T; situation: integer; from, &to: SystemIndex; step: integer := 1): array of T; extensionmethod;\nbegin\n  if from.IsInverted then\n    from.IndexValue := Self.Count - from.IndexValue;\n  if &to.IsInverted then\n    &to.IndexValue := Self.Count - &to.IndexValue;\n  Result := SystemSliceArrayImplQuestion(Self, situation, from.IndexValue, &to.IndexValue, step);\nend;"
-  },
-  {
-    "instruction": "Implement extension methods for system slicing of strings with SystemIndex parameters",
-    "output": "function SystemSlice(Self: string; situation: integer; from, &to: SystemIndex; step: integer := 1): string; extensionmethod;\nbegin\n  if from.IsInverted then\n    from.IndexValue := Self.Count - from.IndexValue + 1;\n  if &to.IsInverted then\n    &to.IndexValue := Self.Count - &to.IndexValue + 1;\n  Result := SystemSliceStringImpl(Self, situation, from.IndexValue, &to.IndexValue, step);\nend;"
-  },
-  {
-    "instruction": "Implement extension methods for system slicing of strings with question syntax and SystemIndex parameters",
-    "output": "function SystemSliceQuestion(Self: string; situation: integer; from, &to: SystemIndex; step: integer := 1): string; extensionmethod;\nbegin\n  if from.IsInverted then\n    from.IndexValue := Self.Count - from.IndexValue + 1;\n  if &to.IsInverted then\n    &to.IndexValue := Self.Count - &to.IndexValue + 1;\n  Result := SystemSliceStringImplQuestion(Self, situation, from.IndexValue, &to.IndexValue, step);\nend;"
   },
   {
     "instruction": "Implement extension methods for adding elements to tuples",
@@ -3846,37 +2862,5 @@
   {
     "instruction": "Implement extension method for joining sequence into string with default delimiter with alias",
     "output": "function JoinIntoString<T>(Self: sequence of T): string; extensionmethod\n  := Self.JoinToString();"
-  },
-  {
-    "instruction": "Implement extension operator for function composition",
-    "output": "function operator*<T1, T2, TResult>(Self: T2->TResult; composer: T1->T2): T1->TResult; extensionmethod;\nbegin\n  if composer = nil then\n    raise new System.ArgumentNullException('composer');\n  Result := Self.Compose(composer);\nend;"
-  },
-  {
-    "instruction": "Implement extension operators for tuple concatenation",
-    "output": "function operator+<T1, T2, T3>(Self: (T1, T2); v: T3): (T1, T2, T3); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], v);\nend;\n\nfunction operator+<T1, T2, T3, T4>(Self: (T1, T2, T3); v: T4): (T1, T2, T3, T4); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], v);\nend;\n\nfunction operator+<T1, T2, T3, T4, T5>(Self: (T1, T2, T3, T4); v: T5): (T1, T2, T3, T4, T5); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], Self[3], v);\nend;\n\nfunction operator+<T1, T2, T3, T4, T5, T6>(Self: (T1, T2, T3, T4, T5); v: T6): (T1, T2, T3, T4, T5, T6); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], Self[3], Self[4], v);\nend;\n\nfunction operator+<T1, T2, T3, T4, T5, T6, T7>(Self: (T1, T2, T3, T4, T5, T6); v: T7): (T1, T2, T3, T4, T5, T6, T7); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], Self[3], Self[4], Self[5], v);\nend;"
-  },
-  {
-    "instruction": "Implement extension operators for tuple comparison",
-    "output": "function operator=<T1, T2> (x: (T1,T2); y: (T1,T2)): boolean; extensionmethod := InternalEqual(x,y);\nfunction operator<><T1, T2> (x: (T1,T2); y: (T1,T2)): boolean; extensionmethod := not InternalEqual(x,y);\nfunction operator<<T1, T2>(Self: (T1, T2); v: (T1, T2)); extensionmethod := CompareToTup2(Self, v) < 0;\nfunction operator<=<T1, T2>(Self: (T1, T2); v: (T1, T2)); extensionmethod := CompareToTup2(Self, v) <= 0;\nfunction operator><T1, T2>(Self: (T1, T2); v: (T1, T2)); extensionmethod := CompareToTup2(Self, v) > 0;\nfunction operator>=<T1, T2>(Self: (T1, T2); v: (T1, T2)); extensionmethod := CompareToTup2(Self, v) >= 0;"
-  },
-  {
-    "instruction": "Implement extension operators for 3-element tuple comparison",
-    "output": "function operator=<T1, T2, T3> (x: (T1,T2,T3); y: (T1,T2,T3)); extensionmethod := InternalEqual(x,y);\nfunction operator<><T1, T2, T3> (x: (T1,T2,T3); y: (T1,T2,T3)); extensionmethod := not InternalEqual(x,y);\nfunction operator<<T1,T2,T3>(Self: (T1, T2, T3); v: (T1, T2, T3)); extensionmethod := CompareToTup3(Self, v) < 0;\nfunction operator<=<T1,T2,T3>(Self: (T1, T2, T3); v: (T1, T2, T3)); extensionmethod := CompareToTup3(Self, v) <= 0;\nfunction operator><T1,T2,T3>(Self: (T1, T2, T3); v: (T1, T2, T3)); extensionmethod := CompareToTup3(Self, v) > 0;\nfunction operator>=<T1,T2,T3>(Self: (T1, T2, T3); v: (T1, T2, T3)); extensionmethod := CompareToTup3(Self, v) >= 0;"
-  },
-  {
-    "instruction": "Implement extension operators for 4-element tuple comparison",
-    "output": "function operator=<T1, T2, T3, T4> (x: (T1,T2,T3,T4); y: (T1,T2,T3,T4)); extensionmethod := InternalEqual(x,y);\nfunction operator<><T1, T2, T3, T4> (x: (T1,T2,T3,T4); y: (T1,T2,T3,T4)); extensionmethod := not InternalEqual(x,y);\nfunction operator<<T1,T2,T3,T4>(Self: (T1, T2, T3, T4); v: (T1, T2, T3, T4)); extensionmethod := CompareToTup4(Self, v) < 0;\nfunction operator<=<T1,T2,T3,T4>(Self: (T1, T2, T3, T4); v: (T1, T2, T3, T4)); extensionmethod := CompareToTup4(Self, v) <= 0;\nfunction operator><T1,T2,T3,T4>(Self: (T1, T2, T3, T4); v: (T1, T2, T3, T4)); extensionmethod := CompareToTup4(Self, v) > 0;\nfunction operator>=<T1,T2,T3,T4>(Self: (T1, T2, T3, T4); v: (T1, T2, T3, T4)); extensionmethod := CompareToTup4(Self, v) >= 0;"
-  },
-  {
-    "instruction": "Implement extension operators for 5-element tuple comparison",
-    "output": "function operator=<T1, T2, T3, T4,T5> (x: (T1,T2,T3,T4,T5); y: (T1,T2,T3,T4,T5)); extensionmethod := InternalEqual(x,y);\nfunction operator<><T1, T2, T3, T4,T5> (x: (T1,T2,T3,T4,T5); y: (T1,T2,T3,T4,T5)); extensionmethod := not InternalEqual(x,y);\nfunction operator<<T1,T2,T3,T4,T5>(Self: (T1, T2, T3, T4,T5); v: (T1, T2, T3, T4,T5)); extensionmethod := CompareToTup5(Self, v) < 0;\nfunction operator<=<T1,T2,T3,T4,T5>(Self: (T1, T2, T3, T4,T5); v: (T1, T2, T3, T4,T5)); extensionmethod := CompareToTup5(Self, v) <= 0;\nfunction operator><T1,T2,T3,T4,T5>(Self: (T1, T2, T3, T4,T5); v: (T1, T2, T3, T4,T5)); extensionmethod := CompareToTup5(Self, v) > 0;\nfunction operator>=<T1,T2,T3,T4,T5>(Self: (T1, T2, T3, T4,T5); v: (T1, T2, T3, T4,T5)); extensionmethod := CompareToTup5(Self, v) >= 0;"
-  },
-  {
-    "instruction": "Implement extension operators for 6-element tuple comparison",
-    "output": "function operator=<T1, T2, T3, T4,T5,T6> (x: (T1,T2,T3,T4,T5,T6); y: (T1,T2,T3,T4,T5,T6)); extensionmethod := InternalEqual(x,y);\nfunction operator<><T1, T2, T3, T4,T5,T6> (x: (T1,T2,T3,T4,T5,T6); y: (T1,T2,T3,T4,T5,T6)); extensionmethod := not InternalEqual(x,y);\nfunction operator<<T1,T2,T3,T4,T5,T6>(Self: (T1, T2, T3, T4,T5,T6); v: (T1, T2, T3, T4,T5,T6)); extensionmethod := CompareToTup5(Self, v) < 0;\nfunction operator<=<T1,T2,T3,T4,T5,T6>(Self: (T1, T2, T3, T4,T5,T6); v: (T1, T2, T3, T4,T5,T6)); extensionmethod := CompareToTup5(Self, v) <= 0;\nfunction operator><T1,T2,T3,T4,T5,T6>(Self: (T1, T2, T3, T4,T5,T6); v: (T1, T2, T3, T4,T5,T6)); extensionmethod := CompareToTup5(Self, v) > 0;\nfunction operator>=<T1,T2,T3,T4,T5,T6>(Self: (T1, T2, T3, T4,T5,T6); v: (T1, T2, T3, T4,T5,T6)); extensionmethod := CompareToTup5(Self, v) >= 0;"
-  },
-  {
-    "instruction": "Implement extension operators for 7-element tuple comparison",
-    "output": "function operator=<T1, T2, T3, T4,T5,T6,T7> (x: (T1,T2,T3,T4,T5,T6,T7); y: (T1,T2,T3,T4,T5,T6,T7)); extensionmethod := InternalEqual(x,y);\nfunction operator<><T1, T2, T3, T4,T5,T6,T7> (x: (T1,T2,T3,T4,T5,T6,T7); y: (T1,T2,T3,T4,T5,T6,T7)); extensionmethod := not InternalEqual(x,y);\nfunction operator<<T1,T2,T3,T4,T5,T6,T7>(Self: (T1, T2, T3, T4,T5,T6,T7); v: (T1, T2, T3, T4,T5,T6,T7)); extensionmethod := CompareToTup5(Self, v) < 0;\nfunction operator<=<T1,T2,T3,T4,T5,T6,T7>(Self: (T1, T2, T3, T4,T5,T6,T7); v: (T1, T2, T3, T4,T5,T6,T7)); extensionmethod := CompareToTup5(Self, v) <= 0;\nfunction operator><T1,T2,T3,T4,T5,T6,T7>(Self: (T1, T2, T3, T4,T5,T6,T7); v: (T1, T2, T3, T4,T5,T6,T7)); extensionmethod := CompareToTup5(Self, v) > 0;\nfunction operator>=<T1,T2,T3,T4,T5,T6,T7>(Self: (T1, T2, T3, T4,T5,T6,T7); v: (T1, T2, T3, T4,T5,T6,T7)); extensionmethod := CompareToTup5(Self, v) >= 0;"
   }
 ]

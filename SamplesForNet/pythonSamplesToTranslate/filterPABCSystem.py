@@ -10,7 +10,8 @@ if __name__ == "__main__":
     data = json.loads(json_data)
 
     vars_to_exclude = ['WRITELN_IN_BINARYFILE_ERROR_MESSAGE', 'InternalNullBasedArrayName', 'FILE_NOT_ASSIGNED',
-                       'FILE_NOT_OPENED', 'FILE_NOT_OPENED_FOR_READING', 'FILE_NOT_OPENED_FOR_WRITING']
+                       'FILE_NOT_OPENED', 'FILE_NOT_OPENED_FOR_READING', 'FILE_NOT_OPENED_FOR_WRITING',
+                       '[System.Diagnostics.DebuggerStepThrough]']
 
     new_data = []
 
