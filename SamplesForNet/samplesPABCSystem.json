@@ -81,19 +81,19 @@
   },
   {
     "instruction": "Implement a sequence generator with count, first element and next function",
-    "output": "function SeqGen<T>(count: integer; first: T; next: T->T): sequence of T;\nbegin\n  if count < 1 then\n    raise new System.ArgumentOutOfRangeException('count', count, GetTranslation(PARAMETER_MUST_BE_GREATER_0));\n  Result := Iterate(first, next).Take(count);\nend;"
+    "output": "function SeqGen<T>(count: integer; first: T; next: T->T): sequence of T;\nbegin\n  if count < 1 then\n    raise new System.ArgumentOutOfRangeException('count', count, 'Parameter must be > 0');\n  Result := Iterate(first, next).Take(count);\nend;"
   },
   {
     "instruction": "Implement a sequence generator with count, two initial elements and next function",
-    "output": "function SeqGen<T>(count: integer; first, second: T; next: (T,T) ->T): sequence of T;\nbegin\n  if count < 1 then\n    raise new System.ArgumentOutOfRangeException('count', count, GetTranslation(PARAMETER_MUST_BE_GREATER_0));\n  Result := Iterate(first, second, next).Take(count);\nend;"
+    "output": "function SeqGen<T>(count: integer; first, second: T; next: (T,T) ->T): sequence of T;\nbegin\n  if count < 1 then\n    raise new System.ArgumentOutOfRangeException('count', count, 'Parameter must be > 0');\n  Result := Iterate(first, second, next).Take(count);\nend;"
   },
   {
     "instruction": "Implement an array generator with count, first element and next function",
-    "output": "function ArrGen<T>(count: integer; first: T; next: T->T): array of T;\nbegin\n  if count < 1 then\n    raise new System.ArgumentOutOfRangeException('count', count, GetTranslation(PARAMETER_MUST_BE_GREATER_0));\n  var a := new T[count];\n  a[0] := first;\n  for var i := 1 to a.Length - 1 do\n    a[i] := next(a[i - 1]);\n  Result := a;\nend;"
+    "output": "function ArrGen<T>(count: integer; first: T; next: T->T): array of T;\nbegin\n  if count < 1 then\n    raise new System.ArgumentOutOfRangeException('count', count, 'Parameter must be > 0');\n  var a := new T[count];\n  a[0] := first;\n  for var i := 1 to a.Length - 1 do\n    a[i] := next(a[i - 1]);\n  Result := a;\nend;"
   },
   {
     "instruction": "Implement an array generator with count, two initial elements and next function",
-    "output": "function ArrGen<T>(count: integer; first, second: T; next: (T,T) ->T): array of T;\nbegin\n  if count < 2 then\n    raise new System.ArgumentOutOfRangeException('count', count, GetTranslation(PARAMETER_MUST_BE_GREATER_1));\n  var a := new T[count];\n  a[0] := first;\n  a[1] := second;\n  for var i := 2 to a.Length - 1 do\n    a[i] := next(a[i - 2], a[i - 1]);\n  Result := a;\nend;"
+    "output": "function ArrGen<T>(count: integer; first, second: T; next: (T,T) ->T): array of T;\nbegin\n  if count < 2 then\n    raise new System.ArgumentOutOfRangeException('count', count, 'Parameter must be > 1');\n  var a := new T[count];\n  a[0] := first;\n  a[1] := second;\n  for var i := 2 to a.Length - 1 do\n    a[i] := next(a[i - 2], a[i - 1]);\n  Result := a;\nend;"
   },
   {
     "instruction": "Implement a function to create an array filled with specified value",
@@ -1725,7 +1725,7 @@
   },
   {
     "instruction": "Implement an extension method that sets k-th row of 2D array to specified array",
-    "output": "procedure SetRow<T>(Self: array [,] of T; k: integer; a: array of T); extensionmethod;\nbegin\n  if a.Length <> Self.ColCount then\n    raise new System.ArgumentException(GetTranslation(ARR_LENGTH_MUST_BE_MATCH_TO_MATR_SIZE));\n  for var j := 0 to Self.ColCount - 1 do\n    Self[k, j] := a[j]\nend;"
+    "output": "procedure SetRow<T>(Self: array [,] of T; k: integer; a: array of T); extensionmethod;\nbegin\n  if a.Length <> Self.ColCount then\n    raise new System.ArgumentException('The length of the 1D array must match the size of the 2D array');\n  for var j := 0 to Self.ColCount - 1 do\n    Self[k, j] := a[j]\nend;"
   },
   {
     "instruction": "Implement an extension method that transforms elements of 2D array using specified function",
@@ -2069,7 +2069,7 @@
   },
   {
     "instruction": "Implement an extension method that returns slice of sequence from specified index with step and maximum count",
-    "output": "function Slice<T>(Self: sequence of T; from, step, count: integer): sequence of T; extensionmethod;\nbegin\n  if step <= 0 then\n    raise new ArgumentException(GetTranslation(PARAMETER_STEP_MUST_BE_GREATER_0));\n  \n  if from < 0 then\n    raise new ArgumentException(GetTranslation(PARAMETER_FROM_OUT_OF_RANGE));\n  \n  Result := Self.Skip(from).Where((x, i)-> i mod step = 0).Take(count)\nend;"
+    "output": "function Slice<T>(Self: sequence of T; from, step, count: integer): sequence of T; extensionmethod;\nbegin\n  if step <= 0 then\n    raise new ArgumentException('Step parameter must be greater than 0');\n  \n  if from < 0 then\n    raise new ArgumentException('From parameter is out of range');\n  \n  Result := Self.Skip(from).Where((x, i)-> i mod step = 0).Take(count)\nend;"
   },
   {
     "instruction": "Implement an extension method that returns sequence of differences between adjacent elements using custom function",
@@ -2177,7 +2177,7 @@
   },
   {
     "instruction": "Implement an extension method that sets k-th column of 2D array to specified array",
-    "output": "procedure SetCol<T>(Self: array [,] of T; k: integer; a: array of T); extensionmethod;\nbegin\n  if a.Length <> Self.RowCount then\n    raise new System.ArgumentException(GetTranslation(ARR_LENGTH_MUST_BE_MATCH_TO_MATR_SIZE));\n  for var i := 0 to Self.RowCount - 1 do\n    Self[i, k] := a[i]\nend;"
+    "output": "procedure SetCol<T>(Self: array [,] of T; k: integer; a: array of T); extensionmethod;\nbegin\n  if a.Length <> Self.RowCount then\n    raise new System.ArgumentException('The length of the 1D array must match the size of the 2D array');\n  for var i := 0 to Self.RowCount - 1 do\n    Self[i, k] := a[i]\nend;"
   },
   {
     "instruction": "Implement an extension method that sets k-th column of 2D array to specified sequence",
@@ -2237,15 +2237,11 @@
   },
   {
     "instruction": "Implement an extension method that returns slice of 2D array using specified row and column indices",
-    "output": "function MatrSlice<T>(Self: array[,] of T; RowIndex: array of integer; ColIndex: array of integer): array[,] of T; extensionmethod;\nbegin\n  if RowIndex = nil then\n    raise new System.ArgumentNullException('RowIndex');\n  if ColIndex = nil then\n    raise new System.ArgumentNullException('ColIndex');\n  if RowIndex.Any(i->not InR(i,0,Self.RowCount-1)) then  \n    raise new System.ArgumentOutOfRangeException(GetTranslation(BAD_ROW_INDEX),new Exception);\n  if ColIndex.Any(i->not InR(i,0,Self.ColCount-1)) then  \n    raise new System.ArgumentOutOfRangeException(GetTranslation(BAD_COL_INDEX),new Exception);\n  Result := new T[RowIndex.Length, ColIndex.Length];\n  var r := 0;\n  foreach var ir in RowIndex do\n  begin\n    var c := 0;\n    foreach var jc in ColIndex do\n    begin\n      Result[r, c] := Self[ir, jc];\n      c += 1;\n    end;\n    r += 1;\n  end\nend;"
+    "output": "function MatrSlice<T>(Self: array[,] of T; RowIndex: array of integer; ColIndex: array of integer): array[,] of T; extensionmethod;\nbegin\n  if RowIndex = nil then\n    raise new System.ArgumentNullException('RowIndex');\n  if ColIndex = nil then\n    raise new System.ArgumentNullException('ColIndex');\n  if RowIndex.Any(i->not InR(i,0,Self.RowCount-1)) then  \n    raise new System.ArgumentOutOfRangeException('An element in the RowIndex array is out of range for the matrix row indices',new Exception);\n  if ColIndex.Any(i->not InR(i,0,Self.ColCount-1)) then  \n    raise new System.ArgumentOutOfRangeException('An element in the ColIndex array is out of range for the matrix column indices',new Exception);\n  Result := new T[RowIndex.Length, ColIndex.Length];\n  var r := 0;\n  foreach var ir in RowIndex do\n  begin\n    var c := 0;\n    foreach var jc in ColIndex do\n    begin\n      Result[r, c] := Self[ir, jc];\n      c += 1;\n    end;\n    r += 1;\n  end\nend;"
   },
   {
     "instruction": "Implement an extension method that returns slice of 2D array between specified row and column ranges",
-    "output": "function MatrSlice<T>(Self: array[,] of T; FromRow, ToRow, FromCol, ToCol: integer): array[,] of T; extensionmethod;\nbegin\n  if not InR(FromRow,0,Self.RowCount-1) then  \n    raise new System.ArgumentOutOfRangeException(GetTranslation(BAD_ROW_INDEX_FROM),new Exception);\n  if not InR(ToRow,0,Self.RowCount-1) then      raise new System.ArgumentOutOfRangeException(GetTranslation(BAD_ROW_INDEX_TO),new Exception);\n  if not InR(FromCol,0,Self.ColCount-1) then  \n    raise new System.ArgumentOutOfRangeException(GetTranslation(BAD_COL_INDEX_FROM),new Exception);\n  if not InR(ToCol,0,Self.ColCount-1) then  \n    raise new System.ArgumentOutOfRangeException(GetTranslation(BAD_COL_INDEX_TO),new Exception);\n  Result := new T[ToRow-FromRow+1, ToCol-FromCol+1];\n  var r := 0;\n  for var ir:=FromRow to ToRow do\n  begin\n    var c := 0;\n    for var jc:=FromCol to ToCol do\n    begin\n      Result[r, c] := Self[ir, jc];\n      c += 1;\n    end;\n    r += 1;\n  end\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that checks if arrays are equal",
-    "output": "function ArrEqual<T>(Self,b: array of T): boolean; extensionmethod := ArrEqual(Self,b);"
+    "output": "function MatrSlice<T>(Self: array[,] of T; FromRow, ToRow, FromCol, ToCol: integer): array[,] of T; extensionmethod;\nbegin\n  if not InR(FromRow,0,Self.RowCount-1) then  \n    raise new System.ArgumentOutOfRangeException('FromRow is out of range for the matrix row indices',new Exception);\n  if not InR(ToRow,0,Self.RowCount-1) then      raise new System.ArgumentOutOfRangeException('ToRow is out of range for the matrix row indices',new Exception);\n  if not InR(FromCol,0,Self.ColCount-1) then  \n    raise new System.ArgumentOutOfRangeException('FromCol is out of range for the matrix column indices',new Exception);\n  if not InR(ToCol,0,Self.ColCount-1) then  \n    raise new System.ArgumentOutOfRangeException('ToCol is out of range for the matrix column indices',new Exception);\n  Result := new T[ToRow-FromRow+1, ToCol-FromCol+1];\n  var r := 0;\n  for var ir:=FromRow to ToRow do\n  begin\n    var c := 0;\n    for var jc:=FromCol to ToCol do\n    begin\n      Result[r, c] := Self[ir, jc];\n      c += 1;\n    end;\n    r += 1;\n  end\nend;"
   },
   {
     "instruction": "Implement an extension method that fills array of real numbers with random values in specified range",
@@ -2621,7 +2617,7 @@
   },
   {
     "instruction": "Implement a function that creates 2D array with specified dimensions and data",
-    "output": "function Matr<T>(m,n: integer; params data: array of T): array [,] of T;\nbegin\n  if data.Length<>m*n then\n    raise new System.ArgumentException(GetTranslation(INITELEM_COUNT_MUST_BE_EQUAL_TO_MATRIX_ELEMS_COUNT));\n  \n  Result := new T[m, n];\n  var k := 0;\n  for var i:=0 to Result.RowCount-1 do\n  for var j:=0 to Result.ColCount-1 do\n  begin\n    Result[i,j] := data[k];\n    k += 1;\n  end;\nend;"
+    "output": "function Matr<T>(m,n: integer; params data: array of T): array [,] of T;\nbegin\n  if data.Length<>m*n then\n    raise new System.ArgumentException('The number of initializer elements must equal the number of elements in the matrix');\n  \n  Result := new T[m, n];\n  var k := 0;\n  for var i:=0 to Result.RowCount-1 do\n  for var j:=0 to Result.ColCount-1 do\n  begin\n    Result[i,j] := data[k];\n    k += 1;\n  end;\nend;"
   },
   {
     "instruction": "Implement a function that creates 2D array from array of arrays",
@@ -2684,16 +2680,8 @@
     "output": "function IncrementalSeq(Self: sequence of real): sequence of real;\nbegin\n  var iter := Self.GetEnumerator();\n  if iter.MoveNext() then\n  begin\n    var prevItem := iter.Current;\n    while iter.MoveNext() do\n    begin\n      var nextItem := iter.Current;\n      yield nextItem - prevItem;\n      prevItem := nextItem;\n    end\n  end\nend;"
   },
   {
-    "instruction": "Implement a helper function for creating slice from list with internal implementation",
+    "instruction": "Implement a helper function for creating slice from list",
     "output": "function CreateSliceFromList<T>(Self: List<T>; from, step, count: integer): List<T>;\nbegin\n  Result := new List<T>(count);\n  \n  var f := from;\n  loop count do\n  begin\n    Result.Add(Self[f]);\n    f += step;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to correct count for slice operations",
-    "output": "procedure CorrectCountForSlice(Len, from, step: integer; var count: integer);\nbegin\n  if step = 0 then\n    raise new ArgumentException(GetTranslation(PARAMETER_STEP_MUST_BE_NOT_EQUAL_0));\n  \n  if count < 0 then\n    raise new System.ArgumentOutOfRangeException('count', count, GetTranslation(PARAMETER_MUST_BE_GREATER_EQUAL_0));\n  \n  if (from < 0) or (from > Len - 1) then\n    raise new ArgumentException(GetTranslation(PARAMETER_FROM_OUT_OF_RANGE));\n  \n  var cnt := step > 0 ? Len - from : from + 1; \n  var cntstep := (cnt - 1) div abs(step) + 1;\n  if count > cntstep then \n    count := cntstep;\nend;"
-  },
-  {
-    "instruction": "Implement a helper procedure to correct from and to parameters for slice operations",
-    "output": "procedure CorrectFromTo(situation: integer; Len: integer; var from, &to: integer; step: integer);\nbegin\n  if situation=0 then exit;\n  if step > 0 then\n  begin\n    case situation of\n      1: from := 0;\n      2: &to := Len;\n      3: (from, &to) := (0, Len)\n    end;  \n  end\n  else\n  begin\n    case situation of\n      1: from := Len - 1;\n      2: &to := -1;\n      3: (from, &to) := (Len - 1, -1);\n    end;\n  end;\nend;"
   },
   {
     "instruction": "Implement a helper function for next combination generation",
@@ -2796,34 +2784,6 @@
     "output": "function DQNToNullable<T>(v: T): System.Nullable<T>; where T: record;\nbegin\n  Result := new System.Nullable<T>(v);\nend;"
   },
   {
-    "instruction": "Implement helper functions for converting one-dimensional arrays back to multidimensional arrays",
-    "output": "function FromOneDim2<T>(r: array of T; l: array of SliceType): array [,] of T;\nbegin\n  var dims := l.FindAll(x -> x.oneelem = False).ConvertAll(x -> x.count);\n  var cur := 0;\n  var res := new T[dims[0],dims[1]];\n  for var i0:=0 to dims[0]-1 do\n  for var i1:=0 to dims[1]-1 do\n  begin\n    res[i0,i1] := r[cur];\n    cur += 1;\n  end;\n  Result := res;\nend;\n\nfunction FromOneDim3<T>(r: array of T; l: array of SliceType): array [,,] of T;\nbegin\n  var dims := l.FindAll(x -> x.oneelem = False).ConvertAll(x -> x.count);\n  var cur := 0;\n  var res := new T[dims[0],dims[1],dims[2]];\n  for var i0:=0 to dims[0]-1 do\n  for var i1:=0 to dims[1]-1 do\n  for var i2:=0 to dims[2]-1 do\n  begin\n    res[i0,i1,i2] := r[cur];\n    cur += 1;\n  end;\n  Result := res;\nend;\n\nfunction FromOneDim4<T>(r: array of T; l: array of SliceType): array [,,,] of T;\nbegin\n  var dims := l.FindAll(x -> x.oneelem = False).ConvertAll(x -> x.count);\n  var cur := 0;\n  var res := new T[dims[0],dims[1],dims[2],dims[3]];\n  for var i0:=0 to dims[0]-1 do\n  for var i1:=0 to dims[1]-1 do\n  for var i2:=0 to dims[2]-1 do\n  for var i3:=0 to dims[3]-1 do\n  begin\n    res[i0,i1,i2,i3] := r[cur];\n    cur += 1;\n  end;\n  Result := res;\nend;"
-  },
-  {
-    "instruction": "Implement helper function for converting one-dimensional arrays to N-dimensional arrays",
-    "output": "function FromOneDimN<T>(r: array of T; l: array of SliceType): System.Array;\nbegin\n  var rank := l.Count(x -> x.oneelem = False);\n  case rank of\n    1: Result := r;\n    2: Result := FromOneDim2(r,l);\n    3: Result := FromOneDim3(r,l);\n    4: Result := FromOneDim4(r,l);\n  end;  \nend;"
-  },
-  {
-    "instruction": "Implement helper functions for slicing N-dimensional arrays",
-    "output": "function SliceN<T>(a: array[,] of T; l: array of SliceType): System.Array;\nbegin\n  var r := ToOneDim(a,l);\n  Result := FromOneDimN(r,l);\nend;\n\nfunction SliceN<T>(a: array[,,] of T; l: array of SliceType): System.Array;\nbegin\n  var r := ToOneDim(a,l);\n  Result := FromOneDimN(r,l);\nend;\n\nfunction SliceN<T>(a: array[,,,] of T; l: array of SliceType): System.Array;\nbegin\n  var r := ToOneDim(a,l);\n  Result := FromOneDimN(r,l);\nend;"
-  },
-  {
-    "instruction": "Implement extension methods for system slicing of multidimensional arrays returning arrays",
-    "output": "function SystemSliceN1<T>(Self: array[,] of T; params l: array of SliceType): array of T; extensionmethod \n  := SliceN(Self,l) as array of T;\n\nfunction SystemSliceN1<T>(Self: array[,,] of T; params l: array of SliceType): array of T; extensionmethod \n  := SliceN(Self,l) as array of T;\n\nfunction SystemSliceN1<T>(Self: array[,,,] of T; params l: array of SliceType): array of T; extensionmethod \n  := SliceN(Self,l) as array of T;"
-  },
-  {
-    "instruction": "Implement extension methods for system slicing of multidimensional arrays returning 2D arrays",
-    "output": "function SystemSliceN2<T>(Self: array[,] of T; params l: array of SliceType): array[,] of T; extensionmethod \n  := SliceN(Self,l) as array [,] of T;\n\nfunction SystemSliceN2<T>(Self: array[,,] of T; params l: array of SliceType): array[,] of T; extensionmethod \n  := SliceN(Self,l) as array [,] of T;\n\nfunction SystemSliceN2<T>(Self: array[,,,] of T; params l: array of SliceType): array[,] of T; extensionmethod \n  := SliceN(Self,l) as array [,] of T;"
-  },
-  {
-    "instruction": "Implement extension methods for system slicing of multidimensional arrays returning 3D arrays",
-    "output": "function SystemSliceN3<T>(Self: array[,,] of T; params l: array of SliceType): array[,,] of T; extensionmethod \n  := SliceN(Self,l) as array [,,] of T;\n\nfunction SystemSliceN3<T>(Self: array[,,,] of T; params l: array of SliceType): array[,,] of T; extensionmethod \n  := SliceN(Self,l) as array [,,] of T;"
-  },
-  {
-    "instruction": "Implement extension method for system slicing of 4D arrays returning 4D arrays",
-    "output": "function SystemSliceN4<T>(Self: array[,,,] of T; params l: array of SliceType): array[,,,] of T; extensionmethod \n  := SliceN(Self,l) as array [,,,] of T;"
-  },
-  {
     "instruction": "Implement extension methods for adding elements to tuples",
     "output": "function Add<T1, T2, T3>(Self: (T1, T2); v: T3): (T1, T2, T3); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], v);\nend;\n\nfunction Add<T1, T2, T3, T4>(Self: (T1, T2, T3); v: T4): (T1, T2, T3, T4); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], v);\nend;\n\nfunction Add<T1, T2, T3, T4, T5>(Self: (T1, T2, T3, T4); v: T5): (T1, T2, T3, T4, T5); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], Self[3], v);\nend;\n\nfunction Add<T1, T2, T3, T4, T5, T6>(Self: (T1, T2, T3, T4, T5); v: T6): (T1, T2, T3, T4, T5, T6); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], Self[3], Self[4], v);\nend;\n\nfunction Add<T1, T2, T3, T4, T5, T6, T7>(Self: (T1, T2, T3, T4, T5, T6); v: T7): (T1, T2, T3, T4, T5, T6, T7); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], Self[3], Self[4], Self[5], v);\nend;"
   },
@@ -2846,21 +2806,5 @@
   {
     "instruction": "Implement extension method for setting row of 2D array using sequence",
     "output": "procedure SetRow<T>(Self: array [,] of T; k: integer; a: sequence of T); extensionmethod := Self.SetRow(k,a.ToArray);"
-  },
-  {
-    "instruction": "Implement extension method that checks if 2D arrays are equal",
-    "output": "function MatrEqual<T>(Self,b: array[,] of T): boolean; extensionmethod := MatrEqual(Self,b);"
-  },
-  {
-    "instruction": "Implement extension method that joins sequence into string with default delimiter",
-    "output": "function JoinToString<T>(Self: sequence of T): string; extensionmethod;\nbegin\n  if typeof(T) = typeof(char) then\n    Result := Self.JoinIntoString('') \n  else Result := Self.JoinIntoString(' ');  \nend;"
-  },
-  {
-    "instruction": "Implement extension method for joining sequence into string with alias",
-    "output": "function JoinIntoString<T>(Self: sequence of T; delim: string): string; extensionmethod\n  := Self.JoinToString(delim);"
-  },
-  {
-    "instruction": "Implement extension method for joining sequence into string with default delimiter with alias",
-    "output": "function JoinIntoString<T>(Self: sequence of T): string; extensionmethod\n  := Self.JoinToString();"
   }
 ]
