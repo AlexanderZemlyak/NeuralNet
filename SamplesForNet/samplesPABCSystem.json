@@ -1,9 +1,5 @@
 [
   {
-    "instruction": "Implement a function to get null-based array from object using reflection",
-    "output": "function GetNullBasedArray(arr: object): System.Array;\nvar\n  fi: System.Reflection.FieldInfo;\nbegin\n  fi := arr.GetType.GetField(InternalNullBasedArrayName);\n  if fi <> nil then\n    Result := System.Array(fi.GetValue(arr))\n  else\n    Result := nil;\nend;"
-  },
-  {
     "instruction": "Create a function to format float number by replacing comma with dot",
     "output": "function FormatFloatNumber(s: string): string;\nbegin\n  Result := s.Replace(',', '.');\nend;"
   },
@@ -892,38 +888,6 @@
     "output": "function ReadString(f: Text): string;\nbegin\n  Read(f, Result);\n  Readln(f);\nend;"
   },
   {
-    "instruction": "Implement text file close procedure",
-    "output": "procedure Close(f: Text);\nbegin\n  if f.fi = nil then\n    raise new IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.sr <> nil then \n  begin\n    f.sr.Close; \n    f.sr := nil; \n    f.sw := nil;\n  end\n  else if f.sw <> nil then \n  begin\n    f.sw.Close;\n    f.sr := nil;\n    f.sw := nil;\n  end\n  else raise new IOException(GetTranslation(FILE_NOT_OPENED));\nend;"
-  },
-  {
-    "instruction": "Implement binary file write procedure",
-    "output": "procedure Write(f: AbstractBinaryFile; params vals: array of object);\nbegin\n  if f.fi = nil then raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.fs = nil then raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED));\n  for var i := 0 to vals.Length - 1 do\n  begin\n    var NullBasedArray := GetNullBasedArray(vals[i]);\n    var ind := 0;\n    Write(f, vals[i], NullBasedArray <> nil, ind, false);\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement binary file position function",
-    "output": "function FilePos(f: BinaryFile): int64;\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.fs = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED));\n  Result := f.fs.Position;\nend;"
-  },
-  {
-    "instruction": "Implement binary file size function",
-    "output": "function FileSize(f: BinaryFile): int64;\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.fs = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED));\n  Result := f.fs.Length;\nend;"
-  },
-  {
-    "instruction": "Implement binary file seek procedure",
-    "output": "procedure Seek(f: BinaryFile; n: int64);\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.fs = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED));\n  f.fs.Position := n;\nend;"
-  },
-  {
-    "instruction": "Implement typed file position function",
-    "output": "function FilePos(f: TypedFile): int64;\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.fs = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED));\n  Result := f.fs.Position div f.ElementSize;\nend;"
-  },
-  {
-    "instruction": "Implement typed file size function",
-    "output": "function FileSize(f: TypedFile): int64;\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.fs = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED));\n  if f.fs.Length mod f.ElementSize <> 0 then\n    raise new System.IO.IOException('Bad typed file size');\n  Result := f.fs.Length div f.ElementSize;\nend;"
-  },
-  {
-    "instruction": "Implement typed file seek procedure",
-    "output": "procedure Seek(f: TypedFile; n: int64);\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.fs = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED));\n  f.fs.Position := n * f.ElementSize\nend;"
-  },
-  {
     "instruction": "Implement disk free space function",
     "output": "function DiskFree(diskname: string): int64;\nbegin\n  try\n    var d := new System.IO.DriveInfo(diskname);\n    Result := d.TotalFreeSpace;\n  except\n    Result := -1;\n  end;\nend;"
   },
@@ -1244,28 +1208,12 @@
     "output": "function ReadSeqString(prompt: string; n: integer): sequence of string;\nbegin\n  Print(prompt);\n  Result := ReadSeqString(n);\nend;"
   },
   {
-    "instruction": "Implement text file write procedure for object",
-    "output": "procedure Write(f: Text; val: object);\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.sw = nil then \n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED_FOR_WRITING));\n  f.sw.Write(StructuredObjectToString(val));\nend;"
-  },
-  {
     "instruction": "Implement text file writeln procedure for object",
     "output": "procedure Writeln(f: Text; val: object);\nbegin\n  write(f, val);\n  writeln(f);\nend;"
   },
   {
     "instruction": "Implement text file lines property as sequence",
     "output": "function Text.Lines: sequence of string;\nbegin\n  Self.sr.BaseStream.Position := 0;\n  while not Eof do\n    yield ReadlnString;\nend;"
-  },
-  {
-    "instruction": "Implement binary file reset procedure with encoding",
-    "output": "procedure Reset(f: AbstractBinaryFile; en: Encoding);\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if (f is TypedFile) and not en.IsSingleByte then\n    raise new System.IO.IOException(GetTranslation(TYPED_FILE_CANBE_OPENED_IN_SINGLEBYTE_ENCODING_ONLY));\n  if f.fs = nil then \n  begin\n    f.fs := new FileStream(f.fi.FullName, FileMode.Open);\n    f.br := new BinaryReader(f.fs, en);\n    f.bw := new BinaryWriter(f.fs, en);\n  end \n  else\n    f.fs.Position := 0;\nend;"
-  },
-  {
-    "instruction": "Implement binary file rewrite procedure with encoding",
-    "output": "procedure Rewrite(f: AbstractBinaryFile; en: Encoding);\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if (f is TypedFile) and not en.IsSingleByte then\n    raise new System.IO.IOException(GetTranslation(TYPED_FILE_CANBE_OPENED_IN_SINGLEBYTE_ENCODING_ONLY));\n  if f.fs = nil then\n  begin\n    f.fs := new FileStream(f.fi.FullName, FileMode.Create);\n    f.bw := new BinaryWriter(f.fs, en);\n    f.br := new BinaryReader(f.fs, en);\n  end\n  else \n  begin\n    f.fs.Position := 0;\n    Truncate(f);\n  end;  \nend;"
-  },
-  {
-    "instruction": "Implement binary file truncate procedure",
-    "output": "procedure Truncate(f: AbstractBinaryFile);\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.fs = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED));\n  f.fs.SetLength(f.fs.Position);\nend;"
   },
   {
     "instruction": "Implement function to read boolean from text file",
@@ -1298,14 +1246,6 @@
   {
     "instruction": "Implement procedure to read integer from text file",
     "output": "procedure read(f: Text; var x: integer);\nbegin\n  try\n    x := Convert.ToInt32(ReadLexem(f));\n  except\n    on e: Exception do\n      raise e;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read character from text file",
-    "output": "procedure read(f: Text; var x: char);\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.sr = nil then \n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED_FOR_READING));\n  try\n    x := Convert.ToChar(f.sr.Read());\n  except\n    on e: Exception do\n      raise e;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read string from text file",
-    "output": "procedure read(f: Text; var x: string);\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.sr = nil then \n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED_FOR_READING));\n  \n  var s := new System.Text.StringBuilder;\n  repeat\n    if f.sr.EndOfStream then\n      break;\n    if f.sr.Peek = 13 then\n      break;\n    if f.sr.Peek = 10 then\n      break;\n    s.Append(Convert.ToChar(f.sr.Read));\n  until False;\n  x := s.ToString; {}\n  if x = nil then \n    x := string.Empty; \nend;"
   },
   {
     "instruction": "Implement procedure to read byte from text file",
@@ -1344,28 +1284,12 @@
     "output": "procedure read(f: Text; var x: boolean);\nbegin\n  var s := ReadLexem(f).ToLower;\n  if s = 'true' then\n    x := True\n  else if s = 'false' then\n    x := False  \n  else raise new System.FormatException('Input string had incorrect format');\nend;"
   },
   {
-    "instruction": "Implement procedure to read string with newline from text file",
-    "output": "procedure readln(f: Text; var x: string);\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.sr = nil then \n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED_FOR_READING));\n  \n  x := f.sr.ReadLine;\n  if x = nil then\n    x := '';\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read newline from text file",
-    "output": "procedure readln(f: Text);\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.sr = nil then \n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED_FOR_READING));\n  f.sr.ReadLine;\nend;"
-  },
-  {
     "instruction": "Implement procedure to write to text file without parameters",
     "output": "procedure Write(f: Text);\nbegin\nend;"
   },
   {
-    "instruction": "Implement procedure to write object to text file",
-    "output": "procedure Write(f: Text; val: object);\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.sw = nil then \n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED_FOR_WRITING));\n  \n  f.sw.Write(StructuredObjectToString(val));\nend;"
-  },
-  {
     "instruction": "Implement procedure to write multiple objects to text file",
     "output": "procedure Write(f: Text; params args: array of object);\nbegin\n  for var i := 0 to args.length - 1 do\n    write(f, args[i]);\nend;"
-  },
-  {
-    "instruction": "Implement procedure to write newline to text file",
-    "output": "procedure Writeln(f: Text);\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.sw = nil then \n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED_FOR_WRITING));\n  \n  f.sw.WriteLine;\nend;"
   },
   {
     "instruction": "Implement procedure to write object with newline to text file",
@@ -1382,14 +1306,6 @@
   {
     "instruction": "Implement text file flush procedure",
     "output": "procedure Flush(f: Text);\nbegin\n  if f.sw <> nil then\n    f.sw.Flush\nend;"
-  },
-  {
-    "instruction": "Implement text file erase procedure",
-    "output": "procedure Erase(f: Text);\nbegin\n  if f.fi = nil then\n    raise new IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  f.fi.Delete;\nend;"
-  },
-  {
-    "instruction": "Implement text file rename procedure",
-    "output": "procedure Rename(f: Text; newname: string);\nbegin\n  if f.fi = nil then\n    raise new IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  System.IO.File.Move(f.fi.FullName, newname);\nend;"
   },
   {
     "instruction": "Implement text file initialization procedure",
@@ -2072,16 +1988,8 @@
     "output": "procedure TypedFileInitWithShortString(var f: TypedFile; ElementType: System.Type; off: integer; params offs: array of integer);\nbegin\n  f := new TypedFile(ElementType, off, offs);\nend;"
   },
   {
-    "instruction": "Implement function to read from typed file",
-    "output": "function TypedFileRead(f: TypedFile): object;\nbegin\n  var ind := 0;\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.fs = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED));\n  Result := AbstractBinaryFileReadT(f, f.ElementType, ind, false);\nend;"
-  },
-  {
     "instruction": "Implement procedure for binary file initialization",
     "output": "procedure BinaryFileInit(var f: BinaryFile);\nbegin\n  f := new BinaryFile();\nend;"
-  },
-  {
-    "instruction": "Implement function to read from binary file with element type",
-    "output": "function BinaryFileRead(var f: BinaryFile; ElementType: System.Type): object;\nbegin\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.fs = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED));\n  var ind := 0;\n  Result := AbstractBinaryFileReadT(f, ElementType, ind, false);\nend;"
   },
   {
     "instruction": "Implement function to convert disk number to disk name",
@@ -3742,10 +3650,6 @@
   {
     "instruction": "Implement a helper function to check character range with bounds",
     "output": "function check_in_range_char(val: char; low, up: char): char;\nbegin\n  if (val < low) or (val > up) then\n    raise new RangeException(GetTranslation(RANGE_ERROR_MESSAGE));\n  Result := val;\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to get runtime size of type",
-    "output": "function RunTimeSizeOf(t: System.Type): integer;\nvar\n  t1: System.Type;\n  elem: object;\n  fa: array of System.Reflection.FieldInfo;\n  NullBasedArray: System.Array;\n  fi: System.Reflection.FieldInfo;\nbegin\n  if t.IsPrimitive or t.IsEnum then \n    case System.Type.GetTypeCode(t) of\n      TypeCode.Boolean: Result := sizeof(Boolean);\n      TypeCode.Byte: Result := sizeof(Byte);\n      TypeCode.Char: Result := 1;\n      TypeCode.Decimal: Result := sizeof(Decimal);\n      TypeCode.Double: Result := sizeof(Double);\n      TypeCode.Int16: Result := sizeof(Int16);\n      TypeCode.Int32: Result := sizeof(Int32);\n      TypeCode.Int64: Result := sizeof(Int64);\n      TypeCode.UInt16: Result := sizeof(UInt16);\n      TypeCode.UInt32: Result := sizeof(UInt32);\n      TypeCode.UInt64: Result := sizeof(UInt64);\n      TypeCode.SByte: Result := sizeof(SByte);\n      TypeCode.Single: Result := sizeof(Single);\n    else if t.IsEnum then Result := sizeof(integer);\n    end\n  else\n  if t.IsValueType then\n  begin\n    fa := t.GetFields(System.Reflection.BindingFlags.GetField or System.Reflection.BindingFlags.Instance or System.Reflection.BindingFlags.Public or System.Reflection.BindingFlags.NonPublic);\n    Result := 0;\n    for var i := 0 to fa.Length - 1 do\n      if not fa[i].IsLiteral then \n        Result := Result + RunTimeSizeOf(fa[i].FieldType)\n  end\n  else if t = typeof(string) then\n    Result := 0\n  else\n  if t = typeof(TypedSet) then\n  begin\n    Result := 256 div 8;\n  end\n  else\n  begin\n    fi := t.GetField(InternalNullBasedArrayName);\n    if fi = nil then \n      raise new SystemException(GetTranslation(BAD_TYPE_IN_RUNTIMESIZEOF));\n    elem := Activator.CreateInstance(t);\n    NullBasedArray := GetNullBasedArray(elem);\n    \n    t1 := NullBasedArray.GetType.GetElementType;\n    Result := RunTimeSizeOf(t1) * NullBasedArray.Length;\n  end;\nend;"
   },
   {
     "instruction": "Implement a helper function to get character in short string with bounds checking",
