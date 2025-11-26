@@ -1,5 +1,5 @@
 #!bash
-python finetune_deepseekcoder2.py \
+python3 finetune_deepseekcoder2.py \
     --model_name_or_path deepseek-ai/deepseek-coder-1.3b-instruct \
     --data_path ./train_data.json \
     --output_dir ./LoRa \
