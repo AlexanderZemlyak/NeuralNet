@@ -1,21 +1,5 @@
 [
   {
-    "instruction": "Implement a function to get the current locale from configuration with fallback to 'ru'",
-    "output": "function GetCurrentLocale: string;\nbegin\n  var locale: object;\n  if __CONFIG__.TryGetValue('locale', locale) then\n    Result := locale as string\n  else\n    Result := 'ru';\nend;"
-  },
-  {
-    "instruction": "Create a function to get translation based on current locale, splitting message by '!!' delimiter",
-    "output": "function GetTranslation(message: string): string;\nbegin\n  var cur_locale := GetCurrentLocale();\n  var arr := message.Split(new string[1]('!!'), StringSplitOptions.None);\n  if (cur_locale = 'en') and (arr.Length > 1) then\n    Result := arr[1]\n  else\n    Result := arr[0]\nend;"
-  },
-  {
-    "instruction": "Implement a function to check if running in WDE (Web Development Environment)",
-    "output": "function IsWDE: boolean;\nbegin\n  Result := AppDomain.CurrentDomain.GetData('_RedirectIO_SpecialArgs') <> nil;\nend;"
-  },
-  {
-    "instruction": "Create a function to allocate console for non-Unix platforms when not in console application",
-    "output": "[System.Security.SecuritySafeCriticalAttribute]\nprocedure AllocConsole;\nbegin\n  if not IsConsoleApplication and (System.Environment.OSVersion.Platform <> PlatformID.Unix) and (AppDomain.CurrentDomain.GetData('_RedirectIO_SpecialArgs') = nil) then\n    WINAPI_AllocConsole;\n  console_alloc := true;\nend;"
-  },
-  {
     "instruction": "Implement a function to get null-based array from object using reflection",
     "output": "function GetNullBasedArray(arr: object): System.Array;\nvar\n  fi: System.Reflection.FieldInfo;\nbegin\n  fi := arr.GetType.GetField(InternalNullBasedArrayName);\n  if fi <> nil then\n    Result := System.Array(fi.GetValue(arr))\n  else\n    Result := nil;\nend;"
   },
@@ -108,10 +92,6 @@
     "output": "function BinaryFile.ToString: string := 'file';"
   },
   {
-    "instruction": "Implement GCHandlersController for managing garbage collection handles",
-    "output": "constructor GCHandlersController.Create;\nbegin\n  Counters := new Hashtable;\n  Handlers := new Hashtable;\nend;\n\nprocedure GCHandlersController.Add(obj: Object);\nbegin\n  if obj <> nil then begin\n    if Counters.Contains(obj) then\n      Counters[obj] := integer(Counters[obj]) + 1\n    else begin\n      Counters.Add(obj, 1);          \n      Handlers.Add(obj, GCHandle.Alloc(obj, GCHandleType.Pinned));\n    end;\n  end;\nend;\n\nprocedure GCHandlersController.Remove(obj: Object);\nbegin\n  if obj <> nil then begin\n    if Counters.Contains(obj) then begin\n      var Count := integer(Counters[obj]);\n      if Count > 1 then \n        Counters[obj] := Count - 1\n      else begin\n        Counters.Remove(obj);\n        GCHandle(Handlers[obj]).Free;\n        Handlers.Remove(obj);\n      end;\n    end else\n      raise new SystemException('PABCSystem.GCHandleForPointersController not contains object ' + obj.ToString);\n  end;  \nend;"
-  },
-  {
     "instruction": "Implement structured object to string conversion with recursive formatting",
     "output": "function StructuredObjectToString(o: Object; n: integer := 0): string;\nconst\n  nmax = 100;\n  nmax1 = 30;\nbegin\n  if o = nil then\n    Result := 'nil' \n  else if o is System.Reflection.Pointer then\n    Result := PointerToString(System.Reflection.Pointer.Unbox(o))\n  else if (o.GetType = typeof(real)) or (o.GetType = typeof(decimal)) or (o.GetType = typeof(single)) then\n    Result := FormatFloatNumber(o.ToString)\n  else if (o.GetType = typeof(Complex)) then \n  begin\n    var c := Complex(o);\n    Result := '(' + StructuredObjectToString(c.Real) + ',' + StructuredObjectToString(c.Imaginary) + ')';\n  end\n  else if (o.GetType.IsPrimitive) or (o.GetType = typeof(string)) then\n    Result := o.ToString\n  else if o is System.Array then\n  begin\n    var a := o as System.Array;  \n    Result := ArrNToString(a, new integer[a.Rank], 0); \n  end\n  else if ((o.GetType = typeof(IntRange)) or (o.GetType = typeof(CharRange)) or (o.GetType = typeof(RealRange))) then \n  begin\n    Result := o.ToString\n  end\n  else if o is System.Collections.IEnumerable then\n  begin\n    var sb := new StringBuilder();\n    var g := (o as System.Collections.IEnumerable).GetEnumerator();\n    \n    var otype := o.GetType;\n    var isdictorset := o.GetType.IsGenericType and \n      ((otype.GetGenericTypeDefinition = typeof(Dictionary<,>))\n      or (otype.GetGenericTypeDefinition = typeof(SortedDictionary<,>))\n      or (otype.GetGenericTypeDefinition = typeof(HashSet<>))\n      or (otype.GetGenericTypeDefinition = typeof(SortedSet<>)));\n    isdictorset := isdictorset or (otype = typeof(TypedSet));\n    \n    if isdictorset then\n      sb.Append('{')\n    else sb.Append('[');\n    if g.MoveNext() then\n    begin  \n      sb.Append(StructuredObjectToString(g.Current, n + 1));\n      var cnt := 1;  \n      while g.MoveNext() and (cnt < nmax) do \n      begin\n        sb.Append(',');\n        sb.Append(StructuredObjectToString(g.Current, n + 1));\n        cnt += 1;\n      end;\n      if cnt >= nmax then \n        sb.Append(',...');\n    end;    \n    \n    if isdictorset then\n      sb.Append('}')\n    else sb.Append(']');\n    Result := sb.ToString;\n  end\n  else if o.GetType.GetField('NullBasedArray') <> nil then\n  begin\n    var f := o.GetType.GetField('NullBasedArray');\n    Result := StructuredObjectToString(f.GetValue(o));\n  end\n  else\n  begin\n    var q := RedefinedToString(o);\n    var gg := o.GetType.FullName.StartsWith('System.Tuple');\n    var gg1 := o.GetType.Name.StartsWith('KeyValuePair');\n    if (q <> nil) and q.IsVirtual and not gg and not gg1 then\n      Result := o.ToString\n    else \n    begin\n      var t := o.GetType;\n      var sb := new System.Text.StringBuilder();\n      sb.Append('(');\n      if n > nmax1 then\n        sb.Append('....')\n      else \n        while t <> typeof(object) do\n        begin\n          var ff := t.GetFields(System.Reflection.BindingFlags.Public or System.Reflection.BindingFlags.Instance or System.Reflection.BindingFlags.DeclaredOnly);\n          var pp := t.GetProperties(System.Reflection.BindingFlags.Public or System.Reflection.BindingFlags.Instance or System.Reflection.BindingFlags.DeclaredOnly);\n          \n          for var i := ff.Length - 1 downto 0 do\n            sb.Insert(1, StructuredObjectToString(ff[i].GetValue(o), n + 1) + ',');\n          \n          for var i := pp.Length - 1 downto 0 do\n            if pp[i].GetIndexParameters.Length = 0 then\n              sb.Insert(1, StructuredObjectToString(pp[i].GetValue(o, nil), n + 1) + ',');\n          \n          t := t.BaseType;\n        end; \n      if sb.Length > 1 then \n        sb.Length := sb.Length - 1;\n      sb.Append(')');\n      Result := sb.ToString;\n    end;\n  end;\nend;"
   },
@@ -126,10 +106,6 @@
   {
     "instruction": "Implement string comparison operators for lexicographical ordering",
     "output": "function string.operator<(left, right: string) := string.CompareOrdinal(left, right) < 0;\n\nfunction string.operator<=(left, right: string) := string.CompareOrdinal(left, right) <= 0;\n\nfunction string.operator>(left, right: string) := string.CompareOrdinal(left, right) > 0;\n\nfunction string.operator>=(left, right: string) := string.CompareOrdinal(left, right) >= 0;"
-  },
-  {
-    "instruction": "Implement string concatenation with numeric types using string conversion",
-    "output": "function string.operator+(str: string; n: integer) := str + n.ToString;\n\nfunction string.operator+(n: integer; str: string) := n.ToString + str;\n\nfunction string.operator+(str: string; r: real) := str + r.ToString(nfi);\n\nfunction string.operator+(r: real; str: string) := r.ToString(nfi) + str;\n\nprocedure string.operator+=(var left: string; right: integer);\nbegin\n  left := left + right.ToString;\nend;\n\nprocedure string.operator+=(var left: string; right: real);\nbegin\n  left := left + right.ToString(nfi);\nend;"
   },
   {
     "instruction": "Implement string repetition assignment operator",
@@ -272,10 +248,6 @@
     "output": "function string.operator in(substr: string; str: string) := str.Contains(substr);"
   },
   {
-    "instruction": "Implement GCHandlersController counter and enumerator methods",
-    "output": "function GCHandlersController.GetCounter(obj: Object): integer;\nbegin\n  result := 0;\n  if Counters.Contains(obj) then\n    result := integer(Counters[obj]);      \nend;\n\nfunction GCHandlersController.GetEnumerator: System.Collections.IEnumerator;\nbegin\n  result := Counters.Keys.GetEnumerator; \nend;"
-  },
-  {
     "instruction": "Implement method to find overridden ToString method in class hierarchy",
     "output": "function RedefinedToString(o: object): System.Reflection.MethodInfo;\nbegin\n  var t := o.GetType;\n  var meth: System.Reflection.MethodInfo := nil;\n  while t <> typeof(Object) do\n  begin\n    meth := t.GetMethod('ToString', System.Reflection.BindingFlags.Public or\n                System.Reflection.BindingFlags.Instance or \n                System.Reflection.BindingFlags.DeclaredOnly, nil, new System.Type[0], nil);\n    if meth <> nil then \n      break;\n    t := t.BaseType;            \n  end;\n  if (t = typeof(Object)) or (t = typeof(System.ValueType)) then\n    Result := nil\n  else Result := meth;   \nend;"
   },
@@ -336,10 +308,6 @@
     "output": "type\n  ArithmSeq = auto class\n    a, step: integer;\n    function f(x: integer): integer;\n    begin\n      Result := x * step + a;\n    end;\n  end;"
   },
   {
-    "instruction": "Implement string assignment operators with numeric values",
-    "output": "procedure string.operator+=(var left: string; right: integer);\nbegin\n  left := left + right.ToString;\nend;\n\nprocedure string.operator+=(var left: string; right: real);\nbegin\n  left := left + right.ToString(nfi);\nend;"
-  },
-  {
     "instruction": "Implement HashSet internal equality helper function",
     "output": "function InternalEqual<T>(x,y: HashSet<T>): boolean;\nbegin\n  var xn := Object.ReferenceEquals(x,nil);\n  var yn := Object.ReferenceEquals(y,nil);\n  if xn then\n    Result := yn\n  else if yn then \n    Result := xn\n  else Result := x.SetEquals(y);\nend;"
   },
@@ -386,14 +354,6 @@
   {
     "instruction": "Implement range generation with arithmetic sequence helper",
     "output": "function Range(a, b, step: integer): sequence of integer;\nbegin\n  if step = 0 then\n    raise new System.ArgumentException('step=0');\n  if (step > 0) and (b < a) or (step < 0) and (b > a) then\n  begin\n    Result := System.Linq.Enumerable.Empty&<integer>;\n    exit;\n  end;\n  var n := abs((b - a) div step) + 1;\n  var ar: ArithmSeq;\n  ar := new ArithmSeq(a, step);\n  Result := System.Linq.Enumerable.Range(0, n).Select(ar.f);\nend;"
-  },
-  {
-    "instruction": "Implement GCHandlersController for pinned object management",
-    "output": "constructor GCHandlersController.Create;\nbegin\n  Counters := new Hashtable;\n  Handlers := new Hashtable;\nend;\n\nprocedure GCHandlersController.Add(obj: Object);\nbegin\n  if obj <> nil then begin\n    if Counters.Contains(obj) then\n      Counters[obj] := integer(Counters[obj]) + 1\n    else begin\n      Counters.Add(obj, 1);          \n      Handlers.Add(obj, GCHandle.Alloc(obj, GCHandleType.Pinned));\n    end;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement GCHandlersController object removal with reference counting",
-    "output": "procedure GCHandlersController.Remove(obj: Object);\nbegin\n  if obj <> nil then begin\n    if Counters.Contains(obj) then begin\n      var Count := integer(Counters[obj]);\n      if Count > 1 then \n        Counters[obj] := Count - 1\n      else begin\n        Counters.Remove(obj);\n        GCHandle(Handlers[obj]).Free;\n        Handlers.Remove(obj);\n      end;\n    end else\n      raise new SystemException('PABCSystem.GCHandleForPointersController not contains object ' + obj.ToString);\n  end;  \nend;"
   },
   {
     "instruction": "Implement complex number negation operator",
@@ -544,46 +504,6 @@
     "output": "function KV<TKey, TVal>(key: TKey; value: TVal): KeyValuePair<TKey, TVal>;\nbegin\n  Result := new KeyValuePair<TKey, TVal>(key, value);\nend;"
   },
   {
-    "instruction": "Implement integer read procedure from standard input",
-    "output": "procedure Read(var x: integer);\nbegin\n  CurrentIOSystem.read(x)\nend;"
-  },
-  {
-    "instruction": "Implement real number read procedure from standard input",
-    "output": "procedure Read(var x: real);\nbegin\n  CurrentIOSystem.read(x)\nend;"
-  },
-  {
-    "instruction": "Implement character read procedure from standard input",
-    "output": "procedure Read(var x: char);\nbegin\n  CurrentIOSystem.read(x)\nend;"
-  },
-  {
-    "instruction": "Implement string read procedure from standard input",
-    "output": "procedure Read(var x: string);\nbegin\n  CurrentIOSystem.read(x)\nend;"
-  },
-  {
-    "instruction": "Implement function to read integer from standard input",
-    "output": "function ReadInteger: integer;\nbegin\n  Read(Result);\nend;"
-  },
-  {
-    "instruction": "Implement function to read real number from standard input",
-    "output": "function ReadReal: real;\nbegin\n  Read(Result);\nend;"
-  },
-  {
-    "instruction": "Implement function to read string from standard input",
-    "output": "function ReadString: string;\nbegin\n  Result := CurrentIOSystem.ReadLine;\nend;"
-  },
-  {
-    "instruction": "Implement write procedure for object to standard output",
-    "output": "procedure Write(obj: object);\nbegin\n  if output.sw <> nil then\n    write_in_output(obj)\n  else CurrentIOSystem.Write(obj);\nend;"
-  },
-  {
-    "instruction": "Implement writeln procedure for object to standard output",
-    "output": "procedure Writeln(obj: object);\nbegin\n  if output.sw <> nil then\n  begin\n    write_in_output(obj);\n    writeln_in_output;\n  end\n  else\n  begin\n    CurrentIOSystem.Write(obj);\n    CurrentIOSystem.Writeln;\n  end\nend;"
-  },
-  {
-    "instruction": "Implement writeln procedure without parameters",
-    "output": "procedure Writeln;\nbegin\n  if output.sw <> nil then\n    writeln_in_output\n  else CurrentIOSystem.Writeln;\nend;"
-  },
-  {
     "instruction": "Implement function to get absolute value of integer",
     "output": "function Abs(x: integer): integer := Math.Abs(x);"
   },
@@ -628,12 +548,8 @@
     "output": "function Trunc(x: real) := Convert.ToInt32(Math.Truncate(x));"
   },
   {
-    "instruction": "Implement random number generator initialization",
-    "output": "procedure Randomize;\nbegin\n  rnd := new System.Random;\nend;"
-  },
-  {
-    "instruction": "Implement random integer generator within range",
-    "output": "function Random(a, b: integer): integer;\nbegin\n  if a > b then Swap(a, b);\n  Result := rnd.Next(a, b + 1);\nend;"
+    "instruction": "Implement random integer generator within range using System.Random class",
+    "output": "function Random(a, b: integer): integer;\nbegin\n  if a > b then Swap(a, b);\n  Result := (new System.Random()).Next(a, b + 1);\nend;"
   },
   {
     "instruction": "Implement random real number generator within range",
@@ -678,14 +594,6 @@
   {
     "instruction": "Implement successor function for integer",
     "output": "function Succ(x: integer): integer;\nbegin\n  Result := x + 1;\nend;"
-  },
-  {
-    "instruction": "Implement function to convert real number to string",
-    "output": "function FloatToStr(a: real): string;\nbegin\n  Result := a.ToString(nfi);\nend;"
-  },
-  {
-    "instruction": "Implement string formatting function",
-    "output": "function Format(formatstring: string; params pars: array of object): string;\nbegin\n  try\n    Result := string.Format(nfi, formatstring, pars);\n  except\n    on e: Exception do\n      raise e;\n  end;\nend;"
   },
   {
     "instruction": "Implement string concatenation function for two strings",
@@ -800,44 +708,12 @@
     "output": "function ExtractFilePath(fname: string): string;\nbegin\n  var fi := new System.IO.FileInfo(fname);\n  Result := fi.DirectoryName;\n  if (Result.Length > 0) and (Result[Result.Length] <> '\\') and (Result[Result.Length] <> '/') then\n    Result += '\\';\nend;"
   },
   {
-    "instruction": "Implement file reading as lines function",
-    "output": "function ReadAllLines(path: string): array of string;\nbegin\n  Result := ReadAllLines(path, DefaultEncoding);\nend;"
-  },
-  {
-    "instruction": "Implement file reading as text function",
-    "output": "function ReadAllText(path: string): string;\nbegin\n  Result := ReadAllText(path, DefaultEncoding);\nend;"
-  },
-  {
-    "instruction": "Implement file writing lines function",
-    "output": "procedure WriteAllLines(path: string; ss: array of string);\nbegin\n  WriteAllLines(path, ss, DefaultEncoding);\nend;"
-  },
-  {
-    "instruction": "Implement file writing text function",
-    "output": "procedure WriteAllText(path: string; s: string);\nbegin\n  System.IO.File.WriteAllText(path, s, DefaultEncoding);\nend;"
-  },
-  {
-    "instruction": "Implement command line arguments count function",
-    "output": "function ParamCount: integer;\nbegin\n  if (Environment.GetCommandLineArgs.Length > 1) and ((Environment.GetCommandLineArgs[1] = '[REDIRECTIOMODE]') or (Environment.GetCommandLineArgs[1] = '[RUNMODE]')) then\n    Result := Environment.GetCommandLineArgs.Length - 2\n  else\n    Result := Environment.GetCommandLineArgs.Length - 1;\nend;"
-  },
-  {
-    "instruction": "Implement command line argument retrieval function",
-    "output": "function ParamStr(i: integer): string;\nbegin\n  if (Environment.GetCommandLineArgs.Length > 1) and ((Environment.GetCommandLineArgs[1] = '[REDIRECTIOMODE]') or (Environment.GetCommandLineArgs[1] = '[RUNMODE]')) then\n    Result := Environment.GetCommandLineArgs[i + 1]\n  else\n    Result := Environment.GetCommandLineArgs[i];\nend;"
-  },
-  {
-    "instruction": "Implement program halt procedure",
-    "output": "procedure Halt;\nbegin\n  Halt(ExitCode);\nend;"
-  },
-  {
     "instruction": "Implement program halt with exit code procedure",
     "output": "procedure Halt(exitCode: integer);\nbegin\n  System.Environment.Exit(exitCode);\nend;"
   },
   {
     "instruction": "Implement sleep procedure",
     "output": "procedure Sleep(ms: integer);\nbegin\n  System.Threading.Thread.Sleep(ms);\nend;"
-  },
-  {
-    "instruction": "Implement milliseconds counter function",
-    "output": "function Milliseconds: integer;\nbegin\n  curr_time := DateTime.Now;\n  Milliseconds := Convert.ToInt32((curr_time - StartTime).TotalMilliseconds);\nend;"
   },
   {
     "instruction": "Implement assertion procedure with message",
@@ -1004,10 +880,6 @@
     "output": "function ReadlnReal: real;\nbegin\n  Result := ReadReal;\n  Readln();\nend;"
   },
   {
-    "instruction": "Implement readln function for string",
-    "output": "function ReadlnString: string;\nbegin\n  Result := CurrentIOSystem.ReadLine;\nend;"
-  },
-  {
     "instruction": "Implement read function for text file integer",
     "output": "function ReadInteger(f: Text): integer;\nbegin\n  Read(f, Result);\nend;"
   },
@@ -1020,32 +892,8 @@
     "output": "function ReadString(f: Text): string;\nbegin\n  Read(f, Result);\n  Readln(f);\nend;"
   },
   {
-    "instruction": "Implement text file assignment procedure",
-    "output": "procedure Assign(f: Text; name: string);\nbegin\n  try\n    f.fi := System.IO.FileInfo.Create(name);\n  except\n    on e: Exception do\n      raise e;\n  end;\n  if f = output then\n    f.sw := new StreamWriter(f.fi.FullName);\n  if f = input then\n  begin  \n    f.sr := new StreamReader(f.fi.FullName, DefaultEncoding);\n    (CurrentIOSystem as IOStandardSystem).tr := f.sr;\n    (CurrentIOSystem as IOStandardSystem).realbuflen := -1;\n    _IsPipedRedirected := True;\n    _IsPipedRedirectedQuery := True;\n  end;  \nend;"
-  },
-  {
     "instruction": "Implement text file close procedure",
     "output": "procedure Close(f: Text);\nbegin\n  if f.fi = nil then\n    raise new IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.sr <> nil then \n  begin\n    f.sr.Close; \n    f.sr := nil; \n    f.sw := nil;\n  end\n  else if f.sw <> nil then \n  begin\n    f.sw.Close;\n    f.sr := nil;\n    f.sw := nil;\n  end\n  else raise new IOException(GetTranslation(FILE_NOT_OPENED));\nend;"
-  },
-  {
-    "instruction": "Implement text file reset procedure",
-    "output": "procedure Reset(f: Text);\nbegin\n  Reset(f, DefaultEncoding);\nend;"
-  },
-  {
-    "instruction": "Implement text file rewrite procedure",
-    "output": "procedure Rewrite(f: Text);\nbegin\n  Rewrite(f, DefaultEncoding)\nend;"
-  },
-  {
-    "instruction": "Implement text file append procedure",
-    "output": "procedure Append(f: Text);\nbegin\n  Append(f, DefaultEncoding);\nend;"
-  },
-  {
-    "instruction": "Implement text file end-of-file check",
-    "output": "function Eof(f: Text): boolean;\nbegin\n  if f = input then\n    Result := Eof\n  else if f.sr <> nil then\n    Result := f.sr.EndOfStream\n  else if f.sw <> nil then\n    raise new IOException(GetTranslation(EOF_FOR_TEXT_WRITEOPENED))\n  else raise new IOException(GetTranslation(FILE_NOT_OPENED));\nend;"
-  },
-  {
-    "instruction": "Implement text file end-of-line check",
-    "output": "function Eoln(f: Text): boolean;\nbegin\n  if f = input then\n    Result := Eoln\n  else if f.sr <> nil then\n    Result := f.sr.EndOfStream or (f.sr.Peek = 13) or (f.sr.Peek = 10) \n  else if f.sw <> nil then\n    raise new IOException(GetTranslation(EOLN_FOR_TEXT_WRITEOPENED))\n  else raise new IOException(GetTranslation(FILE_NOT_OPENED));\nend;"
   },
   {
     "instruction": "Implement binary file write procedure",
@@ -1172,10 +1020,6 @@
     "output": "function Copy(a: &Array): &Array;\nbegin\n  Result := &Array(a.Clone());\nend;"
   },
   {
-    "instruction": "Implement print procedure for multiple objects",
-    "output": "procedure Print(params args: array of object);\nbegin\n  if args.Length = 0 then\n    exit;\n  if PrintDelimDefault<>'' then\n    for var i := 0 to args.length - 1 do\n      Write(args[i], PrintDelimDefault)\n  else     \n    for var i := 0 to args.length - 1 do\n      Write(args[i])\nend;"
-  },
-  {
     "instruction": "Implement println procedure for multiple objects",
     "output": "procedure Println(params args: array of object);\nbegin\n  Print(args);\n  Writeln;\nend;"
   },
@@ -1222,34 +1066,6 @@
   {
     "instruction": "Implement binary file deserialize function",
     "output": "function BinaryFile.Deserialize: object;\nbegin\n  var formatter := new BinaryFormatter;\n  Result := formatter.Deserialize(fs);\nend;"
-  },
-  {
-    "instruction": "Implement function to read short string from input",
-    "output": "procedure ReadShortString(var s: string; n: integer);\nbegin\n  var sb := new System.Text.StringBuilder;\n  var c := char(CurrentIOSystem.peek());\n  var i := 0;\n  while (c <> #13) and (c <> #10) and (i < n) do \n  begin\n    c := CurrentIOSystem.read_symbol;\n    i += 1;\n    sb.Append(c);\n    c := char(CurrentIOSystem.peek());\n  end;\n  s := sb.ToString;\nend;"
-  },
-  {
-    "instruction": "Implement function to check if input is at end of line",
-    "output": "function Eoln: boolean;\nbegin\n  if not console_alloc then\n    AllocConsole;\n  var next := CurrentIOSystem.peek;\n  Result := (next = -1) or (next = 13) or (next = 10);\nend;"
-  },
-  {
-    "instruction": "Implement function to check if input is at end of file",
-    "output": "function Eof: boolean;\nbegin\n  if not console_alloc then\n    AllocConsole;\n  Result := CurrentIOSystem.peek = -1\nend;"
-  },
-  {
-    "instruction": "Implement function to seek to end of file in input",
-    "output": "function SeekEof: boolean;\nbegin\n  repeat\n    if Eof then\n      break;\n    var i := CurrentIOSystem.peek;\n    if not char.IsWhiteSpace(char(i)) then\n      break;\n    CurrentIOSystem.read_symbol\n  until False;  \n  Result := Eof;\nend;"
-  },
-  {
-    "instruction": "Implement function to seek to end of line in input",
-    "output": "function SeekEoln: boolean;\nbegin\n  repeat\n    if Eoln then\n      break;\n    var i := CurrentIOSystem.peek;\n    if (i <> 32) and (i <> 9) then\n      break;\n    CurrentIOSystem.read_symbol;\n  until False;\n  var next := CurrentIOSystem.peek;\n  Result := (next = -1) or (next = 13) or (next = 10);\nend;"
-  },
-  {
-    "instruction": "Implement function to get command line arguments",
-    "output": "function CommandLineArgs: array of string;\nbegin\n  Result := _CommandLineArgs;\n  if Result = nil then\n  begin\n    var arg := Environment.GetCommandLineArgs();\n    if arg.Length > 1 then begin\n      _CommandLineArgs := new string[arg.Length - 1];\n      for var i := 1 to arg.Length - 1 do\n        _CommandLineArgs[i - 1] := arg[i];\n    end else\n      _CommandLineArgs := new string[0];\n    Result := _CommandLineArgs;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement function to get PascalABC version",
-    "output": "function PascalABCVersion: string;\nbegin\n  Result := '3.2.0.1364';\nend;"
   },
   {
     "instruction": "Implement function to get executable file name",
@@ -1436,14 +1252,6 @@
     "output": "procedure Writeln(f: Text; val: object);\nbegin\n  write(f, val);\n  writeln(f);\nend;"
   },
   {
-    "instruction": "Implement text file print procedure for multiple objects",
-    "output": "procedure Text.Print(params o: array of Object);\nbegin\n  if PrintDelimDefault<>'' then\n    foreach var s in o do\n      PABCSystem.Write(Self, s, PrintDelimDefault)\n  else    \n    foreach var s in o do\n      PABCSystem.Write(Self, s)\nend;"
-  },
-  {
-    "instruction": "Implement text file println procedure for multiple objects",
-    "output": "procedure Text.Println(params o: array of Object);\nbegin\n  if o.Length <> 0 then\n  begin\n    if PrintDelimDefault<>'' then\n      for var i:=0 to o.Length-2 do\n        PABCSystem.Write(Self, o[i], PrintDelimDefault)\n    else    \n      for var i:=0 to o.Length-2 do\n        PABCSystem.Write(Self, o[i]);\n    PABCSystem.Write(Self, o.Last);\n  end;\n  PABCSystem.Writeln(Self);\nend;"
-  },
-  {
     "instruction": "Implement text file lines property as sequence",
     "output": "function Text.Lines: sequence of string;\nbegin\n  Self.sr.BaseStream.Position := 0;\n  while not Eof do\n    yield ReadlnString;\nend;"
   },
@@ -1484,20 +1292,12 @@
     "output": "function ReadlnBoolean(f: Text): boolean;\nbegin\n  Result := ReadBoolean(f);\n  Readln(f);\nend;"
   },
   {
-    "instruction": "Implement function to read lexem from text file",
-    "output": "function ReadLexem(f: Text): string;\nbegin\n  if f = input then\n  begin  \n    Result := ReadLexem;\n    exit\n  end;\n  if f.fi = nil then\n    raise new System.IO.IOException(GetTranslation(FILE_NOT_ASSIGNED));\n  if f.sr = nil then \n    raise new System.IO.IOException(GetTranslation(FILE_NOT_OPENED_FOR_READING));\n  var i: integer;\n  repeat\n    i := f.sr.Read();\n  until not char.IsWhiteSpace(char(i)); // pass spaces\n  if i=-1 then \n    raise new System.IO.IOException(GetTranslation(READ_LEXEM_AFTER_END_OF_TEXT_FILE));\n  var c := char(i);\n  var sb := System.Text.StringBuilder.Create;\n  repeat\n    sb.Append(c);\n    i := f.sr.Peek();\n    if i = -1 then\n      break;\n    c := char(i);\n    if char.IsWhiteSpace(c) then\n      break;\n    f.sr.Read();\n  until False; // accumulate nonspaces\n  Result := sb.ToString;\nend;"
-  },
-  {
     "instruction": "Implement procedure to read from text file without parameters",
     "output": "procedure read(f: Text);\nbegin\nend;"
   },
   {
     "instruction": "Implement procedure to read integer from text file",
     "output": "procedure read(f: Text; var x: integer);\nbegin\n  try\n    x := Convert.ToInt32(ReadLexem(f));\n  except\n    on e: Exception do\n      raise e;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read real number from text file",
-    "output": "procedure read(f: Text; var x: real);\nbegin\n  try\n    x := Convert.ToDouble(ReadLexem(f), nfi);\n  except\n    on e: Exception do\n      raise e;\n  end;\nend;"
   },
   {
     "instruction": "Implement procedure to read character from text file",
@@ -1580,14 +1380,6 @@
     "output": "procedure ReadShortStringFromFile(f: Text; var s: string; n: integer);\nbegin\n  var i := 1;\n  var sb := new System.Text.StringBuilder;\n  repeat\n    if f.sr.EndOfStream then\n      break;\n    if f.sr.Peek = 13 then\n      break;\n    if f.sr.Peek = 10 then\n      break;\n    if i > n then break;\n    sb.Append(Convert.ToChar(f.sr.Read));\n    i := i + 1;\n  until False;\n  s := sb.ToString; {}\n  if s = nil then \n    s := string.Empty;\n  if s.Length > n then s := s.Substring(0, n);\nend;"
   },
   {
-    "instruction": "Implement text file seek to end of file function",
-    "output": "function SeekEof(f: Text): boolean;\nbegin\n  if f = input then\n  begin  \n    Result := SeekEof;\n    exit;\n  end;  \n  if f.sw <> nil then\n    raise new IOException(GetTranslation(SEEKEOF_FOR_TEXT_WRITEOPENED));\n  if f.sr = nil then  \n    raise new IOException(GetTranslation(FILE_NOT_OPENED));\n  repeat\n    if f.sr.EndOfStream then\n      break;\n    var i := f.sr.Peek;\n    if not char.IsWhiteSpace(char(i)) then\n      break;\n    f.sr.Read;\n  until False;  \n  Result := f.sr.EndOfStream;\nend;"
-  },
-  {
-    "instruction": "Implement text file seek to end of line function",
-    "output": "function SeekEoln(f: Text): boolean;\nbegin\n  if f = input then\n  begin  \n    Result := SeekEoln;\n    exit;\n  end;  \n  if f.sw <> nil then\n    raise new IOException(GetTranslation(SEEKEOLN_FOR_TEXT_WRITEOPENED));\n  if f.sr = nil then  \n    raise new IOException(GetTranslation(FILE_NOT_OPENED));\n  repeat\n    if f.sr.EndOfStream then\n      break;\n    var i := f.sr.Peek;\n    if (i <> 32) and (i <> 9) then\n      break;\n    f.sr.Read;\n  until False;\n  Result := f.sr.EndOfStream or (f.sr.Peek = 13) or (f.sr.Peek = 10);\nend;"
-  },
-  {
     "instruction": "Implement text file flush procedure",
     "output": "procedure Flush(f: Text);\nbegin\n  if f.sw <> nil then\n    f.sw.Flush\nend;"
   },
@@ -1602,18 +1394,6 @@
   {
     "instruction": "Implement text file initialization procedure",
     "output": "procedure TextFileInit(var f: Text);\nbegin\n  f := new Text;  \nend;"
-  },
-  {
-    "instruction": "Implement open file for reading function",
-    "output": "function OpenRead(fname: string): Text := OpenRead(fname, DefaultEncoding);"
-  },
-  {
-    "instruction": "Implement open file for writing function",
-    "output": "function OpenWrite(fname: string): Text := OpenWrite(fname, DefaultEncoding);"
-  },
-  {
-    "instruction": "Implement open file for appending function",
-    "output": "function OpenAppend(fname: string): Text := OpenAppend(fname, DefaultEncoding);"
   },
   {
     "instruction": "Implement function to read array of int64 from standard input",
@@ -2040,30 +1820,6 @@
     "output": "function Random3 := (Random, Random, Random);"
   },
   {
-    "instruction": "Implement procedure to read BigInteger from standard input",
-    "output": "procedure Read(var x: BigInteger);\nbegin\n  CurrentIOSystem.read(x)\nend;"
-  },
-  {
-    "instruction": "Implement function to read BigInteger from standard input",
-    "output": "function ReadBigInteger: BigInteger;\nbegin\n  Read(Result);\nend;"
-  },
-  {
-    "instruction": "Implement function to read BigInteger with newline from standard input",
-    "output": "function ReadlnBigInteger: BigInteger;\nbegin\n  Result := ReadBigInteger;\n  Readln();\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read BigInteger from text file",
-    "output": "procedure read(f: Text; var x: BigInteger);\nbegin\n  x := BigInteger.Parse(ReadLexem(f))\nend;"
-  },
-  {
-    "instruction": "Implement function to read BigInteger from text file",
-    "output": "function ReadBigInteger(f: Text): BigInteger;\nbegin\n  Read(f, Result);\nend;"
-  },
-  {
-    "instruction": "Implement function to read BigInteger with newline from text file",
-    "output": "function ReadlnBigInteger(f: Text): BigInteger;\nbegin\n  Result := ReadBigInteger(f);\n  Readln(f);\nend;"
-  },
-  {
     "instruction": "Implement procedure for validation of BigInteger from string",
     "output": "procedure Val(s: string; var value: BigInteger; var err: integer);\nbegin\n  if BigInteger.TryParse(s, value) then\n    err := 0\n  else err := 1;\nend;"
   },
@@ -2106,58 +1862,6 @@
   {
     "instruction": "Implement function to get successor of BigInteger",
     "output": "function Succ(x: BigInteger): BigInteger;\nbegin\n  Result := x + 1;\nend;"
-  },
-  {
-    "instruction": "Implement procedure for reading without parameters",
-    "output": "procedure Read;\nbegin\nend;"
-  },
-  {
-    "instruction": "Implement procedure for reading newline without parameters",
-    "output": "procedure Readln;\nbegin\n  CurrentIOSystem.readln\nend;"
-  },
-  {
-    "instruction": "Implement procedure for writing without parameters",
-    "output": "procedure Write;\nbegin\nend;"
-  },
-  {
-    "instruction": "Implement procedure for writing newline without parameters",
-    "output": "procedure Writeln;\nbegin\n  if output.sw <> nil then\n    writeln_in_output\n  else CurrentIOSystem.Writeln;\nend;"
-  },
-  {
-    "instruction": "Implement procedure for writing two objects",
-    "output": "procedure Write(obj1, obj2: object);\nbegin\n  if output.sw <> nil then\n  begin\n    write_in_output(obj1);\n    write_in_output(obj2);\n  end\n  else\n  begin\n    CurrentIOSystem.Write(obj1);\n    CurrentIOSystem.Write(obj2);\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement procedure for writing two objects with newline",
-    "output": "procedure Writeln(obj1, obj2: object);\nbegin\n  if output.sw <> nil then\n  begin\n    write_in_output(obj1);\n    write_in_output(obj2);\n    writeln_in_output;\n  end\n  else\n  begin\n    CurrentIOSystem.Write(obj1);\n    CurrentIOSystem.Write(obj2);\n    CurrentIOSystem.Writeln;\n  end\nend;"
-  },
-  {
-    "instruction": "Implement procedure for formatted writing to standard output",
-    "output": "procedure WriteFormat(formatstr: string; params args: array of object);\nbegin\n  var s := Format(formatstr, args);\n  write(s);\nend;"
-  },
-  {
-    "instruction": "Implement procedure for formatted writing with newline to standard output",
-    "output": "procedure WritelnFormat(formatstr: string; params args: array of object);\nbegin\n  var s := Format(formatstr, args);\n  writeln(s);\nend;"
-  },
-  {
-    "instruction": "Implement procedure for formatted writing to text file",
-    "output": "procedure WriteFormat(f: Text; formatstr: string; params args: array of object);\nbegin\n  var s := Format(formatstr, args);\n  write(f, s);\nend;"
-  },
-  {
-    "instruction": "Implement procedure for formatted writing with newline to text file",
-    "output": "procedure WritelnFormat(f: Text; formatstr: string; params args: array of object);\nbegin\n  var s := Format(formatstr, args);\n  Writeln(f, s);\nend;"
-  },
-  {
-    "instruction": "Implement procedure for printing string to standard output",
-    "output": "procedure Print(s: string);\nbegin\n  if PrintDelimDefault<>'' then\n    Write(s, PrintDelimDefault)\n  else Write(s)  \nend;"
-  },
-  {
-    "instruction": "Implement procedure for printing object to standard output",
-    "output": "procedure Print(o: object);\nbegin\n  if PrintDelimDefault<>'' then\n    Write(o, PrintDelimDefault)\n  else     \n    Write(o)\nend;"
-  },
-  {
-    "instruction": "Implement procedure for printing to text file",
-    "output": "procedure Print(f: Text; params args: array of object);\nbegin\n  if args.Length = 0 then\n    exit;\n  if PrintDelimDefault<>'' then\n    for var i := 0 to args.length - 1 do\n      Write(f, args[i], PrintDelimDefault)\n  else     \n    for var i := 0 to args.length - 1 do\n      Write(f, args[i])\nend;"
   },
   {
     "instruction": "Implement procedure for printing with newline to text file",
@@ -2446,14 +2150,6 @@
   {
     "instruction": "Implement procedure for string conversion from string",
     "output": "procedure Str(s1: string; var s: string);\nbegin\n  s := s1;\nend;"
-  },
-  {
-    "instruction": "Implement procedure for string conversion from single",
-    "output": "procedure Str(r: single; var s: string);\nbegin\n  s := Convert.ToString(r, nfi);\nend;"
-  },
-  {
-    "instruction": "Implement procedure for string conversion from real",
-    "output": "procedure Str(r: real; var s: string);\nbegin\n  s := Convert.ToString(r, nfi);\nend;"
   },
   {
     "instruction": "Implement function for string comparison",
@@ -2860,10 +2556,6 @@
     "output": "function ColCount<T>(Self: array [,] of T): integer; extensionmethod;\nbegin\n  Result := Self.GetLength(1);\nend;"
   },
   {
-    "instruction": "Implement an extension method that prints 2D array with specified field width",
-    "output": "function Print<T>(Self: array [,] of T; w: integer := 4): array [,] of T; extensionmethod;\nbegin\n  for var i := 0 to Self.RowCount - 1 do\n  begin\n    for var j := 0 to Self.ColCount - 1 do\n    begin\n      if PrintMatrixWithFormat then\n        Write(StructuredObjectToString(Self[i, j]).PadLeft(w))\n      else Print(Self[i, j]);\n    end;\n    Writeln;  \n  end;\n  Result := Self;  \nend;"
-  },
-  {
     "instruction": "Implement an extension method that returns k-th row of 2D array",
     "output": "function Row<T>(Self: array [,] of T; k: integer): array of T; extensionmethod;\nbegin\n  var n := Self.ColCount;\n  var res := new T[n];\n  for var j := 0 to n - 1 do\n    res[j] := Self[k, j];\n  Result := res;\nend;"
   },
@@ -2946,10 +2638,6 @@
   {
     "instruction": "Implement an extension method that converts string to integer",
     "output": "function ToInteger(Self: string): integer; extensionmethod := StrToInt(Self);"
-  },
-  {
-    "instruction": "Implement an extension method that converts string to real number",
-    "output": "function ToReal(Self: string): real; extensionmethod := real.Parse(Self, nfi);"
   },
   {
     "instruction": "Implement an extension method that splits string into words using specified delimiters",
@@ -3086,10 +2774,6 @@
   {
     "instruction": "Implement an extension method Println for string type that outputs value and moves to new line",
     "output": "function Println(Self: string): string; extensionmethod;\nbegin\n  PABCSystem.Println(Self);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that prints sequence using space as delimiter",
-    "output": "function Print<T>(Self: sequence of T): sequence of T; extensionmethod;\nbegin\n  if typeof(T) = typeof(char) then \n    Result := Self.Print('')\n  else  \n    Result := Self.Print(PrintDelimDefault);  \nend;"
   },
   {
     "instruction": "Implement an extension method that prints sequence using specified delimiter and moves to new line",
@@ -3318,10 +3002,6 @@
   {
     "instruction": "Implement an extension method that checks if element exists in 2D array",
     "output": "function operator in<T>(x: T; a: array[,] of T): boolean; extensionmethod;\nbegin\n  var (m,n) := a.Size;\n  Result := False;\n  for var i:=0 to m-1 do\n  for var j:=0 to n-1 do\n    if a[i,j]=x then\n    begin\n      Result := True;\n      exit;\n    end;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that prints 2D real array with specified format (width and decimal places)",
-    "output": "function Print(Self: array [,] of real; w: integer := 7; f: integer := 2): array [,] of real; extensionmethod;\nbegin\n  for var i := 0 to Self.RowCount - 1 do\n  begin\n    for var j := 0 to Self.ColCount - 1 do\n    begin\n      if PrintMatrixWithFormat then\n        Write(FormatValue(Self[i, j], w, f))\n      else Print(Self[i, j]);\n    end;  \n    Writeln;  \n  end;\n  Result := Self;  \nend;"
   },
   {
     "instruction": "Implement an extension method that prints 2D array with specified width and moves to new line",
@@ -4096,10 +3776,6 @@
     "output": "function FormatValue(value: int64; NumOfChars: integer): string;\nbegin\n  Result := value.ToString;\n  Result := Result.PadLeft(NumOfChars);\nend;"
   },
   {
-    "instruction": "Implement a helper function to format real value with specified width",
-    "output": "function FormatValue(value: real; NumOfChars: integer): string;\nbegin\n  Result := value.ToString(nfi);\n  Result := Result.PadLeft(NumOfChars);\nend;"
-  },
-  {
     "instruction": "Implement a helper function to format real value with specified width and decimal places",
     "output": "function FormatValue(value: real; NumOfChars, NumOfSignesAfterDot: integer): string;\nbegin\n  var FmtStr := '{0,' + NumOfChars.ToString + ':f' + abs(NumOfSignesAfterDot).ToString + '}';\n  Result := Format(FmtStr, value);\nend;"
   },
@@ -4138,10 +3814,6 @@
   {
     "instruction": "Implement a helper function to get runtime size of generic type",
     "output": "function GetRuntimeSize<T>: integer;\nvar\n  val: T;\nbegin\n  result := System.Runtime.InteropServices.Marshal.SizeOf(val);\nend;"
-  },
-  {
-    "instruction": "Implement a helper function to fix pointer for interop",
-    "output": "function __FixPointer(obj: object): GCHandle;\nbegin\n  if obj <> nil then\n  begin\n    try\n      if (NotPinnableWrapper.notPinnableTypes <> nil) and NotPinnableWrapper.notPinnableTypes.Contains(obj.GetType()) then\n        Result := GCHandle.Alloc(obj)\n      else\n        Result := GCHandle.Alloc(obj, GCHandleType.Pinned);\n    except\n      if NotPinnableWrapper.notPinnableTypes = nil then \n          NotPinnableWrapper.notPinnableTypes := new HashSet<&Type>;\n      NotPinnableWrapper.notPinnableTypes.Add(obj.GetType());\n      Result := GCHandle.Alloc(obj);\n    end;\n  end;\nend;"
   },
   {
     "instruction": "Implement a helper function to convert to nullable value type",
@@ -4262,10 +3934,6 @@
   {
     "instruction": "Implement extension method that joins sequence into string with default delimiter",
     "output": "function JoinToString<T>(Self: sequence of T): string; extensionmethod;\nbegin\n  if typeof(T) = typeof(char) then\n    Result := Self.JoinIntoString('') \n  else Result := Self.JoinIntoString(' ');  \nend;"
-  },
-  {
-    "instruction": "Implement extension method that prints sequence with default delimiter and moves to new line",
-    "output": "function Println<T>(Self: sequence of T): sequence of T; extensionmethod;\nbegin\n  if typeof(T) = typeof(char) then \n    Result := Self.Println('')\n  else  \n    Result := Self.Println(PrintDelimDefault);  \nend;"
   },
   {
     "instruction": "Implement extension method for joining sequence into string with alias",
