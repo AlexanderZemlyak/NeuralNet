@@ -1,0 +1,82 @@
+[
+  {
+    "instruction": "Create a basic 'Hello World' program in PascalABC.NET",
+    "output": "// First program\nprogram HelloWorld;\nbegin\n  Writeln('Привет, мир!');\nend."
+  },
+  {
+    "instruction": "Implement depth-first traversal of a directed graph in PascalABC.NET",
+    "output": "// Depth-first traversal of directed graph\nprocedure TraverseDepth(gr: array of array of integer; p: array of boolean; x: integer);\nbegin\n  Print(x);\n  p[x] := True;\n  foreach var y in gr[x] do\n    if not p[y] then\n      TraverseDepth(gr,p,y);\nend;\n\nbegin\n  var gr := [[1, 2], [3], [1, 4], [5], [6], [4, 7], [], []];\n  var p := [False] * gr.Count;\n  TraverseDepth(gr,p,0);  \nend."
+  },
+  {
+    "instruction": "Demonstrate coordinate system transformations in GraphABC with rotation and scaling",
+    "output": "// Demonstration of coordinate system transformations\nuses GraphABC;\n\nbegin\n  Window.Title := 'Coordinate system transformations';\n  Window.IsFixedSize := True;\n\n  // Rotation\n  Coordinate.Angle := 30; \n  // Scale\n  Coordinate.Scale := 3;\n  // Coordinate origin - in window center\n  Coordinate.Origin := Window.Center;\n\n  Brush.Color := clMoneyGreen;\n  Ellipse(-50,-20,50,20);\n  Line(-70,0,70,0);\n  Line(0,-40,0,40);\nend."
+  },
+  {
+    "instruction": "Create circular pattern using coordinate transformations in GraphABC",
+    "output": "// Demonstration of coordinate system transformations\nuses GraphABC;\n\nbegin\n  Window.Title := 'Coordinate system transformations';\n  Window.IsFixedSize := True;\n\n  Coordinate.Origin := Window.Center;\n  Circle(0,0,200);\n  for var i := 1 to 12 do\n  begin\n    Circle(0,180,10);\n    Coordinate.Angle := Coordinate.Angle + 30; \n  end;  \nend."
+  },
+  {
+    "instruction": "Create rotating ellipse animation using coordinate transformations in GraphABC",
+    "output": "uses GraphABC;\n\nbegin\n  Coordinate.Origin := Window.Center;\n  Coordinate.SetMathematic;\n  while True do\n  begin\n    LockDrawing;\n    ClearWindow;\n    Ellipse(-120,-70,120,70);\n    Line(0,0,200,0);\n    Line(0,0,0,200);\n    Redraw;\n    Coordinate.Angle := Coordinate.Angle + 1;\n    Sleep(100);\n  end;\nend."
+  },
+  {
+    "instruction": "Demonstrate font properties and styles in GraphABC with different fonts and colors",
+    "output": "// Demonstration of working with fonts\nuses GraphABC;\n\nbegin\n  Window.Title := 'Fonts';\n  SetWindowSize(760,460);\n  Font.Name := 'Arial';\n  Font.Style := fsBoldItalic;\n  for var i:=4 to 14 do\n  begin\n    Font.Size := 2*i;\n    Font.Color := clRandom;\n    TextOut(30,2*i*i-15,'PascalABC.NET');\n  end;\n  Font.Name := 'Times New Roman';\n  Font.Style := fsBoldUnderline;\n  for var i:=4 to 14 do\n  begin\n    Font.Size := 2*i;\n    Font.Color := clRandom;\n    TextOut(400,2*i*i-15,'PascalABC.NET');\n  end;\nend."
+  },
+  {
+    "instruction": "Center text in window using TextWidth and TextHeight functions in GraphABC",
+    "output": "// Demonstration of using TextWidth and TextHeight\nuses GraphABC;\n\nconst s = 'Width & Height';\n  \nbegin\n  Window.Title := 'Centered text';\n  Window.IsFixedSize := True;\n  SetWindowSize(700,300);\n  Window.Center;\n  Font.Name := 'Times';\n  Font.Size := 50;\n  var tw := TextWidth(s);\n  var th := TextHeight(s);\n  TextOut((Window.Width-tw) div 2,(Window.Height-th) div 2,s);\nend."
+  },
+  {
+    "instruction": "Use Polyline, Polygon, Curve, and ClosedCurve procedures with coordinate translation in GraphABC",
+    "output": "// Procedures Polyline, Polygon, Curve, ClosedCurve\n// Coordinate system origin translation\nuses GraphABC;\n\nvar a: array of Point := (new Point(0,0), new Point(50,170), new Point(100,100), new Point(150,170), new Point(200,0));\n\nbegin\n  Window.Title := 'Drawing by point array';\n  Brush.Color := Color.Beige;\n  Coordinate.SetOrigin(60,30);\n  Polyline(a);\n  Coordinate.OriginX := 360;\n  Polygon(a);\n  Coordinate.Origin := new Point(60,250);\n  Curve(a);\n  Coordinate.OriginX := 360;\n  ClosedCurve(a);\nend."
+  },
+  {
+    "instruction": "Implement Tower of Hanoi algorithm with graphical visualization in GraphABC",
+    "output": "// Tower of Hanoi\nuses GraphABC;\n\ntype\n  /// Disk type\n  DiskType = record\n    /// Disk diameter\n    Sz: integer;\n    /// Disk color\n    Color: GraphABC.Color;\n  end;\n  /// Type of disk array on rod\n  DiskArr = array of DiskType;\n\nconst\n  /// Number of disks\n  CountDisks = 8;\n  /// Disk height\n  DiskHeight = 12;\n  /// Disk width increment\n  DiskWidthDelta = 12;\n  h = CountDisks * DiskWidthDelta * 2 + 20; \n  /// y-coordinate of disk pyramid base\n  y0 = DiskHeight * CountDisks + 80;\n  hh = 30;\n  /// x-coordinate of first rod\n  x1 = h div 2 + hh;\n  /// x-coordinate of second rod\n  x2 = x1 + h;\n  /// x-coordinate of third rod\n  x3 = x2 + h;\n  /// Pause, ms\n  delay = 50;\n\nvar\n  /// Array of disk pyramids \n  Tower: array [1..3] of DiskArr;\n  /// Array of disk counts in pyramids\n  DisksInTower: array [1..3] of integer;\n  /// Move number\n  MoveNumber: integer;\n\n/// Drawing pyramid\nprocedure DrawTower(a: DiskArr; n: integer; x0,y0: integer);\nbegin\n  Brush.Color := clBlack;\n  Rectangle(x0-5,y0,x0+5,y0-DiskHeight*CountDisks-10);\n  for var i:=0 to n-1 do\n  begin\n    Brush.Color := a[i].Color;\n    Rectangle(x0-a[i].sz*DiskWidthDelta,y0-DiskHeight*(i-1),x0+a[i].sz*DiskWidthDelta,y0-DiskHeight*i+1)\n  end;\nend;\n\n/// Drawing all pyramids and info string\nprocedure DrawAll;\nbegin\n  DrawTower(Tower[1],DisksInTower[1],x1,y0);\n  DrawTower(Tower[2],DisksInTower[2],x2,y0);\n  DrawTower(Tower[3],DisksInTower[3],x3,y0);\n  Brush.Color := clWhite;\n  TextOut(20,20,'Number of disk moves = '+MoveNumber);\n  Redraw;\nend;\n\n/// Moving disk from rod FromN to rod ToN\nprocedure MoveDisk(FromN, ToN: integer);\nbegin\n  Inc(MoveNumber);\n  Inc(DisksInTower[ToN]);\n  Tower[ToN][DisksInTower[ToN]-1] := Tower[FromN][DisksInTower[FromN]-1];\n  Dec(DisksInTower[FromN]);\n  Sleep(delay);\n  ClearWindow;\n  DrawAll;\nend;\n\n/// Main recursive procedure of \"Tower of Hanoi\" algorithm\nprocedure MoveTower(n: integer; FromN, ToN, WorkN: integer);\nbegin\n  if n=0 then exit;\n  MoveTower(n-1, FromN, WorkN, ToN);\n  MoveDisk(FromN, ToN);\n  MoveTower(n-1, WorkN, ToN, FromN);\nend;\n\n/// Array initialization\nprocedure InitTowers;\nbegin\n  SetLength(Tower[1],CountDisks);\n  SetLength(Tower[2],CountDisks);\n  SetLength(Tower[3],CountDisks);\n  DisksInTower[1] := CountDisks;\n  DisksInTower[2] := 0;\n  DisksInTower[3] := 0;\n  for var i:=0 to DisksInTower[1]-1 do\n  begin\n    Tower[1][i].Sz := DisksInTower[1]-i+1;\n    Tower[1][i].Color := clRandom;\n  end;\nend;\n\n/// Window initialization\nprocedure InitWindow;\nbegin\n  SetWindowSize(x3+x1,y0+50);\n  CenterWindow;\n  Window.Title := 'Tower of Hanoi';\n  Font.Size := 14;\n  Font.Name := 'Arial';\nend;\n\nbegin\n  InitWindow;\n  InitTowers;\n  LockDrawing;\n  DrawAll;\n  MoveTower(CountDisks,1,3,2);\nend."
+  },
+  {
+    "instruction": "Demonstrate transparency effect with random colored circles in GraphABC",
+    "output": "// Transparency illustration\nuses GraphABC;\n \nbegin\n  for var Transparency:=0 to 255 do\n  begin\n    Brush.Color := ARGB(Transparency,Random(256),Random(256),Random(256));\n    FillCircle(Random(Window.Width),Random(Window.Height),Random(20,60));\n    sleep(100);\n  end;\nend."
+  },
+  {
+    "instruction": "Use if statement in full form to compare two numbers in PascalABC.NET",
+    "output": "// Conditional operator. Full form\nvar \n  x: integer := 5;\n  y: integer := 3;\n\nbegin\n  if x<y then\n    writeln(x,'<',y)\n  else writeln(y,'<',x);\nend."
+  },
+  {
+    "instruction": "Use if statement in shortened form for password checking in PascalABC.NET",
+    "output": "// Conditional operator. Shortened form\nvar pass: string;\n\nbegin\n  writeln('Enter password: ');\n  readln(pass);\n  if pass = 'NET' then \n    writeln('Password correct');\nend."
+  },
+  {
+    "instruction": "Demonstrate naive animation with flickering effect in GraphABC",
+    "output": "// Graphics. Example of \"naive\" animation. Flickering effect\nuses GraphABC;\n\nbegin\n  Window.Title := 'Simple animation demonstration';\n  var y := 200;\n  Brush.Color := clGreen;\n  for var x := 70 to 500 do\n  begin\n    Window.Clear(clWhite);    \n    Circle(x,y,50);\n    Sleep(3);\n  end;\nend."
+  },
+  {
+    "instruction": "Implement smooth animation without flickering using LockDrawing and Redraw in GraphABC",
+    "output": "// Graphics. Using LockDrawing-Redraw. No flickering\nuses GraphABC;\n\nbegin\n  Window.Title := 'Animation without flickering';\n  var y := 200;\n  Brush.Color := clGreen;\n  // Disable drawing in window\n  LockDrawing;\n  for var x := 70 to 500 do\n  begin\n    Window.Clear(clWhite);    \n    Circle(x,y,50);\n    // Redraw window from off-screen buffer\n    Redraw;\n    Sleep(3);\n  end;\nend."
+  },
+  {
+    "instruction": "Create function graph plotting procedure with Y-axis scaling and window resize handling in GraphABC",
+    "output": "// Procedure drawGraph for drawing function graph in full window\n// with Y-axis scaling\n// Redraws graph when window size changes\nuses GraphABC;\n\nfunction f(x: real) := x*sin(x)*exp(-0.1*x);\n\n// l (logical) - logical coordinates\n// s (screen) - physical coordinates\nprocedure drawGraph(x1,x2: real; f: real -> real);\n var\n  xl0,wl,yl0,hl: real;\n  xs0,ws,ys0,hs: integer;\n\n function LtoSx(xl: real) := round(ws/wl*(xl-xl0)+xs0);\n function LtoSy(yl: real) := round(hs/hl*(yl-yl0)+ys0);\n function StoLx(xs: integer) := wl/ws*(xs-xs0)+xl0;\n\nbegin // drawGraph\n  xs0 := 0;\n  ys0 := WindowHeight-1;\n  ws := WindowWidth;\n  hs := WindowHeight-1;\n  \n  xl0 := x1;\n  wl := x2-x1;\n\n  var yi: array of real;\n  SetLength(yi,ws+1);\n\n  var min := real.MaxValue;\n  var max := real.MinValue;\n  for var xi:=0 to ws do\n  begin\n    yi[xi] := f(StoLx(xi+xs0));\n    if yi[xi]<min then \n      min := yi[xi];\n    if yi[xi]>max then \n      max := yi[xi];\n  end;\n  \n  yl0 := min;\n  hl := -(max-min);\n\n  // Draw coordinate system axes\n  Line(0,LtoSy(0),ws,LtoSy(0));\n  Line(LtoSx(0),0,LtoSx(0),hs);\n\n  Pen.Color := clBlue;\n  MoveTo(xs0,LtoSy(yi[0]));\n  for var xi:=xs0+1 to xs0+ws do\n    LineTo(xi,LtoSy(yi[xi-xs0]));\nend;\n\nprocedure Resize;\nbegin\n  ClearWindow;\n  drawGraph(0,60,f);\n  Redraw;\nend;\n\nbegin\n  LockDrawing;\n  SetWindowCaption('Function graph: scaling');\n  drawGraph(0,60,f);\n  Redraw;\n  OnResize := Resize;\nend."
+  },
+  {
+    "instruction": "Create 3D function plot using GraphABC (legacy code from KuMir/PMir)",
+    "output": "// Example from KuMir/PMir package\n// Published almost without changes\n// Precious as memory :)\nUses GraphABC;\n\nvar Xmin,Xmax,Xstep: real;\n    Ymin,Ymax,Ystep,asp: real;\n    dx: integer;\n\nfunction f(x,y:real): integer;\nvar r: real;\nbegin\n  r := x*x+y*y+1;\n  f := round(5*asp*(cos(r)/r+0.1))\nend;\n\nprocedure gr(N : integer);\nvar X,Y: real; \n    i,j,k,Z0,dy: integer; \n    pred: array [1..100] of integer;\n    jj,maxX,maxY: integer;\nbegin\n  Xmin := -4;\n  Xmax := 4;\n  Ymin := -3;\n  Ymax := 3;\n  maxX := 600;\n  maxY := 400;\n  Xstep := dx*(Xmax-Xmin)/maxX; \n  X := Xmin;\n  Ystep := (Ymax-Ymin)/N;     \n  Y := Ymin;\n  dy := maxY div N div 2;        \n  asp := maxY/8;\n  for i := 1 to N do\n  begin\n    pred[i] := maxY-i*dy-f(X,Y);\n    Y := Y + Ystep\n  end;\n  for jj := 1 to maxX div dx do \n  begin\n    j := jj*dx;\n    X := X + Xstep;\n    Y := Ymin; Z0 := maxY;\n    for i := 1 to N do \n    begin\n      k := maxY-i*dy-f(X,Y);\n      if k<Z0 then\n      begin\n        Line(j-dx,pred[i],j,k);\n        Z0 := k\n      end;\n      pred[i] := Z0;\n      Y := Y+Ystep\n    end;\n  end;\nend;\n\nbegin\n  SetWindowCaption('Function graph of two variables');\n  SetWindowSize(600,400);\n  dx := 2; { X-axis resolution }\n  gr(100); { number of lines by Y <= MaxN }\nend."
+  },
+  {
+    "instruction": "Create simple rotating coordinate system animation using GraphABC",
+    "output": "// Illustration of simplest GraphABC capabilities\nuses GraphABC;\n\nbegin\n  Coordinate.Origin := Window.Center;\n  Coordinate.SetMathematic;\n  Brush.Color := Color.LightSkyBlue;\n  while True do\n  begin\n    LockDrawing;\n    ClearWindow;\n    Ellipse(-120,-70,120,70);\n    Line(0,0,200,0);\n    Line(0,0,0,200);\n    Redraw;\n    Coordinate.Angle := Coordinate.Angle + 1;\n    Sleep(100);\n  end;\nend."
+  },
+  {
+    "instruction": "Create group animation with rotating prisms and pyramids using Graph3D",
+    "output": "uses Graph3D;\n\nbegin\n  View3D.ShowGridLines := False;\n  \n  var a := new GroupAnimation;\n  \n  var p := P3D(9,-3,0);\n  var sz := 1.3;\n  var h := 4;\n  for var n:=3 to 10 do\n  begin\n    var pr := Prism(p,n,sz,4,Colors.Beige);\n    var prw := PrismWireFrame(p,n,sz+0.01,4);\n    p := p.MoveX(-2*sz-0.3);\n    a += pr.AnimRotate(OrtZ,360,10).Forever;\n    a += prw.AnimRotate(OrtZ,360,10).Forever;\n  end;\n\n  p := P3D(9,3,0);\n  for var n:=3 to 10 do\n  begin\n    var pr := Pyramid(p,n,sz,4,Colors.Beige);\n    var prw := PyramidWireFrame(p,n,sz+0.01,4);\n    p := p.MoveX(-2*sz-0.3);\n    a += pr.AnimRotate(OrtZ,360,10).Forever;\n    a += prw.AnimRotate(OrtZ,360,10).Forever;\n  end;\n  a.Begin;\nend."
+  },
+  {
+    "instruction": "Create forever rotating cubes animation using Graph3D GroupAnimation",
+    "output": "uses Graph3D;\n\nbegin\n  var c := Cube(-2,0,0,2,Colors.Beige);\n  var c1 := Cube(2,0,0,2,Colors.Green);\n  var a := c.AnimRotate(OrtZ,360,4).Forever * c1.AnimRotate(OrtZ,360,1).Forever;\n  a.Begin;\nend."
+  },
+  {
+    "instruction": "Create and manipulate groups of 3D objects using Graph3D",
+    "output": "uses Graph3D;\n\nbegin\n  var b := Box(0,0,0,3,1,2,Colors.Blue);\n  var s := Sphere(0,0,2,1,Colors.Green);\n \n  var g := Group(b,s);\n  g.MoveByY(-4);\n  var g1 := g.Clone;\n  g.MoveByY(3);\n  var gg := Group(g,g1);\n  gg.MoveByX(3);\nend."
+  }
+]

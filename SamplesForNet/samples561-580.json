@@ -1,0 +1,62 @@
+[
+  {
+    "instruction": "Create a program that demonstrates working with untyped files by writing and reading data of different types (real, char, integer) to/from a file.",
+    "output": "const filename = 'u.dat';\n\nvar \n  f: file;\n  r: real;\n  s: string[10];\n  k: integer;\n  c: char;\n\nbegin\n  if not FileExists(filename) then\n  begin\n    assign(f,filename);\n    rewrite(f);\n    writeln('Writing to file ',filename);\n    \n    r := random*10; \n    for var i:=0 to 10 do\n      s := s + Chr(Ord('A')+Random(26));\n    c := Chr(Ord('A')+Random(26));\n    k := Random(100);\n    \n    writeln(r);\n    writeln(c);\n    writeln(k);\n    write(f,r);\n    write(f,c);\n    write(f,k);\n    close(f);  \n  end\n  else \n  begin\n    assign(f,filename);\n    reset(f);\n    writeln('Reading from file ',filename);\n    read(f,r,c,k);\n    writeln(r);\n    writeln(c);\n    writeln(k);\n    close(f);  \n    erase(f);\n  end;  \nend."
+  },
+  {
+    "instruction": "Create a program that demonstrates working with untyped files by writing and reading multiple data types (integer, real, string) in one operation.",
+    "output": "var \n  f: file;\n  i: integer;\n  r: real;\n  s: string;\n\nbegin\n  assign(f,'a.dat');\n  rewrite(f);\n  write(f,1,2.5,'Hello');  \n  close(f);\n  reset(f);\n  read(f,i,r,s);\n  write(i,' ',r,' ',s);\n  close(f);\nend."
+  },
+  {
+    "instruction": "Create a program that demonstrates the use of UpperCase and LowerCase functions for both English and Russian characters.",
+    "output": "var c: char;\n\nbegin\n  for c:='a' to 'z' do\n    write(UpperCase(c));\n  writeln;\n  for c:='A' to 'Z' do\n    write(LowerCase(c));\n  writeln;\n  for c:='А' to 'Я' do\n    write(UpperCase(c));\n  writeln;\n  for c:='а' to 'я' do\n    write(LowerCase(c));\n  writeln;\n  var s := 'Папа у Васи силён в математике';\n  s := UpperCase(s);\n  writeln(s);\n  s := LowerCase(s);\n  writeln(s);\nend."
+  },
+  {
+    "instruction": "Create a class with a custom deconstructor and demonstrate its usage with pattern matching.",
+    "output": "type\n  Person = class\n    name: string;\n    age: integer;\n    \n    constructor(name: string; age: integer);\n    begin\n      self.name := name;\n      self.age := age;\n    end;\n    \n    procedure Deconstruct(var name: string; var age: integer);\n    begin\n      name := self.name;\n      age := self.age;\n    end;\n  end;\n\nbegin\n  var p := new Person('Петр', 25);\n  if p is Person(var name, var age) then\n    Println(name, age);\n    \n  match p with\n    Person(name,age): Println(name,age);\n  end;\nend."
+  },
+  {
+    "instruction": "Create an extension method deconstructor for integer type that splits a number into tens and units.",
+    "output": "procedure Deconstruct(Self: integer; var a: integer; var b: integer); extensionmethod;\nbegin\n  a := Self div 10;\n  b := Self mod 10;\nend;\n\nbegin\n  var i := 25;\n  if i is integer(var a, var b) then\n    Println(a,b); \n    \n  i := 9;\n  match i with\n    integer(a,b) when i>=10: Println(a,b);\n    integer(a): Println(a);\n  end;\nend."
+  },
+  {
+    "instruction": "Create a short program that uses modules in compact syntax to create a 3D sphere.",
+    "output": "uses Graph3D;\nSphere(Origin,1);"
+  },
+  {
+    "instruction": "Create a program that demonstrates vector algebra operations using NumLibABC module.",
+    "output": "uses NumLibABC;\n\nbegin\n  var a:=new Vector(3,-4,1);\n  var b:=new Vector(-1,0,5);\n  Writeln((2*a-b).ModV);\n  \n  var p:=Arr(3.0,0.0,-4.0);\n  a:=new Vector(p);\n  a.Ort.Println;\n\n  a:=new Vector(2,-1,1);\n  b:=new Vector(2,3,6);\n  Writeln(a*b/(a.ModV*b.ModV))\nend."
+  },
+  {
+    "instruction": "Create a program that uses WebClient to download web page content and files from the internet.",
+    "output": "uses System.Net;\n\nbegin\n  var w := new WebClient();\n  w.Encoding := System.Text.Encoding.UTF8;\n  var s := w.DownloadString('http://pascalabc.net');\n  writeln(s);\n  w.DownloadFile('http://pascalabc.net/images/logo/LogoPABCNET2010_Rus.png','LogoPABCNET2010_Rus.png');\nend."
+  },
+  {
+    "instruction": "Create a generic class with type constraints using 'where' clause to restrict parameter types.",
+    "output": "uses System,System.Collections.Generic;\n\ntype\n   MyClass<T,T1> = class \n   where T: System.Array,ICloneable;\n   where T1: constructor;\n     procedure p(obj1: T; var obj2: T1);\n     begin\n       obj1.Clone();\n       obj2 := new T1;\n     end;\n   end;\n   IntArr = array of integer;\n   \nvar \n  m: MyClass<IntArr,integer>;\n\nbegin\nend."
+  },
+  {
+    "instruction": "Create programs that demonstrate while loop usage for different scenarios: multiples of 3, powers of 2, and digit sum calculation.",
+    "output": "const n = 60;\n\nbegin\n  writeln('Numbers from 1 to ',n,', multiples of 3');\n  var x := 3;\n  while x<=n do\n  begin\n    write(x,' ');\n    x += 3;\n  end;\nend.\n\nbegin\n  writeln('Powers of 2');\n  var i := 1;\n  var p := 1;\n  while i<32 do\n  begin\n    writeln(i:2,p:12);\n    i += 1;\n    p *= 2;\n  end;\nend.\n\nbegin\n  var m := ReadlnInteger('Enter positive number: ');\n  Print('Digits in reverse order:');\n  var s := 0;\n  while m>0 do\n  begin\n    var digit := m mod 10;\n    Print(digit);\n    s += digit;\n    m := m div 10;\n  end;\n  Println;\n  Println('Sum of digits =',s);\nend."
+  },
+  {
+    "instruction": "Create a Windows Forms application with a button that closes the window when clicked.",
+    "output": "{$apptype windows}\n{$reference System.Windows.Forms.dll}\n\nuses \n  System,\n  System.Windows.Forms;\n\nvar \n  myForm: Form;\n  myButton: Button;\n  \nprocedure MyButtonClick(sender: Object; e: EventArgs);\nbegin\n  myForm.Close;\nend;\n\nbegin\n  myForm := new Form;\n  myForm.Text := 'Windows Application';\n  myButton := new Button;\n  myButton.Text := '  Close window  ';\n  myButton.AutoSize := True;\n  myButton.Left := 90;\n  myButton.Top := 110;\n  myForm.Controls.Add(myButton);\n  myButton.Click += MyButtonClick;\n  Application.Run(myForm);\nend."
+  },
+  {
+    "instruction": "Create a 3D wireframe prism with labeled points using Graph3D module.",
+    "output": "uses Graph3D;\n\nbegin\n  HideObjects;\n  var p := PrismWireFrame(Origin,13,3,5);\n  var pp := p.Points;\n  foreach var x in pp do\n    p.AddChild(Sphere(x,0.1,Colors.Gray));\n  var m := 'A';  \n  foreach var x in pp do\n  begin\n    var b := Text3D(x.Move(0.3,0.3,0.4),m,0.5);\n    p.AddChild(b);\n    Inc(m);\n  end;\n  var p1 := p.Clone;\n  p1.MoveByX(-5);\n  ShowObjects;\n  p1.AnimRotate(OrtZ,360,10).Forever.Begin;\nend."
+  },
+  {
+    "instruction": "Create a WPF calculator application with basic arithmetic operations using procedural approach.",
+    "output": "uses WPF;\n\nbegin\n  MainWindow.Title := 'Calculator';\n  var mainpanel := Panels.StackPanel.AsMainContent;\n  var panel1 := Panels.StackPanel(Margin := 10, Horizontal := True)\n    .With(Background := Brushes.LightBlue)\n    .AddTo(mainpanel);\n  \n  var tb := CreateTextBox('0', Width := 120);\n  var lb := CreateLabel('+',Width := 35);\n  var tb1 := CreateTextBox('0', Width := 120);\n  var lb1 := CreateLabel('=',Width := 55);\n  panel1.AddElements(tb,lb,tb1,lb1);\n  \n  var panel2 := Panels.StackPanel(Margin := |10,0,10,10|, Horizontal := True)\n    .With(Background := Brushes.LightBlue)\n    .AddTo(mainpanel);\n  panel2.HorizontalAlignment := HA.Right;\n\n  var Handler: EventHandler := (o,e) -> begin\n    var b := o as Button;\n    var Left := tb.Text.ToReal;\n    var Right := tb1.Text.ToReal;\n    case b.Text of\n      $'+': lb1.Content := '= ' + (Left + Right);\n      $'-': lb1.Content := '= ' + (Left - Right);\n      $'*': lb1.Content := '= ' + (Left * Right);\n      $'/': lb1.Content := '= ' + (Left / Right);\n    end;\n  end;\n  \n  var bb := CreateButtons(|$'+',$'-',$'*',$'/'|); \n  panel2.AddElements(bb, Width := 35, Margin := |10,0|, Padding := 5);\n\n  for var i:=0 to bb.Length-1 do\n    bb[i].Click += Handler;\n  \n  MainWindow.SizeToContent := SizeToContent.WidthAndHeight;\nend."
+  },
+  {
+    "instruction": "Create a WPF calculator application using class-based approach with proper encapsulation.",
+    "output": "uses WPF;\n\ntype Main = class\n  mainpanel,panel1,panel2: StackPanel;\n  tb,tb1: TextBox;\n  lb,lb1: TLabel;\n  bb: array of Button;\n  \n  procedure ButtonClick(o: Object; e: RoutedEventArgs);\n  begin\n    var b := o as Button;\n    var Left := tb.Text.ToReal;\n    var Right := tb1.Text.ToReal;\n    case b.Text of\n      $'+': lb1.Content := '= ' + (Left + Right);\n      $'-': lb1.Content := '= ' + (Left - Right);\n      $'*': lb1.Content := '= ' + (Left * Right);\n      $'/': lb1.Content := '= ' + (Left / Right);\n    end;\n  end;\n  \n  procedure InitControls;\n  begin\n    MainWindow.Title := 'Calculator';\n    mainpanel := Panels.StackPanel.AsMainContent;\n    panel1 := Panels.StackPanel(Margin := 10, Horizontal := True)\n      .With(Background := Brushes.LightBlue)\n      .AddTo(mainpanel);\n    \n    tb := CreateTextBox('0', Width := 120);\n    lb := CreateLabel('+',Width := 35);\n    tb1 := CreateTextBox('0', Width := 120);\n    lb1 := CreateLabel('=',Width := 55);\n    panel1.AddElements(tb,lb,tb1,lb1);\n    \n    panel2 := Panels.StackPanel(Margin := |10,0,10,10|, Horizontal := True)\n      .With(Background := Brushes.LightBlue)\n      .AddTo(mainpanel);\n    panel2.HorizontalAlignment := HA.Right;\n    \n    bb := CreateButtons(|$'+',$'-',$'*',$'/'|); \n    panel2.AddElements(bb, Width := 35, Margin := |10,0|, Padding := 5);\n\n    for var i:=0 to bb.Length-1 do\n      bb[i].Click += ButtonClick;\n    \n    MainWindow.SizeToContent := SizeToContent.WidthAndHeight;\n  end;\nend;\n\nbegin\n  Main.Create.InitControls; \nend."
+  },
+  {
+    "instruction": "Create programs that demonstrate tuple unpacking for different scenarios: range tuples, dictionary key-value pairs, and ValueTuple types.",
+    "output": "begin\n  var t := 2 to 3.5;\n  var (a,b) := t;\n  Println(a,b);\n  foreach var (a1,b1) in Dict(1 to 7, 22 to 555) do\n    Println(a1,b1);\nend.\n\nbegin\n  var s := Seq(('Умнова',16),('Иванов',23),\n               ('Попова',17),('Козлов',24));\n  Println('Adults:');\n  s.Where(\\(name,age) -> age >= 18).Println;\n  Println('Sort by last name:');\n  s.OrderBy(\\(name,age) -> name).Println;\nend.\n\nbegin\n  var (n,s) := System.ValueTuple.Create(2,'ab');\n  Print(n,s);\nend."
+  }
+]

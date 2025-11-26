@@ -1,0 +1,78 @@
+[
+  {
+    "instruction": "Demonstrate the use of ranges and sequences in PascalABC.NET with the following operations: create a character range 'a' to 'z', check if 3 is in range 1..5, iterate through range 1..10, create an array and hash set from range 1..5, and calculate squares of numbers 1 to 9.",
+    "output": "begin\n  var diap := 'a'..'z';\n  Println(diap);\n  var g := 3 in 1..5;\n  Println(g);\n  foreach var x in 1..10 do\n    Print(x);\n  var a := Arr(1..5);\n  var h := HSet(1..5);\n  Println(a,h);\n  (1..9).Select(x->x*x).Println;\nend."
+  },
+  {
+    "instruction": "Create and display a dictionary from an array of key-value pairs in PascalABC.NET.",
+    "output": "##\nvar pairs := Arr((1,'один'),(2,'два'));\nvar d := Dict(pairs);\nPrintln(pairs);\nPrintln(d);"
+  },
+  {
+    "instruction": "Create and use a string dictionary and integer list in PascalABC.NET. Add 'cat' translation for 'кошка' to dictionary and add numbers 2 and 3 to the list.",
+    "output": "##\nvar d := DictStr;\nd['кошка'] := 'cat';\nd.Println;\nvar L := LstInt;\nL.Add(2); L.Add(3);\nL.Println;"
+  },
+  {
+    "instruction": "Solve the Cauchy problem for orbital motion using RKF45 method in PascalABC.NET with NumLibABC library.",
+    "output": "uses NumLibABC;\n\nprocedure Orbit(t:real; y,yp:array of real);\nbegin\n  var alpha:=Sqr(ArcTan(1.0));\n  var r:=y[0]*y[0]+y[1]*y[1]; r:=r*Sqrt(r)/alpha;\n  yp[0]:=y[2]; yp[1]:=y[3]; yp[2]:=-y[0]/r; yp[3]:=-y[1]/r\nend;\n\nbegin\n  var e:=0.25;\n  var y:=Arr(1.0-e,0.0,0.0,ArcTan(1)*Sqrt((1.0+e)/(1.0-e)));\n  var (abserr,relerr):=(0.0,0.3e-6);\n  var oL:=new RKF45(Orbit, y, abserr, relerr);\n  var (t,tb,th):=(0.0,12.0,0.5);\n  var t_out:=t;\n  repeat\n    oL.Solve(t,t_out);\n    Writeln(t:5:1,oL.y[0]:15:9,oL.y[1]:15:9);\n    case oL.flag of\n    -3,-2,-1,1,8:begin Writeln('Flag=',oL.flag); Exit end;\n    2:t_out:=t+th;\n    end\n  until t>=tb\nend."
+  },
+  {
+    "instruction": "Create a digital clock using GraphABC and System libraries in PascalABC.NET that displays current time in HH:MM:SS format and updates every second.",
+    "output": "uses GraphABC,System;\n\nbegin\n  Font.Size := 80;\n  var x0 := (Window.Width - TextWidth('00:00:00')) div 2;\n  var y0 := (Window.Height - TextHeight('00:00:00')) div 2;\n  while True do\n  begin\n    var t := DateTime.Now;\n    var s := string.Format('{0:d2}:{1:d2}:{2:d2}',t.Hour,t.Minute,t.Second);\n    TextOut(x0,y0,s);\n    Sleep(1000);\n  end;\nend."
+  },
+  {
+    "instruction": "Create graphics with random points, shapes and text using Coords library in PascalABC.NET.",
+    "output": "uses Coords;\n\nfunction RandomPoint: Point := Pnt(Random(-13,13),Random(-10,10));\n\nbegin\n  DrawPoints(ArrGen(10,i -> RandomPoint),PointRadius := 4);\n  DrawPoints(ArrGen(10,i -> RandomPoint),PointRadius := 6);\n  DrawPoint(2,3,Colors.Red);\n  DrawCircle(1,1,1,Colors.LightBlue);\n  DrawRectangle(3,2,2,1);\n  DrawText(3,2,'Hello');\n  DrawTextUnscaled(0,0,'Текст не масштабируется', Size := 20, Color := Colors.Red);\n  DrawText(-4,7,'Текст масштабируется', FontName := 'Courier New', Size := 34);\nend."
+  },
+  {
+    "instruction": "Draw points with labels and calculate distances between them using Coords library in PascalABC.NET.",
+    "output": "uses Coords;\n\nbegin\n  Globals.PointRadius := 2.3;\n  Globals.LineWidth := 1.0;\n  var p1 := Pnt(2,3);\n  var p2 := Pnt(-4,7.3);\n  var p3 := Pnt(-5,-3);\n  DrawPoint(p1); \n  DrawPoint(p2);\n  DrawPoint(p3);\n  DrawText(p1,'A', Align := Alignment.LeftBottom, Size := 18);\n  DrawText(p2,'B', Align := Alignment.LeftBottom, Size := 18);\n  DrawText(p3,'C', Align := Alignment.RightTop, Size := 18);\n  DrawLine(p1,p2);\n  DrawLine(p1,p3);\n  DrawLine(p2,p3);\n  DrawText(Middle(p1,p2), p1.Distance(p2).ToString(2), Align := Alignment.Center, BackgroundColor := Colors.LightBlue);\n  DrawText(Middle(p2,p3), p2.Distance(p3).ToString(2), Align := Alignment.Center,\n    BackgroundColor := Colors.White, BorderWidth := 0.5);\n  DrawText(Middle(p1,p3), p1.Distance(p3).ToString(2), Align := Alignment.Center, BackgroundColor := Colors.LightGreen);\nend."
+  },
+  {
+    "instruction": "Count occurrences of number 1 in an array using CountOf method in PascalABC.NET.",
+    "output": "begin\n  var a := Arr(1,3,5,7,1,2,1,3,1,5);\n  a.CountOf(1).Print;\nend."
+  },
+  {
+    "instruction": "Demonstrate covariance with sequences of different types in PascalABC.NET.",
+    "output": "begin\n  var a: sequence of object;\n  var b: sequence of integer;\n  a := b;\n  a := Arr(1,2,3);\n  a := new List<DateTime>;\nend."
+  },
+  {
+    "instruction": "Create a console drawing application using Crt library in PascalABC.NET with cursor movement and color changing functionality.",
+    "output": "uses Crt;\n\nvar\n  draw: boolean;\t\t\t\n  color: integer;\n  \nfunction IsCoordCorrect(x,y: integer): boolean;  \nbegin\n  Result := (x in [1..WindowWidth]) and (y in [1..WindowHeight]);\nend;\n  \nprocedure MyGotoXY(x,y: integer);\nbegin\n  if not IsCoordCorrect(x,y) then  \n    exit;\n  GotoXY(x,y);  \nend;\n\nprocedure DrawSymbol(x,y: integer; c: char);\nbegin\n  if not IsCoordCorrect(x,y) then  \n    exit;\n  GotoXY(x,y);  \n  write(c);\n  GotoXY(x,y);  \nend;\n  \nbegin\n  draw := True;\n  color := Green;\n  ClrScr;\n  SetWindowTitle('Рисование курсором (Esc-выход, Num 5 - изменение цвета)');\n  TextBackGround(color);\n  GotoXY(WindowWidth div 2,WindowHeight div 2);\n  var c: char;\n  repeat\n    c := ReadKey;\n    if c=#32 then \n      draw := not draw;\n    if c=#0 then \n    begin\n      c := ReadKey;\n      case c of                           \n    {5} #12: begin\n              color := color + 1;\n              if color=16 then \n                color := 0;\n              TextBackGround(color);\n            end;\n    {RU}#33: MyGotoXY(WhereX+1,WhereY-1);\n    {RD}#34: MyGotoXY(WhereX+1,WhereY+1);\n    {LD}#35: MyGotoXY(WhereX-1,WhereY+1);\n    {LU}#36: MyGotoXY(WhereX-1,WhereY-1);\n    {L} #37: MyGotoXY(WhereX-1,WhereY);\n    {U} #38: MyGotoXY(WhereX,WhereY-1);\n    {R} #39: MyGotoXY(WhereX+1,WhereY);\n    {D} #40: MyGotoXY(WhereX,WhereY+1);\n        #67: ClrScr;\n      end;\n      if draw then \n        DrawSymbol(WhereX, WhereY,' ');\n    end;\n  until c=#27;\n  TextBackGround(Black);\n  GotoXY(1,25);\nend."
+  },
+  {
+    "instruction": "Display all CRT color combinations in PascalABC.NET.",
+    "output": "uses CRT;\n\nbegin\n  SetWindowTitle('Стандартные CRT-цвета');\n  for var i:=0 to 15 do\n  begin\n    TextBackground(i);\n    for var j:=0 to 15 do\n    begin\n      TextColor(j);\n      write(' CRT');\n    end;\n    writeln;\n  end;\n  HideCursor;\n  TextBackground(0);\n  TextColor(0);\nend."
+  },
+  {
+    "instruction": "Create a 3D cube grid using Graph3D library in PascalABC.NET.",
+    "output": "uses Graph3D;\n\nbegin\n  View3D.ShowGridLines := False;\n  View3D.ShowViewCube := False;\n  View3D.ShowCoordinateSystem := False;\n  var w := 1;\n  for var x := -5 to 5 do\n  for var y := -5 to 5 do\n  for var z := -4 to 6 do\n    Cube(x*w,y*w,z*w,w*0.96,RandomColor)\nend."
+  },
+  {
+    "instruction": "Create various graphical shapes and text using GraphWPF library in PascalABC.NET with save/load functionality.",
+    "output": "uses GraphWPF;\n\nbegin\n  Window.Title := 'Всякая Курья Мурья';\n  Pen.Width := 0.5;\n  Brush.Color := RGB(128,200,100);\n  Ellipse(100,100,30,20);\n  Brush.Color := RandomColor;\n  Circle(170,100,20);\n  Brush.Color := RandomColor;\n  Rectangle(220,80,70,50);\n  Line(220,80,220+70,80+50);\n  Brush.Color := RGB(200,200,255);\n  Polygon(Arr(Pnt(20,20),Pnt(20,120),Pnt(120,20)));\n  Brush.Color := Colors.Black;\n  for var i:=0 to 400 do\n    Rectangle(1+2*i,2,0,0);\n  Font.Size := 30;\n  Font.Color := Colors.Red;\n  TextOut(0,0,'Hello');  \n  Font.Size := 40;\n  Font.Color := Colors.Blue;\n  Font.Name := 'Times New Roman';\n  Font.Style := FontStyle.BoldItalic;\n  TextOut(200,0,'Привет'); \n  Sleep(1000);\n  Window.Save('1.png');\n  Window.Title := 'Сохранили';\n  Sleep(1000);\n  Window.Clear;\n  Window.Title := 'Очистили';\n  Sleep(1000);\n  Window.Load('1.png');\n  Window.Title := 'Загрузили';\nend."
+  },
+  {
+    "instruction": "Work with DateTime objects in PascalABC.NET: get current date, add/subtract time, create specific date, and calculate time intervals.",
+    "output": "Uses System;\n\nvar d1, d2, d3: DateTime;\n    ts: TimeSpan;\n\nbegin\n  d1 := DateTime.Now; \n  Writeln(d1);\n  \n  d2 := d1.AddMonths(1);\n  Writeln(d2);\n\n  d2 := d1.AddHours(-12);\n  Writeln(d2);\n\n  d3 := new DateTime(2001, 1, 1);\n  Writeln(d3);\n  \n  ts := d1.Subtract(d3);\n  Writeln(ts.TotalDays);\n  Writeln(ts.Days, ' ', ts.Hours, ':', ts.Minutes, ':', ts.Seconds);\nend."
+  },
+  {
+    "instruction": "Parse date string, check for leap year, and format DateTime to different string representations in PascalABC.NET.",
+    "output": "Uses System;\n\nbegin\n  var s := '03.27.2008 9:58:17';\n  var d: DateTime;\n  if not DateTime.TryParse(s, d) then\n  begin\n    Println('Строка не содержит значение даты и времени');\n    Exit;\n  end;\n\n  if DateTime.IsLeapYear(d.Year) then\n     Println('Год високосный')\n  else\n     Println('Год невисокосный');\n  \n  s := d.ToString;\n  Println(s);\n  \n  s := d.ToShortDateString;\n  Println(s);\n\n  s := d.ToShortTimeString;\n  Println(s);\nend."
+  },
+  {
+    "instruction": "Measure code execution time using DateTime in PascalABC.NET.",
+    "output": "begin\n  var dt: DateTime := DateTime.Now;\n  var ms := Random(1000);\n  Writeln('Sleep','(',ms,')');\n  Sleep(ms);\n  Println((DateTime.Now-dt).TotalMilliseconds,'ms');\nend."
+  },
+  {
+    "instruction": "Solve system of linear equations using Decomp from NumLibABC library in PascalABC.NET.",
+    "output": "uses NumLibABC;\n\nbegin\n  var A:=new real[3,3] ((2,3,-1),(1,-2,1),(1,0,2));\n  var B:=new real[3] (9,3,2);\n  var oL:=new Decomp(A);\n  oL.Solve(B);\n  B.Println;\n  Writeln('cond=',oL.cond)\nend."
+  },
+  {
+    "instruction": "Create a game where squares must be deleted in numerical order using WPFObjects library in PascalABC.NET.",
+    "output": "uses WPFObjects;\n\nconst CountSquares = 20;\n\nvar\n  CurrentDigit: integer;\n  Mistakes: integer;\n  StatusRect: RectangleWPF;\n\nprocedure DrawStatusText;\nbegin\n  if CurrentDigit<=CountSquares then\n    StatusRect.Text := $'Удалено квадратов: {CurrentDigit-1}     Ошибок: {Mistakes}'\n  else StatusRect.Text := $'Игра окончена. Время: {Milliseconds div 1000} с.    Ошибок: {Mistakes}';\nend;\n\nprocedure MyMouseDown(x,y: real; mb: integer);\nbegin\n  var ob := ObjectUnderPoint(x,y);\n  if (ob<>nil) and (ob is RectangleWPF) and (ob<>StatusRect) then\n    if ob.Number=CurrentDigit then\n    begin\n      ob.Destroy;\n      Inc(CurrentDigit);\n      DrawStatusText;\n    end\n    else\n    begin\n      ob.Color := Colors.Red;\n      Inc(Mistakes);\n      DrawStatusText;\n    end;\nend;\n\nbegin\n  Window.Title := 'Игра: удали все квадраты по порядку';\n  for var i:=1 to CountSquares do\n  begin\n    var x := Random(Window.Width-50);\n    var y := Random(Window.Height-100);\n    var ob := RectangleWPF.Create(x,y,50,50,Colors.LightGreen,1);\n    ob.FontSize := 25;\n    ob.Number := i;\n  end;\n  StatusRect := RectangleWPF.Create(0,Window.Height-40,Window.Width,40,Colors.LightBlue);\n  CurrentDigit := 1;\n  Mistakes := 0;\n  DrawStatusText;\n  OnMouseDown := MyMouseDown;\nend."
+  },
+  {
+    "instruction": "Display letters/digits and punctuation characters from ASCII range 0-127 in PascalABC.NET.",
+    "output": "begin\n  Range(#0,#127).Where(c->char.IsLetterOrDigit(c)).Println;\n  Range(#0,#127).Where(c->char.IsPunctuation(c)).Println;\nend."
+  }
+]

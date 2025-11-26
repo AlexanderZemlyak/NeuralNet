@@ -1,0 +1,78 @@
+[
+  {
+    "instruction": "Implement a generic Swap procedure for any type in PascalABC.NET",
+    "output": "procedure Swap<T>(var a,b: T);\nbegin\n  var v := a;\n  a := b;\n  b := v;\nend;\n\nbegin\n  var a := 2;\n  var b := 3;\n  writelnFormat('Before Swap a={0}, b={1}',a,b);\n  Swap(a,b);\n  writelnFormat('After Swap a={0}, b={1}',a,b);\n  var c := 2.5;\n  var d := 3.3;\n  writeln;\n  writelnFormat('Before Swap c={0}, d={1}',c,d);\n  Swap(c,d);\n  writelnFormat('After Swap c={0}, d={1}',c,d);\nend."
+  },
+  {
+    "instruction": "Use System.Timers.Timer with event handlers in PascalABC.NET",
+    "output": "uses System;\n\nvar\n  Timer: System.Timers.Timer;\n  x: integer;\n  exit: boolean;\n\nprocedure OnTimer2(sender: object; e: System.Timers.ElapsedEventArgs);\nbegin\n  Writeln(x);\n  x := x + 1;\n  exit := x >= 10;\nend;\n\nprocedure OnTimer1(sender: object; e: System.Timers.ElapsedEventArgs);\nbegin\n  Writeln(e.SignalTime);\n  x := x + 1;\n  if x >= 5 then begin\n    Timer.Elapsed -= OnTimer1;\n    Timer.Elapsed += OnTimer2;\n  end;\nend;\n\nbegin\n  Exit := false;\n  Timer := System.Timers.Timer.Create(1000);\n  Timer.Elapsed += OnTimer1;\n  Timer.Start;\n  while not exit do \n    Sleep(Round(Timer.Interval));\nend."
+  },
+  {
+    "instruction": "Demonstrate namespace resolution and name conflicts in PascalABC.NET",
+    "output": "uses System;\n\nbegin\n  var r: Random := new Random();\n  writeln(r.Next(10));\n  var i: integer := PABCSystem.Random(10);\n  writeln(i);\nend."
+  },
+  {
+    "instruction": "Create a tentacles animation using trigonometric functions in PascalABC.NET",
+    "output": "uses GraphABC;\n\nconst\n  S = 14;\n  N = 18;\n  W = 2;\n\nvar\n  i, j: Integer;\n  x, y: Real;\n  tx, ty: Real;\n  k, d: Real;\n  a: array [1..N] of Real;\n  len: Real;\n\nbegin\n  Pen.Width := W;\n  SetWindowSize(320, 320);\n  SetWindowTitle('Tentacles');\n  \n  if Window.Width > Window.Height then\n    len := Window.Height / 1.8 / N\n  else\n    len := Window.Width / 1.8 / N;\n  k := random(360) * pi / 180;\n  d := pi * 2 / S;\n  \n  var k1 := 1;\n  \n  repeat\n    if Window.Width > Window.Height then\n      len := Window.Height / 1.8 / N\n    else\n      len := Window.Width / 1.8 / N;\n    \n    LockDrawing();\n    ClearWindow(ClBlack);\n    \n    if random(50) = 0 then\n      k := random(360) * pi / 180;\n    \n    a[1] := a[1] + sin(k) / 15;\n\n    for i := 2 to N do \n      a[i] := a[i] + (a[i - 1] - a[i]) * 0.1;\n    for j := 0 to S - 1 do\n    begin\n      x := 0.5 * Window.Width;\n      y := 0.5 * Window.Height;\n      for i := 2 to N do \n      begin\n        SetPenColor(Color.FromArgb(255, trunc(255 - 255 * i / N), 255));\n        tx := x + cos(j * d + a[i]) * len;\n        ty := y + sin(j * d + a[i]) * len;\n        Line(trunc(x), trunc(y), trunc(tx), trunc(ty));\n        x  := tx;\n        y  := ty;\n      end;\n    end;\n    Redraw();\n\n    k1 += 1;\n    SetWindowTitle('Tentacles( Avg. FPS ' + Format('{0,5:f2}',k1/Milliseconds*1000)+')');\n    \n    sleep(5);\n  until false;\n  \nend."
+  },
+  {
+    "instruction": "Read and display text from the program's own source file in PascalABC.NET",
+    "output": "var \n  f: Text;\n\nbegin\n  assign(f,'Text1.pas');\n  reset(f);\n  while not eof(f) do\n  begin\n    var s: string;\n    readln(f,s);\n    writeln(s);\n  end;\n  close(f);\nend."
+  },
+  {
+    "instruction": "Write text array to file in PascalABC.NET",
+    "output": "var \n  f: Text;\n  a: array of string := ('Каждый','охотник','желает','знать','где','сидит','фазан');\n\nbegin\n  assign(f,'a.txt');\n  rewrite(f);\n  for var i:=0 to a.Length-1 do \n    writeln(f,a[i]);\n  close(f);\n  writeln('Text written to file a.txt');\nend."
+  },
+  {
+    "instruction": "Write multiplication table to text file in PascalABC.NET",
+    "output": "const \n  n = 30;\n  filename = 'pifagor.txt';\n\nvar f: Text;\n\nbegin\n  assign(f,filename);\n  rewrite(f);\n  for var i:=1 to n do \n  begin\n    for var j:=1 to n do \n      write(f,i*j:4);\n    writeln(f);  \n  end;    \n  close(f);\n  writeln('Multiplication table written to file '+filename);\nend."
+  },
+  {
+    "instruction": "Create a simple text editor with file operations in PascalABC.NET",
+    "output": "{$apptype windows}\n{$reference 'System.Windows.Forms.dll'}\n{$reference 'System.Drawing.dll'}\n{$resource 'Open.png'}\n{$resource 'Save.png'}\n\nuses System.Windows.Forms;\n\nconst \n  TextFileExt = 'txt';\n  TextFileFilter = 'Text files (*.'+TextFileExt+')|*.'+TextFileExt;\n\nvar\n  myForm: Form;\n  TextBox1: TextBox;\n\nprocedure SaveFile(FileName: string);\nbegin\n  var f := new System.IO.StreamWriter(FileName, false, System.Text.Encoding.Default);\n  f.Write(TextBox1.Text);\n  f.Close;\nend;\n\nprocedure OpenFile(FileName: string);\nbegin\n  var f := new System.IO.StreamReader(FileName, System.Text.Encoding.Default);\n  TextBox1.Text := f.ReadToEnd;\n  f.Close;\nend;\n\nprocedure FormClose(sender: object; args: System.EventArgs);\nbegin\n  myForm.Close;  \nend;\n\nprocedure MenuSaveClick(sender:object; args:System.EventArgs);\nbegin\n  var sd := new SaveFileDialog;\n  sd.DefaultExt := TextFileExt;\n  sd.Filter := TextFileFilter;\n  if sd.ShowDialog=DialogResult.OK then \n    SaveFile(sd.FileName);\nend;\n\nprocedure MenuOpenClick(sender:object; args:System.EventArgs);\nbegin\n  var sd := new OpenFileDialog;\n  sd.DefaultExt := TextFileExt;\n  sd.Filter := TextFileFilter;\n  if sd.ShowDialog = DialogResult.OK then \n    OpenFile(sd.FileName);\nend;\n\nbegin\n  myForm := new Form;\n  myForm.Text := 'Simple text editor';\n\n  TextBox1 := new TextBox;\n  TextBox1.Multiline := True;\n  TextBox1.Height := 100;\n  TextBox1.Dock := DockStyle.Fill;\n  TextBox1.ScrollBars := ScrollBars.Both;\n  TextBox1.Font := new System.Drawing.Font('Courier New',10);\n\n  myForm.Controls.Add(TextBox1);\n  \n  var toolStrip1 := new ToolStrip;\n  toolStrip1.GripStyle := System.Windows.Forms.ToolStripGripStyle.Hidden;\n  var miFile := new ToolStripMenuItem('File');  \n  miFile.DropDownItems.Add(new ToolStripMenuItem('Open', new System.Drawing.Bitmap(GetResourceStream('Open.png')),MenuOpenClick));\n  miFile.DropDownItems.Add(new ToolStripMenuItem('Save as...',new System.Drawing.Bitmap(GetResourceStream('Save.png')),MenuSaveClick));\n  miFile.DropDownItems.Add(new ToolStripMenuItem('Exit',nil,FormClose));\n  toolStrip1.Items.Add(miFile);\n  myForm.Controls.Add(toolStrip1);\n  \n  if CommandLineArgs.Length = 1 then \n    OpenFile(CommandLineArgs[0]);\n      \n  Application.Run(myForm);\nend."
+  },
+  {
+    "instruction": "Count word frequency in a text file using Dictionary in PascalABC.NET",
+    "output": "begin\n  var d := new Dictionary<string,integer>;\n  foreach var s in ReadLines('TextFileCount.pas') do\n    foreach var word in s.ToWords(AllDelimiters) do\n      d[word] := d.Get(word) + 1;\n  d.PrintLines;    \nend."
+  },
+  {
+    "instruction": "Count word frequency using Dict initialization in PascalABC.NET",
+    "output": "begin\n  var d := Dict('begin' to 0);\n  var words := ReadAllText('TextFileCount1.pas').ToWords(AllDelimiters); \n  foreach var word in words do\n    d[word] := d.Get(word) + 1;\n  d.Print(NewLine);    \nend."
+  },
+  {
+    "instruction": "Display text at mathematical coordinates in GraphWPF in PascalABC.NET",
+    "output": "uses GraphWPF;\n\nbegin\n  SetMathematicCoords;\n  var (p1,p2,p3) := (Pnt(0,0),Pnt(2,3),Pnt(4,-1));\n  Circle(p1,0.1);\n  Circle(p2,0.1);\n  Circle(p3,0.1);\n  TextOut(p1,p1);\n  TextOut(p2,p2);\n  TextOut(p3,p3);\nend."
+  },
+  {
+    "instruction": "Use FontOptions for text formatting in GraphWPF in PascalABC.NET",
+    "output": "uses GraphWPF;\n\nbegin\n  Window.Title := 'Using FontOptions';\n  TextOut(10,10,'Normal');\n  TextOut(10,40,'Bold',Font.WithStyle(FontStyle.Bold));\n  TextOut(10,70,'20 points',Font.WithSize(20));\n  TextOut(10,110,'Italic blue',Font.WithColor(Colors.Blue).WithStyle((FontStyle.Italic)));\nend."
+  },
+  {
+    "instruction": "Apply texture material to 3D object in Graph3D in PascalABC.NET",
+    "output": "uses Graph3D;\n\nbegin\n  var m := ImageMaterial('Cells1.png',0.2,0.2);\n  var c := Cube(0,0,2,4,m);\n  c.Rotate(OrtZ,35)\nend."
+  },
+  {
+    "instruction": "Chain animations using WhenCompleted in Graph3D in PascalABC.NET",
+    "output": "uses Graph3D;\n\nbegin\n  var s := Sphere(Origin,1,Colors.Green);\n  s.AnimMoveByX(5).WhenCompleted(procedure->s.AnimMoveByY(5).Begin).Begin;\n  var s1 := s.Clone;\n  s1.Color := Colors.Blue;\n  s1.AnimMoveByX(-5).WhenCompleted(procedure->s1.AnimMoveByY(-5).Begin).Begin;\nend."
+  },
+  {
+    "instruction": "Overload comparison operators for Student class in PascalABC.NET",
+    "output": "type \n  Student = auto class\n    Name: string;\n    Height: integer;\n  public\n    class function operator<(left,right: Student): boolean := left.Height < right.Height;\n    class function operator>(left,right: Student): boolean := left.Height > right.Height;\n    function ToString: string; override := string.Format('{0} ({1})', Name, Height);\n  end;\n\nbegin\n  var s1 := new Student('Stepa Morkovkin',188);\n  var s2 := new Student('Petya Pomidorov',180);\n  Writeln('s1: ',s1);\n  Writeln('s2: ',s2);\n  Writeln;\n  Writeln('s1<s2: ',s1<s2);\n  Writeln('Student.operator>(s1,s2): ',Student.operator>(s1,s2));\nend."
+  },
+  {
+    "instruction": "Compare performance of Substring vs slice operations in PascalABC.NET",
+    "output": "begin\n  var s := Range(#32,#1000).JoinIntoString;\n  var s1: string;\n  Milliseconds;\n  var n := 100000000;\n  loop n do\n    s1 := s.Substring(10,10);\n  MillisecondsDelta.Println;\n  loop n do\n    s1 := s[1:11];\n  MillisecondsDelta.Println;\nend."
+  },
+  {
+    "instruction": "Compare performance of LINQ vs traditional loop for sum calculation in PascalABC.NET",
+    "output": "begin\n  var n := 100000000;\n  var q := Range(1,n).Select(x->1/x).Sum();\n  Println(q,MillisecondsDelta);\n    \n  var s := 0.0;\n  for var i:=1 to n do\n    s += 1.0/i;\n\n  Println(s,MillisecondsDelta);\nend."
+  },
+  {
+    "instruction": "Swap halves of an array using LINQ operations in PascalABC.NET",
+    "output": "var a := Arr(1,3,5,7);\n\nbegin\n  a.Skip(2).Concat(a.Take(2)).Print;\nend."
+  },
+  {
+    "instruction": "Work with arrays using System.Array methods in PascalABC.NET",
+    "output": "const Size = 10;\n\nbegin\n  var a := ArrRandomInteger(Size);\n  a.Println;\n  Sort(a);\n  a.Println;\n  Reverse(a);\n  a.Println;\n  var i := a.IndexOf(99);\n  Println(i);\nend."
+  }
+]

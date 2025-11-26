@@ -1,0 +1,78 @@
+[
+  {
+    "instruction": "Create a text stamp class with move functionality in PascalABC.NET",
+    "output": "uses GraphABC;\n\ntype \n  TextStamp = auto class\n    x,y,pt: integer;\n    Text: string;\n    procedure Stamp;\n    begin\n      Font.Size := pt;\n      TextOut(x,y,text);\n    end;\n    procedure MoveOn(dx,dy: integer);\n    begin\n      x += dx; y += dy;\n    end;\n  end;\n  \nbegin\n  var txt := new TextStamp(200,200,14,'Привет!');\n  txt.Stamp;\n  txt.MoveOn(0,40);\n  txt.Text := 'До свидания!';\n  txt.Stamp;\nend."
+  },
+  {
+    "instruction": "Create a cross stamp class with cloning and relative movement in PascalABC.NET",
+    "output": "uses GraphABC;\n\ntype \n  CrossStamp = class\n    x,y,w: integer;\n    constructor (xx,yy,ww: integer);\n    begin\n      x := xx; y := yy;\n      w := ww; \n    end;\n    procedure Stamp;\n    begin\n      MoveTo(x,y);\n      LineTo(x+w,y);\n      LineTo(x+w,y+w);\n      LineTo(x+2*w,y+w);\n      LineTo(x+2*w,y);\n      LineTo(x+3*w,y);\n      LineTo(x+3*w,y-w);\n      LineTo(x+2*w,y-w);\n      LineTo(x+2*w,y-2*w);\n      LineTo(x+w,y-2*w);\n      LineTo(x+w,y-w);\n      LineTo(x,y-w);\n      LineTo(x,y);\n    end;\n    procedure MoveOn(dx,dy: integer);\n    begin\n      x += dx; y += dy;\n    end;\n    procedure MoveOnRel(a,b: integer);\n    begin\n      MoveOn(a*w,b*w);\n    end;\n    function Clone := new CrossStamp(x,y,w);\n  end;\n  \nbegin\n  var r := new CrossStamp(100,150,20);\n  for var k:=1 to 2 do\n  begin\n    var r1 := r.Clone;\n    for var i:=1 to 8 do\n    begin\n      r1.Stamp;\n      r1.MoveOnRel(2,1);\n    end;\n    r.MoveOnRel(-1,2);\n  end;\nend."
+  },
+  {
+    "instruction": "Create a compound stamp class combining rectangle and text in PascalABC.NET",
+    "output": "uses GraphABC;\n\ntype \n  TextStamp = class\n    x,y,pt: integer;\n    Text: string;\n    constructor (xx,yy,ppt: integer; t: string);\n    begin\n      x := xx; y := yy;\n      pt := ppt; \n      text := t;\n    end;\n    procedure Stamp;\n    begin\n      Font.Size := pt;\n      Brush.Color := clWhite;\n      TextOut(x,y,text);\n    end;\n    procedure MoveOn(dx,dy: integer);\n    begin\n      x += dx; y += dy;\n    end;\n  end;\n  \n  RectangleStamp = class\n    x,y,w,h: integer;\n    constructor (xx,yy,ww,hh: integer);\n    begin\n      x := xx; y := yy;\n      w := ww; h := hh;\n    end;\n    procedure Stamp;\n    begin\n      Brush.Color := clRandom;\n      Rectangle(x,y,x+w,y+h);\n    end;\n    procedure MoveOn(dx,dy: integer);\n    begin\n      x += dx; y += dy;\n    end;\n  end;\n  \n  RectWithTextStamp = class\n    x,y,w,h: integer;\n    Text: string;\n    constructor (xx,yy,ww,hh: integer; t: string);\n    begin\n      x := xx; y := yy;\n      w := ww; h := hh;\n      text := t;\n    end;\n    procedure Draw;\n    begin\n      var r := new RectangleStamp(x,y,w,-h);\n      var t := new TextStamp(x,y+3,10,Text);\n      r.Stamp;\n      t.Stamp;\n    end;\n    procedure MoveOn(dx,dy: integer);\n    begin\n      x += dx; y += dy;\n    end;\n  end;"
+  },
+  {
+    "instruction": "Create a function stamp class for plotting mathematical functions in PascalABC.NET",
+    "output": "uses GraphABC;\n\ntype \n  FuncType = function (r: real): real;\n  FuncStamp = class\n    xs0,ys0,ws,hs: integer;\n    xf0,yf0,wf,hf: real;\n    f: FuncType;\n    constructor (xs0p,ys0p,xs1p,ys1p: integer; xf0p,yf0p,xf1p,yf1p: real; ff: FuncType);\n    begin\n      SetScreenWindow(xs0p,ys0p,xs1p,ys1p);\n      SetFuncWindow(xf0p,yf0p,xf1p,yf1p);\n      f := ff;\n    end;\n    function WorldToScreenX(xf: real): integer;\n    begin\n      var a := ws/wf;\n      var b := xs0-a*xf0;\n      Result := Round(a * xf + b);\n    end;\n    function WorldToScreenY(yf: real): integer;\n    begin\n      var c := hs/hf;\n      var d := ys0-c*yf0;\n      Result := hs + 2*ys0 - Round(c * yf + d);\n    end;\n    procedure Stamp;\n    const n = 100;\n    begin\n      Pen.Color := Color.Gray;\n      Rectangle(xs0,ys0,xs0+ws,ys0+hs);\n      Pen.Color := Color.Black;\n      var x := xf0;\n      var y := f(x);\n      var h := wf/n;\n      var xs := WorldToScreenX(x);\n      var ys := WorldToScreenY(y);\n      MoveTo(xs,ys);\n      for var i:=1 to n do\n      begin\n        x += h;\n        y := f(x);\n        xs := WorldToScreenX(x);\n        ys := WorldToScreenY(y);\n        LineTo(xs,ys);\n      end;  \n    end;\n    procedure SetScreenWindow(xs0p,ys0p,xs1p,ys1p: integer);\n    begin\n      xs0 := xs0p; ys0 := ys0p;\n      ws := xs1p-xs0p; hs := ys1p-ys0p;\n    end;\n    procedure SetFuncWindow(xf0p,yf0p,xf1p,yf1p: real);\n    begin\n      xf0 := xf0p; yf0 := yf0p;\n      wf := xf1p-xf0p; hf := yf1p-yf0p;\n    end;\n    procedure MoveOn(dx,dy: integer);\n    begin\n      xs0 += dx; ys0 += dy;\n    end;\n  end;"
+  },
+  {
+    "instruction": "Create a regular polygon stamp class with cloning in PascalABC.NET",
+    "output": "uses GraphABC;\n\ntype \n  RegularPolygonStamp = class\n    x,y,r: real;\n    n: integer;\n    constructor (xx,yy,rr: real; nn: integer);\n    begin\n      x := xx; y := yy;\n      r := rr; n := nn;\n    end;\n    procedure Stamp;\n    begin\n      var t := 0.0;\n      var xr := r*cos(t);\n      var yr := r*sin(t);\n      MoveTo(Round(x + xr),Round(y + yr));\n      for var i:=1 to n do\n      begin\n        t += 2*Pi/n;\n        xr := Round(r*cos(t));\n        yr := Round(r*sin(t));\n        LineTo(Round(x + xr),Round(y + yr));\n      end;  \n    end;\n    procedure MoveOn(dx,dy: real);\n    begin\n      x += dx; y += dy;\n    end;\n    function Clone: RegularPolygonStamp;\n    begin\n      Result := new RegularPolygonStamp(x,y,r,n);\n    end;\n  end;\n  \nbegin\n  var r := new RegularPolygonStamp(Window.Center.X,Window.Center.Y,50,6);\n  r.Stamp;\n  var t := 2*Pi/12;\n  var rr := r.r*sqrt(3)+10;\n  for var i:=1 to 6 do\n  begin\n    var r1 := r.Clone;\n    r1.MoveOn(rr*cos(t),rr*sin(t));\n    r1.Stamp;\n    t += 2*Pi/6;\n  end;\nend."
+  },
+  {
+    "instruction": "Display sizes of standard data types in PascalABC.NET",
+    "output": "var \n  i: integer;\n  j: shortint;\n  k: smallint;\n  l: longint;\n  i64: int64;\n  b: byte;\n  w: word;\n  lw: longword;\n  car: cardinal;\n  ui64: uint64;\n  r: real;\n  d: double;\n  sn: single;\n  c: char;\n  \nbegin\n  writeln('sizeof(integer) = ':20, sizeof(integer));\n  writeln('sizeof(shortint) = ':20,sizeof(shortint));\n  writeln('sizeof(smallint) = ':20,sizeof(smallint));\n  writeln('sizeof(longint) = ':20, sizeof(longint));\n  writeln('sizeof(int64) = ':20,   sizeof(int64));\n  writeln('sizeof(byte) = ':20,    sizeof(byte));\n  writeln('sizeof(word) = ':20,    sizeof(word));\n  writeln('sizeof(longword) = ':20,sizeof(longword));\n  writeln('sizeof(cardinal) = ':20,sizeof(cardinal));\n  writeln('sizeof(uint64) = ':20,  sizeof(uint64));\n  writeln('sizeof(real) = ':20,    sizeof(real));\n  writeln('sizeof(double) = ':20,  sizeof(double));\n  writeln('sizeof(single) = ':20,  sizeof(single));\n  writeln('sizeof(char) = ':20,    sizeof(char));\nend."
+  },
+  {
+    "instruction": "Demonstrate standard mathematical functions in PascalABC.NET",
+    "output": "var x: real;\n\nbegin \n  write('Enter x: ');\n  Readln(x);\n  Writeln('Square ',x,' equals ',Sqr(x));\n  Writeln(x,' to the power of 5 equals ',Power(x,5));\n  Writeln('Square root of ',x,' equals ',Sqrt(x));\n  Writeln('Absolute value of ',x,' equals ',Abs(x));\n  Writeln('Natural logarithm of ',x,' equals ',Ln(x));\n  Writeln('Sine of ',x,' equals ',Sin(x));\n  Writeln('Cosine of ',x,' equals ',Cos(x));\nend."
+  },
+  {
+    "instruction": "Draw a star using polar coordinates in PascalABC.NET",
+    "output": "uses GraphABC;\n\nconst \n  n = 17;\n  n1 = 7;\n\nbegin\n  var a := -Pi/2;\n  var Center := Window.Center;\n  var Radius := Window.Height/2.2;\n  MoveTo(Round(Center.X+Radius*cos(a)),Round(Center.Y+Radius*sin(a)));\n  for var i:=1 to n do\n  begin\n    a += n1*2*Pi/n;\n    LineTo(Round(Center.X+Radius*cos(a)),Round(Center.Y+Radius*sin(a)));\n  end;\nend."
+  },
+  {
+    "instruction": "Create object movement and rotation controls using WPFObjects in PascalABC.NET",
+    "output": "uses Controls,WPFObjects;\n\nbegin\n  Window.Title := 'Controls module - StatusBar';\n  var l := LeftPanel(180,Colors.Orange);\n  \n  var c := new RectangleWPF(50,200,80,50,Colors.Green);\n  c.Direction := (1,0);\n  c.Velocity := 0;\n  c.Tag := 0;\n  \n  OnDrawFrame := dt -> begin\n    c.MoveTime(dt);  \n    c.RotateAngle += integer(c.Tag) * dt;\n  end;\n\n  Button('Start movement').Click := procedure -> begin\n    c.Velocity := 30;\n  end;\n  Button('Stop movement').Click := procedure -> begin\n    c.Velocity := 0;\n  end;\n  Button('Start rotation').Click := procedure -> begin\n    c.Tag := 30;\n  end;\n  Button('Stop rotation').Click := procedure -> begin\n    c.Tag := 0;\n  end;\nend."
+  },
+  {
+    "instruction": "Use high-precision Stopwatch for timing measurements in PascalABC.NET",
+    "output": "begin\n  var stopWatch := new System.Diagnostics.Stopwatch;\n  stopWatch.Start;\n \n  Sleep(123);\n \n  stopWatch.Stop;\n  var ts := stopWatch.Elapsed;\n  writelnFormat('Elapsed time: {0:00}:{1:00}:{2:00}.{3:000}',ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);\nend."
+  },
+  {
+    "instruction": "Create a basic rectangle stamp class in PascalABC.NET",
+    "output": "uses GraphABC;\n\ntype \n  RectangleStamp = auto class\n    x,y,w,h: integer;\n    procedure Stamp;\n    begin\n      Rectangle(x,y,x+w,y+h);\n    end;\n  end;\n\nbegin\n  var r := new RectangleStamp(30,30,50,50);\n  r.Stamp;\n  for var i:=1 to 10 do\n  begin\n    r.x := r.x + r.w +5;\n    r.Stamp;\n  end;\nend."
+  },
+  {
+    "instruction": "Create a row of rectangles stamp class in PascalABC.NET",
+    "output": "uses GraphABC;\n\ntype \n  RectangleStamp = auto class\n    x,y,w,h: integer;\n    procedure Stamp;\n    begin\n      Rectangle(x,y,x+w,y+h);\n    end;\n  end;\n  \n  RowRectanglesStamp = auto class\n    x,y,w,h,n: integer;\n    procedure Stamp;\n    begin\n      var r := new RectangleStamp(x,y,w,h);\n      r.Stamp;\n      for var i:=1 to n-1 do\n      begin\n        r.x += r.w + 5;\n        r.Stamp;\n      end;\n    end;\n  end;  \n\nconst n=8;\n\nbegin\n  var r := new RowRectanglesStamp(30,30,50,50,n);\n  r.Stamp;\n  for var i:=1 to n-1 do\n  begin\n    r.y += r.h + 5;\n    r.Stamp;\n  end;\nend."
+  },
+  {
+    "instruction": "Create a rectangle stamp with increase/decrease methods in PascalABC.NET",
+    "output": "uses GraphABC;\n\ntype \n  RectangleStamp = auto class\n    x,y,w,h: integer;\n    procedure Stamp := Rectangle(x,y,x+w,y+h);\n    procedure Increase(dw,dh: integer);\n    begin\n      w += dw; h += dh;    \n    end;\n    procedure Decrease(dw,dh: integer) := Increase(-dw,-dh);      \n    procedure MoveOn(dx,dy: integer);\n    begin\n      x += dx; y += dy;\n    end;\n  end;\n  \nbegin\n  var r := new RectangleStamp(100,100,300,300);\n  r.Stamp;\n  while r.w>2 do\n  begin\n    r.Decrease(8,8);\n    r.MoveOn(4,4);\n    r.Stamp;\n  end;\nend."
+  },
+  {
+    "instruction": "Create a rectangle stamp with center-based resizing in PascalABC.NET",
+    "output": "uses GraphABC;\n\ntype \n  RectangleStamp = class\n    x,y,w,h: integer;\n    constructor (xx,yy,ww,hh: integer);\n    begin\n      x := xx; y := yy;\n      w := ww; h := hh;\n    end;\n    procedure Stamp;\n    begin\n      Rectangle(x,y,x+w,y+h);\n    end;\n    procedure IncreaseFromCenter(dw: integer);\n    begin\n      w += dw*2; h += dw*2;\n      x -= dw; y -= dw;\n    end;\n    procedure DecreaseFromCenter(dw: integer);\n    begin\n      IncreaseFromCenter(-dw);      \n    end;\n    procedure MoveOn(dx,dy: integer);\n    begin\n      x += dx; y += dy;\n    end;\n  end;\n  \nbegin\n  var r := new RectangleStamp(100,100,300,300);\n  r.Stamp;\n  while r.w>2 do\n  begin\n    r.DecreaseFromCenter(4);\n    r.Stamp;\n  end;\nend."
+  },
+  {
+    "instruction": "Create a triangle stamp with orientation in PascalABC.NET",
+    "output": "uses GraphABC;\n\ntype \n  TriangleStamp = auto class\n    x,y,w,orient: integer;\n    procedure Stamp;\n    begin\n      MoveTo(x,y);\n      var dx := w;\n      var dy := w;\n      case orient of\n     2: dx := -dx;\n     3: dy := -dy;\n     4: begin dx := -dx; dy := -dy; end;\n      end;\n      LineTo(x+dx,y);\n      LineTo(x,y+dy);\n      LineTo(x,y);      \n    end;\n    procedure MoveOn(dx,dy: integer);\n    begin\n      x += dx; y += dy;\n    end;\n  end;\n  \nbegin\n  var r := new TriangleStamp(200,200,100,1);\n  r.Stamp;\n  r.orient := 2;\n  r.Stamp;\n  r.orient := 3;\n  r.Stamp;\n  r.orient := 4;\n  r.Stamp;\nend."
+  },
+  {
+    "instruction": "Work with static arrays - basic usage in PascalABC.NET",
+    "output": "const n=10;\n\nvar a: array [1..n] of real;\n\nbegin\n  for var i:=1 to n do\n    a[i] := Random*10;\n  writeln('Contents of random real array: ');  \n  foreach x: real in a do\n    write(x:4:2,'  ');\nend."
+  },
+  {
+    "instruction": "Work with static arrays as procedure parameters in PascalABC.NET",
+    "output": "const n=10;\n\ntype RealArr = array [1..n] of real;\n\nprocedure FillArrByRandom(var a: RealArr; n: integer);\nbegin\n  for var i:=1 to n do\n    a[i] := Random*10;\nend;\n\nprocedure PrintArr(const a: RealArr; n: integer);\nbegin\n  foreach x: real in a do\n    write(x:4:2,'  ');\nend;\n\nvar a: RealArr;\n\nbegin\n  FillArrByRandom(a,n);\n  writeln('Contents of random real array: ');  \n  PrintArr(a,n);\nend."
+  },
+  {
+    "instruction": "Use exit procedure to exit from subroutines in PascalABC.NET",
+    "output": "const n=10;\n\ntype IntArr = array [1..n] of integer;\n\nprocedure FillArrByRandom(var a: IntArr; n: integer);\nbegin\n  for var i:=1 to n do\n    a[i] := Random(10);\nend;\n\nprocedure PrintArr(const a: IntArr; n: integer);\nbegin\n  foreach x: integer in a do\n    write(x,' ');\n  writeln;  \nend;\n\nfunction IndexOf(const a: IntArr; n: integer; k: integer): integer;\nbegin\n  Result := 0;\n  for var i := 1 to n do\n    if a[i]=k then\n    begin\n      Result := i;\n      exit;\n    end;  \nend;\n\nvar a: IntArr;\n\nbegin\n  FillArrByRandom(a,n);\n  writeln('Random integer array: ');\n  PrintArr(a,n);\n  \n  var ind := IndexOf(a,n,7);\n  if ind>0 then\n    writeln('Index of first element 7 equals ', ind)\n  else writeln('Element 7 not found');\nend."
+  },
+  {
+    "instruction": "Implement a generic stack class using arrays in PascalABC.NET",
+    "output": "type\n  Stack<T> = class\n  private\n    a: array of T;\n    last: integer;\n  public  \n    constructor Create(sz: integer);\n    begin\n      SetLength(a,sz);\n      last := 0;\n    end;\n    constructor Create;\n    begin\n      Create(100);\n    end;\n    procedure push(i: T);\n    begin\n      a[last] := i;\n      Inc(last);\n    end;\n    function pop: T;\n    begin\n      Dec(last);\n      pop := a[last];\n    end;\n    function top: T;\n    begin\n      top := a[last-1];\n    end;\n    function empty: boolean;\n    begin\n      Result := (last=0);\n    end;\n    function ToString: string; override;\n    begin\n      Result := '';\n      for var i:=0 to last-1 do\n        Result += a[i]+' ';\n    end;\n  end;\n  \nvar s: Stack<integer>;\n\nbegin\n  s := new Stack<integer>;\n  s.push(7);\n  s.push(2);\n  s.push(5);\n  s.push(4);\n  writeln(s);\n  while not s.empty do\n    write(s.pop,' ');\nend."
+  }
+]

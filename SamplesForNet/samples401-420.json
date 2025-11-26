@@ -1,0 +1,78 @@
+[
+  {
+    "instruction": "Create a procedural variable example in PascalABC.NET that demonstrates assigning different functions to the same procedural variable and calling them.",
+    "output": "function add(a,b: integer): integer;\nbegin\n  Result := a + b;\nend;\n\nfunction mult(a,b: integer): integer;\nbegin\n  Result := a * b;\nend;\n\nvar p: function (a,b: integer): integer;\n  \nbegin\n  p := add;\n  writeln('Сумма 2 и 3 равна ',p(2,3));\n  p := mult;\n  writeln('Произведение 2 и 3 равно ',p(2,3));\nend."
+  },
+  {
+    "instruction": "Create a procedure in PascalABC.NET that takes a procedural variable as a parameter to apply operations to array elements. Include examples of multiplication and printing procedures.",
+    "output": "procedure for_each(a: array of real; p: procedure(var r: real));\nbegin\n  for var i := 0 to a.Length-1 do\n    p(a[i]);\nend;\n\nprocedure mult2(var r: real);\nbegin\n  r := 2*r\nend;\n\nprocedure print(var r: real);\nbegin\n  write(r,' ');\nend;\n\nvar a: array of real := (1,2,3,6,7);\n\nbegin\n  writeln('Содержимое массива: ');\n  for_each(a,print); \n  writeln;\n  for_each(a,mult2);\n  writeln('Содержимое массива после умножения его элеметов на 2: ');\n  for_each(a,print);\nend."
+  },
+  {
+    "instruction": "Create a simplified version of procedural variable usage in PascalABC.NET with lambda-style procedure definitions for array operations.",
+    "output": "procedure for_each(a: array of real; p: procedure(var r: real));\nbegin\n  for var i := 0 to a.Length-1 do\n    p(a[i]);\nend;\n\nprocedure mult2(var r: real) := r := 2*r;\n\nprocedure print(var r: real) := write(r,' ');\n\nvar a: array of real := (1,2,3,6,7);\n\nbegin\n  for_each(a,print); writeln;\n  for_each(a,mult2);\n  for_each(a,print);\nend."
+  },
+  {
+    "instruction": "Demonstrate different ways to initialize procedural variables in PascalABC.NET including regular procedures, class methods, and static class methods with multicast delegate operations.",
+    "output": "procedure pp;\nbegin\n  writeln('Вызов обычной процедуры');\nend;\n\ntype \n  A = class\n  private\n    x: integer;\n  public  \n    constructor Create(xx: integer);\n    begin\n      x := xx;\n    end;\n    procedure pp;\n    begin\n      writeln('Вызов метода класса, значение поля равно ',x);\n    end;\n    class procedure ppstatic; \n    begin\n      writeln('Вызов классового метода класса');\n    end;\n  end;\n\nvar p: procedure;\n\nbegin\n  p := pp;\n  var a1: A := new A(5);\n  p += a1.pp;\n  p += A.ppstatic;\n  p;\n  writeln;\n  p -= pp;\n  p;\nend."
+  },
+  {
+    "instruction": "Create a basic procedural variable example in PascalABC.NET showing multicast delegate initialization with regular procedures, instance methods, and static methods.",
+    "output": "procedure pp;\nbegin\n  writeln('Вызов обычной процедуры');\nend;\n\ntype \n  A = class\n  private\n    x: integer;\n  public  \n    constructor Create(xx: integer);\n    begin\n      x := xx;\n    end;\n    procedure pp;\n    begin\n      writeln('Вызов метода класса, значение поля равно ',x);\n    end;\n    class procedure ppstatic; \n    begin\n      writeln('Вызов классового метода класса');\n    end;\n  end;\n\nvar p: procedure;\n\nbegin\n  p := pp;\n  var a1: A := new A(5);\n  p += a1.pp;\n  p += A.ppstatic;\n  p;\nend."
+  },
+  {
+    "instruction": "Create a 3D point light visualization in PascalABC.NET using Graph3D. Include a sphere as light source, cylinder, and textured ground plane with point lighting.",
+    "output": "uses Graph3D;\n\nbegin\n  var p := P3D(-3,3,3);\n  Sphere(p,0.3,Colors.White);\n  View3D.ShowGridLines := false;\n  Cylinder(0,0,0,5,2,True,Colors.Yellow);\n  Rectangle3D(0,0,-0.01,15,15,OrtZ,OrtX,ImageMaterial('трава.jpg',0.2,0.2));\n  Sleep(2000);\n  Lights.AddPointLight(GrayColor(64),p);\nend."
+  },
+  {
+    "instruction": "Create a polynomial root finding example in PascalABC.NET using NumLibABC to find all roots of a polynomial with real coefficients.",
+    "output": "uses NumLibABC;\n\nbegin\n  var p:=new Polynom(-609, -283 ,294, -38, -5,1);\n  var oL:=new PolRt(p);\n  if oL.ier=0 then oL.Value.Println\n  else Writeln('Ошибка: ier=',oL.ier);\nend."
+  },
+  {
+    "instruction": "Create polynomial operations examples in PascalABC.NET including polynomial evaluation, integration, and differentiation using NumLibABC.",
+    "output": "uses NumLibABC;\n\nbegin\n   var u:=(new Polynom(2, -6, 0, 3.8, 0, 1)).Value(-7.16);\n   Println(u);\n   \n   var t:=new Polynom(1, -7, 12, -3, -2);\n   var (p,q):=(t.PInt, t.PDif);\n   p.PrintlnBeauty; q.PrintlnBeauty;\nend."
+  },
+  {
+    "instruction": "Create polynomial arithmetic examples in PascalABC.NET including addition, subtraction, multiplication, and polynomial division with quotient and remainder.",
+    "output": "uses NumLibABC;\n\nbegin\n  var a:=new Polynom(6.5,-4,2.12,1);\n  var b:=new Polynom(3,0,-3.8);\n  var c:=new Polynom(ArrGen(5,i->i*i+1.0));\n      (-c +(a-2*b)*a+11.5*(1-b)).Println;\n  \n  a:=new Polynom(3,0,-72,12,0,-1,2);\n  b:=new Polynom(-1,0,2,1);\n  var (p,q):=a/b;\n  Print('Частное'); p.PrintlnBeauty;\n  Print('остаток'); b.PrintlnBeauty\nend."
+  },
+  {
+    "instruction": "Create an interactive 3D teapot in PascalABC.NET that can be moved using arrow keys for navigation in 3D space.",
+    "output": "uses Graph3D;\n\nbegin\n  View3D.Title := 'Двигайте чайник при помощи стрелок';\n  var t := Teapot(0, 0, 1, Colors.Green);\n  OnKeyDown := k -> begin\n    case k of\n   Key.Left: t.X += 1; \n   Key.Right: t.X -= 1; \n   Key.Down: t.Y += 1; \n   Key.Up: t.Y -= 1; \n   Key.PageUp: t.Z += 1; \n   Key.PageDown: t.Z -= 1; \n    end;\n  end;\nend."
+  },
+  {
+    "instruction": "Create a 3D coordinate system visualization in PascalABC.NET with three colored planes (XY, XZ, YZ) and coordinate axes with labels.",
+    "output": "uses Graph3D;\n\nbegin\n  View3D.ShowGridLines := False;\n  \n  Camera.Position := P3D(12,16,24);\n  Camera.LookDirection := Camera.Position.Multiply(-1).ToVector3D;\n\n  var sz := 12;\n  var alpha := 100;\n  var planeXZ := Rectangle3D(0,0,0,sz,sz,V3D(0,1,0),Colors.Green.ChangeAlpha(alpha));\n  var planeXY := Rectangle3D(0,0,0,sz,sz,V3D(0,0,1),Colors.Blue.ChangeAlpha(alpha));\n  var planeYZ := Rectangle3D(0,0,0,sz,sz,V3D(1,0,0),V3D(0,1,0),Colors.Red.ChangeAlpha(alpha));\n  BillboardText(sz/2,sz/2,0,'XY',20);\n  BillboardText(0,sz/2,sz/2,'YZ',20);\n  BillboardText(sz/2,0,sz/2,'XZ',20);\n  var len := 8;\n  CoordinateSystem(len,0.3);\n  BillboardText(len+0.5,0,0,'X',20);\n  BillboardText(0,len+0.5,0,'Y',20);\n  BillboardText(0,0,len+0.5,'Z',20);\nend."
+  },
+  {
+    "instruction": "Create a camera rotation animation in PascalABC.NET that orbits around a teapot object with continuous circular camera movement.",
+    "output": "uses Graph3D;\n\nbegin\n  Window.Title := 'Вращение камеры';\n  var tp := Teapot(0,0,2,Colors.Green);\n  tp.Scale(2);\n  Camera.Position := P3D(8,16,20);\n  Camera.LookDirection := Camera.Position.Multiply(-1).ToVector3D;\n  var d := 26.0;\n  var t := 0.0;\n  while True do\n  begin\n    Sleep(10);\n    Camera.Position := P3D(15*cos(t),15*sin(t),10);\n    Camera.UpDirection := V3D(0,0,1);\n    Camera.LookDirection := Camera.Position.Multiply(-1).ToVector3D;\n    t += 2*Pi/360/2;\n  end;\n  \n  Camera.LookDirection := Camera.Position.Multiply(-1).ToVector3D;\nend."
+  },
+  {
+    "instruction": "Create a prime number generator in PascalABC.NET that finds and prints large prime numbers starting from a random number.",
+    "output": "begin\n  Println('Большие простые числа: ');\n  var count := 0;\n  var beg := Random(1000000000)+2;\n  for var i:=beg to beg+5000 do\n  begin\n    var f := True;\n    var j := 2;\n    var r := Round(Sqrt(i));\n    while f and (j<=r) do\n      if i mod j = 0 then f := False\n        else j += 1;\n    if f then\n    begin\n      Print(i);\n      count += 1;\n      if count mod 8 = 0 then \n        Println;\n    end;\n  end;\nend."
+  },
+  {
+    "instruction": "Create a simple Print statement example in PascalABC.NET demonstrating basic output functionality.",
+    "output": "begin\n  Print(1,2,3)\nend."
+  },
+  {
+    "instruction": "Create a 3D group animation in PascalABC.NET where a box and sphere rotate together around a fixed point using Group object.",
+    "output": "uses Graph3D;\n\nbegin\n  var b := Box(0,0,0,6,1,2,Colors.Blue);\n  var s := Sphere(0,0,2,1,Colors.Green);\n\n  var g := Group(b,s);\n  g.AnimRotateAt(OrtZ,360,P3D(3,0,0),2).Begin;\nend."
+  },
+  {
+    "instruction": "Create a 3D group animation with multiple objects in PascalABC.NET where an array of boxes rotates together as a group.",
+    "output": "uses Graph3D;\n\nbegin\n  var bb := ArrGen(15,i -> Object3D(Box(0.5*i,0,0,0.1,6,2,RandomColor)));\n  var g := Group(bb).MoveByX(-5);\n  g.AnimRotateAt(ortZ,360,P3D(-1,0,0),2).Forever.Begin;  \nend."
+  },
+  {
+    "instruction": "Create a procedure in PascalABC.NET that demonstrates all basic arithmetic operations on two integer parameters.",
+    "output": "procedure Operations(a,b: integer);\nbegin\n  writeln(a,' + ',b,' = ',a+b);\n  writeln(a,' - ',b,' = ',a-b);\n  writeln(a,' * ',b,' = ',a*b);\n  writeln(a,' / ',b,' = ',a/b);\n  writeln(a,' div ',b,' = ',a div b);\n  writeln(a,' mod ',b,' = ',a mod b);\nend;\n\nbegin\n  Operations(5,3);\n  writeln;\n  Operations(7,4);\nend."
+  },
+  {
+    "instruction": "Create a procedure in PascalABC.NET that uses var parameters to return both division quotient and modulus results from a single operation.",
+    "output": "procedure DivMod(a,b: integer; var d,m: integer);\nbegin\n  d := a div b;\n  m := a mod b;\nend;\n\nvar \n  a,b: integer;\n  d,m: integer;\n\nbegin\n  a := 7;\n  b := 3;\n  DivMod(a,b,d,m);\n  writelnFormat('{0} div {1} = {2};  {0} mod {1} = {3}',a,b,d,m);\n  a := 23;\n  b := 5;\n  DivMod(a,b,d,m);\n  writelnFormat('{0} div {1} = {2};  {0} mod {1} = {3}',a,b,d,m);\nend."
+  },
+  {
+    "instruction": "Create a record type and procedure in PascalABC.NET that demonstrates parameter packing using records for drawing lines between points.",
+    "output": "uses GraphABC;\n\ntype \n  Point = record\n    x,y: integer;\n    constructor (xx,yy: integer);\n    begin\n      x := xx;\n      y := yy;\n    end;\n  end;\n\nprocedure Line(p1,p2: Point);\nbegin\n  GraphABC.Line(p1.x,p1.y,p2.x,p2.y);\nend;\n\nbegin\n  var p1 := new Point(10,10);\n  var p2 := new Point(10,210);\n  var p3 := new Point(210,10);\n  Line(p1,p2);\n  Line(p2,p3);\n  Line(p3,p1);\nend."
+  }
+]

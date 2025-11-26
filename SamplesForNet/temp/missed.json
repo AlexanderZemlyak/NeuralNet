@@ -1,0 +1,98 @@
+[
+    {
+        "instruction": "Write a python function to check if a given number is a perfect number or not. A perfect number is a positive integer that is equal to the sum of its proper divisors. The smallest perfect number is 6, which is the sum of 1, 2, and 3.",
+        "output": "def isPerfNum(n):\n    sum = 0\n    for i in range(1, n):\n        if n % i == 0:\n            sum += i\n    return sum == n"
+    },
+    {
+        "instruction": "Write a python function to reverse the order of characters in each word within a sentence while still preserving whitespace and initial word order.",
+        "output": "def reverse_characters_in_words(s: str) -> str:\n    str_list = list(s)\n    left = 0\n    for index, value in enumerate(str_list):\n        if value == ' ':\n            right = index - 1\n            while left < right:\n                str_list[left], str_list[right] = str_list[right], str_list[left]\n                left += 1\n                right -= 1\n            left = index + 1\n        \n    right = len(s) - 1\n    while left < right:\n        str_list[left], str_list[right] = str_list[right], str_list[left]\n        left += 1\n        right -= 1\n\n    return ''.join(str_list)"
+    },
+    {
+        "instruction": "Write a python function to find the height of a binary tree.",
+        "output": "class Node:\n    def __init__(self, val, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef find_tree_height(root):\n    if root is None:\n        return 0\n    left_height = find_tree_height(root.left)\n    right_height = find_tree_height(root.right)\n    return max(left_height, right_height) + 1"
+    },
+    {
+        "instruction": "Write a function that checks if a string is valid based on the following rules:\n- The string is valid if all characters of the string appear the same number of times.\n- It is also valid if you can remove just 1 character at 1 index in the string, and the remaining characters will occur the same number of times.",
+        "output": "def is_valid_string(s):\n    hash = [0]*26\n    for i in s:\n        hash[ord(i)-97] += 1\n\n    first = second = 0\n    sum_first = sum_second = 0\n    for i in hash:\n        if i > 0:\n            if first == 0:\n                first = i\n                sum_first = 1\n            elif i == first:\n                sum_first += 1\n            elif second == 0:\n                second = i\n                sum_second = 1\n            elif i == second:\n                sum_second += 1\n            else:\n                return \"NO\"\n    if (second == 0) or ((first == 1 or first == second + 1) and sum_first == 1) or ((second == 1 or second == first + 1) and sum_second == 1):\n        return \"YES\"\n    return \"NO\""
+    },
+    {
+        "instruction": "Write a function to calculate the sum of all elements in a list that are greater than a given number.",
+        "output": "def sum_greater_than(lst, num):\n    return sum([i for i in lst if i > num])"
+    },
+    {
+        "instruction": "Write a function that will return the count of distinct case-insensitive alphabetic characters and numeric digits that occur more than once in the input string. The input string can be assumed to contain only alphabets (both uppercase and lowercase) and numeric digits.",
+        "output": "def duplicate_count(text):\n    seen = set()\n    duplicates = set()\n    for char in text.lower():\n        if char in seen:\n            duplicates.add(char)\n        else:\n            seen.add(char)\n    return len(duplicates)"
+    },
+    {
+        "instruction": "Write a function to find the least number of unique integers after removing 'k' elements from a given array.",
+        "output": "from collections import Counter\n\ndef find_least_unique(arr, k):\n    count = Counter(arr)\n    for num, freq in sorted(count.items(), key=lambda x: x[1]):\n        if k >= freq:\n            k -= freq\n            del count[num]\n        else:\n            count[num] -= k\n            break\n    return len(count)"
+    },
+    {
+        "instruction": "Write a python function to find the largest power of a given base that does not exceed a given integer.",
+        "output": "def largest_power_of_base(base, number):\n    power = 0\n    result = 1\n    while result * base <= number:\n        result *= base\n        power += 1\n    return result"
+    },
+    {
+        "instruction": "Write a function to find the maximum sum of a subarray crossing the midpoint of the given array.",
+        "output": "def max_crossing_subarray(arr):\n    max_left_sum = float('-inf')\n    left_sum = 0\n    max_right_sum = float('-inf')\n    right_sum = 0\n\n    # Find the maximum sum for the left part\n    for i in range(len(arr) // 2 - 1, -1, -1):\n        left_sum += arr[i]\n        if left_sum > max_left_sum:\n            max_left_sum = left_sum\n\n    # Find the maximum sum for the right part\n    for i in range(len(arr) // 2, len(arr)):\n        right_sum += arr[i]\n        if right_sum > max_right_sum:\n            max_right_sum = right_sum\n\n    return max_left_sum + max_right_sum"
+    },
+    {
+        "instruction": "Write a function that takes a list of integers as input and returns a list where all elements are separated by a comma and a space, and enclosed within square brackets. However, all the even numbers in the list should be doubled before the conversion.",
+        "output": "def format_and_double(lst):\n    lst = [i*2 if i%2==0 else i for i in lst]\n    return '[' + ', '.join(map(str, lst)) + ']'"
+    },
+    {
+        "instruction": "Write a python function to find the maximum difference between two elements in an array, where the larger element appears after the smaller one.",
+        "output": "def find_max_difference(arr):\n    max_diff = -1\n    min_element = arr[0]\n\n    for i in range(1, len(arr)):\n        diff = arr[i] - min_element\n        if diff > max_diff:\n            max_diff = diff\n        if arr[i] < min_element:\n            min_element = arr[i]\n    return max_diff"
+    },
+    {
+        "instruction": "Write a function to find the number of times a given element is repeated in a list.",
+        "output": "def count_repeated_elements(lst, element):\n    return lst.count(element)"
+    },
+    {
+        "instruction": "Write a function that takes an array of integers and returns the length of the shortest contiguous subarray that, if sorted, results in the entire array being sorted. If the array is already sorted, the function should return 0.",
+        "output": "def shortest_subarray_sort(arr):\n    n = len(arr)\n    # Find the right boundary of the unsorted subarray\n    right = n - 1\n    while right > 0 and arr[right - 1] <= arr[right]:\n        right -= 1\n    if right == 0:\n        return 0\n    \n    # Find the left boundary of the unsorted subarray\n    left = 0\n    while left < right and arr[left] <= arr[left + 1]:\n        left += 1\n    \n    # Find the minimum and maximum in the unsorted subarray\n    sub_min = float('inf')\n    sub_max = float('-inf')\n    for i in range(left, right + 1):\n        sub_min = min(sub_min, arr[i])\n        sub_max = max(sub_max, arr[i])\n    \n    # Extend the boundaries to include any elements that are out of place\n    left = 0\n    while left < len(arr) and arr[left] > sub_min:\n        left -= 1\n    right = n - 1\n    while right >= 0 and arr[right] < sub_max:\n        right += 1\n    \n    return right - left - 1"
+    },
+    {
+        "instruction": "Write a python function to find the length of the smallest string that contains all the given strings as substrings. The function should take a list of strings as input and return the length of the smallest string that contains all the strings in the list as substrings.",
+        "output": "def find_common(A, B):\n    if len(A) >= len(B):\n        for ii in range(len(B)-1, 0, -1):\n            l = len(B[:ii])\n            if A[-l:] == B[:ii]:\n                return A + B[ii:]\n    else:\n        for ii in range(len(A)-1, 0, -1):\n            if A[ii:] == B[:ii]:\n                return A + B[ii:]\n\n    return A+B\n\n\ndef smallest_string_length(A):\n    if len(A) == 0:\n        return 0\n    ans = float('inf')\n    for ii in range(len(A)):\n        tmp = A[ii]\n        for jj in range(len(A)):\n            if ii == jj:\n                continue\n            if tmp in A[jj]:\n                tmp = A[jj]\n            elif A[jj] not in tmp:\n                tmp = find_common(tmp, A[jj])\n                if len(tmp) >= ans:\n                    break\n        ans = min(ans, len(tmp))\n    return ans"
+    },
+    {
+        "instruction": "Write a Python function to remove the minimum number of overlapping intervals to make the rest non-overlapping.\n\nGiven a list of intervals, find the minimum number of intervals to remove to make the remaining intervals non-overlapping. Intervals can \"touch\", such as [0, 1] and [1, 2], but they won't be considered overlapping.\n\nFor example, given the intervals [(7, 9), (2, 4), (5, 8)], return 1 as the last interval can be removed and the first two won't overlap.\n\nThe intervals are not necessarily sorted in any order.",
+        "output": "def remove_overlapping_intervals(n):\n    n.sort(key=lambda a:a[1])\n    end = n[0][1]\n    count = 1\n    for i in range(1, len(n)):\n        if n[i][0] >= end:\n            count += 1\n            end = n[i][1]\n    return len(n) - count\n\n# Test cases\nprint(remove_overlapping_intervals([(7, 9), (2, 4), (5, 8)])) # 1\nprint(remove_overlapping_intervals([(1,2), (2,3), (3,4), (4,10), (4,5), (5,6)])) # 1\nprint(remove_overlapping_intervals([(1,10), (3,9), (1,3), (2,6), (7,11)])) # 3"
+    },
+    {
+        "instruction": "Write a function to find the minimum number of operations to reduce x to exactly 0. An operation consists of choosing an element from either the beginning or the end of the array and subtracting it from x. If it is not possible to reduce x to 0, return -1.",
+        "output": "from collections import deque\n\ndef min_operations_to_zero(nums, x):\n    total = sum(nums)\n    target = total - x\n    if target < 0:\n        return -1\n\n    max_len = -1\n    left = 0\n    current_sum = 0\n\n    for right in range(len(nums)):\n        current_sum += nums[right]\n        while current_sum > target and left <= right:\n            current_sum -= nums[left]\n            left += 1\n        if current_sum == target:\n            max_len = max(max_len, right - left + 1)\n\n    return len(nums) - max_len if max_len != -1 else -1"
+    },
+    {
+        "instruction": "Write a python function that checks if a string is a palindrome and contains only alphanumeric characters. Do not consider case sensitivity.",
+        "output": "def is_palindrome_alphanumeric(s: str) -> bool:\n    alphanumeric_s = ''.join([char for char in s if char.isalnum()]).lower()\n    return alphanumeric_s == alphanumeric_s[::-1]"
+    },
+    {
+        "instruction": "Write a function to find the largest overlap between two binary images represented as 2D arrays. The function takes two 2D arrays of integers (A and B) as input and returns the size of the largest overlap. An overlap is defined as the number of 1's that are present at the same relative position in both A and B.\n\nFor example, given A and B as follows:\n\nA = [[1,1,0],\n     [0,1,0],\n     [0,1,0]]\n\nB = [[0,0,0],\n     [0,1,1],\n     [0,0,1]]\n\nThe largest overlap is 3, as the 1's at relative positions (1,1), (2,1), and (2,2) are present in both A and B.",
+        "output": "import collections\n\ndef largest_overlap(A, B):\n    a = []\n    b = []\n    d = collections.defaultdict(int)\n\n    rows = len(A)\n    cols = len(A[0])\n\n    for i in range(rows):\n        for j in range(cols):\n            if A[i][j] == 1:\n                a.append((i, j))\n            if B[i][j] == 1:\n                b.append((i, j))\n\n    res = 0\n    for x, y in a:\n        for i, j in b:\n            d[(x - i, y - j)] += 1\n            res = max(res, d[(x - i, y - j)])\n    return res"
+    },
+    {
+        "instruction": "Write a function that takes a string, a pattern, and a replacement string as input and returns the modified string after replacing all occurrences of the pattern with the replacement string.",
+        "output": "def replace_pattern(text, pattern, replacement):\n    return text.replace(pattern, replacement)"
+    },
+    {
+        "instruction": "Write a python function to determine whether a given list of non-negative integers can be partitioned into two subsets such that the sum of elements in both subsets is equal.",
+        "output": "class Partition:\n    def canPartition(self, nums):\n        target = sum(nums)\n\n        if target % 2 == 1:\n            return False\n\n        target //= 2\n\n        dp = [0 for _ in range(target + 1)]\n\n        for i in range(len(nums)):\n            for j in range(target, nums[i] - 1, -1):\n                dp[j] = max(dp[j], dp[j - nums[i]] + nums[i])\n\n        return dp[-1] == target\n\ndef can_Partition(nums):\n    partition = Partition()\n    return partition.canPartition(nums)"
+    },
+    {
+        "instruction": "Write a python function that takes two lists as input and returns a new list where each element is the product of the elements in the same position in the two input lists.",
+        "output": "def multiply_lists(list1, list2):\n    return [a*b for a, b in zip(list1, list2)]"
+    },
+    {
+        "instruction": "Write a python function to find the element that is repeated n times in an integer array nums with the following properties:\n- nums.length == 2 * n.\n- nums contains n + 1 unique elements.\n- Exactly one element of nums is repeated n times.\nReturn the element that is repeated n times.",
+        "output": "from collections import Counter\ndef find_repeated_element(nums):\n    \"\"\"\n    Find the element that is repeated n times in an integer array nums.\n    :param nums: List[int]\n    :return: int\n    \"\"\"\n    counts_map = Counter(nums)\n    for key, count in counts_map.items():\n        if count >= 2:\n            return key"
+    },
+    {
+        "instruction": "Write a function to find the smallest set of vertices from which all nodes in a directed graph are reachable. The graph is represented as a list of directed edges.",
+        "output": "from collections import defaultdict\n\ndef find_smallest_set_of_vertices(n, edges):\n    incoming_node = defaultdict(list)\n    for x, y in edges:\n        incoming_node[y].append(x)\n    res = []\n    for i in range(n):\n        if not incoming_node[i]:\n            res.append(i)\n    return res"
+    },
+    {
+        "instruction": "Write a function to find the power of a number in a given modular value. The function should take three parameters: base, exponent, and module. The function should return the result of (base^exponent) % module.",
+        "output": "def power_modulo(base, exponent, module):\n    if exponent == 0:\n        return 1\n    t = power_modulo(base, exponent//2, module) % module\n    t = (t*t) % module\n    if exponent % 2 == 0:\n        return t\n    else:\n        return ((base % module) * t) % module"
+    }
+]

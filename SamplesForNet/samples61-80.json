@@ -1,0 +1,82 @@
+[
+  {
+    "instruction": "Demonstrate arithmetic calculations with user input using ReadlnInteger2 in PascalABC.NET",
+    "output": "begin\n  var (a,b) := ReadlnInteger2('Enter a and b:');\n  Writeln;\n  Writeln(a,' + ',b,' = ',a+b);\n  Writeln(a,' - ',b,' = ',a-b);\n  Writeln(a,' * ',b,' = ',a*b);\n  Writeln(a,' / ',b,' = ',a/b);\nend."
+  },
+  {
+    "instruction": "Call static method from C# class library in PascalABC.NET",
+    "output": "{$reference ClassLibrary1.dll}\nuses ClassLibrary1;\n\nbegin\n  writeln(Class1.add(2,3));  \nend."
+  },
+  {
+    "instruction": "Call native DLL function from PascalABC.NET with platform target specification",
+    "output": "{$platformtarget x86}\nfunction add(a,b: integer): integer; external 'NativeDll.dll' name 'add';\n\nbegin\n  writeln(add(2,3));\nend."
+  },
+  {
+    "instruction": "Demonstrate string permutations, combinations and Cartesian operations in PascalABC.NET",
+    "output": "begin\n  'abc'.Permutations.Println;\n  'abc'.Permutations(2).Println;\n  'abc'.Combinations(2).Println;\n  'abc'.CartesianPower(2).Println;\n  'abc'.Cartesian('def').Println;\nend."
+  },
+  {
+    "instruction": "Implement case statement for grade evaluation in PascalABC.NET",
+    "output": "var x: integer;\n\nbegin\n  writeln('Enter grade (1..5): ');\n  readln(x);\n  case x of\n    1: writeln('One');\n    2: writeln('Two');\n    3: writeln('Three');\n    4: writeln('Four');\n    5: writeln('Five');  \n  else writeln('No such grade');\n  end;\nend."
+  },
+  {
+    "instruction": "Use case statement with ranges for weekday classification in PascalABC.NET",
+    "output": "var day: integer;\n\nbegin\n  writeln('Enter day of week number (1..7): ');\n  readln(day);\n  case day of\n    1..5: writeln('Weekday');\n    6,7: writeln('Weekend');\n  else writeln('Invalid day of week');\n  end;\nend."
+  },
+  {
+    "instruction": "Implement character classification using case statement in PascalABC.NET",
+    "output": "var c: char;\n\nbegin\n  writeln('Enter character: ');\n  readln(c);\n  case c of\n    '0'..'9': writeln('This is digit');\n    'a'..'z','A'..'Z': writeln('This is English letter');\n    'а'..'я','А'..'Я': writeln('This is Russian letter');\n  end;\nend."
+  },
+  {
+    "instruction": "Generate random geometric shapes using case statement with GraphABC in PascalABC.NET",
+    "output": "uses GraphABC;\n\nbegin\n  SetWindowSize(400,300);\n  var t := Random(1,5);\n  case t of\n    1: Circle(200,150,100);\n    2: Rectangle(100,100,300,200);\n    3: Ellipse(100,100,300,200);\n    4: RoundRect(100,100,300,200,20,20);\n    5: Line(100,100,300,200);\n  end;\nend."
+  },
+  {
+    "instruction": "Demonstrate efficient real to integer casting in PascalABC.NET",
+    "output": "begin\n  var i: integer := integer(2.7);\n  Print(i);\nend."
+  },
+  {
+    "instruction": "Create comprehensive UI with all Controls module elements in GraphWPF using PascalABC.NET",
+    "output": "uses GraphWPF,Controls;\n\nbegin\n  Window.Title := 'Controls module - all UI elements';\n  LeftPanel(160,Colors.Orange);\n \n  Button('Button');\n  CheckBox('Checkbox');\n  RadioButton('Radio button 1');\n  RadioButton('Radio button 2');\n  TextBox('Text input field');\n  var ib := IntegerBox('Integer input',0,10);\n  ib.Tooltip := 'Use mouse wheel to change value';\n  var l := ListBox('Country list');\n  l.Height := 110;\n  l.Add('Russia');\n  l.Add('USA');\n  l.Add('China');\n  l.Add('Germany');\n  l.Add('France');\n  var cb := ComboBox('Dropdown list');\n  cb.AddRange('Russia','USA','China','Germany','France');\n  \n  Slider('Slider:',0,10);\n  TextBlock('Text block');\n  IntegerBlock('Integer block:',64);\n  RealBlock('Real block:',3.5);\n\n  var s := StatusBar;\n  s.Text := 'Status bar';\nend."
+  },
+  {
+    "instruction": "Implement 3D sphere dragging with mouse interaction using Graph3D in PascalABC.NET",
+    "output": "uses Graph3D;\n\nbegin \n  View3D.Title := 'Drag sphere with mouse';\n  var s := Sphere(0,0,0,1);\n  var obj: Object3D;\n  OnMouseDown += procedure (x,y,mb) -> begin\n    obj := FindNearestObject(x,y);\n    if obj=s then View3D.Title := '';\n  end;\n\n  OnMouseUp += procedure (x,y,mb) -> begin\n    obj := nil\n  end;\n  \n  OnMouseMove += procedure (x,y,mb) -> begin\n    if obj = nil then exit;\n    var pp := PlaneXY.PointOnPlane(x,y);\n    if pp<>BadPoint then\n    begin\n      if pp.X<-5 then pp.X := -5;\n      if pp.X>5 then pp.X := 5;\n      if pp.Y<-5 then pp.Y := -5;\n      if pp.Y>5 then pp.Y := 5;\n      obj.Position := pp;\n      View3D.SubTitle := $'X={pp.x.ToString(2)} Y={pp.y.ToString(2)}';\n    end;\n  end;\nend."
+  },
+  {
+    "instruction": "Create UI with constructor-based control creation and right panel in PascalABC.NET",
+    "output": "uses GraphWPF,Controls;\n\nbegin\n  Window.Title := 'Controls module - constructor creation + right panel';\n  new RightPanelWPF(160,Colors.Orange);\n \n  new ButtonWPF('Button');\n  new CheckBoxWPF('Checkbox');\n  new RadioButtonWPF('Radio button 1');\n  new RadioButtonWPF('Radio button 2');\n  new TextBoxWPF('Text input field');\n  var ib := new IntegerBoxWPF('Integer input',0,10);\n  ib.Tooltip := 'Use mouse wheel to change value';\n  var l := new ListBoxWPF('Country list');\n  l.Height := 110;\n  l.Add('Russia');\n  l.Add('USA');\n  l.Add('China');\n  l.Add('Germany');\n  l.Add('France');\n  var cb := new ComboBoxWPF('Dropdown list');\n  cb.AddRange('Russia','USA','China','Germany','France');\n  \n  new SliderWPF('Slider:',0,10);\n  new TextBlockWPF('Text block');\n  new IntegerBlockWPF('Integer block:',64);\n  new RealBlockWPF('Real block:',3.5);\n\n  var s := new StatusBarWPF;\n  s.Text := 'Status bar';\nend."
+  },
+  {
+    "instruction": "Implement button click handlers with different actions in Controls module using PascalABC.NET",
+    "output": "uses GraphWPF,Controls;\n\nbegin\n  Window.Title := 'Controls module - buttons and their handlers';\n  var p := LeftPanel;\n  p.Color := Colors.Orange;\n \n  Button('Random color').Click := () -> begin\n    Window.Clear(RandomColor);\n  end;\n  \n  var b2 := Button('Plus');\n  b2.Click := procedure -> \n    if b2.Text = 'Plus' then b2.Text = 'Minus' else b2.Text = 'Plus';\n\n  var b1 := Button('Close window');\n  b1.Click := procedure -> Window.Close;\nend."
+  },
+  {
+    "instruction": "Implement checkbox controls with programmatic toggling in PascalABC.NET",
+    "output": "uses GraphWPF,Controls;\n\nbegin\n  Window.Title := 'Controls module - checkboxes';\n  \n  var p := LeftPanel(170,Colors.Orange);\n \n  var b1 := Button('Toggle checkbox 1');\n  var b2 := Button('Toggle checkbox 2');\n  var b3 := Button('Toggle checkbox 3');\n\n  var cb1 := new CheckBoxWPF('Checkbox 1');\n  var cb2 := new CheckBoxWPF('Checkbox 2');\n  var cb3 := new CheckBoxWPF('Checkbox 3');\n  \n  b1.Click := procedure -> cb1.Checked := not cb1.Checked;\n  b2.Click := procedure -> cb2.Checked := not cb2.Checked;\n  b3.Click := procedure -> cb3.Checked := not cb3.Checked;\nend."
+  },
+  {
+    "instruction": "Create circle customization interface with checkboxes using WPFObjects in PascalABC.NET",
+    "output": "uses WPFObjects,Controls;\n\nbegin\n  Window.Title := 'Controls module - checkboxes';\n  \n  LeftPanel(170);\n \n  var tb := TextBlock('Circle parameters:'); \n  tb.Margin := 12;\n  \n  var cb1 := new CheckBoxWPF('Fill');\n  var cb2 := new CheckBoxWPF('Bold border');\n  var cb3 := new CheckBoxWPF('With text');\n  \n  var c := new CircleWPF(GraphWindow.Center,60,Colors.White,1);\n  \n  cb1.Click := procedure -> begin\n    if cb1.Checked then \n      c.Color := Colors.Green\n    else c.Color := Colors.White\n  end;\n  cb2.Click := procedure -> begin\n    if cb2.Checked then \n      c.BorderWidth := 4\n    else c.BorderWidth := 1\n  end;\n  cb3.Click := procedure -> begin\n    if cb3.Checked then \n      c.Text := 'Text'\n    else c.Text := ''\n  end;\nend."
+  },
+  {
+    "instruction": "Implement color selection using radio buttons with WPFObjects in PascalABC.NET",
+    "output": "uses WPFObjects,Controls;\n\nbegin\n  Window.Title := 'Controls module - radio buttons';\n  LeftPanel(150,Colors.Beige);\n \n  var tb := TextBlock('Circle color:'); \n  \n  var rb1 := new RadioButtonWPF('Red');\n  var rb2 := new RadioButtonWPF('Green');\n  var rb3 := new RadioButtonWPF('Blue');\n  \n  var c := new CircleWPF(GraphWindow.Center,60,Colors.White,1);\n  \n  rb1.Click := procedure -> begin\n    c.Color := Colors.Red;\n  end;\n  rb2.Click := procedure -> begin\n    c.Color := Colors.Green;\n  end;\n  rb3.Click := procedure -> begin\n    c.Color := Colors.Blue;\n  end;\nend."
+  },
+  {
+    "instruction": "Demonstrate arithmetic calculations using named constants in PascalABC.NET",
+    "output": "const \n  a = 121;\n  b = 363;\n\nbegin\n  Writeln('Calculations:');\n  Writeln;\n  Writeln(a,' + ',b,' = ',a+b);\n  Writeln(a,' - ',b,' = ',a-b);\n  Writeln(a,' * ',b,' = ',a*b);\n  Writeln(a,' / ',b,' = ',a/b);\nend."
+  },
+  {
+    "instruction": "Implement 3D object movement along lines with mouse interaction using Graph3D in PascalABC.NET",
+    "output": "uses Graph3D;\n\nbegin \n  var d := new Dictionary<Object3D,Line3D>;\n  \n  var pp := Arr(p3D(2,3,0),p3D(-3,0,0),p3D(2,-2,0));\n  var p := p3D(0,0,5);\n  foreach var x in pp do\n  begin\n    var lin := Line(x,p);\n    Segment3D(x,p);\n    var s := Sphere(x,0.2);\n    d[s] := lin;\n  end;\n  \n  var tr := Polygon3D(Arr(pp));\n  \n  var obj: Object3D;\n  OnMouseDown += procedure (x,y,mb) -> begin\n    obj := FindNearestObject(x,y);\n    if obj=nil then exit;\n    if not d.ContainsKey(obj) then\n      obj := nil;\n  end;\n\n  OnMouseUp += procedure (x,y,mb) -> begin\n    obj := nil\n  end;\n\n  OnMouseMove += procedure (x,y,mb) -> begin\n    if mb<>1 then exit;\n    if obj=nil then exit;\n    \n    obj.Position := d[obj].NearestPointOnLine(x,y);\n    \n    var pp := d.Keys.Select(o->o.Position).ToArray;\n    tr.Points := Arr(pp[0],pp[1],pp[1],pp[2],pp[2],pp[0]);\n  end;\nend."
+  },
+  {
+    "instruction": "Create UI with controls positioned manually on main panel in PascalABC.NET",
+    "output": "uses GraphWPF,Controls;\n\nbegin\n  Window.Title := 'Controls module - manually positioned controls';\n\n  var x := 10;\n  var w := 140;\n  Button(x,10,'Button',w);\n  CheckBox(x,43,'Checkbox');\n  RadioButton(x,70,'Radio button 1');\n  RadioButton(x,97,'Radio button 2');\n  TextBox(x,120,'Text input field',w);\n  var ib0 := IntegerBox(x,172,'Integer input',0,10,w);\n  ib0.Tooltip := 'Use mouse wheel to change value';\n  var l0 := ListBox(x,221,'Country list',w);\n  l0.Height := 110;\n  l0.Add('Russia');\n  l0.Add('USA');\n  l0.Add('China');\n  l0.Add('Germany');\n  l0.Add('France');\n  var cb0 := ComboBox(x,362,'Dropdown list',w);\n  cb0.AddRange('Russia','USA','China','Germany','France');\n  \n  Slider(x,414,'Slider:',0,10,w);\n  TextBlock(x,469,'Text block',w);\n  IntegerBlock(x,497,'Integer block:',w,64);\n  RealBlock(x,526,'Real block:',w,3.5);\n\n  LeftPanel(160,Colors.Orange);\n \n  Button('Button');\n  CheckBox('Checkbox');\n  RadioButton('Radio button 1');\n  RadioButton('Radio button 2');\n  TextBox('Text input field');\n  var ib := IntegerBox('Integer input',0,10);\n  ib.Tooltip := 'Use mouse wheel to change value';\n  var l := ListBox('Country list');\n  l.Height := 110;\n  l.Add('Russia');\n  l.Add('USA');\n  l.Add('China');\n  l.Add('Germany');\n  l.Add('France');\n  var cb := ComboBox('Dropdown list');\n  cb.AddRange('Russia','USA','China','Germany','France');\n  \n  Slider('Slider:',0,10);\n  TextBlock('Text block');\n  IntegerBlock('Integer block:',64);\n  RealBlock('Real block:',3.5);\n\n  var s := StatusBar;\n  s.Text := 'Status bar';\nend."
+  },
+  {
+    "instruction": "Implement 3D line-constrained sphere movement with Graph3D in PascalABC.NET",
+    "output": "uses Graph3D;\n\nbegin \n  View3D.Title := 'Drag sphere with mouse';\n  \n  var p1 := p3D(2,3,0);\n  var p := p3D(0,0,5);\n  var lin := Line(p,p1);\n  Segment3D(p,p1);\n  var s := Sphere(p1,0.2);\n\n  var obj: Object3D;\n  OnMouseDown += procedure (x,y,mb) -> begin\n    obj := FindNearestObject(x,y);\n    if obj=s then View3D.Title := '';\n  end;\n\n  OnMouseUp += procedure (x,y,mb) -> begin\n    obj := nil;\n  end;\n\n  OnMouseMove += procedure (x,y,mb) -> begin\n    if mb<>1 then exit;\n    if obj=nil then exit;\n    \n    obj.Position := lin.NearestPointOnLine(x,y);\n  end;\nend."
+  }
+]

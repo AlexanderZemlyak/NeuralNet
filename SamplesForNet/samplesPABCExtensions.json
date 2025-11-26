@@ -1,0 +1,254 @@
+[
+  {
+    "instruction": "Write a PascalABC.NET function to get the current locale from configuration, defaulting to 'ru' if not specified",
+    "output": "function GetCurrentLocale: string;\nbegin\n  var locale: object;\n  if __CONFIG__.TryGetValue('locale', locale) then\n    Result := locale as string\n  else\n    Result := 'ru';\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to get translated message based on current locale. Messages are separated by '!!' with Russian first and English second",
+    "output": "function GetTranslation(message: string): string;\nbegin\n  var cur_locale := GetCurrentLocale();\n  var arr := message.Split(new string[1]('!!'), System.StringSplitOptions.None);\n  if (cur_locale = 'en') and (arr.Length > 1) then\n    Result := arr[1]\n  else\n    Result := arr[0]\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET procedure to correct 'from' and 'to' indices based on step direction and situation for string slicing",
+    "output": "procedure CorrectFromTo(situation: integer; Len: integer; var from, &to: integer; step: integer);\nbegin\n  if step > 0 then\n  begin\n    case situation of\n      1: from := 0;\n      2: &to := Len;\n      3: (from, &to) := (0, Len)\n    end;  \n  end\n  else\n  begin\n    case situation of\n      1: from := Len - 1;\n      2: &to := -1;\n      3: (from, &to) := (Len - 1, -1);\n    end;\n  end;\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to check and correct from/to parameters and calculate count for system slice operation",
+    "output": "function CheckAndCorrectFromToAndCalcCountForSystemSlice(situation: integer; Len: integer; var from, &to: integer; step: integer): integer;\nbegin\n  if step = 0 then\n    raise new System.ArgumentException(GetTranslation(PARAMETER_STEP_MUST_BE_NOT_EQUAL_0));\n  \n  if (situation = 0) or (situation = 2) then\n    if (from < 0) or (from > Len - 1) then\n      raise new System.ArgumentException(GetTranslation(PARAMETER_FROM_OUT_OF_RANGE));\n  \n  if (situation = 0) or (situation = 1) then\n    if (&to < -1) or (&to > Len) then\n      raise new System.ArgumentException(GetTranslation(PARAMETER_TO_OUT_OF_RANGE));\n  \n  CorrectFromTo(situation, Len, from, &to, step);\n  \n  var count: integer;\n  \n  if step > 0 then\n  begin\n    var cnt := &to - from;\n    if cnt <= 0 then \n      count := 0\n    else count := (cnt - 1) div step + 1;\n  end\n  else\n  begin\n    var cnt := from - &to;\n    if cnt <= 0 then \n      count := 0\n    else count := (cnt - 1) div (-step) + 1;\n  end;\n  \n  Result := count;\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET procedure for system slice assignment implementation for strings",
+    "output": "procedure SystemSliceAssignmentStringImpl(var Self: string; rightValue: string; situation: integer; \n  from, &to: SystemIndex; step: integer; baseIndex: integer := 1);\nbegin\n  from.IndexValue := from.IndexValue - baseIndex;\n  &to.IndexValue := &to.IndexValue - baseIndex;\n  \n  var fromValue := from.IndexValue;\n  var toValue := &to.IndexValue;\n  var count := CheckAndCorrectFromToAndCalcCountForSystemSlice(situation, Self.Count, fromValue, toValue, step);\n  if count <> rightValue.Length then\n    raise new System.ArgumentException(GetTranslation(SLICE_SIZE_AND_RIGHT_VALUE_SIZE_MUST_BE_EQUAL));\n    \n  var f := fromValue + 1;\n  \n  var strInd := 1;\n  loop count do\n  begin\n    Self[f] := rightValue[strInd];\n    f += step;\n    strInd += 1;\n  end;\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to open a binary file and return file variable",
+    "output": "function OpenBinary(fname: string): file;\nbegin\n  PABCSystem.Reset(Result, fname);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to create or truncate a binary file and return file variable",
+    "output": "function CreateBinary(fname: string): file;\nbegin\n  PABCSystem.Rewrite(Result, fname);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to check if a type contains reference types recursively",
+    "output": "function ContainsReferenceTypes(t: System.Type): boolean;\nbegin\n  if t.IsPrimitive then\n    Result := False\n  else if t.IsValueType then \n  begin\n    var fa := t.GetFields(System.Reflection.BindingFlags.GetField or System.Reflection.BindingFlags.Instance or System.Reflection.BindingFlags.Public or System.Reflection.BindingFlags.NonPublic);\n    Result := fa.Any(x->ContainsReferenceTypes(x.FieldType));\n  end\n  else Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to open a typed file with validation for reference types",
+    "output": "function OpenFile<T>(fname: string): file of T;\nbegin\n  if ContainsReferenceTypes(typeof(T)) then\n    raise new System.SystemException(GetTranslation(BAD_TYPE_IN_TYPED_FILE));\n  PABCSystem.Reset(Result, fname);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to create a typed file with validation for reference types",
+    "output": "function CreateFile<T>(fname: string): file of T;\nbegin\n  if ContainsReferenceTypes(typeof(T)) then\n  begin\n    raise new System.SystemException(GetTranslation(BAD_TYPE_IN_TYPED_FILE));\n  end;  \n  var res: file of T;\n  PABCSystem.Rewrite(res, fname);\n  Result := res;\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET procedure to write sequence elements to a typed file",
+    "output": "procedure WriteElements<T>(fname: string; ss: sequence of T);\nbegin\n  var f := CreateFile&<T>(fname);\n  foreach var x in ss do\n    f.Write(x);\n  f.Close\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET extension method to seek to position in typed file",
+    "output": "function Seek<T>(Self: file of T; n: int64): file of T; extensionmethod;\nbegin\n  PABCSystem.Seek(Self, n);\n  Result := Self;\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET extension method to read next element from typed file",
+    "output": "function Read<T>(Self: file of T): T; extensionmethod;\nbegin\n  PABCSystem.Read(Self, Result);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET extension method to read two elements from typed file as tuple",
+    "output": "function Read2<T>(Self: file of T): (T,T); extensionmethod;\nbegin\n  var a,b: T;\n  PABCSystem.Read(Self, a);\n  PABCSystem.Read(Self, b);\n  Result := (a,b);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET extension method to read three elements from typed file as tuple",
+    "output": "function Read3<T>(Self: file of T): (T,T,T); extensionmethod;\nbegin\n  var a,b,c: T;\n  PABCSystem.Read(Self, a);\n  PABCSystem.Read(Self, b);\n  PABCSystem.Read(Self, c);\n  Result := (a,b,c);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET extension method to get sequence of elements from current position to end of typed file",
+    "output": "function ReadElements<T>(Self: file of T): sequence of T; extensionmethod;\nbegin\n  while not Self.Eof do\n  begin\n    var x := Self.Read;\n    yield x;\n  end;\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET extension method to get all elements of typed file as sequence",
+    "output": "function Elements<T>(Self: file of T): sequence of T; extensionmethod;\nbegin\n  Reset(Self);\n  Result := Self.ReadElements;\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to read elements from typed file by filename as sequence",
+    "output": "function ReadElements<T>(fname: string): sequence of T;\nbegin\n  var f := OpenFile&<T>(fname);\n  while not f.Eof do\n  begin\n    var x := f.Read;\n    yield x;\n  end;\n  f.Close\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET extension method to write multiple values to typed file",
+    "output": "procedure Write<T>(Self: file of T; params vals: array of T); extensionmethod;\nbegin\n  foreach var x in vals do\n    PABCSystem.Write(Self, x);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET operator to repeat procedure n times",
+    "output": "function operator*(p: procedure; n: integer): procedure; extensionmethod;\nbegin\n  Result := () -> for var i:=1 to n do p\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET implicit conversion operator from integer set to byte set with range validation",
+    "output": "function operator implicit(n: set of integer): set of byte; extensionmethod;\nbegin\n  foreach var x in n._hs do\n    if (x >= byte.MinValue) and (x <= byte.MaxValue) then\n      Result._hs.Add(x)\n    else raise new System.ArgumentException(GetTranslation(OUT_OF_TYPE_RANGE_IN_SET_ASSIGNMENT));\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET equality operator for integer set and byte set",
+    "output": "function operator=(a: set of integer; b: set of byte); extensionmethod \n  := (a.Count = b.Count) and b.All(x -> x in a);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET set union operator for integer set and byte set",
+    "output": "function operator+(a: set of integer; b: set of byte): set of integer; extensionmethod;\nbegin\n  Result.hs.UnionWith(a); \n  Result.hs.UnionWith(b.Select(x -> integer(x)));\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET set intersection operator for integer set and byte set",
+    "output": "function operator*(a: set of integer; b: set of byte): set of integer; extensionmethod;\nbegin\n  Result := a;\n  Result.hs.IntersectWith(b.Select(x -> integer(x)));\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET set difference operator for integer set and byte set",
+    "output": "function operator-(a: set of integer; b: set of byte): set of integer; extensionmethod;\nbegin\n  Result.hs.UnionWith(a); \n  Result.hs.ExceptWith(b.Select(x -> integer(x)));\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET 'in' operator to check if int64 value exists in byte array with range validation",
+    "output": "function operator in(x: int64; a: array of byte): boolean; extensionmethod\n  := (x >= byte.MinValue) and (x <= byte.MaxValue) and a.Contains(byte(x));"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to open a binary file with specified encoding and return file variable",
+    "output": "function OpenBinary(fname: string; en: Encoding): file;\nbegin\n  PABCSystem.Reset(Result, fname, en);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to create or truncate a binary file with specified encoding and return file variable",
+    "output": "function CreateBinary(fname: string; en: Encoding): file;\nbegin\n  PABCSystem.Rewrite(Result, fname, en);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to open a typed file with specified encoding and validation for reference types",
+    "output": "function OpenFile<T>(fname: string; en: Encoding): file of T;\nbegin\n  if ContainsReferenceTypes(typeof(T)) then\n    raise new System.SystemException(GetTranslation(BAD_TYPE_IN_TYPED_FILE));\n  PABCSystem.Reset(Result, fname, en);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to create a typed file with specified encoding and validation for reference types",
+    "output": "function CreateFile<T>(fname: string; en: Encoding): file of T;\nbegin\n  if ContainsReferenceTypes(typeof(T)) then\n    raise new System.SystemException(GetTranslation(BAD_TYPE_IN_TYPED_FILE));\n  var res: file of T;\n  PABCSystem.Rewrite(res, fname, en);\n  Result := res;\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to open a file of integers",
+    "output": "function OpenFileInteger(fname: string): file of integer;\nbegin\n  Result := OpenFile&<integer>(fname);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to open a file of real numbers",
+    "output": "function OpenFileReal(fname: string): file of real;\nbegin\n  Result := OpenFile&<real>(fname);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to create a file of integers",
+    "output": "function CreateFileInteger(fname: string): file of integer;\nbegin\n  Result := CreateFile&<integer>(fname);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to create a file of real numbers",
+    "output": "function CreateFileReal(fname: string): file of real;\nbegin\n  Result := CreateFile&<real>(fname);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET extension method to reset a typed file",
+    "output": "procedure Reset<T>(Self: file of T); extensionmethod;\nbegin\n  PABCSystem.Reset(Self);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET extension method to rewrite a typed file",
+    "output": "procedure Rewrite<T>(Self: file of T); extensionmethod;\nbegin\n  PABCSystem.Rewrite(Self);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET operator to repeat procedure n times with integer first",
+    "output": "function operator*(n: integer; p: procedure): procedure; extensionmethod;\nbegin\n  Result := () -> for var i:=1 to n do p\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET implicit conversion operator from integer set to shortint set with range validation",
+    "output": "function operator implicit(n: set of integer): set of shortint; extensionmethod;\nbegin\n  foreach var x in n._hs do\n    if (x >= shortint.MinValue) and (x <= shortint.MaxValue) then\n      Result._hs.Add(x)\n    else raise new System.ArgumentException(GetTranslation(OUT_OF_TYPE_RANGE_IN_SET_ASSIGNMENT));\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET implicit conversion operator from integer set to smallint set with range validation",
+    "output": "function operator implicit(n: set of integer): set of smallint; extensionmethod;\nbegin\n  foreach var x in n._hs do\n    if (x >= smallint.MinValue) and (x <= smallint.MaxValue) then\n      Result._hs.Add(x)\n    else raise new System.ArgumentException(GetTranslation(OUT_OF_TYPE_RANGE_IN_SET_ASSIGNMENT));\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET implicit conversion operator from integer set to word set with range validation",
+    "output": "function operator implicit(n: set of integer): set of word; extensionmethod;\nbegin\n  foreach var x in n._hs do\n    if (x >= word.MinValue) and (x <= word.MaxValue) then\n      Result._hs.Add(x)\n    else raise new System.ArgumentException(GetTranslation(OUT_OF_TYPE_RANGE_IN_SET_ASSIGNMENT));\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET implicit conversion operator from integer set to longword set with range validation",
+    "output": "function operator implicit(n: set of integer): set of longword; extensionmethod;\nbegin\n  foreach var x in n._hs do\n    if (x >= longword.MinValue) and (x <= longword.MaxValue) then\n      Result._hs.Add(x)\n    else raise new System.ArgumentException(GetTranslation(OUT_OF_TYPE_RANGE_IN_SET_ASSIGNMENT));\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET implicit conversion operator from integer set to int64 set",
+    "output": "function operator implicit(n: set of integer): set of int64; extensionmethod;\nbegin\n  foreach var x in n._hs do\n    Result._hs.Add(x)\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET implicit conversion operator from integer set to uint64 set with range validation",
+    "output": "function operator implicit(n: set of integer): set of uint64; extensionmethod;\nbegin\n  foreach var x in n._hs do\n    if x >= 0 then\n      Result._hs.Add(x)\n    else raise new System.ArgumentException(GetTranslation(OUT_OF_TYPE_RANGE_IN_SET_ASSIGNMENT));\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET implicit conversion operator from integer array to byte set with range validation",
+    "output": "function operator implicit(n: array of integer): set of byte; extensionmethod;\nbegin\n  foreach var x in n do\n    if (x >= byte.MinValue) and (x <= byte.MaxValue) then\n      Result._hs.Add(x)\n    else raise new System.ArgumentException(GetTranslation(OUT_OF_TYPE_RANGE_IN_SET_ASSIGNMENT));\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET implicit conversion operator from integer array to int64 set",
+    "output": "function operator implicit(a: array of integer): set of int64; extensionmethod;\nbegin\n  foreach var x in a do\n    Result._hs.Add(x);\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to convert byte set to sequence of integers",
+    "output": "function NSToInts(ns: set of byte) := ns._hs.Select(x -> integer(x));"
+  },
+  {
+    "instruction": "Write a PascalABC.NET function to convert integer set to sequence of bytes with range validation",
+    "output": "function NSToBytes(ns: set of integer): sequence of byte;\nbegin\n  var res := new List<byte>;\n  foreach var x in ns._hs do\n    if (x >= byte.MinValue) and (x <= byte.MaxValue) then\n      res.Add(x)\n    else raise new System.ArgumentException(GetTranslation(OUT_OF_TYPE_RANGE_IN_SET_OPERATION));\n  Result := res;  \nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET inequality operator for integer set and byte set",
+    "output": "function operator<>(a: set of integer; b: set of byte); extensionmethod := not(a = b);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET subset operator for integer set and byte set",
+    "output": "function operator<(a: set of integer; b: set of byte); extensionmethod \n  := (a.Count < b.Count) and a.All(x -> (x >= 0) and (x <= byte.MaxValue) and (x in b));"
+  },
+  {
+    "instruction": "Write a PascalABC.NET superset operator for integer set and byte set",
+    "output": "function operator>(a: set of integer; b: set of byte); extensionmethod \n  := b < a;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET subset or equal operator for integer set and byte set",
+    "output": "function operator<=(a: set of integer; b: set of byte); extensionmethod \n  := (a.Count <= b.Count) and a.All(x -> (x >= 0) and (x <= byte.MaxValue) and (x in b));"
+  },
+  {
+    "instruction": "Write a PascalABC.NET superset or equal operator for integer set and byte set",
+    "output": "function operator>=(a: set of integer; b: set of byte); extensionmethod \n  := b <= a;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET set intersection assignment operator for byte set and integer set",
+    "output": "procedure operator*=(a: set of byte; b: set of integer); extensionmethod \n  := a *= NewSet&<byte>(b);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET set union assignment operator for byte set and integer set",
+    "output": "procedure operator+=(a: set of byte; b: set of integer); extensionmethod \n  := a += NewSet&<byte>(b);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET set difference assignment operator for byte set and integer set",
+    "output": "procedure operator-=(a: set of byte; b: set of integer); extensionmethod \n  := a -= NewSet&<byte>(b);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET array concatenation operator for byte array and integer array",
+    "output": "function operator+(a: array of byte; b: array of integer): array of integer; extensionmethod \n  := a.ConvertAll(x -> integer(x)) + b;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET 'in' operator to check if int64 value exists in shortint array with range validation",
+    "output": "function operator in(x: int64; a: array of shortint): boolean; extensionmethod\n  := (x >= shortint.MinValue) and (x <= shortint.MaxValue) and a.Contains(shortint(x));"
+  },
+  {
+    "instruction": "Write a PascalABC.NET 'in' operator to check if int64 value exists in smallint array with range validation",
+    "output": "function operator in(x: int64; a: array of smallint): boolean; extensionmethod\n  := (x >= smallint.MinValue) and (x <= smallint.MaxValue) and a.Contains(smallint(x));"
+  },
+  {
+    "instruction": "Write a PascalABC.NET 'in' operator to check if int64 value exists in word array with range validation",
+    "output": "function operator in(x: int64; a: array of word): boolean; extensionmethod\n  := (x >= word.MinValue) and (x <= word.MaxValue) and a.Contains(word(x));"
+  },
+  {
+    "instruction": "Write a PascalABC.NET 'in' operator to check if int64 value exists in longword array with range validation",
+    "output": "function operator in(x: int64; a: array of longword): boolean; extensionmethod\n  := (x >= longword.MinValue) and (x <= longword.MaxValue) and a.Contains(longword(x));"
+  },
+  {
+    "instruction": "Write a PascalABC.NET 'in' operator to check if int64 value exists in integer array with range validation",
+    "output": "function operator in(x: int64; a: array of integer): boolean; extensionmethod\n  := (x >= integer.MinValue) and (x <= integer.MaxValue) and a.Contains(integer(x));"
+  },
+  {
+    "instruction": "Write a PascalABC.NET 'in' operator to check if int64 value exists in uint64 array with range validation",
+    "output": "function operator in(x: int64; a: array of uint64): boolean; extensionmethod\n  := (x >= uint64.MinValue) and a.Contains(uint64(x));"
+  },
+  {
+    "instruction": "Write a PascalABC.NET module initialization procedure",
+    "output": "procedure __InitModule__;\nbegin\n  if not __initialized then\n  begin\n    __initialized := true;\n    __InitPABCSystem;\n  end;\nend;"
+  }
+]

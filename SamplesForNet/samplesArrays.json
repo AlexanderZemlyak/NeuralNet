@@ -1,0 +1,86 @@
+[
+  {
+    "instruction": "Write a procedure in PascalABC.NET that fills an integer array with random numbers in the range from minValue to maxValue",
+    "output": "procedure FillByRandom(a: array of integer; minValue, maxValue: integer);\nbegin\n  for var i := 0 to a.Length - 1 do\n    a[i] := PABCSystem.Random(minValue, maxValue);\nend;"
+  },
+  {
+    "instruction": "Write a procedure in PascalABC.NET that fills a real array with random numbers in the range from minValue to maxValue",
+    "output": "procedure FillByRandom(a: array of real; minValue, maxValue: real);\nbegin\n  for var i := 0 to a.Length - 1 do\n    a[i] := PABCSystem.Random * (maxValue - minValue);\nend;"
+  },
+  {
+    "instruction": "Write a procedure in PascalABC.NET that fills an array with a specified value",
+    "output": "procedure FillByValue<T>(a: array of T; x: T);\nbegin\n  for var i := 0 to a.Length - 1 do\n    a[i] := x;\nend;"
+  },
+  {
+    "instruction": "Write a function in PascalABC.NET that creates and returns an integer array of size n filled with random numbers in the range from minValue to maxValue",
+    "output": "function CreateRandomIntegerArray(n: integer; minValue, maxValue: integer): array of integer;\nbegin\n  SetLength(Result, n);\n  FillByRandom(Result, minValue, maxValue);\nend;"
+  },
+  {
+    "instruction": "Write a function in PascalABC.NET that creates and returns a real array of size n filled with random numbers in the range from minValue to maxValue",
+    "output": "function CreateRandomRealArray(n: integer; minValue, maxValue: real): array of real;\nbegin\n  SetLength(Result, n);\n  FillByRandom(Result, minValue, maxValue);\nend;"
+  },
+  {
+    "instruction": "Write a procedure in PascalABC.NET that reads an integer array from input",
+    "output": "procedure ReadArray(a: array of integer);\nbegin\n  for var i := 0 to a.Length - 1 do\n    read(a[i]);\n  readln;  \nend;"
+  },
+  {
+    "instruction": "Write a procedure in PascalABC.NET that reads a real array from input",
+    "output": "procedure ReadArray(a: array of real);\nbegin\n  for var i := 0 to a.Length - 1 do\n    read(a[i]);\n  readln;  \nend;"
+  },
+  {
+    "instruction": "Write a procedure in PascalABC.NET that reads a string array from input",
+    "output": "procedure ReadArray(a: array of string);\nbegin\n  for var i := 0 to a.Length - 1 do\n    read(a[i]);\n  readln;  \nend;"
+  },
+  {
+    "instruction": "Write a procedure in PascalABC.NET that writes an array using delimiter as a separator for values",
+    "output": "procedure WriteArray<T>(a: array of T; delimiter: string := ' ');\nbegin\n  if (a=nil) or (a.Length=0) then\n    exit;\n  for var i := 0 to a.Length - 2 do\n    write(a[i], delimiter);\n  write(a[a.Length - 1]);  \nend;"
+  },
+  {
+    "instruction": "Write a procedure in PascalABC.NET that writes an array using delimiter as a separator for values and moves to a new line",
+    "output": "procedure WritelnArray<T>(a: array of T; delimiter: string := ' ');\nbegin\n  WriteArray(a, delimiter);\n  writeln;\nend;"
+  },
+  {
+    "instruction": "Write a procedure in PascalABC.NET that sorts an array in ascending order",
+    "output": "procedure Sort<T>(a: array of T);\nbegin\n  System.Array.Sort(a);\nend;"
+  },
+  {
+    "instruction": "Write a procedure in PascalABC.NET that sorts an array in descending order",
+    "output": "procedure SortDescending<T>(a: array of T);\nbegin\n  System.Array.Sort(a);\n  System.Array.Reverse(a);\nend;"
+  },
+  {
+    "instruction": "Write a procedure in PascalABC.NET that fills a two-dimensional integer array with random numbers in the range from minValue to maxValue",
+    "output": "procedure FillByRandom(a: array [,] of integer; minValue, maxValue: integer);\nbegin\n  for var i := 0 to a.GetLength(0) - 1 do\n    for var j := 0 to a.GetLength(1) - 1 do\n      a[i, j] := PABCSystem.Random(minValue, maxValue);\nend;"
+  },
+  {
+    "instruction": "Write a procedure in PascalABC.NET that fills a two-dimensional real array with random numbers in the range from minValue to maxValue",
+    "output": "procedure FillByRandom(a: array [,] of real; minValue, maxValue: real);\nbegin\n  for var i := 0 to a.GetLength(0) - 1 do\n    for var j := 0 to a.GetLength(1) - 1 do\n      a[i, j] := PABCSystem.Random * (maxValue - minValue);\nend;"
+  },
+  {
+    "instruction": "Write a procedure in PascalABC.NET that fills a two-dimensional array with a specified value",
+    "output": "procedure FillByValue<T>(a: array [,] of T; x: T);\nbegin\n  for var i := 0 to a.GetLength(0) - 1 do\n    for var j := 0 to a.GetLength(1) - 1 do\n      a[i, j] := x\nend;"
+  },
+  {
+    "instruction": "Write a function in PascalABC.NET that creates and returns a two-dimensional integer array of size m x n filled with random numbers in the range from minValue to maxValue",
+    "output": "function CreateRandomIntegerMatrix(m, n: integer; minValue, maxValue: integer): array [,] of integer;\nbegin\n  SetLength(Result, m, n);  \n  FillByRandom(Result, minValue, maxValue);\nend;"
+  },
+  {
+    "instruction": "Write a function in PascalABC.NET that creates and returns a two-dimensional real array of size m x n filled with random numbers in the range from minValue to maxValue",
+    "output": "function CreateRandomRealMatrix(m, n: integer; minValue, maxValue: real): array [,] of real;\nbegin\n  SetLength(Result, m, n);  \n  FillByRandom(Result, minValue, maxValue);\nend;"
+  },
+  {
+    "instruction": "Write a procedure in PascalABC.NET that writes a two-dimensional array with specified width formatting",
+    "output": "procedure WriteMatrix<T>(a: array [,] of T; width: integer := 0);\nbegin\n  for var i := 0 to a.GetLength(0) - 1 do\n  begin\n    for var j := 0 to a.GetLength(1) - 1 do\n      write(a[i, j]:width, ' ');\n    writeln;  \n  end;\nend;"
+  },
+  {
+    "instruction": "Write a procedure in PascalABC.NET that writes a two-dimensional real array with specified width and decimal places formatting",
+    "output": "procedure WriteMatrix(a: array [,] of real; width: integer := 0; digitsafterpoint: integer := 2);\nbegin\n  for var i := 0 to a.GetLength(0) - 1 do\n  begin\n    for var j := 0 to a.GetLength(1) - 1 do\n      write(a[i, j]:width:digitsafterpoint, ' ');\n    writeln;  \n  end;\nend;"
+  },
+  {
+    "instruction": "Write an extension method in PascalABC.NET that writes an array using delimiter as separator",
+    "output": "procedure &Array.Write(delimiter: string);\nbegin\n  if Self.Rank = 1 then\n    for var i := 0 to Self.Length - 1 do\n    begin\n      PABCSystem.write(Self.GetValue(i));\n      if i < Self.Length - 1 then\n        PABCSystem.write(delimiter);\n    end\n  else if Self.Rank = 2 then \n    for var i := 0 to Self.GetLength(0) - 1 do\n    begin\n      for var j := 0 to Self.GetLength(1) - 1 do\n        PABCSystem.write(Self.GetValue(i, j), delimiter);\n      PABCSystem.writeln;\n    end;\nend;"
+  },
+  {
+    "instruction": "Write an extension method in PascalABC.NET that writes an array using delimiter as separator and moves to a new line",
+    "output": "procedure &Array.Writeln(delimiter: string);\nbegin\n  Self.Write(delimiter);\n  PABCSystem.writeln;\nend;"
+  }
+]

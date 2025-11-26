@@ -1,0 +1,78 @@
+[
+  {
+    "instruction": "Draw a circle interactively using mouse in GraphWPF. Press and hold mouse button to draw circles with random colors.",
+    "output": "uses GraphWPF;\n\nbegin\n  var x1,y1: real;\n  var c: Color;\n  OnMouseDown := procedure(x,y,mb) -> begin\n    (x1,y1) := (x,y);\n    c := RandomColor;\n  end;\n  OnMouseMove := procedure(x,y,mb) -> if mb=1 then\n  begin\n    var r := Sqrt(Sqr(x1-x)+Sqr(y1-y));\n    Window.Clear;\n    Circle(x1,y1,r,c);\n  end;\nend."
+  },
+  {
+    "instruction": "Draw multiple mathematical functions (x*sin(x), sin, cos, exp) using GraphABC with transparent brush.",
+    "output": "uses GraphABC;\n\nbegin\n  Brush.Color := ARGB(0,0,0,0);\n  Draw(x->x*sin(x),-20,20);\n  Draw(sin);\n  Draw(cos);\n  Draw(exp);\nend."
+  },
+  {
+    "instruction": "Draw mathematical functions in different scaled rectangles using GraphABC. Implement Scale and Move extension methods for Rectangle.",
+    "output": "uses GraphABC;\n\nfunction System.Drawing.Rectangle.Scale(m: real): System.Drawing.Rectangle;\nbegin\n  Result := Self;\n  Result.Width := Trunc(Result.Width * m);\n  Result.Height := Trunc(Result.Height * m)\nend;\n\nfunction System.Drawing.Rectangle.Move(dx,dy: integer): System.Drawing.Rectangle;\nbegin\n  Result := Self;\n  Result.X := Result.X + dx;\n  Result.Y := Result.Y + dy;\nend;\n\nbegin\n  var r := ClientRectangle;\n  r := r.Scale(0.5);\n  var r1 := r.Move(r.Width,0);\n  var r2 := r.Move(0,r.Height);\n  var r3 := r.Move(r.Width,r.Height);\n  Draw(x->x*sin(x),-20,20,r);\n  Draw(sin,r1);\n  Draw(cos,r2);\n  Draw(exp,20,10,r3);\nend."
+  },
+  {
+    "instruction": "Draw multiple function graphs in different window quadrants using GraphWPF: sin(4x)+cos(3x), x², exp(x), and x*cos(2x-1).",
+    "output": "uses GraphWPF;\n\nbegin\n  Window.Title := 'Графики функций';\n  var ww := Window.Width / 2;\n  var hh := Window.Height / 2;\n  DrawGraph(x -> sin(4 * x) + cos(3 * x), -5, 5, 0, 0, ww, hh, 'sin(4 * x) + cos(3 * x)');\n  DrawGraph(x -> x * x, -5, 5, ww - 1, 0, ww, hh, 'x * x');\n  DrawGraph(x -> exp(x), -3, 3, 0, 10, 0, hh-1, ww, hh, 'exp(x)');\n  DrawGraph(x -> x*cos(2*x-1), -15, 15, ww - 1, hh-1, ww, hh, 'x * cos(2*x-1)');\nend."
+  },
+  {
+    "instruction": "Generate and display a pixel matrix with calculated RGB colors using GraphWPF, then measure drawing performance.",
+    "output": "uses GraphWPF;\n\nbegin\n  Window.SetSize(640, 480);\n  var m := MatrGen(640,480,(x,y)->RGB(2 * x - y, x - 3 * y, x + y));\n  MillisecondsDelta.Println;  \n  DrawPixels(0,0,m);\n  MillisecondsDelta.Println;  \nend."
+  },
+  {
+    "instruction": "Draw random points using Turtle library. Generate arrays of random coordinates and plot them.",
+    "output": "uses Turtle;\n\nbegin\n  Window.Title := 'DrawPoints';\n  var n := 1000;\n  var d := 10;\n  var a := ArrRandomReal(n,-d,d);\n  DrawPoints(a[::2],a[1::2]);\n  a := ArrRandomReal(n,-d,d);\n  DrawPoints(a[::2],a[1::2]);\nend."
+  },
+  {
+    "instruction": "Create parametric trajectory functions and duplicate 3D objects along a spiral path using Graph3D.",
+    "output": "uses Graph3D;\n\nfunction ParametricTrajectory(a,b: real; fun: real->Point3D; N: integer) := PartitionPoints(a,b,N).Select(fun);\n\nfunction ParametricCirve3D(a,b: real; fun: real->Point3D; N: integer := 200): SegmentsT;\nbegin\n  var tr := ParametricTrajectory(a,b,fun,N);\n  Result := Polyline3D(tr);\nend;\n\nprocedure DuplicateByTrajectory(c: Object3D; a,b: real; fun: real->Point3D; N: integer);\nbegin\n  c.MoveTo(fun(a));\n  foreach var p in PartitionPoints(a,b,N).Skip(1).Select(fun) do\n  begin\n    var c1 := c.Clone.MoveTo(p);\n    c1.Rotate(OrtZ,3);\n    (c1 as CubeT).Color := RandomColor;\n    c := c1;\n  end;\nend;\n\nbegin\n  var c := Cube(0,0,0,0.7,Colors.Green);\n  DuplicateByTrajectory(c,0,4*Pi,t->P3D(4*cos(t),4*sin(t),0.5*t),40);\nend."
+  },
+  {
+    "instruction": "Demonstrate basic operations with dynamic arrays in PascalABC.NET: creation, sorting, reversing, resizing, and searching.",
+    "output": "begin\n  var a := ArrRandom(10);\n  a.Println;\n  a.Sort;\n  a.Println;\n  a.Reverse;\n  a.Println;\n  a.Resize(a.Length+2);\n  a.Println;\n  var i := a.IndexOf(50);\n  Writeln(i);\nend."
+  },
+  {
+    "instruction": "Create and display a dynamic array of random integers using SetLength and foreach loop.",
+    "output": "var a: array of integer;\n\nbegin\n  var n := 20;\n  SetLength(a,n);\n  for var i:=0 to a.Length-1 do\n    a[i] := Random(1,99);\n  writeln('Содержимое случайного динамического массива целых: ');  \n  foreach var x in a do\n    Print(x);\nend."
+  },
+  {
+    "instruction": "Demonstrate that dynamic array assignment creates references, not copies. Show how modifying one array affects another.",
+    "output": "var a: array of integer;\n\nbegin\n  writeln('При присваивании динамических массивов две переменные начинают указывать на одну память:');\n  var n := 20;\n  a := new integer[n];\n  for var i:=0 to a.Length-1 do\n    a[i] := i;\n  writeln('До присваивания b[5]: a[5]=',a[5]);\n  var b: array of integer;\n  b := a;\n  b[5] := 666;\n  writeln('После присваивания b[5]: a[5]=',a[5]);\nend."
+  },
+  {
+    "instruction": "Show how SetLength preserves existing elements when resizing a dynamic array.",
+    "output": "var a: array of integer;\n\nbegin\n  writeln('SetLength при повторном вызове не портит старые элементы:');\n  SetLength(a,5);\n  for var i:=0 to a.Length-1 do\n    a[i] := i+1;\n  a.Println;\n  SetLength(a,10);\n  a.Println;\nend."
+  },
+  {
+    "instruction": "Demonstrate passing dynamic arrays as parameters. Show when to use var parameter for array creation.",
+    "output": "procedure WriteArr(a: array of integer);\nbegin\n  foreach x: integer in a do\n    write(x,' ');\n  writeln;\nend;\n\nprocedure CreateRandomArr(var a: array of integer; n: integer);\nbegin\n  a := new integer[n];\n  for var i:=0 to a.Length-1 do\n    a[i] := Random(10);\nend;\n\nvar a: array of integer;\n\nbegin\n  writeln('Случайный целый массив: ');\n  CreateRandomArr(a,30);\n  WriteArr(a);\nend."
+  },
+  {
+    "instruction": "Demonstrate common dynamic array errors: accessing array without memory allocation and index out of bounds.",
+    "output": "// Error 1: No memory allocation\nvar a: array of integer;\nbegin\n  a[0] := 666;\nend.\n\n// Error 2: Index out of bounds  \nvar a: array of integer;\nbegin\n  SetLength(a,10);\n  a[10] := 666;\nend."
+  },
+  {
+    "instruction": "Convert number to digits in base 2 and back using School library in PascalABC.NET.",
+    "output": "##\nuses School;\nvar lst := 1234.Digits(2);\nlst.Println;\nvar n := lst.DigitsToInt64(2);\nPrintln(n);"
+  },
+  {
+    "instruction": "Use div and mod operations to extract last digit and remove last digit from a number, and check if number is even.",
+    "output": "var a: integer;\n\nbegin \n  Write('Введите a: ');\n  Readln(a);\n  Writeln('Последняя цифра числа: ',a mod 10);\n  Writeln('Число без последней цифры: ',a div 10);\n  Writeln('Если число a четно, то 0: ',a mod 2);\nend."
+  },
+  {
+    "instruction": "Reverse the digits of a number using div and mod operations in PascalABC.NET.",
+    "output": "var a: integer := 247;\n\nbegin \n  Write('Цифры числа в обратном порядке: ');\n  Print(a mod 10);\n  a := a div 10;\n  Print(a mod 10);\n  a := a div 10;\n  Print(a mod 10);\nend."
+  },
+  {
+    "instruction": "Use Drawman library to draw simple geometric shapes. Move to point, draw line, and return to origin.",
+    "output": "uses Drawman;\n\nbegin\n  Task('a1');\n  ToPoint(2,3);\n  PenDown;\n  OnVector(1,2);\n  PenUp;\n  ToPoint(0,0);\nend."
+  },
+  {
+    "instruction": "Download a file from web using System.Net.WebClient and execute it in PascalABC.NET.",
+    "output": "uses System.Net;\n\nconst \n  address = 'www.yandex.ru';\n  filename = 'LogoPABCNET2010_Rus.png';\n\nbegin\n  var w := new WebClient();\n  w.DownloadFile('http://pascalabc.net/images/logo/'+filename,filename);\n  Exec(filename);\nend."
+  },
+  {
+    "instruction": "Generate Dragon Curve fractal using GraphABC and Utils libraries in PascalABC.NET with performance measurement.",
+    "output": "program Dragon;\n\nuses GraphABC,Utils;\n\nvar\n  x := 200;\n  y := 150;\n  dx := 0;\n  dy := -4;\n  turn: array [1..1000] of Boolean;\n\nbegin\n  SetWindowSize(790,500);\n  Window.Title := 'Кривая Дракона';\n  var f := True;\n  for var a := 1 to 64 do\n  begin\n    turn[2*a-1] := f;\n    f := not f;\n    turn[2*a] := turn[a];\n  end;\n  var b := 0;\n  var d := 1;\n  f := false;\n  MoveTo(x,y);\n  \n  for var a:=1 to 128 do\n  begin\n    var t: integer;\n    LockDrawing;\n    for var i:=1 to 127*4 do\n    begin\n      b += d; \n      x += dx; \n      y += dy;\n      LineTo(x,y);\n      if f and not turn[b] or not f and turn[b] then\n      begin\n        t := dy;\n        dy := -dx;\n      end\n      else\n      begin\n        t := -dy;\n        dy := dx;\n      end;\n      dx := t;\n    end;\n    b += d; \n    x += dx; \n    y += dy;\n    LineTo(x,y);\n    d := -d;\n    f := not f;\n    if turn[a] then\n    begin\n      t := dy;\n      dy := -dx;\n    end\n    else\n    begin\n      t := -dy;\n      dy := dx;\n    end;\n    dx := t;\n    UnLockDrawing;\n  end;\n  write('Время работы = ',Milliseconds/1000,' с');\nend."
+  }
+]

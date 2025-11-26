@@ -1,0 +1,86 @@
+[
+  {
+    "instruction": "Create a simple shooter game with player, monsters and bullets using WPFObjects in PascalABC.NET",
+    "output": "uses WPFObjects,Timers;\n\ntype \n  BulletWPF = class(CircleWPF) end;\n  MonsterWPF = class(SquareWPF) end;\n  PlayerWPF = class(EllipseWPF) end;\n\nbegin\n  var Player := new PlayerWPF(GraphWindow.Center, 30, 50, RandomColor);\n  Player.Velocity := 100;\n  Player.Number := 0;\n  \n  loop 5 do\n  begin\n    var m := new MonsterWPF(750,Random(10,550),30,RandomColor);\n    m.Velocity := 50;\n  end;  \n  \n  OnMouseMove := (x,y,mb) -> Player.RotateToPoint(x,y);\n  \n  OnMouseDown := (x,y,mb) -> begin\n    var cc := new BulletWPF(Player.CenterTop,5,Colors.Red);\n    cc.Direction := (x-Player.Center.X,y-Player.Center.Y);\n    cc.Velocity := 300;\n  end;\n  \n  var kl,kr,ku,kd: boolean;\n\n  OnDrawFrame := dt -> begin\n    Window.Title := 'Object count: '+Objects.Count;\n    if kr then \n      Player.Dx := 1\n    else if kl then \n      Player.Dx := -1\n    else Player.Dx := 0;  \n    if ku then \n      Player.Dy := -1\n    else if kd then \n      Player.Dy := 1\n    else Player.Dy := 0; \n    \n    for var i:=Objects.Count-1 downto 0 do\n    begin\n      var o := Objects[i];\n      if o is MonsterWPF then \n        o.Direction := (Player.Center.X - o.Center.X,Player.Center.Y-o.Center.Y);\n      o.MoveTime(dt);\n    end;\n    \n    if Player.IntersectionList.Any(o -> o is MonsterWPF) then\n    begin\n      // Game over\n    end;\n  end;\n  \n  CreateTimerAndStart(100,procedure ->\n  begin\n    for var i:=Objects.Count-1 downto 0 do\n    begin\n      var o := Objects[i];\n      if o.OutOfGraphWindow and not (o is PlayerWPF) then \n        o.Destroy;   \n      if o is BulletWPF then\n        foreach var x in o.IntersectionList do\n          if x is MonsterWPF then\n          begin\n            x.Destroy;\n            o.Destroy;\n            Player.Number += 1;\n            break;\n          end;\n    end;\n  end);\n  \n  CreateTimerAndStart(1000,procedure ->\n  begin\n    var x := if Random(2)=0 then 750 else 50;\n    var m := new MonsterWPF(x,Random(10,550),30,RandomColor);\n    m.Velocity := 50;\n  end);\n  \n  OnKeyDown := k ->\n  begin\n    case k of\n      Key.w,Key.Up: begin ku := true; kd := false; end; \n      Key.s,Key.Down: begin kd := true; ku := false; end;\n      Key.a,Key.Left: begin kl := true; kr := false; end;\n      Key.d,Key.Right: begin kr := true; kl := false end;\n    end;  \n  end;\n\n  OnKeyUp := k ->\n  begin\n    case k of\n      Key.w,Key.Up: ku := false;\n      Key.s,Key.Down: kd := false;\n      Key.a,Key.Left: kl := false;\n      Key.d,Key.Right: kr := false;\n    end;  \n  end;\nend."
+  },
+  {
+    "instruction": "Create an enhanced shooter game with interface, game states and controls in PascalABC.NET",
+    "output": "uses WPFObjects, Timers, Controls;\n\ntype\n  BulletWPF = class(CircleWPF) end;\n  MonsterWPF = class(SquareWPF) end;\n  PlayerWPF = class(EllipseWPF) end;\n  TGameState = (Paused, Started, EndOfGame);\n\nvar\n  GameState: TGameState := Paused;\n  sb: StatusBarWPF;\n  bstart, bstop, bnewgame: ButtonWPF;\n  Player: PlayerWPF;\n  kl, kr, ku, kd: boolean;\n\nprocedure InitGame;\nbegin\n  Player := new PlayerWPF(GraphWindow.Center, 30, 50, RandomColor);\n  Player.Velocity := 100;\n  Player.Number := 0;\n  \n  loop 10 do\n  begin\n    var m := new MonsterWPF(750, Random(10, 550), 30, RandomColor);\n    m.Velocity := 50;\n  end;\nend;\n\nprocedure NewGame;\nbegin\n  sb.Text := '';\n  Objects.Clear;\n  InitGame;\nend;\n\nprocedure GameOver;\nbegin\n  sb.Text := 'Player died';\n  GameState := EndOfGame;\n  bstart.Enabled := False;\n  bstop.Enabled := False;\n  bnewgame.Enabled := True;\n  Player.Color := Colors.Black;\nend;\n\nprocedure GameOverWin;\nbegin\n  sb.Text := 'Victory!';\n  GameState := EndOfGame;\n  bstart.Enabled := False;\n  bstop.Enabled := False;\n  bnewgame.Enabled := True;\n  Player.Color := Colors.Yellow;\nend;"
+  },
+  {
+    "instruction": "Implement interface initialization and game procedures for shooter game in PascalABC.NET",
+    "output": "procedure InitInterface;\nbegin\n  Window.SetSize(1000, 600);\n  LeftPanel(200, Colors.Orange);\n  bstart := Button('Start');\n  bstop := Button('Stop');\n  bnewgame := Button('New game');\n  bstop.Enabled := False;\n  bstart.Enabled := False;\n  bstart.Click := procedure → begin\n    GameState := Started;\n    bstart.Enabled := False;\n    bstop.Enabled := True;\n  end;\n  bstop.Click := procedure → begin\n    GameState := Paused;\n    bstart.Enabled := True;\n    bstop.Enabled := False;\n  end;\n  bNewGame.Click := procedure → begin\n    GameState := Started;\n    bnewgame.Enabled := False;\n    bstart.Enabled := False;\n    bstop.Enabled := True;\n    NewGame;\n  end;\n  sb := StatusBar;\nend;\n\nprocedure KillMonstersHandler;\nbegin\n  if GameState <> Started then \n    exit;\n  Objects.DestroyAll(o → o.OutOfGraphWindow and not (o is PlayerWPF));\n  foreach var o in Objects do\n  begin\n    if o is BulletWPF then\n      foreach var x in o.IntersectionList do\n        if x is MonsterWPF then\n        begin\n          x.Destroy;\n          o.Destroy;\n          Player.Number += 1;\n          break;\n        end;\n  end;\nend;\n\nprocedure DrawFrame(dt: real);\nbegin\n  if GameState <> Started then exit;\n  Window.Title := 'Object count: ' + Objects.Count;\n  \n  if kr then \n    Player.Dx := 1\n  else if kl then \n    Player.Dx := -1\n  else Player.Dx := 0;  \n  if ku then \n    Player.Dy := -1\n  else if kd then \n    Player.Dy := 1\n  else Player.Dy := 0; \n  \n  foreach var o in Objects do\n  begin\n    if o is MonsterWPF then \n      o.Direction := (Player.Center.X - o.Center.X, Player.Center.Y - o.Center.Y);\n    o.MoveTime(dt);\n  end;\n  \n  if Player.IntersectionList.Any(o → o is MonsterWPF) then\n    GameOver;\n\n  if Player.Number >= 10 then\n    GameOverWin;\nend;"
+  },
+  {
+    "instruction": "Demonstrate usage of generic types with short type names in template parameters in PascalABC.NET",
+    "output": "begin\n  var q := new Queue<(integer,integer)>;\n  q.Enqueue((1,2));\n  q.Enqueue((2,5));\n  q.Println;\n  Println(q);\n  \n  var l := new List<integer->integer>;\n  l.Add(x->x);\n  l.Add(x->x*x);\n  l.ForEach(f->Print(f(5)));\n  Println;\n  \n  var l1 := new List<(integer,integer)->integer>;\n  l1.Add((x,y)->x+y);\n  l1.Add((x,y)->x-y);\n  l1.Add((x,y)->x*y);\n  l1.ForEach(f->Print(f(2,3)));\nend."
+  },
+  {
+    "instruction": "Show simple new language features in PascalABC.NET including variable initialization and type inference",
+    "output": "var i: integer := 1; \nvar r := 2.5;\n\nbegin\n  var s: real := 1.0;\n  \n  for j: integer := 1 to 10 do\n    s += j;\n\n  var p := 1;\n  \n  for var j := 1 to 10 do\n    p *= j;\n    \n  var str := '';\n  for c: char := 'a' to 'z' do\n    str += c;\n  \nend."
+  },
+  {
+    "instruction": "Create a simple text editor using CRT in PascalABC.NET",
+    "output": "uses CRT;\n\nbegin\n  SetWindowTitle('Text editor (Enter - new line, Esc - exit)');\n  clrScr;\n  repeat\n    var c := ReadKey;\n    case c of\n  #13: writeln;\n  #27: break;\n  #32..#255: write(c);\n  #0: c := ReadKey;\n    end;\n  until false;\nend."
+  },
+  {
+    "instruction": "Solve system of linear equations using NumLibABC in PascalABC.NET",
+    "output": "uses NumLibABC;\n\nbegin\n  var A:=new Matrix(3,3,2,3,-1,1,-2,1,1,0,2);\n  var B:=new Vector(9,3,2);\n  var cond:real;\n  var x:=A.SLAU(B,cond);\n  x.Println;\n  Writeln('Condition number = ',cond)\nend."
+  },
+  {
+    "instruction": "Implement selection sort algorithm with helper procedures in PascalABC.NET",
+    "output": "procedure SortByChoice(a: array of real);\nbegin\n  for var i:=0 to a.Length-2 do\n  begin\n    var min := a[i]; \n    var ind := i;\n    for var j:=i+1 to a.Length-1 do\n      if a[j]<min then\n      begin\n        min := a[j];\n        ind := j;\n      end;\n    a[ind] :=a [i];\n    a[i] := min;\n  end;\nend;\n\nprocedure WriteArr(a: array of real); \nbegin\n  foreach x: real in a do\n    write(x,' ');\n  writeln;\nend;\n\nfunction CreateRandomArr(n: integer): array of real; \nbegin\n  Result := new real[n];\n  for var i:=0 to Result.Length-1 do\n    Result[i] := Random(100);\nend;\n\nvar a: array of real;\n\nbegin\n  a := CreateRandomArr(20);\n  writeln('Array contents: ');\n  WriteArr(a);\n  SortByChoice(a);\n  writeln('After selection sort: ');\n  WriteArr(a);\nend."
+  },
+  {
+    "instruction": "Sort array of tuples using key projection in PascalABC.NET",
+    "output": "begin\n  var pp := |('Sidorov',21),('Petrov',23), ('Popov',20),('Ivanov',22)|;\n  Sort(pp, p->p[0]);\n  Println('By last name');\n  pp.Println;\n  Sort(pp, p->p[1]);\n  Println('By age');\n  pp.Println;\nend."
+  },
+  {
+    "instruction": "Create 3D spheres animation using Graph3D in PascalABC.NET",
+    "output": "uses Graph3D;\n\nbegin\n  Window.Title := 'Creation of objects... wait!';\n  HideObjects;\n  View3D.ShowGridLines := False;\n  View3D.ShowViewCube := False;\n  View3D.ShowCoordinateSystem := False;\n  \n  var l := new List<SphereT>;\n  \n  var w := 1;\n  for var x := -5 to 5 do\n  for var y := -5 to 5 do\n  for var z := -5 to 5 do\n     l.Add(Sphere(x*w,y*w,z*w,w*0.5,RandomColor));\n  ShowObjects;\n\n  Window.Title := 'Spheres animation';\n  \n  foreach var x in l do\n    x.AnimMoveBy(Random,Random,Random).AutoReverse.Forever.Begin;\nend."
+  },
+  {
+    "instruction": "Perform cubic spline interpolation using NumLibABC in PascalABC.NET",
+    "output": "uses NumLibABC;\n\nbegin\n  var f:real->real:=x->(3*x-8)/(8*x-4.1);\n  var pt:=PartitionPoints(1.0,10.0,18).Select(x->new Point(x,f(x))).ToArray;\n  var oL:=new Spline(pt);\n  var r:=oL.Value(4.8);\n  Writeln('Value of approximated function for x=4.8: ',r);\n  var (d1,d2):=oL.Diff(4.8);\n  Writeln('Values of 1st and 2nd derivatives at this point: ',d1,' ',d2)\nend."
+  },
+  {
+    "instruction": "Calculate square root using iterative method in PascalABC.NET",
+    "output": "var x := 2.0;\nSeqGen(6,x,a → (a + x/a) / 2).Last.Println;\nx.Sqrt.Print;"
+  },
+  {
+    "instruction": "Demonstrate array and set operations with square brackets in PascalABC.NET",
+    "output": "begin\n  var a := [1,2,3];\n  Println(a,TypeName(a));\n  var s := [2..4];\n  Println(s,TypeName(s));\n  var s1: set of byte := [3,4,5];\n  Println(s1,TypeName(s1));\n  Println(s + [1,2,3], s * [1,2,3], [1,2,3] - s, s - [1,2,3]); \n  Println(a + [7,8,9], a * 3);\n  Println(5 in [3,5,7], 5 in [3..5,7]);\nend."
+  },
+  {
+    "instruction": "Use pattern matching to calculate areas of different shapes in PascalABC.NET",
+    "output": "type\n  Line = class\n  end;\n  Rectangle = auto class\n    X,Y,Width,Height: real;\n  end;\n  Circle = auto class\n    X,Y,Radius: real;\n  end;\n  \nbegin\n  var l := new List<Object>;\n  l.Add(new Line);\n  l.Add(new Circle(10,10,5));\n  l.Add(new Rectangle(10,10,20,10));\n  foreach var x in l do\n    match x with\n  Line(var ll): Println('Line S =',0);\n  Circle(var c): Println('Circle S =',c.Radius*c.Radius*Pi);\n  Rectangle(var r): Println('Rectangle S =',r.Width*r.Height);\n    end;\nend."
+  },
+  {
+    "instruction": "Implement a generic stack class using arrays in PascalABC.NET",
+    "output": "type\n  Stack<T> = class\n  private\n    a: array of T;\n    last: integer;\n  public  \n    constructor Create(sz: integer);\n    begin\n      SetLength(a,sz);\n      last := 0;\n    end;\n    constructor Create;\n    begin\n      Create(100);\n    end;\n    procedure push(i: T);\n    begin\n      a[last] := i;\n      Inc(last);\n    end;\n    function pop: T;\n    begin\n      Dec(last);\n      pop := a[last];\n    end;\n    function top: T;\n    begin\n      top := a[last-1];\n    end;\n    function empty: boolean;\n    begin\n      Result := (last=0);\n    end;\n    function ToString: string; override;\n    begin\n      Result := '';\n      for var i:=0 to last-1 do\n        Result += a[i]+' ';\n    end;\n  end;\n  \nvar s: Stack<integer>;\n\nbegin\n  s := new Stack<integer>;\n  s.push(7);\n  s.push(2);\n  s.push(5);\n  s.push(4);\n  writeln(s);\n  while not s.empty do\n    write(s.pop,' ');\nend."
+  },
+  {
+    "instruction": "Serialize and deserialize a single object in PascalABC.NET",
+    "output": "type \n  [Serializable]\n  My = auto class\n    x,y: integer;\n  end;\n\nconst fname = 'a.dat';\n\nbegin\n  var m := new My(2,3);\n  Serialize(fname,m);\n  var m1 := Deserialize(fname) as My;\n  Print(m1);\nend."
+  },
+  {
+    "instruction": "Draw pixels using SetPixel function in GraphABC in PascalABC.NET",
+    "output": "uses GraphABC;\n\nbegin\n  for var x:=0 to Window.Width-1 do\n  for var y:=0 to Window.Height-1 do\n    SetPixel(x,y,RGB(2*x-y,x-3*y,x+y));\nend."
+  },
+  {
+    "instruction": "Draw pixels using SetPixel function in GraphWPF in PascalABC.NET",
+    "output": "uses GraphWPF;\n\nbegin\n  Window.SetSize(640, 480);\n  for var x := 0 to Window.Width.Round do\n  for var y := 0 to Window.Height.Round do\n    SetPixel(x, y, RGB(2 * x - y, x - 3 * y, x + y));\n  Milliseconds.Println;  \nend."
+  },
+  {
+    "instruction": "Draw pixels using SetPixels function for better performance in GraphWPF in PascalABC.NET",
+    "output": "uses GraphWPF;\n\nbegin\n  Window.SetSize(640, 480);\n  SetPixels(0,0,640,480,(x, y)->RGB(2 * x - y, x - 3 * y, x + y));\n  Milliseconds.Println;  \nend."
+  },
+  {
+    "instruction": "Demonstrate set operations with string sets in PascalABC.NET",
+    "output": "var \n  s1: set of string := ['Ivanov','Popov','Sidorova','Petrov'];\n  s2: set of string := ['Kozlov','Petrov','Ivanov'];\nbegin\n  writeln('Set s1: ',s1);\n  writeln('Set s2: ',s2);\n  writeln('Union of sets s1 and s2: ',s1+s2);\n  writeln('Intersection of sets s1 and s2: ',s1*s2);\n  writeln('Difference of sets s1 and s2: ',s1-s2);\n  Include(s1,'Umnov');\n  Exclude(s1,'Ivanov');\n  writeln('Set s1: ',s1);\nend."
+  },
+  {
+    "instruction": "Demonstrate shl (shift left) operation to calculate powers of 2 in PascalABC.NET",
+    "output": "begin\n  Writeln('Powers of two');\n  Writeln(' n         2^n');\n  for var i:=0 to 30 do\n    Writeln(i:2,(1 shl i):12);\nend."
+  }
+]

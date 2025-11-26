@@ -1,0 +1,78 @@
+[
+  {
+    "instruction": "Create a red cube that rotates continuously around the Z-axis with auto-reverse animation",
+    "output": "uses Graph3D;\n\nbegin\n  var ss := Cube(0,0,0,1.5,Colors.Red);\n  var anim := ss.AnimRotate(OrtZ,360).Forever.AutoReverse;\n  anim.Begin;\nend."
+  },
+  {
+    "instruction": "Create a green cylinder and a red cube that rotates around point (3,0,0) on the Z-axis forever",
+    "output": "uses Graph3D;\n\nbegin\n  Cylinder(Origin,6,0.3,Colors.Green);\n  var ss := Cube(-3,0,0,1.5,Colors.Red);\n  var anim := ss.AnimRotateAt(OrtZ,360,P3D(3,0,0),2).Forever;\n  anim.Begin;\nend."
+  },
+  {
+    "instruction": "Create a green box with combined animations: move on Z-axis, scale on Z-axis, and move on X-axis simultaneously",
+    "output": "uses Graph3D;\n\nbegin\n  var jmp := 0.3;\n  var time := 0.5;\n  var c := Box(0,0,2,1,2,4,Colors.Green);\n  var a := c.AnimMoveByZ(-0.4,time).AutoReverse.Forever * c.AnimScaleZ(0.95,time).AutoReverse.Forever * c.AnimMoveByX(1*10,time*10);\n  a.Begin;\nend."
+  },
+  {
+    "instruction": "Create a parametric trajectory and animate a blue sphere moving along it forever",
+    "output": "uses Graph3D;\n\nfunction ParametricTrajectory(a,b: real; N: integer; fun: real->Point3D) := PartitionPoints(a,b,N).Select(fun);\n\nbegin\n  var tr := ParametricTrajectory(0,2*Pi,100,t->P3D(8*cos(t),4*sin(t),0));\n  Polyline3D(tr);\n  var b := Sphere(tr.First,1,Colors.Blue);\n  b.AnimMoveTrajectory(tr.Skip(1),5).Forever.Begin;\nend."
+  },
+  {
+    "instruction": "Create a blue sphere and animate it moving along a rectangular trajectory forever",
+    "output": "uses Graph3D;\n\nbegin\n  var b := Sphere(Origin,1,Colors.Blue);\n  \n  var (p1,p2,p3,p4) := (P3D(3,0,0),P3D(3,3,0),P3D(0,3,0),P3D(0,0,0));\n  \n  b.MoveTo(p1);\n  b.AnimMoveTrajectory(Arr(p2,p3,p4,p1),3).Forever.Begin;\nend."
+  },
+  {
+    "instruction": "Create a blue box with sequential and parallel animations: move to point p1 with scaling, then move to point p2 with scaling, then rotate around Z-axis",
+    "output": "uses Graph3D;\n\nbegin\n  Window.Title := 'a+b+c - sequential execution, a*b - parallel execution';\n  var s := Box(0,0,0,3,1,2,Colors.Blue);\n  var p1 := P3D(5,0,0);\n  var p2 := P3D(5,5,0);\n  var OrtZ := V3D(0,0,1);\n  var an := s.AnimMoveTo(p1,1.Sec)*s.AnimScale(1.5,1.Sec) + \n            s.AnimMoveTo(p2,1.Sec)*s.AnimScale(1,1.Sec) + \n            s.AnimRotate(OrtZ,90,1.Sec);\n  an.Begin;\nend."
+  },
+  {
+    "instruction": "Create a blue box and animate it with sequential movement: first move on Y-axis, then move on X-axis",
+    "output": "uses Graph3D;\n\nbegin\n  var s := Box(0,0,0,3,1,2,Colors.Blue);\n  var an := Animate.Sequence(\n    s.AnimMoveByY(5),\n    s.AnimMoveByX(5)\n  );\n  an.Begin;\nend."
+  },
+  {
+    "instruction": "Create a blue box that moves to point (5,0,0) and display text when animation completes",
+    "output": "uses Graph3D;\n\nbegin\n  var t := Text3D(0,-7,1,'Animation start...',2);\n  var s := Box(0,0,0,3,1,2,Colors.Blue);\n  var an := s.AnimMoveTo(P3D(5,0,0),2).WhenCompleted(procedure -> t.Text := 'End!');\n  an.Begin\nend."
+  },
+  {
+    "instruction": "Approximate tabular function using Chebyshev polynomials with least squares method",
+    "output": "uses NumLibABC;\n\nbegin\n  var e:=0.1;\n  var x:=ArrGen(12,i->0.25*i-2); x.Println;\n  var y:=x.Select(z->2*z-5*Sqr(z)+8*z*Sqr(z)).ToArray; y.Println;\n  var oL:=new ApproxCheb(x,y,e);\n  oL.f.Println;  // approximated values\n  Println(oL.r,oL.tol);  // suggested polynomial degree and calculated error\n  oL.MakeCoef; // decoded coefficients\n  oL.c.Println;\nend."
+  },
+  {
+    "instruction": "Draw arrows between points using mathematical coordinate system",
+    "output": "uses GraphWPF;\n\nbegin\n  Parameters.ArrowSizeAcross := 4;\n  Parameters.ArrowSizeAlong := 10;\n  SetMathematicCoords;\n  var (p1,p2,p3) := (Pnt(0,0),Pnt(2,3),Pnt(4,-1));\n  Arrow(p1,p2);\n  Arrow(p2,p3);\n  Arrow(p3,p1);\nend."
+  },
+  {
+    "instruction": "Draw arcs and sectors with different radii and angles",
+    "output": "uses GraphWPF;\n\nbegin\n  Window.Title := 'Arcs and sectors';\n  var (x,y) := (200,Window.Height/2);\n  Circle(x,y,5);\n  for var i:=1 to 18*2 do\n    Arc(x,y,5*i,0,10*i);\n  (x,y) := (600,Window.Height/2);  \n  for var i:=1 to 12 do\n  begin\n    Brush.Color := RandomColor;\n    Sector(x,y,180,30*(i-1),30*i);\n  end;\nend."
+  },
+  {
+    "instruction": "Draw a directed weighted graph using dictionary representation",
+    "output": "uses GraphWPF;\n\nbegin\n  var graph := Dict(\n    ('A',Dict(('B',2),('E',5))),\n    ('C',Dict(('B',7),('D',9))),\n    ('D',Dict(('B',34))),\n    ('E',Dict(('C',12),('B',66)))\n  );\n  var dPoints := new Dictionary<char,Point>;\n  var R := 200;\n  var n := ('A'..'E').Count;\n  var Phi := 0.0; \n  for var c := 'A' to 'E' do\n  begin  \n    dPoints[c] := Window.Center + R * Vect(Cos(Phi),Sin(Phi));\n    Phi += 2 * Pi/n;\n  end;\n  \n  Window.Title := 'Directed graph drawing';\n  var Radius := 10;\n  foreach var kv in dPoints do\n  begin\n    var p := kv.Value;\n    Circle(p,Radius);\n    TextOut(p.x,p.y,kv.Key,Alignment.Center);\n  end;\n  foreach var k1 in graph.Keys do\n  foreach var k2 in graph[k1].Keys do\n  begin\n    var weight := graph[k1][k2];\n    var (p1,p2) := (dPoints[k1],dPoints[k2]);\n    var v := p2 - p1;\n    var pp1 := p1 + v.Norm * Radius;\n    var pp2 := p2 - v.Norm * Radius;\n    Arrow(pp1,pp2);\n    var cc := p1 + v/2;\n    var txt := weight.ToString;\n    var sz := TextSize(txt);\n    FillRectangle(cc.X - sz.Width/2, cc.Y - sz.Height/2, sz.Width, sz.Height);\n    TextOut(cc.x,cc.y,weight,Alignment.Center);\n  end;\nend."
+  },
+  {
+    "instruction": "Implement arithmetic expression evaluator using pattern matching for constants, addition, multiplication, and negation",
+    "output": "type\n  Expr = interface\n  end;\n  Cons = auto class(Expr)\n    r: real;\n  end;\n  Add = auto class(Expr)\n    left,right: Expr;\n  end;\n  Mult = auto class(Expr)\n    left,right: Expr;\n  end;\n  Neg = auto class(Expr)\n    ex: Expr;\n  end;\n  \nfunction ConsC(r: real) := new Cons(r);\nfunction AddC(l,r: Expr) := new Add(l,r);\nfunction MultC(l,r: Expr) := new Mult(l,r);\nfunction NegC(ex: Expr) := new Neg(ex);\n\nfunction Eval(e: Expr): real;\nbegin\n  match e with\n    Cons(c): Result := c;\n    Neg(n): Result := -Eval(n);\n    Add(l,r): Result := Eval(l) + Eval(r);\n    Mult(l,r): Result := Eval(l) * Eval(r);\n  end;\nend;  \n  \nbegin\n  var r := AddC(NegC(ConsC(2)),MultC(ConsC(3),ConsC(4)));\n  Eval(r).Print;\nend."
+  },
+  {
+    "instruction": "Implement arithmetic expression simplifier that handles constants, variables, addition, multiplication, and negation with algebraic simplification rules",
+    "output": "type\n  Expr = interface\n  end;\n  V = auto class(Expr)\n    name: string;\n  end;\n  Cons = auto class(Expr)\n    r: real;\n  end;\n  Add = auto class(Expr)\n    left,right: Expr;\n  end;\n  Mult = auto class(Expr)\n    left,right: Expr;\n  end;\n  Neg = auto class(Expr)\n    ex: Expr;\n  end;\n  \nfunction NegC(ex: Expr) := new Neg(ex);  \nfunction ConsC(r: real) := new Cons(r);  \nfunction AddC(ex1,ex2: Expr) := new Add(ex1,ex2);  \nfunction MultC(ex1,ex2: Expr) := new Mult(ex1,ex2);  \nfunction VC(name: string) := new V(name);  \n  \nfunction Simplify(e: Expr): Expr; forward;\n\nfunction Simplify1(e: Expr): Expr;\nbegin\n  match e with\n    Mult(Cons(c),Cons(c1)): Result := ConsC(c*c1);\n    Mult(Cons(1.0),ex): Result := Simplify(ex);\n    Mult(Cons(0.0),ex): Result := ConsC(0);\n    Add(Cons(0.0),ex): Result := Simplify(ex);\n    Add(ex,Cons(0.0)): Result := Simplify(ex);\n    Add(Cons(c),Cons(c1)): Result := ConsC(c+c1); \n    Add(Cons(c),ex): Result := AddC(ex,ConsC(c)); // constants at the end!\n    Mult(Cons(c),ex): Result := MultC(ex,ConsC(c));\n    Add(Add(ex,Cons(c)),Cons(c1)): Result := AddC(ex,ConsC(c+c1)); // associativity\n    Mult(Mult(ex,Cons(c)),Cons(c1)): Result := MultC(ex,ConsC(c*c1)); // associativity\n    Neg(Cons(c)): Result := ConsC(-c); \n    else Result := e;\n  end;\nend;\n\nfunction Simplify(e: Expr): Expr;\nbegin\n  match e with\n    Mult(e1,e2): Result := Simplify1(MultC(Simplify(e1),Simplify(e2)));\n    Add(e1,e2): Result := Simplify1(AddC(Simplify(e1),Simplify(e2)));\n    Neg(e1): Result := Simplify1(NegC(Simplify(e1)));\n    else Result := e;\n  end;\nend;\n\nfunction Str(e: Expr): string;\nbegin\n  match e with\n    Mult(l,r): Result := Str(l) + ' * ' + Str(r);\n    Add(l,r): Result := Str(l) + ' + ' + Str(r);\n    Neg(n): Result := '-' + Str(n);\n    Cons(c): Result := c.ToString;\n    V(x): Result := x;\n  end;\nend;\n  \nbegin\n  var r: Expr := AddC(ConsC(1),AddC(MultC(ConsC(1),VC('x')),ConsC(1)));\n  r := AddC(r,MultC(ConsC(0),AddC(ConsC(2),VC('a'))));\n  r := AddC(r,ConsC(2));\n  Str(r).Println;\n  r := Simplify(r);\n  Str(r).Println;\nend."
+  },
+  {
+    "instruction": "Measure performance of array slicing operation",
+    "output": "begin\n  var s := Arr(1..1000);\n  var s1: array of integer;\n  var n := 100000000;\n  MillisecondsDelta;\n  loop n do\n    s1 := s[1:11];\n  MillisecondsDelta.Println;\nend."
+  },
+  {
+    "instruction": "Measure performance of array slice assignment operation",
+    "output": "begin\n  var s := Arr(1..10);\n  Milliseconds;\n  var n := 100000000;\n  MillisecondsDelta.Println;\n  loop n do\n    s[0:10] := s;\n  MillisecondsDelta.Println;\nend."
+  },
+  {
+    "instruction": "Demonstrate array initialization with empty collections and nested arrays",
+    "output": "begin\n  var a: array of array of integer := [[],[],[1]];\n  Println(a,TypeName(a));\n  var b := [[],[1],[]];\n  Println(b,TypeName(b));\n  var aa: array of array of array of integer := [[[],[2]],[]];\n  Print(aa,TypeName(aa));\nend."
+  },
+  {
+    "instruction": "Calculate r to the power of 8 using auxiliary variables for intermediate results",
+    "output": "begin\n  var r := ReadlnReal('Enter r: ');\n  var r2,r4,r8: real; // auxiliary variables\n  r2 := r * r;\n  r4 := r2 * r2;\n  r8 := r4 * r4;\n  Println(r,'to the power of 8 =',r8);\nend."
+  },
+  {
+    "instruction": "Swap values of two variables using a temporary variable",
+    "output": "var x,y: real;\n\nbegin\n  Write('Enter x,y: ');\n  Readln(x,y);\n  var v: real; // temporary variable\n  v := x;\n  x := y;\n  y := v;\n  Writeln('New values x,y: ',x,' ',y);\nend."
+  }
+]

@@ -1,0 +1,78 @@
+[
+  {
+    "instruction": "Draw a rectangle and an ellipse in a window using GraphWPF",
+    "output": "uses GraphWPF;\n\nbegin\n  Pen.Width := 1;\n  Rectangle(0,0,Window.Width-1,Window.Height-1);\n  Ellipse((Window.Width-1)/2,(Window.Height-1)/2,(Window.Width-1)/2,(Window.Height-1)/2);\nend."
+  },
+  {
+    "instruction": "Demonstrate enumeration type in PascalABC.NET with months example",
+    "output": "// Enumeration type\ntype Months = (January,February,March,April,May,June,July,August,September,October,November,December);\n\nvar m: Months;\n  \nbegin\n  m := February;\n  writeln(m);\n  // Using enumeration type constants after type name is convenient: after dot intellisense shows list of constants\n  m := Months.April;\n  writeln('Next month: ',m);\n  Inc(m);\n  writeln('Next month: ',m);\n  m := Succ(m);  \n  writeln('Next month: ',m);\n  m := Pred(m);  \n  writeln('Previous month: ',m);\n  Dec(m);\n  writeln('Previous month: ',m);\n  writeln('Its ordinal number (numbering - from zero): ',Ord(m));\n  // No error\n  writeln('Month before January - out of bounds: ',pred(Months.January));\n  // No error\n  writeln('Month after December - out of bounds: ',succ(Months.December));\nend."
+  },
+  {
+    "instruction": "Work with enumeration type using System namespace to get names and values",
+    "output": "// Enumeration type\nuses System;\n\ntype Months = (January,February,March,April,May,June,July,August,September,October,November,December);\n\nbegin\n  var t: &Type := typeof(Months);\n  var names: array of string := Enum.GetNames(t);\n  writeln('Cycle by enumeration type names');\n  foreach name: string in names do\n    write(name,' ');\n  writeln; writeln;\n  \n  var v: &Array := Enum.GetValues(t);\n  var mm: array of Months := new Months[v.Length];\n  writeln('Cycle by array of all enumeration type values');\n  for var i:=0 to v.Length-1 do\n    mm[i] := Months(v.GetValue(i));\n     \n  for var i:=0 to mm.Length-1 do\n    write(mm[i],' ');    \nend."
+  },
+  {
+    "instruction": "Demonstrate EOF function. Run with Shift-F9, finish with Ctrl-Z",
+    "output": "// Demonstration of EOF function. Run with Shift-F9, finish with Ctrl-Z\nbegin\n  var s: char;\n  while not Eof do\n  begin\n    Read(s);\n    Println('-',Ord(s),'-');\n  end;\nend."
+  },
+  {
+    "instruction": "Demonstrate EOLN function for reading until end of line",
+    "output": "// Demonstration of EOLN function\nbegin\n  while not Eoln do\n  begin\n    var c := ReadChar;\n    Print(c);\n  end;\nend."
+  },
+  {
+    "instruction": "Implement Sieve of Eratosthenes algorithm to find prime numbers up to 100000",
+    "output": "// \"Sieve of Eratosthenes\" - computing prime numbers\nconst n = 100000;\n\nbegin\n  var primes := HSet(2..n);\n  \n  for var i:=2 to Round(Sqrt(n)) do\n  begin\n    if not (i in primes) then\n      continue;\n    var x := i*i;\n    while x<=n do\n    begin\n      primes -= x;\n      x += i;\n    end;\n  end;\n\n  Println('Prime numbers <',n,';');\n  Println(primes);\n  Println;\n  Println('Computation time:',Milliseconds/1000);\nend."
+  },
+  {
+    "instruction": "Draw E-squares using recursion with GraphABC",
+    "output": "// E-squares. Recursion demonstration\nuses GraphABC;\n\nconst mw = 2.9;\n\nprocedure ESquares(n,x,y,w: integer);\nbegin\n  var w1 := round(w/mw);\n  var h := (w-2*w1) div 3;\n  Brush.Color := clRandom;\n  Rectangle(x,y,x+w,y+w);\n  if n>0 then\n  begin\n    Sleep(1);\n    ESquares(n-1,x+h,y+h,w1);\n    ESquares(n-1,x+w-h-w1,y+h,w1);\n    ESquares(n-1,x+h,y+w-h-w1,w1);\n    ESquares(n-1,x+w-h-w1,y+w-h-w1,w1);\n  end;\nend;\n\nbegin\n  Window.Title := 'Recursion: E-squares';\n  SetWindowSize(750,530);\n  Pen.Color := clWhite;\n  ESquares(4,125,18,490);\nend."
+  },
+  {
+    "instruction": "Create a simple function that returns 3 using exit with parameter",
+    "output": "function fff: integer;\nbegin\n  exit(3)\nend;\n\nbegin\n  Print(fff());\nend."
+  },
+  {
+    "instruction": "Implement IsPrime function using exit with parameter for early returns",
+    "output": "function IsPrime(n: integer): boolean;\nbegin\n  if n < 2 then exit(False);\n  for var i:=2 to n.Sqrt.Trunc do\n    if n.Divs(i) then\n      exit(False);\n  exit(True);\nend;\n\nbegin\n  IsPrime(17).Print;\n  IsPrime(1).Print;\nend."
+  },
+  {
+    "instruction": "Implement IsPrime as lambda function using exit with parameter",
+    "output": "begin\n  var IsPrime: integer → boolean := n → begin\n    if n < 2 then exit(False);\n    for var i:=2 to n.Sqrt.Trunc do\n    if n.Divs(i) then\n      exit(False);\n    exit(True);\n  end;\n  \n  IsPrime(17).Print;\n  IsPrime(1).Print;\nend."
+  },
+  {
+    "instruction": "Implement FastPower function using recursion and exit with parameter for efficient exponentiation",
+    "output": "function FastPower(a: real; n: integer): real;\nbegin\n  if n = 0 then exit(1); // a^0 = 1\n  if n = 1 then exit(a); // a^1 = a\n  if n < 0 then exit(1 / FastPower(a, -n)); // negative exponent\n  \n  var half := FastPower(a, n div 2);\n  if n mod 2 = 0 then exit(half * half); // even exponent\n  exit(half * half * a); // odd exponent\nend;\n\nbegin\n  Writeln('2^10 = ', FastPower(2, 10)); // 1024\n  Writeln('3^-2 = ', FastPower(3, -2)); // 0.111...\nend."
+  },
+  {
+    "instruction": "Use extended foreach with tuple unpacking for arrays of tuples and sequences",
+    "output": "// Extended foreach with value unpacking into variables\nbegin\n  var a := Arr((1,2),(3,4),(5,6));\n  foreach var (x,y) in a do // Tuple unpacking\n    Print(x,y);\n  Println;\n  var b := Arr(|1,2,3|,|4,5|,|6,7,8,9|);\n  foreach var (x,y) in b do // Sequence unpacking\n    Print(x,y);\nend."
+  },
+  {
+    "instruction": "Create GUI application with FormsABC for calculating sum and product of two numbers",
+    "output": "uses FormsABC;\n\nvar \n  a,b,sum,prod: IntegerField;\n  d: Button;\n\nprocedure MyClick;\nbegin\n  sum.Value := a.Value + b.Value;\n  prod.Value := a.Value * b.Value;\nend;\n\nbegin\n  a := new IntegerField('a:');\n  b := new IntegerField('b:');\n  LineBreak;\n  sum := new IntegerField('Sum:',220);\n  LineBreak;\n  prod := new IntegerField('Product:',220);\n  LineBreak;\n  EmptyLine(20);\n  d := new Button('Calculate');\n  d.Click += MyClick;\nend."
+  },
+  {
+    "instruction": "Create GUI application using class with FormsABC for calculating sum and product",
+    "output": "uses FormsABC;\n\ntype \n  View = class\n  private\n    a,b,sum,prod: IntegerField;\n    procedure MyClick;\n    begin\n      sum.Value := a.Value + b.Value;\n      prod.Value := a.Value * b.Value;\n    end;\n  public\n    constructor Create;\n    begin\n      a := new IntegerField('a:');\n      b := new IntegerField('b:');\n      LineBreak;\n      sum := new IntegerField('Sum:',220);\n      LineBreak;\n      prod := new IntegerField('Product:',220);\n      LineBreak;\n      EmptyLine(20);\n      var d := new Button('Calculate');\n      d.Click += MyClick;\n    end;\n  end;\n\nbegin\n  var v := new View;\nend."
+  },
+  {
+    "instruction": "Use Each method to create dictionary with zeros for range 1 to 10",
+    "output": "##\nvar dct := Arr(1..10).Each(x -> 0);\nPrint(dct); // dictionary"
+  },
+  {
+    "instruction": "Use EachCount to get frequency dictionary for characters in string",
+    "output": "##\nvar s := 'каракатица так и катится';\n// EachCount returns frequency dictionary (element,count)\ns.EachCount.Println"
+  },
+  {
+    "instruction": "Create 3D Earth rotation animation with Graph3D using image material",
+    "output": "uses Graph3D;\n\nbegin\n  HideObjects;\n  View3D.Title := 'Earth rotation';\n  View3D.CameraMode := CameraMode.Inspect;\n  View3D.ShowCoordinateSystem := False;\n  View3D.ShowGridLines := False;\n  View3D.ShowViewCube := False;\n  View3D.ShowCameraInfo := False;\n  View3D.BackgroundColor := Colors.Black;\n  \n  var c := Sphere(0,0,0,5,Colors.Wheat);\n  c.Material := ImageMaterial('Earth.jpg');\n  ShowObjects;\n\n  var gr := 0;\n  var dgr := 1;\n  while True do\n  begin\n    c.Rotate(V3D(0,0,1),1);\n    Sleep(10);\n    gr += dgr;\n    if (gr<=0) or (gr>=255) then\n      dgr := - dgr;\n    View3D.BackgroundColor := RGB(gr,gr,gr);\n  end;\nend."
+  },
+  {
+    "instruction": "Use polynomial economization on interval with NumLibABC",
+    "output": "uses NumLibABC;\n\n// Polynomial economization on interval\nbegin\n  var x:=ArrGen(8,-0.75,x->x+0.25);\n  var p:=new Polynom(0,1,-1/2,1/3,-1/4,1/5);\n  var r:=p.EconomSym(0.75, 0.05);\n  Println(r.eps,r.n);\n  r.PrintlnBeauty;\n  for var i:=1 to x.Length do\n    Write(r.Value(x[i-1]):0:3,' ')\nend."
+  },
+  {
+    "instruction": "Draw multiple random ellipses using GraphWPF for performance testing",
+    "output": "uses GraphWPF;\n \nbegin\n  Window.Title := 'Drawing ellipses';\n  Pen.Width := 1;\n  var n := 20000;\n  for var i:=1 to n do\n  begin\n    if i mod 10000 = 0 then\n      Println(i,MillisecondsDelta); \n    Brush.Color := RandomColor;\n    Ellipse(Random(800),Random(600),Random(20),Random(20));\n  end;\nend."
+  }
+]

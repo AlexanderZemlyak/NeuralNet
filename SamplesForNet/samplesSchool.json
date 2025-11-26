@@ -1,0 +1,426 @@
+[
+  {
+    "instruction": "Convert a decimal number to binary system",
+    "output": "function Bin(number: int64): string;\nbegin\n  if number < 0 then number := -number;\n  Result := '';\n  while number >= 2 do\n  begin\n    Result += number mod 2;\n    number := number div 2\n  end;  \n  Result += number;\n  Result := Result.Inverse\nend;"
+  },
+  {
+    "instruction": "Convert a decimal number to octal system",
+    "output": "function Oct(number: int64): string;\nbegin\n  if number < 0 then number := -number;\n  Result := '';\n  while number >= 8 do\n  begin\n    Result += number mod 8;\n    number := number div 8\n  end;  \n  Result += number;\n  Result := Result.Inverse;\nend;"
+  },
+  {
+    "instruction": "Convert a decimal number to hexadecimal system",
+    "output": "function Hex(number: int64): string;\nbegin\n  if number < 0 then number := -number;\n  var hex_nums := '0123456789ABCDEF';\n  Result := '';\n  while number >= 16 do\n  begin\n    Result += hex_nums[number mod 16 + 1];\n    number := number div 16\n  end;  \n  Result += hex_nums[number + 1];\n  Result := Result.Inverse;\nend;"
+  },
+  {
+    "instruction": "Convert from base system (2..36) to decimal",
+    "output": "function Dec(str: string; base: integer): int64;\nbegin\n  if not (base in 2..36) then\n    raise new School_InvalidBase\n    ($'Dec: Invalid base {base}');\n  str := str.ToUpper;\n  var invalid_chars := \n    str.Except(valid_chars[:base + 1]).JoinToString;\n  if invalid_chars.Length > 0 then\n    raise new School_BadCharInString\n    ($'Dec: Invalid characters \"{invalid_chars}\"');\n  var rank_weight := 1bi;\n  var res := 0bi;\n  foreach var char in str.Reverse do\n  begin\n    var rank_value := Pos(char, valid_chars) - 1;\n    res += rank_weight * rank_value;\n    rank_weight *= base\n  end;\n  Result := int64(res)\nend;"
+  },
+  {
+    "instruction": "Convert decimal number to any base system (2..36)",
+    "output": "function ToBase(number: int64; base: integer): string;\nbegin\n  if not (base in 2..36) then\n    raise new School_InvalidBase\n    ($'ToBase: Invalid base {base}');\n  var sb := new System.Text.StringBuilder('');\n  while number > 0 do \n  begin\n    sb.Insert(0, valid_chars[number mod base + 1]);\n    number := number div base\n  end;\n  Result := if sb.Length = 0 then '0'\n    else sb.ToString\nend;"
+  },
+  {
+    "instruction": "Find minimum and maximum of a sequence",
+    "output": "function MinMax(seq: sequence of int64): (int64, int64);\nbegin\n  var min := int64.MaxValue;\n  var max := int64.MinValue;\n  foreach var elem in seq do\n  begin\n    if elem < min then\n      min := elem;\n    if elem > max then\n      max := elem\n  end;\n  Result := (min, max)\nend;"
+  },
+  {
+    "instruction": "Calculate GCD of two numbers",
+    "output": "function НОД(a, b: int64): int64;\nbegin\n  while b <> 0 do\n    (a, b) := (b, a mod b);\n  Result := Abs(a)\nend;"
+  },
+  {
+    "instruction": "Calculate LCM of two numbers",
+    "output": "function НОК(a, b: int64): int64;\nbegin\n  var (a1, b1) := (a, b);\n  while b <> 0 do\n    (a, b) := (b, a mod b);\n  Result := Abs(a1 div a * b1)\nend;"
+  },
+  {
+    "instruction": "Check if a number is prime",
+    "output": "function IsPrime(n: integer): boolean;\nbegin\n  if n < 2 then\n    Result := False\n  else\n  begin\n    Result := True;\n    foreach var prime in LPrimes do\n      if Sqr(prime) > n then\n        break\n      else if n mod prime = 0 then\n      begin\n        Result := False;\n        break\n      end\n  end\nend;"
+  },
+  {
+    "instruction": "Get prime numbers in range [2;n]",
+    "output": "function Primes(n: integer): List<integer>;\nbegin\n  Result := [];\n  if n < 2 then\n    exit;\n  var Sieve := new boolean[n];\n  var p := 2;\n  while Sqr(p) <= n do\n  begin\n    if not Sieve[p - 1] then\n    begin\n      var notPrime := p * p;\n      while notPrime <= n do\n      begin\n        Sieve[notPrime - 1] := True;\n        notPrime += p\n      end\n    end;\n    p += 1\n  end;\n  for var i := 2 to n do\n    if not Sieve[i - 1] then\n      Result.Add(i)\nend;"
+  },
+  {
+    "instruction": "Get prime factors of a number",
+    "output": "function PrimeFactors(n: integer): List<integer>;\nbegin\n  Result := [];\n  if n < 2 then exit;\n  var (i, prime, m) := (0, LPrimes[0], n);\n  while Sqr(prime) <= n do\n  begin\n    while n mod prime = 0 do\n    begin\n      Result.Add(prime);\n      n := n div prime\n    end;\n    Inc(i);\n    prime := LPrimes[i];\n  end;\n  if Result.Count = 0 then Result.Add(m)\n  else if n > 1 then Result.Add(n)\nend;"
+  },
+  {
+    "instruction": "Get digits of a number in given base",
+    "output": "function Digits(n: int64; base: integer): List<integer>;\nbegin\n  Result := [];\n  if (n < 0) or (base < 2) or (base > integer.MaxValue) then exit;\n  if n = 0 then Result := Lst(0)\n  else\n    while n > 0 do\n    begin\n      var rem: integer := n mod base;\n      Result.Add(rem);\n      n := n div base\n    end;\n    Result.Reverse\nend;"
+  },
+  {
+    "instruction": "Get all divisors of a natural number",
+    "output": "function Divisors(n: integer): List<integer>;\nbegin\n  Result := [];\n  Result.Add(1);\n  foreach var prime in LPrimes do\n  begin\n    if Sqr(prime) > n then break;\n    var ndivs := Result.Count;\n    while n mod prime = 0 do\n    begin\n      for var i := Result.Count - ndivs to Result.Count - 1 do\n        Result.Add(Result[i] * prime);\n      n := n div prime\n    end\n  end;\n  if n > 1 then\n    for var i := 0 to Result.Count - 1 do\n      Result.Add(Result[i] * n);\n  Result.Sort;\nend;"
+  },
+  {
+    "instruction": "Calculate sine of angle in degrees",
+    "output": "function SinDegrees(x: real): real := Sin(DegToRad(x));"
+  },
+  {
+    "instruction": "Generate array of random real numbers",
+    "output": "function ArrRandomReal(n: integer; a, b: real; t: integer): array of real;\nbegin\n  Result := new real[n];\n  for var i := 0 to Result.Length - 1 do\n    Result[i] := Round(Random * (b - a) + a, t);\nend;"
+  },
+  {
+    "instruction": "Generate truth table for boolean function with 2 variables",
+    "output": "function TrueTable(f: function(a, b: boolean): boolean):\n    array[,] of boolean;\nbegin\n  Result := new boolean[4, 3];\n  var i := 0;\n  for var a := False to True do\n    for var b := False to True do\n    begin\n      Result[i, 0] := a;\n      Result[i, 1] := b;\n      Result[i, 2] := f(a, b);\n      i += 1\n    end;\nend;"
+  },
+  {
+    "instruction": "Replace last occurrence of substring in string",
+    "output": "procedure ReplaceLast(var s: string; source, target: string);\nbegin\n  var position := LastPos(source, s);\n  if position > 0 then\n  begin\n    Delete(s, position, source.Length);\n    Insert(target, s, position)\n  end\nend;"
+  },
+  {
+    "instruction": "Multiple character replacement in string",
+    "output": "function ReplaceMany(s, source, target: string): string;\nbegin\n  var SB := new StringBuilder(s);\n  var m := target.Length;\n  for var i := 1 to source.Length do\n    if i <= m then SB.Replace(source[i], target[i])\n    else SB.Replace(source[i],'');\n  Result := SB.ToString\nend;"
+  },
+  {
+    "instruction": "Bitwise AND operation for Addr32 objects",
+    "output": "static function Addr32.operator and (a, b: Addr32): Addr32;\nbegin\n  Result := new Addr32;\n  Result.addr10 := a.addr10 and b.addr10;\n  SetAddress(Result) \nend;"
+  },
+  {
+    "instruction": "Convert decimal BigInteger to binary system",
+    "output": "function Bin(number: BigInteger): string;\nbegin\n  if number < 0 then number := -number;\n  Result := '';\n  while number >= 2 do\n  begin\n    Result += byte(number mod 2);\n    number := number div 2\n  end;  \n  Result += byte(number);\n  Result := Result.Inverse\nend;"
+  },
+  {
+    "instruction": "Convert decimal number to binary with formatting",
+    "output": "function BinFormat(number: BigInteger; bytes: integer; split: string): string;\nbegin\n  if number < 0 then number := -number;\n  var a := number = 0 ? [byte(0)] : number.ToByteArray;\n  var len := a.Length;\n  if (number > 0) and (a[^1] = 0) then Dec(len);\n  SetLength(a, Max(bytes, len));\n  Result := a.Reverse.Select(t -> (Convert.ToString(t, 2)).PadLeft(8, '0')).JoinToString(split)\nend;"
+  },
+  {
+    "instruction": "Convert decimal BigInteger to octal system",
+    "output": "function Oct(number: BigInteger): string;\nbegin\n  if number < 0 then number := -number;\n  Result := '';\n  while number >= 8 do\n  begin\n    Result += byte(number mod 8);\n    number := number div 8\n  end;  \n  Result += byte(number);\n  Result := Result.Inverse;\nend;"
+  },
+  {
+    "instruction": "Convert decimal BigInteger to hexadecimal system",
+    "output": "function Hex(number: BigInteger): string;\nbegin\n  if number < 0 then number := -number;\n  var hex_nums := '0123456789ABCDEF';\n  Result := '';\n  while number >= 16 do\n  begin\n    Result += hex_nums[byte(number mod 16 + 1)];\n    number := number div 16\n  end;  \n  Result += hex_nums[byte(number + 1)];\n  Result := Result.Inverse;\nend;"
+  },
+  {
+    "instruction": "Convert from base system to BigInteger decimal",
+    "output": "function DecBig(str: string; base: integer): BigInteger;\nbegin\n  if not (base in 2..36) then\n    raise new School_InvalidBase\n    ($'DecBig: Invalid base {base}');\n  str := str.ToUpper;\n  var invalid_chars := \n    str.Except(valid_chars[:base + 1]).JoinToString;\n  if invalid_chars.Length > 0 then\n    raise new School_BadCharInString\n    ($'DecBig: Invalid characters \"{invalid_chars}\"');\n  var rank_weight := 1bi;\n  Result := 0bi;\n  foreach var char in str.Reverse do\n  begin\n    var rank_value := Pos(char, valid_chars) - 1;\n    Result += rank_weight * rank_value;\n    rank_weight *= base\n  end\nend;"
+  },
+  {
+    "instruction": "Convert decimal BigInteger to any base system",
+    "output": "function ToBase(number: BigInteger; base: integer): string;\nbegin\n  if not (base in 2..36) then\n    raise new School_InvalidBase\n    ($'ToBase: Invalid base {base}');\n  var sb := new System.Text.StringBuilder('');\n  while number > 0 do \n  begin\n    sb.Insert(0, valid_chars[integer(number mod base) + 1]);\n    number := number div base\n  end;\n  Result := if sb.Length = 0 then '0'\n    else sb.ToString\nend;"
+  },
+  {
+    "instruction": "Calculate GCD and LCM of two numbers",
+    "output": "function НОДНОК(a, b: int64): (int64, int64);\nbegin\n  var (a1, b1) := (a, b);\n  while b <> 0 do\n    (a, b) := (b, a mod b);\n  Result := (a, Abs(a1 div a * b1))\nend;"
+  },
+  {
+    "instruction": "Get prime numbers in range [m;n]",
+    "output": "function Primes(m, n: integer): List<integer>;\nbegin\n  var ls := ubPrimeDivs;\n  if m > n then Swap(m, n);\n  Result := [];\n  if m <= LPrimes[^1] then\n  begin\n    foreach var prime in LPrimes do\n    begin\n      if prime > n then break;\n      if prime >= m then Result.Add(prime)\n    end;\n    if Result.Count = 0 then exit;\n    m := Result[^1] + 1;\n    if m >= n then exit\n  end;  \n  var ls64: int64 := ls;\n  var ln := Ceil(m / ls);\n  var rn := Ceil(n / ls);\n  for var sn := ln to rn do\n  begin\n    var a := Max((sn - 1) * ls64 + 1, 2);\n    var b := sn * ls64;\n    var Sieve := new boolean[ls];\n    for var i := 0 to LPrimes.Count - 1 do\n    begin\n      var prime := LPrimes[i];\n      if Sqr(prime) > b then break;\n      var k := a;\n      var d := k mod prime;\n      if d <> 0 then k += prime - d;\n      while k <= b do\n      begin\n        Sieve[integer(k - a)] := True;\n        k += prime\n      end\n    end;\n    for var i := 0 to Sieve.High do\n      if not Sieve[i] then\n        if (a + i >= m) and (a + i <= n) then\n          Result.Add(a + i)\n  end\nend;"
+  },
+  {
+    "instruction": "Get first k prime numbers",
+    "output": "function FirstPrimes(k: integer): List<integer>;\nbegin\n  if k <= nPrimeDivs then Result := LPrimes[:k]\n  else\n  begin\n    Result := LPrimes;\n    var kprimes := nPrimeDivs;\n    var n := maxPrimeDiv + 2;\n    repeat\n      if n.IsPrime then\n      begin\n        Result.Add(n);\n        Inc(kprimes)\n      end;  \n      n += 2\n    until kprimes = k\n  end\nend;"
+  },
+  {
+    "instruction": "Get unique prime divisors of a number",
+    "output": "function PrimeDivisors(n: integer): List<integer>;\nbegin\n  Result := [];\n  if n < 2 then exit;\n  var (i, prime, m) := (0, LPrimes[0], n);\n  while Sqr(prime) <= n do\n  begin\n    if n mod prime = 0 then\n    begin\n      Result.Add(prime);\n      repeat\n        n := n div prime\n      until n mod prime <> 0\n    end;\n    Inc(i);\n    prime := LPrimes[i];\n  end;\n  if Result.Count = 0 then Result.Add(m)\n  else if n > 1 then Result.Add(n)\nend;"
+  },
+  {
+    "instruction": "Count unique prime divisors of a number",
+    "output": "function PrimeDivisorsCount(n: integer): integer;\nbegin\n  Result := 0;\n  if n < 2 then Exit;\n  var (i, prime, DivIsPrime) := (0, LPrimes[0], True);\n  while Sqr(prime) <= n do\n  begin\n    if n mod prime = 0 then\n    begin\n      Inc(Result);\n      DivIsPrime := False;\n      repeat\n        n := n div prime\n      until n mod prime <> 0\n    end;\n    Inc(i);\n    prime := LPrimes[i];\n  end;\n  if DivIsPrime then Result := 1\n  else if n > 1 then Result += 1\nend;"
+  },
+  {
+    "instruction": "Count prime factors of a number",
+    "output": "function PrimeFactorsCount(n: integer): integer;\nbegin\n  Result := 0;\n  if n < 2 then exit;\n  var (i, prime, DivIsPrime) := (0, LPrimes[0], True);\n  while Sqr(prime) <= n do\n  begin\n    while n mod prime = 0 do\n    begin\n      Inc(Result);\n      DivIsPrime := False;\n      n := n div prime\n    end;\n    Inc(i);\n    prime := LPrimes[i];\n  end;\n  if DivIsPrime then Result := 1\n  else if n > 1 then Result += 1\nend;"
+  },
+  {
+    "instruction": "Convert digits list to BigInteger",
+    "output": "function DigitsToBigInteger(ext: List<integer>; base: integer): BigInteger;\nbegin\n  Result := BigInteger.Zero;\n  var p := BigInteger.One;\n  for var i := ext.Count -1 downto 0 do\n  begin  \n    Result += ext[i] * p;\n    p *= base\n  end\nend;"
+  },
+  {
+    "instruction": "Count divisors of a number",
+    "output": "function DivisorsCount(n: integer): integer;\nbegin\n  Result := 1;\n  foreach var prime in LPrimes do\n  begin\n    if Sqr(prime) > n then break;\n    var ndivs := Result;\n    while n mod prime = 0 do\n    begin\n      for var i := Result - ndivs to Result - 1 do\n        Result += 1;\n      n := n div prime;\n    end\n  end;  \n  if n > 1 then\n    for var i := 0 to Result - 1 do\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Calculate cosine of angle in degrees",
+    "output": "function CosDegrees(x: real): real := Cos(DegToRad(x));"
+  },
+  {
+    "instruction": "Calculate tangent of angle in degrees",
+    "output": "function TanDegrees(x: real): real := Tan(DegToRad(x));"
+  },
+  {
+    "instruction": "Generate sequence of random real numbers",
+    "output": "function SeqRandomReal(n: integer; a, b: real; t: integer): sequence of real;\nbegin\n  loop n do\n    yield Round(Random * (b - a) + a, t)\nend;"
+  },
+  {
+    "instruction": "Generate matrix of random real numbers",
+    "output": "function MatrRandomReal(m: integer; n: integer; a, b: real; t: integer): array [,] of real;\nbegin\n  Result := new real[m, n];\n  for var i := 0 to Result.RowCount - 1 do\n    for var j := 0 to Result.ColCount - 1 do\n      Result[i, j] := Round(Random * (b - a) + a, t);\nend;"
+  },
+  {
+    "instruction": "Generate truth table for boolean function with 3 variables",
+    "output": "function TrueTable(f: function(a, b, c: boolean): boolean):\n    array[,] of boolean;\nbegin\n  Result := new boolean[8, 4];\n  var i := 0;\n  for var a := False to True do\n    for var b := False to True do\n      for var c := False to True do\n      begin\n        Result[i, 0] := a;\n        Result[i, 1] := b;\n        Result[i, 2] := c;\n        Result[i, 3] := f(a, b, c);\n        i += 1\n      end;\nend;"
+  },
+  {
+    "instruction": "Generate truth table for boolean function with n variables",
+    "output": "function TrueTable(n: integer; f: (array of boolean) -> boolean):\n    array[,] of boolean;\nbegin\n  Result := new boolean[1 shl n, n + 1];\n  foreach var values in [False, True].CartesianPower(n) index i do\n  begin\n    foreach var val in values index j do \n    begin\n      Result[i, j] := val\n    end;\n    Result[i, ^1] := f(values)\n  end\nend;"
+  },
+  {
+    "instruction": "Multiple substring replacement in string",
+    "output": "function ReplaceMany(s: string; source, target: IList<string>): string;\nbegin\n  var SB := new StringBuilder(s);\n  var tl := target.Count - 1;\n  for var i := 0 to source.Count - 1 do\n    if i <= tl then SB.Replace(source[i], target[i])\n    else SB.Replace(source[i], '');\n  Result := SB.ToString\nend;"
+  },
+  {
+    "instruction": "Swap substrings in string",
+    "output": "procedure SwapSubstr(var s: string; ss1, ss2: string);\nbegin\n  if not ((ss1 in s) and (ss2 in s)) then exit;\n  var D := Dict((ss1, ss2), (ss2, ss1));\n  s := Regex.Replace(s, $'({ss1}|{ss2})', m -> D[m.Value])\nend;"
+  },
+  {
+    "instruction": "Translate characters in string",
+    "output": "function Translate(s, source, target: string): string;\nbegin\n  var sb := new StringBuilder(s.Length);\n  foreach var x in s do \n  begin\n    var ind := source.IndexOf(x); \n    if ind >= 0 then\n    begin\n      if ind <= target.Length - 1 then\n        sb.Append(target[ind + 1])\n    end\n    else sb.Append(x)\n  end;\n  Result := sb.ToString\nend;"
+  },
+  {
+    "instruction": "Bitwise OR operation for Addr32 objects",
+    "output": "static function Addr32.operator or (a, b: Addr32): Addr32;\nbegin\n  Result := new Addr32;\n  Result.addr10 := a.addr10 or b.addr10;\n  SetAddress(Result)\nend;"
+  },
+  {
+    "instruction": "Bitwise NOT operation for Addr32 object",
+    "output": "static function Addr32.operator not (a: Addr32): Addr32;\nbegin\n  Result := new Addr32;\n  Result.addr10 := not a.addr10;\n  SetAddress(Result)\nend;"
+  },
+  {
+    "instruction": "Addition operation for Addr32 object",
+    "output": "static function Addr32.operator + (a: Addr32; b: longword): Addr32;\nbegin\n  Result := new Addr32;\n  Result.addr10 := a.addr10 + b;\n  SetAddress(Result)\nend;"
+  },
+  {
+    "instruction": "Validate IP address format with octets",
+    "output": "function Addr32.AddressValid(address: string): boolean := \n    (address = address.MatchValue('(\\d{1,3}\\.){3}\\d{1,3}')) and\n    address.Split('.').All(t -> t.ToInteger <= 255);"
+  },
+  {
+    "instruction": "Validate 32-bit binary address format",
+    "output": "function Addr32.AddressBinValid(address: string): boolean :=\n    address.MatchValue('[0|1]*').Length = 32;"
+  },
+  {
+    "instruction": "Convert IP address/mask from decimal with octets to 32-bit binary",
+    "output": "function Addr32.AddressToBin(address: string): string :=\n    address.Split('.')\n    .Select(t -> Convert.ToString(Convert.ToByte(t), 2).PadLeft(8, '0'))\n    .JoinToString('');"
+  },
+  {
+    "instruction": "Convert 32-bit binary string to decimal value",
+    "output": "function Addr32.BinToDec(bits: string): longword := Convert.ToUInt32(bits, 2);"
+  },
+  {
+    "instruction": "Convert binary address representation to decimal with octets",
+    "output": "static function Addr32.BinToAddress(pic: string): string;\nbegin\n  var s := if '.' in pic then pic.Split('.') else pic.Batch(8).Select(t -> t.JoinToString(''));\n  Result := s.Select(t -> Convert.ToByte(t, 2)).JoinToString('.')\nend;"
+  },
+  {
+    "instruction": "Format 32-bit binary address with octets",
+    "output": "function Addr32.AddrFormat(addr: string): string;\nbegin\n  Result := addr.Substring(0, 8);\n  for var i := 1 to 3 do\n    Result += '.' + addr.Substring(8 * i, 8);\nend;"
+  },
+  {
+    "instruction": "Set address for Addr32 object",
+    "output": "procedure Addr32.SetAddress(value: string);\nbegin\n  if AddressValid(value) then\n  begin\n    addr := value;\n    addr2 := AddressToBin(value);\n    addr10 := BinToDec(addr2)\n  end\n  else\n  begin\n    Println('Incorrect address record:', value);\n    Halt\n  end\nend;"
+  },
+  {
+    "instruction": "Set binary address for Addr32 object",
+    "output": "procedure Addr32.SetAddressBin(value: string);\nbegin\n  if AddressBinValid(value) then\n  begin\n    addr := Addr32.BinToAddress(value);\n    addr2 := value;\n    addr10 := BinToDec(addr2)\n  end\n  else\n  begin\n    Println('Incorrect address record:', value);\n    Halt\n  end\nend;"
+  },
+  {
+    "instruction": "Binary representation of decimal number for CalcIP",
+    "output": "function CalcIP.Bin(n:int64): string := Convert.ToString(n, 2);"
+  },
+  {
+    "instruction": "32-bit binary representation of decimal number for CalcIP",
+    "output": "function CalcIP.Bin32(n:int64): string := Convert.ToString(n, 2).PadLeft(32, '0');"
+  },
+  {
+    "instruction": "Convert binary string to decimal for CalcIP",
+    "output": "function CalcIP.BinToDec(bits: string): integer := integer(Convert.ToInt64(bits, 2));"
+  },
+  {
+    "instruction": "Format address with network and host separation",
+    "output": "function CalcIP.AddrFine(addr: Addr32): string;\nbegin\n  Result := AddrFormat(addr.value2);\n  var d := bit_mask + bit_mask div 8 + 1;\n  if bit_mask > 0 then Result := Result[:d] + '  ' + Result[d:]\nend;"
+  },
+  {
+    "instruction": "Validate IP address format for CalcIP",
+    "output": "function CalcIP.AddressValid(addr: string): boolean :=\n    (addr = addr.MatchValue('(\\d{1,3}\\.){3}\\d{1,3}')) and\n    addr.Split('.').All(t -> t.ToInteger <= 255);"
+  },
+  {
+    "instruction": "Convert IP address to binary for CalcIP",
+    "output": "function CalcIP.AddressToBin(addr: string): string :=\n    addr.Split('.')\n    .Select(t -> Convert.ToString(Convert.ToByte(t), 2).PadLeft(8, '0'))\n    .JoinToString('');"
+  },
+  {
+    "instruction": "Convert binary address to decimal with octets for CalcIP",
+    "output": "function CalcIP.BinToAddress(pic: string): string;\nbegin\n  var s := if '.' in pic then pic.Split('.') else pic.Batch(8).Select(t -> t.JoinToString(''));\n  Result := s.Select(t -> Convert.ToByte(t, 2)).JoinToString('.')\nend;"
+  },
+  {
+    "instruction": "Validate subnet mask",
+    "output": "function CalcIP.MaskValid(mask: Addr32): boolean :=\n    mask.value2.MatchValue('1+0+').Length = 32;"
+  },
+  {
+    "instruction": "Calculate IP network parameters",
+    "output": "procedure CalcIP.Calc;\nbegin\n  bit_mask := Pos('0', mask32.value2) - 1;\n  n_hosts := integer(2 ** (32 - bit_mask)) - 2;\n  var addr := mask32.value.Split('.').Select(t -> (255 - Convert.ToByte(t)).ToString).JoinToString('.');\n  wildcard32 := new Addr32(addr);\n  network32 := ip32 and mask32;\n  broadcast32 := network32 or wildcard32;\n  hostmin32 := network32 + 1;\n  hostmax32 := network32 + n_hosts\nend;"
+  },
+  {
+    "instruction": "Format address with bitmask separation",
+    "output": "function CalcIP.AddressFormat(pic: string): string := pic[:bit_mask + 1] + '  ' + pic[bit_mask + 1:];"
+  },
+  {
+    "instruction": "Get string representation of Addr32 object",
+    "output": "function Addr32.ToString: string := $'{addr + '','', -15}{AddrFormat(addr2)}';"
+  },
+  {
+    "instruction": "Get string representation of CalcIP object",
+    "output": "function CalcIP.ToString: string;\nbegin\n  var s := \n       $'IP address (Address)                  | {ip32.value, -15} | {AddrFine(ip32)}{NewLine}';\n  s += $'Subnet mask prefix (Bitmask)          | /{bit_mask}{NewLine}';\n  s += $'Subnet mask (Netmask)                 | {mask32.value, -15} | {AddrFine(mask32)}{NewLine}';\n  s += $'Host mask (Wildcard)                  | {Wildcard32.value, -15} | {AddrFine(wildcard32)}{NewLine}';\n  s += $'Network IP address (Network)          | {network32.value, -15} | {AddrFine(network32)}{NewLine}';\n  s += $'Broadcast address (Broadcast)         | {broadcast32.value, -15} | {AddrFine(broadcast32)}{NewLine}';\n  s += $'Available host addresses (Hosts)      | {n_hosts}{NewLine}';\n  s += $'First host address (Hostmin)          | {hostmin32.value, -15} | {AddrFine(hostmin32)}{NewLine}';\n  s += $'Last host address (Hostmax)           | {hostmax32.value, -15} | {AddrFine(hostmax32)}{NewLine}';\n  Result := s\nend;"
+  },
+  {
+    "instruction": "Initialize prime numbers list using Sieve of Eratosthenes",
+    "output": "procedure PrimesInternal;\nbegin\n  LPrimes := new List<integer>;\n  var Sieve := new boolean[ubPrimeDivs + 1];\n  for var i := 2 to ubPrimeDivs do\n    if not Sieve[i] then\n    begin\n      LPrimes.Add(i);\n      var k := i;\n      while k <= ubPrimeDivs - i do\n      begin\n        k += i;\n        Sieve[k] := True\n      end\n    end\nend;"
+  },
+  {
+    "instruction": "Print truth table with filtering options",
+    "output": "procedure TrueTablePrint(a: array[,] of boolean; f: integer; s: string);\nbegin\n  var n := a.ColCount;\n  s := s?[:n];\n  s := s.PadRight(n - 1, ' ');\n  Write(' ');\n  for var i := 1 to s.Length do\n    Print(s[i]);\n  Writeln('F');\n  Writeln(' ' + (2 * n - 1) * '-');\n  for var i := 0 to a.RowCount - 1 do\n    if not (((f = 0) and a[i, n - 1]) or ((f = 1) and not a[i, n - 1])) then\n    begin\n      for var j := 0 to n - 1 do\n        Write(if a[i, j] then ' 1' else ' 0');\n      Writeln\n    end\nend;"
+  },
+  {
+    "instruction": "Logical implication extension method",
+    "output": "function Imp(Self, b: boolean): boolean; extensionmethod := not Self or b;"
+  },
+  {
+    "instruction": "GCD extension method for integer tuple",
+    "output": "function НОД(Self: (integer, integer)): integer; extensionmethod;\nbegin\n  var (a, b) := Self;\n  while b <> 0 do\n    (a, b) := (b, a mod b);\n  Result := Abs(a)\nend;"
+  },
+  {
+    "instruction": "IsPrime extension method for integer",
+    "output": "function IsPrime(Self: integer): boolean; extensionmethod := IsPrime(Self);"
+  },
+  {
+    "instruction": "PrimeDivisors extension method for integer",
+    "output": "function PrimeDivisors(Self: integer): List<integer>; extensionmethod := PrimeDivisors(Self);"
+  },
+  {
+    "instruction": "PrimeDivisorsCount extension method for integer",
+    "output": "function PrimeDivisorsCount(Self: integer): integer; extensionmethod := PrimeDivisorsCount(Self);"
+  },
+  {
+    "instruction": "PrimeFactors extension method for integer",
+    "output": "function PrimeFactors(Self: integer): List<integer>; extensionmethod := PrimeFactors(Self);"
+  },
+  {
+    "instruction": "PrimeFactorsCount extension method for integer",
+    "output": "function PrimeFactorsCount(Self: integer): integer; extensionmethod := PrimeFactorsCount(Self);"
+  },
+  {
+    "instruction": "Divisors extension method for integer",
+    "output": "function Divisors(Self: integer): List<integer>; extensionmethod :=\nDivisors(Self);"
+  },
+  {
+    "instruction": "DivisorsCount extension method for integer",
+    "output": "function DivisorsCount(Self: integer): integer; extensionmethod := DivisorsCount(Self);"
+  },
+  {
+    "instruction": "ToBase extension method for int64",
+    "output": "function ToBase(Self: int64; base: integer): string; extensionmethod := ToBase(Self, base);"
+  },
+  {
+    "instruction": "ToBase extension method for BigInteger",
+    "output": "function ToBase(Self: BigInteger; base: integer): string; extensionmethod := ToBase(Self, base);"
+  },
+  {
+    "instruction": "ToBase extension method for string",
+    "output": "function ToBase(Self: string; base: integer): string; extensionmethod := ToBase(Self, base);"
+  },
+  {
+    "instruction": "Digits extension method for integer",
+    "output": "function Digits(Self: integer; base: integer := 10): List<integer>;\n    extensionmethod := Digits(Self, base);"
+  },
+  {
+    "instruction": "Digits extension method for int64",
+    "output": "function Digits(Self: int64; base: integer := 10): List<integer>;\n    extensionmethod := Digits(Self, base);"
+  },
+  {
+    "instruction": "Digits extension method for BigInteger",
+    "output": "function Digits(Self: Biginteger; base: integer := 10): List<integer>;\n    extensionmethod := Digits(Self, base);"
+  },
+  {
+    "instruction": "DigitsToInt64 extension method for List<integer>",
+    "output": "function DigitsToInt64(Self: List<integer>; base: integer := 10): int64;\n    extensionmethod := DigitsToInt64(Self, base);"
+  },
+  {
+    "instruction": "DigitsToBigInteger extension method for List<integer>",
+    "output": "function DigitsToBigInteger(Self: List<integer>; base: integer := 10): BigInteger;\n    extensionmethod := DigitsToBigInteger(Self, base);"
+  },
+  {
+    "instruction": "ReplaceMany extension method for string with characters",
+    "output": "function ReplaceMany(Self, source, target: string): string;\nextensionmethod := ReplaceMany(Self, source, target);"
+  },
+  {
+    "instruction": "ReplaceMany extension method for string with substrings",
+    "output": "function ReplaceMany(Self: string; source, target: IList<string>): string;\nextensionmethod := ReplaceMany(Self, source, target);"
+  },
+  {
+    "instruction": "SwapSubstr extension method for string",
+    "output": "procedure SwapSubstr(var Self: string; ss1, ss2: string);\n  extensionmethod := SwapSubstr(Self, ss1, ss2);"
+  },
+  {
+    "instruction": "Translate extension method for string",
+    "output": "function Translate(Self, source, target: string): string;\n  extensionmethod := Translate(Self, source, target);"
+  },
+  {
+    "instruction": "Set internal address for Addr32 object",
+    "output": "static procedure Addr32.SetAddress(a: Addr32);\nbegin\n  a.addr2 := Bin32(a.addr10);\n  a.addr := BinToAddress(a.addr2)\nend;"
+  },
+  {
+    "instruction": "Generate truth table for boolean function with 4 variables",
+    "output": "function TrueTable(f: function(a, b, c, d: boolean): boolean):\n    array[,] of boolean;\nbegin\n  Result := new boolean[16, 5];\n  var i := 0;\n  for var a := False to True do\n    for var b := False to True do\n      for var c := False to True do\n        for var d := False to True do\n        begin\n          Result[i, 0] := a;\n          Result[i, 1] := b;\n          Result[i, 2] := c;\n          Result[i, 3] := d;\n          Result[i, 4] := f(a, b, c, d);\n          i += 1\n        end;\nend;"
+  },
+  {
+    "instruction": "Generate truth table for boolean function with 5 variables",
+    "output": "function TrueTable(f: function(a, b, c, d, e: boolean): boolean):\n    array[,] of boolean;\nbegin\n  Result := new boolean[32, 6];\n  var i := 0;\n  for var a := False to True do\n    for var b := False to True do\n      for var c := False to True do\n        for var d := False to True do\n          for var e := False to True do\n          begin\n            Result[i, 0] := a;\n            Result[i, 1] := b;\n            Result[i, 2] := c;\n            Result[i, 3] := d;\n            Result[i, 4] := e;\n            Result[i, 5] := f(a, b, c, d, e);\n            i += 1\n          end;\nend;"
+  },
+  {
+    "instruction": "MinMax extension method for sequence of int64",
+    "output": "function MinMax(Self: sequence of int64): (int64, int64); extensionmethod :=\nMinMax(Self);"
+  },
+  {
+    "instruction": "MinMax extension method for sequence of integer",
+    "output": "function MinMax(Self: sequence of integer): (integer, integer);\n    extensionmethod :=\nMinMax(Self);"
+  },
+  {
+    "instruction": "MinMax extension method for sequence of real",
+    "output": "function MinMax(Self: sequence of real): (real, real); extensionmethod :=\nMinMax(Self);"
+  },
+  {
+    "instruction": "MinMax extension method for sequence of BigInteger",
+    "output": "function MinMax(Self: sequence of BigInteger): (BigInteger, BigInteger);\nextensionmethod := MinMax(Self);"
+  },
+  {
+    "instruction": "GCD extension method for int64 tuple",
+    "output": "function НОД(Self: (int64, int64)): integer; extensionmethod;\nbegin\n  var (a, b) := Self;\n  while b <> 0 do\n    (a, b) := (b, a mod b);\n  Result := Abs(a)\nend;"
+  },
+  {
+    "instruction": "Factorize function as alias for PrimeFactors",
+    "output": "function Factorize(n: integer): List<integer> := PrimeFactors(n);"
+  },
+  {
+    "instruction": "Factorize extension method for integer",
+    "output": "function Factorize(Self: integer): List<integer>; extensionmethod := PrimeFactors(Self);"
+  },
+  {
+    "instruction": "Divizors function as alias for Divisors",
+    "output": "function Divizors(n: integer) := Divisors(n);"
+  },
+  {
+    "instruction": "Divizors extension method for integer",
+    "output": "function Divizors(Self: integer): List<integer>; extensionmethod :=\nDivisors(Self);"
+  },
+  {
+    "instruction": "BinFormat for int64 with default parameters",
+    "output": "function BinFormat(number: int64; bytes: integer; split: string): string :=\n    BinFormat(BigInteger(number), bytes, split);"
+  },
+  {
+    "instruction": "32-bit binary representation static method for Addr32",
+    "output": "static function Addr32.Bin32(n:integer): string := (Convert.ToString(n, 2)).PadLeft(32, '0');"
+  },
+  {
+    "instruction": "Format address with octets for CalcIP",
+    "output": "function CalcIP.AddrFormat(addr: string): string;\nbegin\n  Result := addr.Substring(0, 8);\n  for var i := 1 to 3 do\n    Result += '.' + addr.Substring(8 * i, 8);\nend;"
+  },
+  {
+    "instruction": "Find minimum and maximum of real sequence",
+    "output": "function MinMax(seq: sequence of real): (real, real);\nbegin\n  var min := real.MaxValue;\n  var max := -real.MaxValue;\n  foreach var elem in seq do\n  begin\n    if elem < min then\n      min := elem;\n    if elem > max then\n      max := elem\n  end; \n  Result := (min, max)\nend;"
+  },
+  {
+    "instruction": "Find minimum and maximum of BigInteger sequence",
+    "output": "function MinMax(seq: sequence of BigInteger): (BigInteger, BigInteger);\nbegin\n  var min, max: BigInteger;\n  var is_first := True;\n  foreach var elem in seq do\n    if is_first then\n    begin\n      (min, max) := (elem, elem);\n      is_first := False\n    end  \n    else\n    begin\n      if elem < min then\n        min := elem;\n      if elem > max then\n        max := elem\n    end;\n  Result := (min, max)\nend;"
+  },
+  {
+    "instruction": "Find minimum and maximum of integer sequence",
+    "output": "function MinMax(seq: sequence of integer): (integer, integer);\nbegin\n  var min := integer.MaxValue;\n  var max := integer.MinValue;\n  foreach var elem in seq do\n  begin\n    if elem < min then\n      min := elem;\n    if elem > max then\n      max := elem\n  end;\n  Result := (min, max)\nend;"
+  }
+]

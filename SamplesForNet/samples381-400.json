@@ -1,0 +1,70 @@
+[
+  {
+    "instruction": "Create a Person class in PascalABC.NET with external method implementation. The class should have private name and age fields, a constructor, and a Print method. Show both old and new syntax for constructor calls.",
+    "output": "type \n  Person = class\n  private\n    name: string;\n    age: integer;\n  public\n    constructor (n: string; a: integer);\n    procedure Print;\n  end;\n\nconstructor Person.Create(n: string; a: integer);\nbegin\n  name := n; age := a;\nend;\n\nprocedure Person.Print;\nbegin\n  writeln('Имя: ',name,'  Возраст: ',age);\nend;\n\nvar p: Person;\n\nbegin\n  p := new Person('Иванов',20);\n  p.Print;\nend."
+  },
+  {
+    "instruction": "Create a Person class in PascalABC.NET with internal method implementation. The class should have private fields and public constructor and Print methods implemented directly in the class interface.",
+    "output": "type \n  Person = class\n  private\n    name: string;\n    age: integer;\n  public\n    constructor (n: string; a: integer);\n    begin\n      name := n; age := a;\n    end;\n    procedure Print;\n    begin\n      writeln('Имя: ',name,'  Возраст: ',age);\n    end;\n  end;\n\nvar p,p1: Person;\n\nbegin\n  p := new Person('Иванов',20);\n  p.Print;\n  p1 := Person.Create('Попов',19);\n  p1.Print;\nend."
+  },
+  {
+    "instruction": "Create a multiplication table test application in PascalABC.NET using GraphWPF. The program should generate random multiplication questions, track answers, and provide a grade after 10 questions.",
+    "output": "uses GraphWPF,Controls,Sounds;\n\nvar x, y: integer;\n\nprocedure NextQuestion;\nbegin\n  Window.Clear;\n  (x, y) := Random2(2, 9);  \n  DrawText(GraphWindow.ClientRect,$'{x} × {y} = ?');\nend;\n\nfunction Оценка(ВерныхОтветов: integer): integer;\nbegin\n  case ВерныхОтветов of\n    10, 9: Оценка := 5;\n    8, 7:  Оценка := 4;\n    4..6:  Оценка := 3;\n    else   Оценка := 2;\n  end;  \nend;\n\nbegin\n  Window.Title := 'Проверка таблицы умножения';\n  Font.Size := 40;\n  var l := LeftPanel(200);\n  l.FontSize := 16;\n  var sb := StatusBar;\n  NextQuestion;\n\n  var Результат := IntegerBox('Введите ответ:',0,100);\n  var b := Button('Ответить');\n  var КоличествоОтветов := IntegerBlock('Ответов:');\n  var ВерныхОтветов := IntegerBlock('Верных ответов:');\n  \n  b.Click := procedure → begin\n    if x * y = Результат then\n    begin\n      sb.Text := 'Верно!';\n      ВерныхОтветов += 1;\n    end  \n    else \n    begin\n      sb.Text := 'Неверно :(';\n    end;  \n    КоличествоОтветов += 1;\n    Результат := 0;\n    if КоличествоОтветов = 10 then\n    begin\n      MessageBox.Show('Тест окончен.'#10#10'Верных ответов: ' + \n        ВерныхОтветов.Value + #10#10 + 'Оценка: ' + Оценка(ВерныхОтветов));\n      ВерныхОтветов := 0;\n      КоличествоОтветов := 0;\n    end;\n    NextQuestion;\n  end;\n  OnResize := procedure → begin\n    Window.Clear;\n    DrawText(GraphWindow.ClientRect,$'{x} × {y} = ?');\n  end;\nend."
+  },
+  {
+    "instruction": "Create an improved multiplication table test in PascalABC.NET using procedures for better code organization. Include separate procedures for test completion, drawing, and next question generation.",
+    "output": "uses GraphWPF,Controls,Sounds;\n\nfunction Оценка(ВерныхОтветов: integer): integer;\nbegin\n  case ВерныхОтветов of\n    10, 9: Оценка := 5;\n    8, 7:  Оценка := 4;\n    4..6:  Оценка := 3;\n    else   Оценка := 2;\n  end;  \nend;\n\nbegin\n  Window.Title := 'Проверка таблицы умножения';\n  Font.Size := 60;\n  var l := LeftPanel(200);\n  l.FontSize := 16;\n  var sb := StatusBar;\n\n  var Результат := IntegerBox('Введите ответ:',0,100);\n  var b := Button('Ответить');\n  var КоличествоОтветов := IntegerBlock('Ответов:');\n  var ВерныхОтветов := IntegerBlock('Верных ответов:');\n  \n  var ТестОкончен := procedure → begin\n    MessageBox.Show('Тест окончен.'+#10#10+'Верных ответов: ' + \n      ВерныхОтветов.Value + #10#10 + 'Оценка: ' + Оценка(ВерныхОтветов));\n    ВерныхОтветов := 0;\n    КоличествоОтветов := 0;\n  end;\n  \n  var x, y: integer;\n\n  var НарисоватьТест := procedure → begin\n    Window.Clear;\n    DrawText(GraphWindow.ClientRect,$'{x} × {y} = ?');\n  end;\n\n  var СледующийВопрос := procedure → begin\n    (x, y) := Random2(2, 9);\n    НарисоватьТест;\n  end;\n  СледующийВопрос;\n  \n  b.Click := procedure → begin\n    if x * y = Результат then\n    begin\n      sb.Text := 'Верно!';\n      ВерныхОтветов += 1;\n    end  \n    else \n    begin\n      sb.Text := 'Неверно :(';\n    end;  \n    КоличествоОтветов += 1;\n    Результат := 0;\n    if КоличествоОтветов = 10 then\n      ТестОкончен;\n    СледующийВопрос;\n  end;\n  OnResize := НарисоватьТест;\nend."
+  },
+  {
+    "instruction": "Create a network ping utility in PascalABC.NET that pings a server and displays its IP address and response time.",
+    "output": "uses System.Net.NetworkInformation;\n\nconst address = 'www.yandex.ru';\n\nbegin\n  var p := new Ping();\n  try\n    var res := p.Send(address);\n    writeln('IP адрес сервера: ',res.Address);\n    writeln('Время отклика: ',res.RoundtripTime,' мс');\n  except\n    on e: Exception do\n      write(e.Message);\n  end;    \nend."
+  },
+  {
+    "instruction": "Create a 3D planet rotation animation in PascalABC.NET using Graph3D. Show two spheres rotating around each other with different rotation speeds.",
+    "output": "uses Graph3D;\n\nbegin\n  Window.Title := 'Вращение планет';\n  View3D.ShowCoordinateSystem := False;\n  View3D.ShowGridLines := False;\n  View3D.ShowViewCube := False;\n  View3D.BackgroundColor := Colors.Black;\n\n  var s := Sphere(2,0,0,0.5,Colors.Red);\n  var ss := Sphere(0,0,0,1,Colors.Blue);\n  Sphere(0,0,0,2,DiffuseMaterial(Colors.Yellow)+SpecularMaterial(32));\n  var g := Group(s,ss);\n  g.MoveBy(-7,0,0);\n  var anim := s.AnimRotateAt(OrtZ,360*100,P3D(-2,0,0),2*100)\n    * g.AnimRotateAt(OrtZ,360*100,P3D(7,0,0),10*100)\n  ;\n   \n  anim.Begin;\nend."
+  },
+  {
+    "instruction": "Create a solar system animation in PascalABC.NET with Earth, Moon, and Sun using texture maps and orbital trajectories.",
+    "output": "uses Graph3D;\n\nbegin\n  Window.Title := 'Вращение планет';\n  View3D.HideAll;\n  View3D.BackgroundColor := Colors.Black;\n  \n  var s := Sphere(0,0,0,30);\n  s.BackMaterial := ImageMaterial('skymap.jpg');\n\n  var Sun := Sphere(0,0,0,2,ImageMaterial('sunmap.jpg'));\n  var Earth := Sphere(-7,0,0,1,ImageMaterial('earthmap.jpg'));\n  var Moon := Sphere(2,0,0,0.5,ImageMaterial('moonmap.jpg'));\n  Earth.AddChild(Moon);\n  \n  var tr := ParametricTrajectory(0,2*Pi,100,t->P3D(7*cos(t),7*sin(t),0));\n  Polyline3D(tr,1.2,GrayColor(70));\n  \n  Moon.AnimRotateAt(OrtZ,360,P3D(-2,0,0),2.sec).Forever.Begin;\n  Earth.AnimRotateAtAbsolute(OrtZ,360,Origin,20.sec).Forever.Begin;\n  Earth.AnimRotate(OrtZ,-360,5.sec).Forever.Begin;\n  Sun.AnimRotate(OrtZ,-360,20.sec).Forever.Begin;\nend."
+  },
+  {
+    "instruction": "Create a frame-based planet rotation animation in PascalABC.NET using OnDrawFrame event for continuous animation.",
+    "output": "uses Graph3D;\n\nbegin\n  Window.Title := 'Вращение планет';\n  View3D.HideAll;\n  \n  var s := Sphere(0,0,0,30);\n  s.BackMaterial := ImageMaterial('skymap.jpg');\n\n  var earth := Sphere(-7,0,0,1,ImageMaterial('earthmap.jpg'));\n  var moon := Sphere(2,0,0,0.5,ImageMaterial('moonmap.jpg'));\n  earth.AddChild(moon);\n  var Sun := Sphere(0,0,0,2,ImageMaterial('sunmap.jpg'));\n  Sun.AnimRotate(OrtZ,-360,20.sec).Forever.Begin;\n  \n  var tr := ParametricTrajectory(0,2*Pi,100,t->P3D(7*cos(t),7*sin(t),0));\n  Polyline3D(tr,1.2,GrayColor(80));\n  \n  var tr1 := ParametricTrajectory(0,2*Pi,100,t->P3D(2*cos(t),2*sin(t),0));\n  var pl1 := Polyline3D(tr1,1.2,GrayColor(80));\n  earth.AddChild(pl1);\n\n  OnDrawFrame := dt -> begin\n    moon.RotateAt(OrtZ,360*dt/3,P3D(-2,0,0));\n    earth.RotateAtAbsolute(OrtZ,360*dt/6,Origin);\n  end;\nend."
+  },
+  {
+    "instruction": "Create a 3D visualization of Platonic solids in PascalABC.NET using Graph3D. Display icosahedron, dodecahedron, tetrahedron, and octahedron with optional circumscribed spheres.",
+    "output": "uses Graph3D;\n\nbegin\n  var РисоватьОписанныеСферы := True;\n  var p := P3D(6,0,0);\n  var p1 := p;\n  var h := -4;\n  Icosahedron(p,2,Colors.Green);\n  p.Offset(h,0,0);\n  Dodecahedron(p,2,Colors.Blue);\n  p.Offset(h,0,0);\n  Tetrahedron(p,2,Colors.Red);\n  p.Offset(h,0,0);\n  Octahedron(p,2,Colors.Magenta);\n  \n  p := p1;\n  if РисоватьОписанныеСферы then\n    loop 4 do\n    begin\n      var s := Sphere(p,2.0,DiffuseMaterial(Colors.Gold.ChangeAlpha(64))+SpecularMaterial(64));\n      s.BackMaterial := nil;\n      p.Offset(h,0,0);\n    end;\nend."
+  },
+  {
+    "instruction": "Create a complete Platonic solids visualization in PascalABC.NET including cube with all five solids and their circumscribed spheres.",
+    "output": "uses Graph3D;\n\nbegin\n  Window.Title := 'Платоновы тела';\n  var РисоватьОписанныеСферы := True;\n  var p := P3D(8,0,0);\n  var p1 := p;\n  var h := -4;\n  Icosahedron(p,2,Colors.Green);\n  p.Offset(h,0,0);\n  Dodecahedron(p,2,Colors.Blue);\n  p.Offset(h,0,0);\n  Tetrahedron(p,2,Colors.Red);\n  p.Offset(h,0,0);\n  Octahedron(p,2,Colors.Magenta);\n  p.Offset(h,0,0);\n  Cube(p,2*2/Sqrt(3),Colors.Brown);\n  \n  p := p1;\n  if РисоватьОписанныеСферы then\n    loop 5 do\n    begin\n      var s := Sphere(p,2.0,DiffuseMaterial(Colors.Gold.ChangeAlpha(64))+SpecularMaterial(64));\n      s.BackMaterial := nil;\n      p.Offset(h,0,0);\n    end;\nend."
+  },
+  {
+    "instruction": "Create various types of graphs in PascalABC.NET using PlotWPF including line graphs, marker graphs, and grid layouts.",
+    "output": "uses PlotWPF;\n\nbegin\n  var g := new GridWPF(2,2,10);\n\n  var c := new LineGraphWPF(0,Pi,v -> v*Sin(v*10));\n  c.PlotRect := Rect(0,0,10,10);\n  c.Graph[0].ChangeData(0,Pi,x->x*x);\n  c.Graph[0].Color := Colors.Green;\n  c.Graph[0].Thickness := 3;\n  c.AddLineGraph(0,Pi,v -> Sqrt(v));\n  \n  var c2 := new LineGraphWPF(0,Pi,v -> Sin(v*10)-Cos(v*7));\n  \n  var c4 := new MarkerGraphWPF(|1.0,2,3,4,5|,|5.0,15,7,12,2|);\n  c4.AddLineGraph(|1.0,2,3,4,5|,|5.0+1,15+1,7+1,12+1,2+1|);\n  c4.AddMarkerGraph(|1.0,2,3,4,5|,|5.0+1,15+1,7+1,12+1,2+1|,Colors.Bisque,MarkerType.Diamond,8);\n  c4.Graph[0].Thickness := 0.7;\n  c4.Graph[1].MarkerType := MarkerType.Box;\n  c4.Graph[2].Thickness := 0.7;\n\n  var gg := new GridWPF(2,2,3);\n  new LineGraphWPF(0,2,x->Cos(10*x));\n  new LineGraphWPF(0,2,x->Sqrt(x));\n  new LineGraphWPF(0,2,x->Sin(10*x));\n  new LineGraphWPF(0,2,x->exp(x));\nend."
+  },
+  {
+    "instruction": "Demonstrate typed pointers in PascalABC.NET by creating integer pointers and manipulating values through pointer dereferencing.",
+    "output": "var\n  i: integer := 5;\n  j: integer := 3;\n  p: ^integer;\n  \nbegin\n  writeln('Исходные значения переменных i и j: ',i,' ',j);\n  p := @i;\n  writeln('По адресу ',p,' находится значение ',p^);\n  p^ := 2;\n  p := @j;\n  writeln('По адресу ',p,' находится значение ',p^);\n  p^ += 1;\n  writeln('Новые значения переменных i и j: ',i,' ',j);\nend."
+  },
+  {
+    "instruction": "Demonstrate untyped pointers in PascalABC.NET with type casting to manipulate different data types through the same pointer variable.",
+    "output": "var\n  i: integer := 5;\n  r: real := 3.14;\n  p: pointer;\n  \ntype \n  pinteger = ^integer;\n  preal = ^real;\n  \nbegin\n  writeln('Исходные значения переменных i и r: ');\n  writeln(i,' ',r);\n  p := @i; \n  pinteger(p)^ := 8;\n  p := @r;\n  preal(p)^ += 1;\n  writeln('Новые значения переменных i и r: ');\n  writeln(i,' ',r);\nend."
+  },
+  {
+    "instruction": "Demonstrate dynamic memory allocation in PascalABC.NET using New and Dispose procedures for pointer management.",
+    "output": "var p: ^real;\n  \nbegin\n  New(p);\n  p^ := 3;\n  writeln('Значение в динамичесской памяти = ',p^);\n  Dispose(p);\nend."
+  },
+  {
+    "instruction": "Create a singly linked list in PascalABC.NET using pointers and dynamic memory allocation. Include functions for node creation, list traversal, and memory cleanup.",
+    "output": "type \n  PNode = ^TNode;\n  TNode = record\n    data: integer;\n    next: PNode;\n  end;\n\nfunction NewNode(d: integer; n: PNode): PNode;\nbegin\n  New(Result);\n  Result^.data := d;\n  Result^.next := n;\nend;\n\nvar first: PNode;\n  \nbegin\n  first := nil;\n  first := NewNode(3,first);\n  first := NewNode(7,first);\n  first := NewNode(5,first);\n  \n  writeln('Содержимое односвязного списка: ');\n  var p := first;\n  while p<>nil do\n  begin\n    write(p^.data,' ');\n    p := p^.next;\n  end;\n  \n  p := first;\n  while p<>nil do\n  begin\n    var p1 := p;\n    p := p^.next;\n    Dispose(p1);\n  end;\nend."
+  },
+  {
+    "instruction": "Demonstrate permutations, combinations, and Cartesian products in PascalABC.NET using both arrays and sequences.",
+    "output": "var a := Arr(1,3,5,7);\na.Permutations.Println;\na.Cartesian(2).Println;\na.Permutations(2).Println;\na.Combinations(2).Println;\nPrintln;\nvar s := Seq(1,3,5,7);\ns.Permutations.Println;\ns.Cartesian(2).Println;\ns.Permutations(2).Println;\ns.Combinations(2).Println;"
+  },
+  {
+    "instruction": "Create a recursive permutation algorithm in PascalABC.NET that generates all permutations of numbers from 1 to n.",
+    "output": "const n = 4;\n\nprocedure Perm(a: array of integer; m: integer);\nbegin\n  if m=1 then\n    a.Println;\n  for var i:=0 to m-1 do\n  begin\n    Swap(a[i],a[m-1]);\n    Perm(a,m-1);\n    Swap(a[i],a[m-1]);\n  end;  \nend;\n\nbegin\n  var a := Range(1,n).ToArray;\n  Perm(a,n);\nend."
+  }
+]

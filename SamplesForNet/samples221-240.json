@@ -1,0 +1,70 @@
+[
+  {
+    "instruction": "Define and use functions in short programs in PascalABC.NET",
+    "output": "##\n// In short programs you can describe subroutines\nfunction Add(a,b: integer) := a + b;\n\nPrint(Add(2,3));"
+  },
+  {
+    "instruction": "Create function table for sin using PartitionPoints and PrintLines",
+    "output": "// Output table of sin function values\n\n##\nPartitionPoints(0,Pi,20).Select(x->$'({x:f4}, {sin(x):f7})').PrintLines;"
+  },
+  {
+    "instruction": "Implement Garbage Collection in PascalABC.NET by setting variable to nil",
+    "output": "// Garbage collection: to free object assign nil to variable\nvar l := new List<integer>;\n\nbegin\n  l.Add(3);\n  l.Add(5);\n  l.Add(2);\n  foreach var x in l do\n    Print(x);\n  l := nil; // after this, memory occupied by dynamic array will be collected by garbage collector \nend."
+  },
+  {
+    "instruction": "Compare performance of global variables vs block variables in PascalABC.NET",
+    "output": "// Comparison of global and block variable performance.\n// See also file BlockVars.pas\nvar \n  s: real := 0; \n  i: real := 1;\n\nbegin\n  while i<1000000000 do\n  begin\n    s += 1/i;\n    i += 1;\n  end;  \n  writeln(s);\n  writeln('Calculation time = ',Milliseconds/1000,' s');\nend."
+  },
+  {
+    "instruction": "Implement Golomb sequence with caching for efficient recursive calculation",
+    "output": "// Golomb sequence G(n) is such unique non-decreasing sequence \n// of natural numbers, in which n appears exactly G(n) times\n// 1 2 2 3 3 4 4 4 5 5 5 6 6 6 6 …\n// Without caching execution time is huge due to repeated recursive calls\n[Cache]\nfunction G(n: int64): int64 := n = 1 ? 1 : 1 + G(n - G(G(n - 1)));\n\nbegin\n  var n := 100000;\n  (1..n).Sum(i -> G(i)).Print;\n  Milliseconds.Print;\nend."
+  },
+  {
+    "instruction": "Define custom function and create its value table using for loop",
+    "output": "// Function definition. Output table of its values\n\nfunction MyFun(x: real): real;\nbegin\n  Result := x*sin(x);\nend;\n\nconst \n  a = 0.0;\n  b = 2*Pi;\n  n = 10;\n\nbegin\n  var h := (b-a)/n;\n  var x := a;\n  writeln('Table of MyFun function values:');\n  for var i := 0 to n do\n  begin\n    writeln(x:5:2,MyFun(x):10:4);\n    x += h;\n  end;  \nend."
+  },
+  {
+    "instruction": "Implement Power function using for loop for exponentiation",
+    "output": "// Power function\n\nfunction Power(x: real; n: integer): real;\nbegin\n  Result := 1;\n  for var i:=1 to n do\n    Result *= x;\nend;\n\nvar \n  x: real; \n  n: integer;\n\nbegin\n  x := 2; n := 5;  \n  writelnFormat('{0} to the power {1} = {2}',x,n,Power(x,n));\nend."
+  },
+  {
+    "instruction": "Implement function with variable number of parameters using params keyword",
+    "output": "// Variable number of parameters \nfunction Sum(params arg: array of integer): integer;\nbegin\n  Result := 0;\n  foreach var x in arg do\n    Result += x;\nend;\n\nbegin\n  writeln(Sum(1,2,3));\n  writeln(Sum(4,5,6,7));\nend."
+  },
+  {
+    "instruction": "Create interactive function graph with transformation parameters using GraphWPF",
+    "output": "uses\n  GraphWPF;\n\nvar\n  h := 0.01;\n  mx := 2.0;\n  my := 0.35;\n  dy := 0.0;\n  dx := 0.0;\n  f: real -> real := x -> x * sin(x);\n\nconst\n  boundx = 5;\n  boundy = 3;\n\nfunction Transform(f: real -> real): real -> real;\nbegin\n  Result := x -> my * f(mx * (x + dx)) + dy;\nend;\n\nprocedure DrawGraphic(f: real -> real);\nbegin\n  Window.Clear;\n  DrawGraph(f, -boundx, boundx, -boundy, boundy); \n  Window.Title := Format('mx={0:f2}  my={1:f2}  dx={2:f2}  dy={3:f2}', mx, my, dx, dy);\nend;\n\nvar ArrowKeys := HSet(Key.Left, Key.Right, Key.Up, Key.Down, Key.Home, Key.&End, Key.PageUp, Key.PageDown);\n\nprocedure KeyDown(k: Key);\nbegin\n  var g := Transform(f);\n  case k of\n    Key.Left:     my -= h;\n    Key.Right:    my += h;\n    Key.Up:       mx -= h;\n    Key.Down:     mx += h;\n    Key.Home:     dx += h;\n    Key.PageUp:   dx -= h;\n    Key.PageDown: dy += h;\n    Key.End:      dy -= h;\n  end;\n  if k in ArrowKeys then\n    DrawGraphic(g);\nend;\n\nbegin\n  DrawGraphic(Transform(f));\n  OnKeyDown := KeyDown;\nend."
+  },
+  {
+    "instruction": "Create Brownian motion animation with various graphical objects using ABCObjects",
+    "output": "// Changing properties of graphical objects\n// Brownian motion of graphical objects\nuses ABCObjects,GraphABC;\n\nprocedure MoveAll(a,b: integer);\nbegin\n  for var j:=0 to Objects.Count-1 do\n    Objects[j].moveOn(a,b);\nend;\n\nbegin\n//  LockDrawingObjects;\n  Window.Title := 'Brownian motion of objects';\n  var sq := new SquareABC(30,5,90,clSkyBlue);\n  var r := new RectangleABC(10,10,100,180,RGB(255,100,100));\n  var rr := new RoundRectABC(200,180,180,50,20,clRandom);\n  var rsq:= new RoundSquareABC(20,180,80,10,clRandom);\n  var c := new CircleABC(160,55,70,clGreen);\n  var z := new StarABC(200,150,70,135,5,clRandom);\n  z.Filled := False;\n  var el := new EllipseABC(5,55,65,50,clRandom);\n  el.Bordered := False;\n  var t := new TextABC(100,170,15,'Hello, ABCObjects!');\n  var br := new BoardABC(200,20,7,5,20,20);\n  br.Filled := False;\n  z.Height := 200;\n  z.Radius := 70;\n  sq.Width := 120;\n  t.TransparentBackground := False;\n  t.BackgroundColor := clYellow;\n  t.FontName := 'Times New Roman';\n  t.FontSize := 20;\n  c.Height := 50;\n  c.Scale(2);\n  MoveAll(160,110);\n  \n  while True do\n  begin\n    for var j:=0 to Objects.Count-1 do\n      Objects[j].moveOn(Random(-1,1),Random(-1,1));\n//    RedrawObjects;\n  end;\nend."
+  },
+  {
+    "instruction": "Create Brownian motion animation with WPFObjects for better performance",
+    "output": "// Changing properties of graphical objects\n// Brownian motion of graphical objects\nuses WPFObjects;\n\nprocedure MoveAll(a,b: integer);\nbegin\n  for var j:=0 to Objects.Count-1 do\n    Objects[j].moveOn(a,b);\nend;\n\nbegin\n  Window.Title := 'Brownian motion of objects';\n  HideObjects;\n  var sq := new SquareWPF(30,5,90,Colors.SkyBlue,1);\n  var r := new RectangleWPF(10,10,100,180,RGB(255,100,100),1);\n  var rr := new RoundRectWPF(200,180,180,50,20,RandomColor,1);\n  var rsq:= new RoundSquareWPF(20,180,80,10,RandomColor,1);\n  var c := new CircleWPF(160,55,70,Colors.Green);\n  var z := new StarWPF(200,150,70,135,5,EmptyColor,1);  \n  var el := new EllipseWPF(5,55,65,50,RandomColor,2,RandomColor);\n  var t := new TextWPF(100,170,40,'Hello, WPFObjects!'); //\n  t.BackgroundColor := Colors.Yellow;\n  t.FontName := 'Times New Roman';\n  //var br := new BoardWPF(200,20,7,5,20,20);\n  //br.Filled := False;\n  z.Height := 220;\n  z.Radius := 160;\n  sq.Width := 120;\n  //t.FontSize := 40;\n  c.Height := 50;\n  c.Scale(2);\n  MoveAll(160,110);\n  ShowObjects;\n  \n  while True do\n  begin\n    for var j:=0 to Objects.Count-1 do\n      Objects[j].MoveOn(Random(-1,1),Random(-1,1));\n    Sleep(10);\n  end;\nend."
+  },
+  {
+    "instruction": "Clone graphical objects recursively to create fractal pattern using ABCObjects",
+    "output": "// Cloning graphical objects. \n// Graphical objects container. Nested containers\nuses GraphABC,ABCObjects;\n\n/// Create four graphical objects from one\nprocedure Four(var g: ObjectABC);\nbegin\n  var w := 8*g.Width div 7;\n  var f := ContainerABC.Create(0,0);\n  f.Add(g);\n  g := g.Clone;;\n  g.moveon(w,0);\n  g := g.Clone;\n  g.moveon(0,w);\n  g := g.Clone;\n  g.moveon(-w,0);\n  g := f;\nend;\n\nbegin\n  LockDrawingObjects;\n  SetWindowSize(630,630);\n  \n  var g: ObjectABC := new SquareABC(0,0,14,clYellow);\n  Four(g);\n  Four(g);\n  Four(g);\n  Four(g);\n  Four(g);\n  UnLockDrawingObjects;\nend."
+  },
+  {
+    "instruction": "Implement object dragging with mouse using ABCObjects",
+    "output": "// Moving graphical objects with mouse\nuses ABCObjects,GraphABC;\n\nvar \n  ob: ObjectABC;\n  sx,sy: integer;\n\nprocedure MyMouseDown(x,y,mb: integer);\nbegin\n  ob := ObjectUnderPoint(x,y);\n  if ob<>nil then\n  begin\n    sx := ob.Left - x;\n    sy := ob.Top - y;\n  end; \nend;\n\nprocedure MyMouseMove(x,y,mb: integer);\nbegin\n  if ob<>nil then\n    ob.Position := new Point(x+sx,y+sy);\nend;\n\nprocedure MyMouseUp(x,y,mb: integer);\nbegin\n  ob := nil;\nend;\n\n\nbegin\n  Window.Title := 'Move objects with mouse';\n  for var i:=1 to 10 do\n  begin\n    var p := new PictureABC(Random(Window.Width-100),Random(Window.Height-100),'demo.bmp');\n    p.Transparent := True;\n  end;  \n  OnMouseDown := MyMouseDown;\n  OnMouseMove := MyMouseMove;\n  OnMouseUp := MyMouseUp;\nend."
+  },
+  {
+    "instruction": "Implement object intersection detection using Intersect method in ABCObjects",
+    "output": "// Illustration of Intersect method for graphical objects\nuses ABCObjects,GraphABC;\n\nvar Destroyer: CircleABC;\n\nprocedure CheckPulyaIntersects;\nbegin\n  for var i:=Objects.Count-1 downto 0 do\n  begin\n    if (Destroyer.Intersect(Objects[i])) and (Objects[i]<>Destroyer) then\n      Objects[i].Destroy;\n  end;    \nend;\n\nbegin\n  Window.Title := 'Destroyer: Intersect method for object intersection';\n  for var i:=1 to 500 do\n    new RectangleABC(Random(WindowWidth-200)+100,Random(WindowHeight-100),Random(200),Random(200),clRandom);\n  Destroyer := new CircleABC(10,WindowHeight div 2,100,clBlack);\n  Destroyer.FontColor := clYellow;\n  Destroyer.Text := 'Destroyer';\n\n  for var i:=1 to 900 do\n  begin\n    Destroyer.MoveOn(1,0);\n    CheckPulyaIntersects;\n  end;\nend."
+  },
+  {
+    "instruction": "Implement object intersection detection using IntersectionList in WPFObjects",
+    "output": "uses WPFObjects;\n\nvar Destroyer: CircleWPF;\n\nprocedure CheckPulyaIntersects;\nbegin\n  Destroyer.IntersectionList.ForEach(procedure(o)->o.Destroy);\nend;\n\nbegin\n  HideObjects;\n  Window.SetSize(640,480);\n  Window.Title := 'Destroyer: Intersect method for object intersection';\n  loop 500 do\n    new RectangleWPF(Random(Window.Width.Round-200)+100,Random(Window.Height.Round-100),Random(200),Random(200),clRandom);\n  Destroyer := new CircleWPF(10,Window.Height / 2,100,Colors.Black);\n  Destroyer.SetText('Destroyer',30,'Arial',Colors.Yellow);\n  ShowObjects;\n\n  loop 900 do\n  begin\n    Destroyer.MoveOn(1,0);\n    CheckPulyaIntersects;\n    Sleep(1);\n  end;\nend."
+  },
+  {
+    "instruction": "Create parametric motion animation with ABCObjects along Lissajous and astroid curves",
+    "output": "// Motion along trajectory\nuses ABCObjects,GraphABC;\n\nconst\n/// Step along curve parameter\n  step = 0.03;\n/// Time delay, ms\n  delay = 10;\n\ntype\n  PointR = record\n    x,y: real;\n  end;\n\nfunction Position(t: real): PointR; // astroid\nbegin\n  var si := sin(1.5 * t);\n  var co := cos(1.5 * t);\n  Result.x := si*si*si;\n  Result.y := co*co*co;\nend;\n\nfunction Position1(t: real): PointR; // Lissajous figure\nbegin\n  Result.x := cos(4*t);\n  Result.y := cos(2.97221*t + 2*Pi/3);\nend;\n\nfunction LogicalToScreen(p: PointR): Point;\nbegin\n  var ww := WindowWidth div 2;\n  var hh := WindowHeight div 2;\n  Result.x := round((ww - 50) * p.x + ww);\n  Result.y := round((hh - 50) * p.y + hh);\nend;\n\nprocedure InitScreen;\nbegin\n  SetBrushColor(clMoneyGreen);\n  Rectangle(10,10,WindowWidth-10,WindowHeight-10);\n  var p := LogicalToScreen(Position1(0));\n  MoveTo(p.x,p.y);\nend;\n\nbegin\n  Window.IsFixedSize := True;\n  Window.Title := 'Motion along trajectory';\n  SetWindowSize(640,480);\n  CenterWindow;\n\n  InitScreen;\n  var c := new CircleABC(200,200,25,clGreen);\n  var d := new StarABC(200,200,40,20,5,clYellow);\n\n  var t: real := 0;\n  while True do\n  begin\n    c.Center := LogicalToScreen(Position1(t));\n    d.Center := LogicalToScreen(Position(t));\n    if t<20*Pi then\n      LineTo(c.Center.x,c.Center.y)\n    else\n    begin\n      t := 0;\n      InitScreen;\n    end;\n    t += step;\n    Sleep(delay);\n  end;\nend."
+  },
+  {
+    "instruction": "Create parametric motion animation with WPFObjects for smoother graphics",
+    "output": "// Motion along trajectory\nuses WPFObjects,GraphWPF;\n\nconst\n/// Step along curve parameter\n  step = 0.02;\n/// Time delay, ms\n  delay = 5;\n\ntype\n  PointR = record\n    x,y: real;\n  end;\n\nfunction Position(t: real): PointR; // astroid\nbegin\n  var si := sin(1.7 * t);\n  var co := cos(1.5 * t);\n  Result.x := si*si*si;\n  Result.y := co*co*co;\nend;\n\nfunction Position1(t: real): PointR; // Lissajous figure\nbegin\n  Result.x := cos(4*t);\n  Result.y := cos(2.97221*t + 2*Pi/3);\nend;\n\nfunction LogicalToScreen(p: PointR): GPoint;\nbegin\n  var ww := Window.Width / 2;\n  var hh := Window.Height / 2;\n  Result.x := Round((ww - 50) * p.x + ww);\n  Result.y := Round((hh - 50) * p.y + hh);\nend;\n\nprocedure InitScreen;\nbegin\n  Brush.Color := Colors.LightGreen;\n  Rectangle(10,10,Window.Width-20,Window.Height-20);\n  var p := LogicalToScreen(Position1(0));\n  MoveTo(p.x,p.y);\nend;\n\nbegin\n  //Window.IsFixedSize := True;\n  Window.Title := 'Motion along trajectory';\n  Window.SetSize(640,480);\n  Window.CenterOnScreen;\n\n  InitScreen;\n  var c := new CircleWPF(200,200,25,Colors.Green);\n  var d := new StarWPF(200,200,40,20,5,Colors.Yellow);\n\n  var t: real := 0;\n  while True do\n  begin\n    c.Center := LogicalToScreen(Position1(t));\n    d.Center := LogicalToScreen(Position(t));\n    if t<20*Pi then\n      LineTo(c.Center.x,c.Center.y)\n    else\n    begin\n      t := 0;\n      InitScreen;\n    end;\n    t += step;\n    Sleep(delay);\n  end;\nend."
+  }
+]

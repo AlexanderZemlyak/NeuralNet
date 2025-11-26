@@ -1,0 +1,1252 @@
+[
+    {
+        "instruction": "Write a python function to find the minimum number of operations to transform an array into a palindrome by flipping elements.",
+        "output": "function MinFlip(arr: array of integer): integer;\nbegin\n  var n := arr.Length;\n  var l := 0;\n  var r := n - 1;\n  var flip := 0;\n  while l < r do\n  begin\n    if arr[l] <> arr[r] then\n      flip += 1;\n    l += 1;\n    r -= 1;\n  end;\n  Result := flip;\nend;",
+        "id": "0"
+    },
+    {
+        "instruction": "Given a list of tuples, each containing two numbers, write a Python function that calculates the product of the first elements and the second elements separately, and returns the results as a tuple.",
+        "output": "function MultiplyTupleElements(tuples: List<(integer, integer)>): (integer, integer);\nbegin\n  var firstProduct := 1;\n  var secondProduct := 1;\n  foreach var t in tuples do\n  begin\n    firstProduct *= t[0];\n    secondProduct *= t[1];\n  end;\n  Result := (firstProduct, secondProduct);\nend;",
+        "id": "1"
+    },
+    {
+        "instruction": "Write a python function to find the largest rectangle containing only 1's in a binary matrix.",
+        "output": "function LargestRectangle(matrix: array[,] of integer): integer;\nbegin\n  if (matrix = nil) or (matrix.GetLength(0) = 0) then\n    Result := 0;\n\n  var rows := matrix.GetLength(0);\n  var cols := matrix.GetLength(1);\n  var height := ArrFill(cols + 1, 0);\n  var maxArea := 0;\n\n  for var r := 0 to rows - 1 do\n  begin\n    for var i := 0 to cols - 1 do\n      height[i] := if matrix[r, i] = 1 then height[i] + 1 else 0;\n\n    var stack := new Stack<integer>;\n    stack.Push(-1);\n    for var i := 0 to cols do\n    begin\n      while (stack.Count > 0) and (stack.Peek() <> -1) and (height[i] < height[stack.Peek()]) do\n      begin\n        var h := height[stack.Pop()];\n        var w := i - 1 - stack.Peek();\n        maxArea := Max(maxArea, h * w);\n      end;\n      stack.Push(i);\n    end;\n  end;\n\n  Result := maxArea;\nend;",
+        "id": "2"
+    },
+    {
+        "instruction": "Write a function that takes a list of strings and returns the string with the highest number of vowels. If there are multiple strings with the same highest number of vowels, return the one that appears first in the list.",
+        "output": "function MostVowels(strings: array of string): string;\nbegin\n  var vowels := 'aeiou';\n  var maxVowels := 0;\n  var res := '';\n  foreach var s in strings do\n  begin\n    var vowelCount := 0;\n    foreach var ch in s do\n      if ch.ToLower() in vowels then\n        vowelCount += 1;\n    if vowelCount > maxVowels then\n    begin\n      maxVowels := vowelCount;\n      res := s;\n    end;\n  end;\n  Result := res;\nend;",
+        "id": "3"
+    },
+    {
+        "instruction": "Write a python function to return the first element from a given list. If the list is empty, return None.",
+        "output": "function FirstElement(lst: array of integer): integer;\nbegin\n  Result := if lst.Length > 0 then lst[0] else 0; // Pascal doesn't have None, using 0 as default\nend;",
+        "id": "4"
+    },
+    {
+        "instruction": "Write a python function to find the largest binary gap within a positive integer N. A binary gap within a positive integer N is any maximal sequence of consecutive zeros that is surrounded by ones at both ends in the binary representation of N.",
+        "output": "function FindLargestBinaryGap(N: integer): integer;\nbegin\n  var binaryStr := Convert.ToString(N, 2);\n  var maxGap := 0;\n  var currentGap := 0;\n\n  foreach var bit in binaryStr do\n  begin\n    if bit = '1' then\n    begin\n      maxGap := Max(maxGap, currentGap);\n      currentGap := 0;\n    end\n    else\n      currentGap += 1;\n  end;\n\n  Result := maxGap;\nend;",
+        "id": "5"
+    },
+    {
+        "instruction": "Write a function to find the elements that appear only once in the given list.",
+        "output": "function FindUnique(inputList: array of integer): array of integer;\nbegin\n  var uniqueElements := new List<integer>;\n  foreach var element in inputList do\n    if inputList.CountOf(element) = 1 then\n      uniqueElements.Add(element);\n  Result := uniqueElements.ToArray();\nend;",
+        "id": "6"
+    },
+    {
+        "instruction": "Write a python function to find the number of palindrome substrings in a given string.",
+        "output": "function PalindromeSubstringsCount(s: string): integer;\n\n  function ExpandAroundCenter(left: integer; right: integer): integer;\n  begin\n    var count := 0;\n    while (left >= 0) and (right < s.Length) and (s[left] = s[right]) do\n    begin\n      count += 1;\n      left -= 1;\n      right += 1;\n    end;\n    Result := count;\n  end;\n\nbegin\n  var totalCount := 0;\n  for var i := 0 to s.Length - 1 do\n  begin\n    totalCount += ExpandAroundCenter(i, i);\n    totalCount += ExpandAroundCenter(i, i + 1);\n  end;\n  Result := totalCount;\nend;",
+        "id": "7"
+    },
+    {
+        "instruction": "Write a python function to find the number of distinct words in a given string. A word is defined as a sequence of non-space characters.",
+        "output": "function DistinctWords(s: string): integer;\nbegin\n  var words := s.ToWords();\n  var distinct := words.Distinct().ToArray();\n  Result := distinct.Length;\nend;",
+        "id": "8"
+    },
+    {
+        "instruction": "Create a function that takes a paragraph and a list of banned words as input, and returns the most common word in the paragraph that is not in the list of banned words. Words in the paragraph are case-insensitive and non-alphanumeric characters are considered as spaces.",
+        "output": "function FindCommonWord(paragraph: string; banned: array of string): string;\nbegin\n  var list1 := Regex.Replace(paragraph, '[\\W_]+', ' ');\n  list1 := list1.ToLower();\n  var words := list1.ToWords();\n  words := words.Where(w -> not banned.Contains(w)).ToArray();\n  var wordCount := words.GroupBy(w -> w).ToDictionary(g -> g.Key, g -> g.Count());\n  var sortedWords := wordCount.OrderByDescending(kv -> kv.Value).ToArray();\n  Result := sortedWords[0].Key;\nend;",
+        "id": "9"
+    },
+    {
+        "instruction": "Write a python function to find the longest substring where the letters occur in alphabetical order.",
+        "output": "function LongestOrderedSubstring(s: string): string;\nbegin\n  var subs := new List<string>;\n  subs.Add(s[1].ToString());\n  for var i := 2 to s.Length do\n  begin\n    if s[i] >= subs[subs.Count - 1][subs[subs.Count - 1].Length] then\n      subs[subs.Count - 1] += s[i]\n    else\n      subs.Add(s[i].ToString());\n  end;\n  Result := subs.OrderByDescending(x -> x.Length).First();\nend;",
+        "id": "10"
+    },
+    {
+        "instruction": "Write a python function to find the maximum performance of a team. The team's performance is the sum of their speeds multiplied by the minimum efficiency in the team. The team should have exactly 'k' members.",
+        "output": "function MaxPerformance(n: integer; speed: array of integer; efficiency: array of integer; k: integer): integer;\nbegin\n  var performances := ArrGen(n, i -> (efficiency[i], speed[i])).OrderByDescending(x -> x[0]).ToArray();\n  var speedSum := 0;\n  var heap := new SortedSet<integer>;\n  var performance := 0;\n\n  foreach var (e, s) in performances do\n  begin\n    if heap.Count > k - 1 then\n    begin\n      var minSpeed := heap.Min;\n      speedSum -= minSpeed;\n      heap.Remove(minSpeed);\n    end;\n\n    heap.Add(s);\n    speedSum += s;\n    performance := Max(performance, speedSum * e);\n  end;\n\n  Result := performance mod (1000000007);\nend;",
+        "id": "11"
+    },
+    {
+        "instruction": "Write a function to check if a given array is a valid peak array. A peak array is defined as an array that has at least three elements and there exists an index where the elements before this index are strictly increasing and the elements after this index are strictly decreasing. The element at this index is called the peak.",
+        "output": "function ValidPeakArray(arr: array of integer): boolean;\nbegin\n  if arr.Length < 3 then\n    Result := False;\n\n  var (peakIndex, peak) := arr.Select((val, idx) -> (idx, val)).OrderByDescending(x -> x[1]).First();\n  if (peakIndex = 0) or (peakIndex = arr.Length - 1) then\n    Result := False;\n\n  for var i := 0 to peakIndex - 1 do\n    if arr[i] >= arr[i + 1] then\n      Result := False;\n\n  for var i := peakIndex to arr.Length - 2 do\n    if arr[i] <= arr[i + 1] then\n      Result := False;\n\n  Result := True;\nend;",
+        "id": "12"
+    },
+    {
+        "instruction": "Write a function to check if a given list of numbers is an arithmetic sequence. An arithmetic sequence is a sequence of numbers such that the difference between the consecutive terms is constant.",
+        "output": "function IsArithmetic(nums: array of integer): boolean;\nbegin\n  if nums.Length < 2 then\n    Result := False;\n  var difference := nums[1] - nums[0];\n  for var i := 2 to nums.Length - 1 do\n    if nums[i] - nums[i - 1] <> difference then\n      Result := False;\n  Result := True;\nend;",
+        "id": "13"
+    },
+    {
+        "instruction": "Write a function to find the degree of a polynomial. The degree of a polynomial is the highest power of the variable in the polynomial.",
+        "output": "function DegreeOfPolynomial(coefficients: array of real): integer;\nbegin\n  var degree := coefficients.Length - 1;\n  for var i := coefficients.Length - 1 downto 0 do\n    if coefficients[i] <> 0 then\n    begin\n      Result := i;\n      exit;\n    end;\n  Result := -1;\nend;",
+        "id": "14"
+    },
+    {
+        "instruction": "Write a Python function to calculate the total number of unique substrings that can be formed from a given string where all the characters in the substring are the same.",
+        "output": "function CountIdenticalCharSubstrings(s: string): integer;\nbegin\n  var totalSubstrings := 0;\n  var currentChar := s[1];\n  var currentCount := 1;\n\n  for var i := 2 to s.Length do\n  begin\n    if s[i] = currentChar then\n      currentCount += 1\n    else\n    begin\n      totalSubstrings += (currentCount * (currentCount + 1)) div 2;\n      currentChar := s[i];\n      currentCount := 1;\n    end;\n  end;\n\n  totalSubstrings += (currentCount * (currentCount + 1)) div 2;\n  Result := totalSubstrings;\nend;",
+        "id": "15"
+    },
+    {
+        "instruction": "Write a function to find the shortest sequence of city visits which will cover all the tourist attractions in a given list. The attractions are represented as integers and you can move from one attraction to another if there is a road between them.",
+        "output": "function ShortestTour(attractions: array of integer; roads: array of (integer, integer)): array of integer;\nbegin\n  var roadMap := new Dictionary<integer, HashSet<integer>>;\n  foreach var road in roads do\n  begin\n    if not roadMap.ContainsKey(road[0]) then\n      roadMap[road[0]] := new HashSet<integer>;\n    if not roadMap.ContainsKey(road[1]) then\n      roadMap[road[1]] := new HashSet<integer>;\n    roadMap[road[0]].Add(road[1]);\n    roadMap[road[1]].Add(road[0]);\n  end;\n\n  var shortest: array of integer;\n  foreach var permutation in attractions.Permutations() do\n  begin\n    var valid := True;\n    for var i := 0 to permutation.Length - 2 do\n      if not roadMap[permutation[i]].Contains(permutation[i + 1]) then\n      begin\n        valid := False;\n        break;\n      end;\n    \n    if valid and ((shortest = nil) or (permutation.Length < shortest.Length)) then\n      shortest := permutation;\n  end;\n\n  Result := shortest;\nend;",
+        "id": "16"
+    },
+    {
+        "instruction": "Write a function that finds the top k frequent elements in a given list of integers using the heap queue algorithm.",
+        "output": "function TopKFrequent(nums: array of integer; k: integer): array of integer;\nbegin\n  var d := nums.GroupBy(x -> x).ToDictionary(g -> g.Key, g -> g.Count());\n  var heap := new SortedSet<(integer, integer)>(\n    Comparer&<(integer, integer)>.Create(\n      (x, y) -> begin\n        if x[0] = y[0] then\n          Result := x[1].CompareTo(y[1])\n        else\n          Result := y[0].CompareTo(x[0]);\n      end));\n\n  foreach var i in d.Keys do\n    heap.Add((-d[i], i));\n\n  var res := new List<integer>;\n  for var idx := 0 to k - 1 do\n  begin\n    res.Add(heap.Min[1]);\n    heap.Remove(heap.Min);\n  end;\n\n  Result := res.ToArray();\nend;",
+        "id": "17"
+    },
+    {
+        "instruction": "Write a python function to find the largest subarray with equal number of 0's and 1's.",
+        "output": "function LargestSubarray(arr: array of integer): integer;\nbegin\n  var count := 0;\n  var maxLength := 0;\n  var start := 0;\n  var sumMap := new Dictionary<integer, integer>;\n  sumMap[0] := -1;\n  \n  for var i := 0 to arr.Length - 1 do\n  begin\n    if arr[i] = 0 then\n      count -= 1\n    else\n      count += 1;\n    \n    if sumMap.ContainsKey(count) then\n    begin\n      var length := i - sumMap[count];\n      if length > maxLength then\n      begin\n        maxLength := length;\n        start := sumMap[count] + 1;\n      end;\n    end\n    else\n      sumMap[count] := i;\n  end;\n  \n  Result := maxLength;\nend;",
+        "id": "18"
+    },
+    {
+        "instruction": "Write a function to find the maximum number of unique characters in a given string.",
+        "output": "function UniqueCharMax(s: string): integer;\nbegin\n  var charDict := new Dictionary<char, integer>;\n  var left := 0;\n  var maxLength := 0;\n  \n  for var right := 1 to s.Length do\n  begin\n    if charDict.ContainsKey(s[right]) then\n      left := Max(left, charDict[s[right]] + 1);\n    charDict[s[right]] := right;\n    maxLength := Max(maxLength, right - left + 1);\n  end;\n  \n  Result := maxLength;\nend;",
+        "id": "19"
+    },
+    {
+        "instruction": "Write a Python function that takes a string as input and returns the string with all repeated characters removed, keeping only the first occurrence of each character.",
+        "output": "function RemoveRepeatedCharacters(s: string): string;\nbegin\n  var res := new List<char>;\n  foreach var ch in s do\n    if not res.Contains(ch) then\n      res.Add(ch);\n  Result := string.Join('', res);\nend;",
+        "id": "20"
+    },
+    {
+        "instruction": "Write a function to find the maximum number of elements between two negative numbers in a list. Return this count, or return -1 if there are no such elements.",
+        "output": "function FindMaxElementsBetweenNegatives(arr: array of integer): integer;\nbegin\n  var count := 0;\n  var maxCount := 0;\n  var foundFirstNegative := False;\n  \n  foreach var num in arr do\n  begin\n    if num < 0 then\n    begin\n      if foundFirstNegative then\n      begin\n        maxCount := Max(maxCount, count);\n        count := 0;\n        foundFirstNegative := False;\n      end\n      else\n        foundFirstNegative := True;\n    end\n    else if foundFirstNegative then\n      count += 1;\n  end;\n\n  Result := if maxCount > 0 then maxCount else -1;\nend;",
+        "id": "21"
+    },
+    {
+        "instruction": "Write a function to create a new string by replacing the character with the character which is present at the next position in the alphabetical order.",
+        "output": "function ReplaceNextChar(s: string): string;\nbegin\n  var res := '';\n  foreach var ch in s do\n  begin\n    if ch = 'z' then\n      res += 'a'\n    else if ch = 'Z' then\n      res += 'A'\n    else\n      res += Chr(Ord(ch) + 1);\n  end;\n  Result := res;\nend;",
+        "id": "22"
+    },
+    {
+        "instruction": "Write a python function to find the minimum number of steps required to make a given string palindrome by performing the following operations: delete a character or insert a character.",
+        "output": "function FindMinSteps(i: integer; j: integer; s: string; dp: array[,] of integer): integer;\nbegin\n  if i >= j then\n  begin\n    Result := 0;\n    exit;\n  end;\n  if dp[i, j] <> -1 then\n  begin\n    Result := dp[i, j];\n    exit;\n  end;\n  if s[i + 1] = s[j + 1] then\n    dp[i, j] := FindMinSteps(i + 1, j - 1, s, dp)\n  else\n    dp[i, j] := 1 + Min(FindMinSteps(i + 1, j, s, dp), FindMinSteps(i, j - 1, s, dp));\n  Result := dp[i, j];\nend;\n\nfunction MinStepsPalindrome(s: string): integer;\nbegin\n  var n := s.Length;\n  var dp := new integer[n, n];\n  for var i := 0 to n - 1 do\n    for var j := 0 to n - 1 do\n      dp[i, j] := -1;\n  Result := FindMinSteps(0, n - 1, s, dp);\nend;",
+        "id": "23"
+    },
+    {
+        "instruction": "Write a function called `is_continuous` that takes a list of 5 integers representing the drawn cards in a game where the numbers can range from 0 to 13 (0 for either King or Ace, 1 for 2, ..., 12 for Queen, 13 for King, and 1 for Ace when playing with the rule that Aces can be high or low). The function should return `True` if the cards can form a straight (consecutive sequence), considering that the wild cards (0s) can take the value of any number. Return `False` otherwise.",
+        "output": "function IsContinuous(cards: array of integer): boolean;\nbegin\n  if cards.Length <> 5 then\n    Result := False;\n  \n  &Array.Sort(cards);\n  var wildCards := cards.CountOf(0);\n  \n  for var i := wildCards to 4 do\n  begin\n    var gap := cards[i] - cards[i - 1] - 1;\n    if gap > 0 then\n    begin\n      wildCards -= gap;\n      if wildCards < 0 then\n      begin\n        Result := False;\n        exit;\n      end;\n    end\n    else if (cards[i] = cards[i - 1]) and (cards[i] <> 0) then\n    begin\n      Result := False;\n      exit;\n    end;\n  end;\n  \n  Result := True;\nend;",
+        "id": "24"
+    },
+    {
+        "instruction": "Write a function to find the minimum health required for a knight to reach the bottom-right corner of a dungeon. The knight starts at the top-left corner of the dungeon (dungeon[0][0]) and moves to the bottom-right corner (dungeon[m-1][n-1]). The knight's health point (HP) should be always greater than 0. Any room can be dangerous to the knight, represented by a negative integer (losing health points), or be very supportive where the knight regains health points, represented by a positive integer.",
+        "output": "function MinimumHealth(dungeon: array[,] of integer): integer;\nbegin\n  var m := dungeon.GetLength(0);\n  var n := dungeon.GetLength(1);\n  var dp := new integer[m + 1, n + 1];\n  \n  for var i := 0 to m do\n    for var j := 0 to n do\n      dp[i, j] := integer.MaxValue;\n      \n  dp[m, n - 1] := 1;\n  dp[m - 1, n] := 1;\n\n  for var i := m - 1 downto 0 do\n    for var j := n - 1 downto 0 do\n    begin\n      dp[i, j] := Max(1, Min(dp[i + 1, j], dp[i, j + 1]) - dungeon[i, j]);\n    end;\n    \n  Result := dp[0, 0];\nend;",
+        "id": "25"
+    },
+    {
+        "instruction": "Write a python function to find the second largest number from the given list of unique integers. Assume the list always contains at least two elements.",
+        "output": "function SecondLargest(lst: array of integer): integer;\nbegin\n  var maxNum := lst.Max();\n  var newLst := lst.Where(x -> x <> maxNum).ToArray();\n  Result := newLst.Max();\nend;",
+        "id": "26"
+    },
+    {
+        "instruction": "Write a function to check whether a given directed graph is acyclic or not. The graph is represented as an adjacency list where each node is an integer from 1 to A (number of nodes) and each edge is represented as a pair (u, v) in the lists B and C where B[i] is the starting node and C[i] is the ending node. Return 1 if the graph is acyclic, otherwise return 0.",
+        "output": "function GraphIsAcyclic(A: integer; B: array of integer; C: array of integer): integer;\n\n  function DFS(adjLis: array of List<integer>; vis: array of boolean; se: HashSet<integer>; element: integer): integer;\n  begin\n    vis[element] := True;\n    var val := 1;\n    se.Add(element);\n    foreach var i in adjLis[element] do\n    begin\n      if se.Contains(i) then\n      begin\n        Result := 0;\n        exit;\n      end;\n      if not vis[i] then\n      begin\n        val := DFS(adjLis, vis, se, i);\n        if val = 0 then\n        begin\n          Result := 0;\n          exit;\n        end;\n      end;\n    end;\n    se.Remove(element);\n    Result := 1;\n  end;\n\nbegin\n  var vis := ArrFill(A + 1, False);\n  var lenb := B.Length;\n  var se := new HashSet<integer>;\n  var adjLis := new List<integer>[A + 1];\n  \n  for var i := 0 to A do\n    adjLis[i] := new List<integer>;\n    \n  for var i := 0 to lenb - 1 do\n    adjLis[B[i]].Add(C[i]);\n    \n  for var i := 1 to A do\n  begin\n    if not vis[i] then\n    begin\n      vis[i] := True;\n      if DFS(adjLis, vis, se, i) = 0 then\n      begin\n        Result := 0;\n        exit;\n      end;\n    end;\n  end;\n  \n  Result := 1;\nend;",
+        "id": "27"
+    },
+    {
+        "instruction": "Write a function to check if all the points in a given list of coordinates are collinear.",
+        "output": "function CheckCollinear(coordinates: array of (integer, integer)): boolean;\n\n  function GetSlope(p1: (integer, integer); p2: (integer, integer)): real;\n  begin\n    var (x1, y1) := p1;\n    var (x2, y2) := p2;\n    if x2 - x1 = 0 then\n      Result := real.PositiveInfinity\n    else\n      Result := (y2 - y1) / (x2 - x1);\n  end;\n\nbegin\n  if coordinates.Length < 2 then\n    Result := False;\n\n  var (x0, y0) := coordinates[0];\n  var (x1, y1) := coordinates[1];\n  var initialSlope := GetSlope((x0, y0), (x1, y1));\n\n  for var i := 2 to coordinates.Length - 1 do\n  begin\n    var (x, y) := coordinates[i];\n    if GetSlope((x0, y0), (x, y)) <> initialSlope then\n    begin\n      Result := False;\n      exit;\n    end;\n  end;\n  \n  Result := True;\nend;",
+        "id": "28"
+    },
+    {
+        "instruction": "Write a function that takes a string as an input and removes all the characters that are the same as the previous character but in the opposite case (uppercase vs. lowercase).",
+        "output": "function RemoveOppositeCase(s: string): string;\nbegin\n  var stack := new Stack<char>;\n  foreach var c in s do\n  begin\n    if (stack.Count = 0) or (Abs(Ord(stack.Peek()) - Ord(c)) <> 32) then\n      stack.Push(c)\n    else\n      stack.Pop();\n  end;\n  Result := string.Join('', stack.Reverse());\nend;",
+        "id": "29"
+    },
+    {
+        "instruction": "Write a function to find the product of all elements in an array that are not equal to zero.",
+        "output": "function ProductNonZero(arr: array of integer): integer;\nbegin\n  var res := 1;\n  foreach var num in arr do\n    if num <> 0 then\n      res *= num;\n  Result := res;\nend;",
+        "id": "30"
+    },
+    {
+        "instruction": "Write a python function that generates the next lexicographic permutation of a given list of numbers. If no such permutation exists (meaning the list is in its highest possible lexicographic order), return the lowest possible order (i.e., sorted in ascending order).",
+        "output": "function NextLexicographicPermutation(arr: array of integer): array of integer;\nbegin\n  var pivot: integer := -1;\n  for var i := arr.Length - 2 downto 0 do\n  begin\n    if arr[i] < arr[i + 1] then\n    begin\n      pivot := i;\n      break;\n    end;\n  end;\n  \n  if pivot = -1 then\n  begin\n    &Array.Sort(arr);\n    Result := arr;\n    exit;\n  end;\n\n  var rightmostSuccessor := 0;\n  for var i := arr.Length - 1 downto pivot + 1 do\n  begin\n    if arr[i] > arr[pivot] then\n    begin\n      rightmostSuccessor := i;\n      break;\n    end;\n  end;\n\n  Swap(arr[pivot], arr[rightmostSuccessor]);\n  \n  var left := pivot + 1;\n  var right := arr.Length - 1;\n  while left < right do\n  begin\n    Swap(arr[left], arr[right]);\n    left += 1;\n    right -= 1;\n  end;\n  \n  Result := arr;\nend;",
+        "id": "31"
+    },
+    {
+        "instruction": "Write a python function to find the smallest number in the list that can be expressed as the sum of two cubes of integers in two different ways.",
+        "output": "function SumOfTwoCubes(n: integer): boolean;\nbegin\n  var cubes := new List<integer>;\n  for var i := 0 to Round(Power(n, 1/3)) + 2 do\n    cubes.Add(i * i * i);\n    \n  for var i := 0 to cubes.Count - 1 do\n    for var j := i to cubes.Count - 1 do\n      for var k := 0 to cubes.Count - 1 do\n        for var l := k to cubes.Count - 1 do\n          if (cubes[i] + cubes[j] = cubes[k] + cubes[l]) and \n             ((i <> k) or (j <> l)) and \n             ((i <> l) or (j <> k)) then\n          begin\n            Result := True;\n            exit;\n          end;\n  Result := False;\nend;",
+        "id": "32"
+    },
+    {
+        "instruction": "Write a function to find the sum of the digits of a given number, but in base 2.",
+        "output": "function SumBinaryDigits(n: integer): integer;\nbegin\n  var binary := Convert.ToString(n, 2);\n  var sum := 0;\n  foreach var digit in binary do\n    sum += StrToInt(digit.ToString());\n  Result := sum;\nend;",
+        "id": "33"
+    },
+    {
+        "instruction": "Write a function to find the character that is added to a string to make it a palindrome.",
+        "output": "function FindPalindromeChar(s: string): char;\nbegin\n  var lowerS := s.ToLower();\n  for var i := 1 to s.Length div 2 do\n  begin\n    if lowerS[i] <> lowerS[s.Length - i + 1] then\n    begin\n      Result := s[i];\n      exit;\n    end;\n  end;\n  Result := #0;\nend;",
+        "id": "34"
+    },
+    {
+        "instruction": "Write a python function to find the sum of the digits of a factorial of a given number.",
+        "output": "function FactorialDigitSum(n: integer): integer;\nbegin\n  var factorial := 1bi;\n  for var i := 1 to n do\n    factorial *= i;\n  \n  var sumOfDigits := 0;\n  foreach var digit in factorial.ToString() do\n    sumOfDigits += StrToInt(digit.ToString());\n  \n  Result := sumOfDigits;\nend;",
+        "id": "35"
+    },
+    {
+        "instruction": "Write a python function to find the maximum number of pairs in an array that sum up to a given value K.",
+        "output": "function FindMaxPairs(nums: array of integer; k: integer): integer;\nbegin\n  var d := new Dictionary<integer, integer>;\n  var count := 0;\n  foreach var num in nums do\n  begin\n    var complement := k - num;\n    if d.ContainsKey(complement) and (d[complement] > 0) then\n    begin\n      count += 1;\n      d[complement] -= 1;\n    end\n    else\n    begin\n      if not d.ContainsKey(num) then\n        d[num] := 0;\n      d[num] += 1;\n    end;\n  end;\n  Result := count;\nend;",
+        "id": "36"
+    },
+    {
+        "instruction": "Write a python function that finds the next greatest value for each element in the array. If no such value exists, return -1 for that position.",
+        "output": "function NextGreatestElement(nums: array of integer): array of integer;\nbegin\n  var stack := new Stack<integer>;\n  var res := ArrFill(nums.Length, -1);\n  \n  for var i := 0 to nums.Length - 1 do\n  begin\n    while (stack.Count > 0) and (nums[stack.Peek()] < nums[i]) do\n    begin\n      res[stack.Pop()] := nums[i];\n    end;\n    stack.Push(i);\n  end;\n  \n  Result := res;\nend;",
+        "id": "37"
+    },
+    {
+        "instruction": "Write a python function that takes a positive integer and returns the count of digits from the right until a digit larger than the rightmost digit is encountered.",
+        "output": "function FindDigitCount(num: integer): integer;\nbegin\n  if num < 10 then\n  begin\n    Result := -1;\n    exit;\n  end;\n  \n  var rightmost := num mod 10;\n  var count := 0;\n  num := num div 10;\n  \n  while num > 0 do\n  begin\n    count += 1;\n    var currentDigit := num mod 10;\n    if currentDigit > rightmost then\n    begin\n      Result := count;\n      exit;\n    end;\n    num := num div 10;\n  end;\n  \n  Result := -1;\nend;",
+        "id": "38"
+    },
+    {
+        "instruction": "Write a python function to check if a given list contains any three consecutive even numbers.",
+        "output": "function HasThreeConsecutiveEvens(arr: array of integer): boolean;\nbegin\n  if arr.Length < 3 then\n    Result := False;\n  \n  var i := 0;\n  while i < arr.Length - 2 do\n  begin\n    if (arr[i] mod 2 = 0) and (arr[i + 1] mod 2 = 0) and (arr[i + 2] mod 2 = 0) then\n    begin\n      Result := True;\n      exit;\n    end\n    else if arr[i + 1] mod 2 = 0 then\n      i += 1\n    else if arr[i + 2] mod 2 = 0 then\n      i += 2\n    else\n      i += 3;\n  end;\n  \n  Result := False;\nend;",
+        "id": "39"
+    },
+    {
+        "instruction": "Write a python function to validate a given string as a valid parenthesis string. A string is a valid parenthesis string (denoted VPS) if it meets one of the following:\n1. It is an empty string \"\", or a single character not equal to \"(\" or \")\",\n2. It can be written as AB (A concatenated with B), where A and B are VPS's, or\n3. It can be written as (A), where A is a VPS.\nYou may assume the input string, s, is non-empty and contains only '(', ')', ' ', 'a' ~ 'z'.",
+        "output": "function ValidParenthesis(s: string): boolean;\nbegin\n  var stack := new Stack<char>;\n  foreach var i in s do\n  begin\n    if (i = '(') or (i = ' ') or ((i >= 'a') and (i <= 'z')) then\n      stack.Push(i)\n    else if i = ')' then\n    begin\n      if (stack.Count = 0) or (stack.Peek() <> '(') then\n      begin\n        Result := False;\n        exit;\n      end;\n      stack.Pop();\n    end;\n  end;\n  Result := stack.Count = 0;\nend;",
+        "id": "40"
+    },
+    {
+        "instruction": "Write a function to count the number of times a given pattern occurs in a string. The pattern can have wildcards where any character can fit. '*' is a wildcard that matches any sequence of characters (including the empty sequence), and '?' is a wildcard that matches any single character.",
+        "output": "function CountWildcardPattern(text: string; pattern: string): integer;\nbegin\n  var wildcardPattern := '^' + pattern.Replace('?', '.?').Replace('*', '.*') + '$';\n  var matches := Regex.Matches(text, wildcardPattern);\n  Result := matches.Count;\nend;",
+        "id": "41"
+    },
+    {
+        "instruction": "Write a python function that will calculate the sum of numbers in a string. The function should be able to ignore non-numeric characters.",
+        "output": "function SumNumbersString(str1: string): integer;\nbegin\n  var numbers := Regex.Matches(str1, '\\d+');\n  var sum := 0;\n  foreach m : &Match in numbers do\n    sum += StrToInt(m.Value);\n  Result := sum;\nend;",
+        "id": "42"
+    },
+    {
+        "instruction": "Write a function to calculate the fuel required for a journey if the distance and fuel efficiency of the vehicle is known. The function should return the fuel required rounded to the nearest litre.",
+        "output": "function CalculateFuel(distance: real; fuelEfficiency: real): integer;\nbegin\n  var fuelRequired := distance / fuelEfficiency;\n  Result := Round(fuelRequired);\nend;",
+        "id": "43"
+    },
+    {
+        "instruction": "Write a python function to find the maximum number of unique substrings that can be formed from a given string such that each substring contains only one distinct letter.",
+        "output": "function MaxUniqueSubstrings(s: string): integer;\nbegin\n  var maxCount := 0;\n  var currentCount := 0;\n  var lastSeen := new Dictionary<char, integer>;\n\n  for var i := 1 to s.Length do\n  begin\n    var ch := s[i];\n    if lastSeen.ContainsKey(ch) then\n      currentCount := i - lastSeen[ch]\n    else\n      currentCount += 1;\n    lastSeen[ch] := i;\n    maxCount := Max(maxCount, currentCount);\n  end;\n\n  Result := maxCount;\nend;",
+        "id": "44"
+    },
+    {
+        "instruction": "Write a python function to find the k most frequent elements in a list of numbers. If there are multiple elements with the same frequency, return them in the order they appear in the original list.",
+        "output": "function TopFrequentElements(nums: array of integer; k: integer): array of integer;\nbegin\n  var counter := new Dictionary<integer, integer>;\n  foreach var n in nums do\n  begin\n    if counter.ContainsKey(n) then\n      counter[n] += 1\n    else\n      counter[n] := 1;\n  end;\n  \n  var topk := counter.OrderByDescending(x -> x.Value).Take(k).ToArray();\n  Result := topk.Select(x -> x.Key).ToArray();\nend;",
+        "id": "45"
+    },
+    {
+        "instruction": "Write a python function to convert a list of dates from one format to another. The input list will contain dates in the format 'YYYYMMDD' and the function should return a list of dates in the format 'MM/DD/YYYY'.",
+        "output": "function ConvertDateFormat(dates: array of string): array of string;\nbegin\n  var convertedDates := new List<string>;\n  foreach var date in dates do\n  begin\n    var year := date.Substring(0, 4);\n    var month := date.Substring(4, 2);\n    var day := date.Substring(6, 2);\n    convertedDates.Add($'{month}/{day}/{year}');\n  end;\n  Result := convertedDates.ToArray();\nend;",
+        "id": "46"
+    },
+    {
+        "instruction": "Write a function to find the length of the longest absolute path to a file in a simulated file system represented as a string.",
+        "output": "function LongestPathLength(inputStr: string): integer;\nbegin\n  var lines := inputStr.Split(|NewLine|, System.StringSplitOptions.RemoveEmptyEntries);\n  var words := new List<string>;\n  var tabCount := new List<integer>;\n  var res := 0;\n  \n  for var i := 0 to lines.Length - 1 do\n  begin\n    var word := lines[i].TrimStart(#9);\n    var count := lines[i].Length - word.Length;\n    while (tabCount.Count > 0) and (count <= tabCount[tabCount.Count - 1]) do\n    begin\n      tabCount.RemoveAt(tabCount.Count - 1);\n      words.RemoveAt(words.Count - 1);\n    end;\n    \n    if word.Contains('.') then\n    begin\n      words.Add(word);\n      res := Max(res, string.Join('/', words).Length);\n      words.RemoveAt(words.Count - 1);\n    end\n    else\n    begin\n      words.Add(word);\n      tabCount.Add(count);\n    end;\n  end;\n  \n  Result := res;\nend;",
+        "id": "47"
+    },
+    {
+        "instruction": "Write a function to find the number of times a number can be evenly divided by a prime number before it becomes less than that prime number.",
+        "output": "function CountDivisible(n: integer; p: integer): integer;\nbegin\n  var count := 0;\n  while (n >= p) and (n mod p = 0) do\n  begin\n    n := n div p;\n    count += 1;\n  end;\n  Result := count;\nend;",
+        "id": "48"
+    },
+    {
+        "instruction": "Write a python function to find the number of unique characters in a string.",
+        "output": "function UniqueCharacters(s: string): integer;\nbegin\n  var uniqueChars := new HashSet<char>(s);\n  Result := uniqueChars.Count;\nend;",
+        "id": "49"
+    },
+    {
+        "instruction": "Write a function to check if a given tree is a binary search tree (BST).",
+        "output": "type\n  TreeNode = class\n    val: integer;\n    left, right: TreeNode;\n    constructor(v: integer; l: TreeNode := nil; r: TreeNode := nil);\n    begin\n      val := v;\n      left := l;\n      right := r;\n    end;\n  end;\n\nfunction IsBst(root: TreeNode): boolean;\n\n  function Dfs(node: TreeNode; minVal: integer; maxVal: integer): boolean;\n  begin\n    if node = nil then\n      Result := True\n    else if not ((minVal < node.val) and (node.val < maxVal)) then\n      Result := False\n    else\n      Result := Dfs(node.left, minVal, node.val) and Dfs(node.right, node.val, maxVal);\n  end;\n\nbegin\n  Result := Dfs(root, integer.MinValue, integer.MaxValue);\nend;",
+        "id": "50"
+    },
+    {
+        "instruction": "Write a function to return the n largest items from a dataset.",
+        "output": "function LargestNNum(list1: array of integer; n: integer): array of integer;\nbegin\n  var largest := list1.OrderByDescending(x -> x).Take(n).ToArray();\n  Result := largest;\nend;",
+        "id": "51"
+    },
+    {
+        "instruction": "Write a function that takes a list of tuples, where each tuple contains a string and a number, and returns a list of tuples with the string and the number multiplied by a given multiplier.",
+        "output": "function MultiplyNumbers(lst: array of (string, integer); multiplier: integer): array of (string, integer);\nbegin\n  Result := lst.Select(x -> (x[0], x[1] * multiplier)).ToArray();\nend;",
+        "id": "52"
+    },
+    {
+        "instruction": "Write a python function to calculate the number of different ways to climb n steps, given that you can take 1 step, 2 steps, or 3 steps at a time.",
+        "output": "function StepClimb(n: integer): integer;\nbegin\n  if n = 1 then\n    Result := 1\n  else if n = 2 then\n    Result := 2\n  else if n = 3 then\n    Result := 4\n  else\n    Result := StepClimb(n - 1) + StepClimb(n - 2) + StepClimb(n - 3);\nend;",
+        "id": "53"
+    },
+    {
+        "instruction": "You are given a list of integers. Write a function to find the two non-overlapping subarrays with the maximum sum. Return the start and end indices of both subarrays.",
+        "output": "function MaxSumSubarrays(nums: array of integer): array of (integer, integer);\nbegin\n  var maxSum := integer.MinValue;\n  var currentSum := 0;\n  var start := 0;\n  var res := new List<(integer, integer)>;\n  \n  for var endIdx := 0 to nums.Length - 1 do\n  begin\n    currentSum += nums[endIdx];\n    if currentSum > maxSum then\n    begin\n      maxSum := currentSum;\n      res.Clear();\n      res.Add((start, endIdx));\n    end\n    else if currentSum = maxSum then\n      res.Add((start, endIdx));\n    \n    if currentSum < 0 then\n    begin\n      currentSum := 0;\n      start := endIdx + 1;\n    end;\n  end;\n  \n  Result := res.ToArray();\nend;",
+        "id": "54"
+    },
+    {
+        "instruction": "Write a function that reverses a string in-place without using extra space for another string. The function should modify the input string directly.",
+        "output": "function ReverseStringInplace(var s: string): string;\nbegin\n  var left := 1;\n  var right := s.Length;\n  while left < right do\n  begin\n    var temp := s[left];\n    s[left] := s[right];\n    s[right] := temp;\n    left += 1;\n    right -= 1;\n  end;\n  Result := s;\nend;",
+        "id": "55"
+    },
+    {
+        "instruction": "Write a function to find the maximum subarray sum in a list using Kadane's algorithm.",
+        "output": "function KadaneAlgorithm(arr: array of integer): integer;\nbegin\n  var maxCurrent := arr[0];\n  var maxGlobal := arr[0];\n  for var i := 1 to arr.Length - 1 do\n  begin\n    maxCurrent := Max(arr[i], maxCurrent + arr[i]);\n    if maxCurrent > maxGlobal then\n      maxGlobal := maxCurrent;\n  end;\n  Result := maxGlobal;\nend;",
+        "id": "56"
+    },
+    {
+        "instruction": "Write a python function to merge two sorted lists into a single sorted list.",
+        "output": "function MergeTwoLists(l1: array of integer; l2: array of integer): array of integer;\nbegin\n  var l3 := new List<integer>;\n  var i := 0;\n  var j := 0;\n  \n  while (i < l1.Length) and (j < l2.Length) do\n  begin\n    if l1[i] < l2[j] then\n    begin\n      l3.Add(l1[i]);\n      i += 1;\n    end\n    else\n    begin\n      l3.Add(l2[j]);\n      j += 1;\n    end;\n  end;\n  \n  if i = l1.Length then\n    l3.AddRange(l2[j:l2.Length])\n  else\n    l3.AddRange(l1[i:l1.Length]);\n  \n  Result := l3.ToArray();\nend;",
+        "id": "57"
+    },
+    {
+        "instruction": "Write a function that takes a list of integers as input and returns a new list where each element is the result of squaring the original element and adding 1.",
+        "output": "function SquareAndAddOne(nums: array of integer): array of integer;\nbegin\n  Result := nums.Select(x -> x * x + 1).ToArray();\nend;",
+        "id": "58"
+    },
+    {
+        "instruction": "Write a python function to find the total number of ways to reach the Nth stair from the ground using either 1 or 2 steps at a time.",
+        "output": "function WaysToReachStair(n: integer): integer;\nbegin\n  if n <= 1 then\n    Result := n\n  else\n  begin\n    var first := 1;\n    var second := 1;\n    for var i := 2 to n do\n    begin\n      var third := first + second;\n      first := second;\n      second := third;\n    end;\n    Result := second;\n  end;\nend;",
+        "id": "59"
+    },
+    {
+        "instruction": "Write a function that finds the smallest set of vertices from which all nodes in a directed graph are reachable. You are given the number of vertices in the graph (n) and a list of directed edges. A vertex is reachable from another vertex if there is a path from the first vertex to the second vertex.",
+        "output": "function FindSmallestSetOfVertices(n: integer; edges: array of (integer, integer)): array of integer;\nbegin\n  var graph := new Dictionary<integer, List<integer>>;\n  foreach var (start, dest) in edges do\n  begin\n    if not graph.ContainsKey(start) then\n      graph[start] := new List<integer>;\n    graph[start].Add(dest);\n  end;\n\n  var ans := new List<integer>;\n  var values := new HashSet<integer>;\n  foreach var valList in graph.Values do\n    values.UnionWith(valList);\n\n  for var i := 0 to n - 1 do\n    if not values.Contains(i) then\n      ans.Add(i);\n\n  Result := ans.ToArray();\nend;",
+        "id": "60"
+    },
+    {
+        "instruction": "Write a python function to find the score of a given parentheses string. The score of a valid parentheses string is defined as follows:\n- () has score 1,\n- AB has score A + B, where A and B are valid parentheses strings,\n- (A) has score 2 * A, where A is a valid parentheses string.",
+        "output": "function ScoreOfParentheses(s: string): integer;\nbegin\n  var stackCount := 0;\n  var start := 1;\n  var score := 0;\n  for var endIdx := 1 to s.Length do\n  begin\n    if s[endIdx] = '(' then\n      stackCount += 1\n    else if stackCount > 0 then\n      stackCount -= 1;\n    \n    if stackCount = 0 then\n    begin\n      if endIdx - start = 1 then\n        score += 1\n      else\n        score += 2 * ScoreOfParentheses(s.Substring(start, endIdx - start));\n      start := endIdx + 1;\n    end;\n  end;\n  Result := score;\nend;",
+        "id": "61"
+    },
+    {
+        "instruction": "Write a function that takes in a list of integers and returns a list of tuples, where each tuple contains the index and the value of the integer in the original list if the integer is larger than 10.",
+        "output": "function FindLargeNumbers(l: array of integer): array of (integer, integer);\nbegin\n  Result := l.Select((v, i) -> (i, v)).Where(x -> x[1] > 10).ToArray();\nend;",
+        "id": "62"
+    },
+    {
+        "instruction": "Write a function that takes an array of integers and returns a new array with each element squared.",
+        "output": "function SquareArray(nums: array of integer): array of integer;\nbegin\n  Result := nums.Select(num -> num * num).ToArray();\nend;",
+        "id": "63"
+    },
+    {
+        "instruction": "Write a function to find the number of ways to split a string into substrings where the number of distinct characters in each substring is equal to the number of substrings.",
+        "output": "function NumSplits(s: string): integer;\nbegin\n  var left := new HashSet<char>;\n  var right := new Dictionary<char, integer>;\n  foreach var ch in s do\n  begin\n    if right.ContainsKey(ch) then\n      right[ch] += 1\n    else\n      right[ch] := 1;\n  end;\n  \n  var res := 0;\n  foreach var ch in s do\n  begin\n    left.Add(ch);\n    right[ch] -= 1;\n    if right[ch] = 0 then\n      right.Remove(ch);\n\n    if left.Count = right.Count then\n      res += 1;\n  end;\n  Result := res;\nend;",
+        "id": "64"
+    },
+    {
+        "instruction": "Write a function to sort a list of numbers based on another list. The numbers in the first list should be sorted in the order of their occurrence in the second list. If a number is not present in the second list, it should be placed at the end of the sorted list in ascending order.",
+        "output": "function RelativeSort(arr1: array of integer; arr2: array of integer): array of integer;\nbegin\n  var countMap := new Dictionary<integer, integer>;\n  foreach var num in arr1 do\n  begin\n    if countMap.ContainsKey(num) then\n      countMap[num] += 1\n    else\n      countMap[num] := 1;\n  end;\n  \n  var sortedArr := new List<integer>;\n  var remaining := new List<integer>;\n  \n  foreach var num in arr2 do\n  begin\n    while countMap.ContainsKey(num) and (countMap[num] > 0) do\n    begin\n      sortedArr.Add(num);\n      countMap[num] -= 1;\n    end;\n  end;\n\n  foreach var num in arr1 do\n  begin\n    if (not arr2.Contains(num)) and (countMap.ContainsKey(num)) and (countMap[num] > 0) then\n    begin\n      remaining.Add(num);\n      countMap[num] -= 1;\n    end;\n  end;\n\n  remaining.Sort();\n  Result := sortedArr.Concat(remaining).ToArray();\nend;",
+        "id": "65"
+    },
+    {
+        "instruction": "Write a function to reverse the order of words in a given sentence and invert the case of each character.",
+        "output": "function ReverseInvertSentence(sentence: string): string;\nbegin\n  var words := sentence.ToWords();\n  var reversedWords := words.Reverse().Select(word -> \n  begin\n    var newWord := '';\n    foreach var ch in word do\n      if ch.IsUpper then\n        newWord += ch.ToLower()\n      else\n        newWord += ch.ToUpper();\n    Result := newWord;\n  end).ToArray();\n  Result := string.Join(' ', reversedWords);\nend;",
+        "id": "66"
+    },
+    {
+        "instruction": "Write a python function to find the length of the longest valid parentheses substring.",
+        "output": "function LongestValidParentheses(s: string): integer;\nbegin\n  var maxLen := 0;\n  var stack := new Stack<integer>;\n  stack.Push(-1);\n  for var i := 1 to s.Length do\n  begin\n    var ch := s[i];\n    if ch = '(' then\n      stack.Push(i)\n    else\n    begin\n      stack.Pop();\n      if stack.Count = 0 then\n        stack.Push(i)\n      else\n        maxLen := Max(maxLen, i - stack.Peek());\n    end;\n  end;\n  Result := maxLen;\nend;",
+        "id": "67"
+    },
+    {
+        "instruction": "Write a function that takes a string and an integer as input and returns the string in a zigzag pattern with the specified number of rows.",
+        "output": "function ConvertStringToZigzag(s: string; numRows: integer): string;\nbegin\n  if (numRows = 1) or (numRows >= s.Length) then\n  begin\n    Result := s;\n    exit;\n  end;\n\n  var res := ArrFill(numRows, '');\n  var p := 2 * (numRows - 1);\n\n  for var i := 1 to s.Length do\n  begin\n    var floor := (i - 1) mod p;\n    if floor >= p div 2 then\n      floor := p - floor;\n    res[floor] += s[i];\n  end;\n\n  Result := string.Join('', res);\nend;",
+        "id": "68"
+    },
+    {
+        "instruction": "Write a python function that takes a string and a character as input and returns the number of occurrences of that character in the string, ignoring case.",
+        "output": "function IgnoreCaseCount(text: string; ch: char): integer;\nbegin\n  var cnt := 0;\n  var lower := ch.ToLower();\n  var upper := ch.ToUpper();\n\n  foreach var c in text do\n    if (c = lower) or (c = upper) then\n      cnt += 1;\n  Result := cnt;\nend;",
+        "id": "69"
+    },
+    {
+        "instruction": "Write a function to detect if any three points in a given list form a right-angled triangle. The function should return True if there is at least one set of three points that form a right-angled triangle, and False otherwise.",
+        "output": "function RightAngleTriangle(points: array of (real, real)): boolean;\n\n  function IsRightAngleTriangle(p1: (real, real); p2: (real, real); p3: (real, real)): boolean;\n  begin\n    var (x1, y1) := p1;\n    var (x2, y2) := p2;\n    var (x3, y3) := p3;\n    \n    var dx1 := x2 - x1;\n    var dy1 := y2 - y1;\n    var dx2 := x3 - x1;\n    var dy2 := y3 - y1;\n    var dx3 := x3 - x2;\n    var dy3 := y3 - y2;\n\n    if (dx1 * dx2 + dy1 * dy2 = 0) or \n       (dx1 * dx3 + dy1 * dy3 = 0) or \n       (dx2 * dx3 + dy2 * dy3 = 0) then\n      Result := True\n    else\n      Result := False;\n  end;\n\nbegin\n  for var i := 0 to points.Length - 1 do\n    for var j := i + 1 to points.Length - 1 do\n      for var k := j + 1 to points.Length - 1 do\n        if IsRightAngleTriangle(points[i], points[j], points[k]) then\n        begin\n          Result := True;\n          exit;\n        end;\n  Result := False;\nend;",
+        "id": "70"
+    },
+    {
+        "instruction": "Write a python function to find the number of connected components in an undirected graph represented as an adjacency matrix.",
+        "output": "function FindConnectedComponents(matrix: array[,] of integer): integer;\n\n  procedure Dfs(node: integer; var visited: array of boolean);\n  begin\n    visited[node] := True;\n    for var neighbor := 0 to matrix.GetLength(0) - 1 do\n      if (matrix[node, neighbor] = 1) and (not visited[neighbor]) then\n        Dfs(neighbor, visited);\n  end;\n\nbegin\n  var n := matrix.GetLength(0);\n  var visited := ArrFill(n, False);\n  var components := 0;\n\n  for var i := 0 to n - 1 do\n    if not visited[i] then\n    begin\n      Dfs(i, visited);\n      components += 1;\n    end;\n\n  Result := components;\nend;",
+        "id": "71"
+    },
+    {
+        "instruction": "Write a function to check whether a string is a valid pin code or not. The valid pin code should be numeric and either 4 or 6 digits long.",
+        "output": "function CheckPin(s: string): boolean;\nbegin\n  Result := ((s.Length = 4) or (s.Length = 6)) and s.All(ch -> ch in ['0'..'9']);\nend;",
+        "id": "72"
+    },
+    {
+        "instruction": "Write a python function to check if a string is a rotation of a pattern. A rotation of a string is a rearrangement of the string by moving the characters from the beginning to the end.",
+        "output": "function IsRotation(str1: string; str2: string): boolean;\nbegin\n  if str1.Length <> str2.Length then\n    Result := False\n  else\n  begin\n    var temp := str1 + str1;\n    Result := temp.Contains(str2);\n  end;\nend;",
+        "id": "73"
+    },
+    {
+        "instruction": "Write a python function to find the largest number of consecutive zeros in a binary string.",
+        "output": "function MaxZero(s: string): integer;\nbegin\n  var count := 0;\n  var maxCount := 0;\n  foreach var ch in s do\n  begin\n    if ch = '0' then\n    begin\n      count += 1;\n      if count > maxCount then\n        maxCount := count;\n    end\n    else\n      count := 0;\n  end;\n  Result := maxCount;\nend;",
+        "id": "74"
+    },
+    {
+        "instruction": "Create a function that takes a list and a number k, and returns all the possible subsets of length k from the list.",
+        "output": "function KSizedSubsets(arr: array of integer; k: integer): array of array of integer;\n\n  procedure Backtrack(start: integer; path: List<integer>; var res: List<array of integer>);\n  begin\n    if path.Count = k then\n    begin\n      res.Add(path.ToArray());\n      exit;\n    end;\n    \n    for var i := start to arr.Length - 1 do\n    begin\n      path.Add(arr[i]);\n      Backtrack(i + 1, path, res);\n      path.RemoveAt(path.Count - 1);\n    end;\n  end;\n\nbegin\n  var res := new List<array of integer>;\n  Backtrack(0, new List<integer>, res);\n  Result := res.ToArray();\nend;",
+        "id": "75"
+    },
+    {
+        "instruction": "Write a python function that checks if all elements in a list of lists are the same length.",
+        "output": "function IsListsSameLength(listOfLists: array of array of integer): boolean;\nbegin\n  var lengths := listOfLists.Select(lst -> lst.Length).Distinct().ToArray();\n  Result := lengths.Length = 1;\nend;",
+        "id": "76"
+    },
+    {
+        "instruction": "Write a function to encode a given string using a simple substitution cipher. The cipher works by shifting each letter in the string by a specified number of places in the alphabet. If the shift number is greater than the length of the alphabet, it should wrap around to the beginning of the alphabet.",
+        "output": "function EncodeCipher(str1: string; shift: integer): string;\nbegin\n  var encodedStr := '';\n  foreach var ch in str1 do\n  begin\n    if ch.IsLetter then\n    begin\n      var shiftAmount := shift mod 26;\n      if ch.IsLower then\n      begin\n        var newChar := Chr(((Ord(ch) - Ord('a') + shiftAmount) mod 26) + Ord('a'));\n        encodedStr += newChar;\n      end\n      else\n      begin\n        var newChar := Chr(((Ord(ch) - Ord('A') + shiftAmount) mod 26) + Ord('A'));\n        encodedStr += newChar;\n      end;\n    end\n    else\n      encodedStr += ch;\n  end;\n  Result := encodedStr;\nend;",
+        "id": "77"
+    },
+    {
+        "instruction": "Write a function that accepts a string and a character. The function should return the index of the first occurrence of the character in the string. If the character is not found, the function should return -1.",
+        "output": "function FindCharIndex(s: string; c: char): integer;\nbegin\n  for var i := 1 to s.Length do\n    if s[i] = c then\n    begin\n      Result := i;\n      exit;\n    end;\n  Result := -1;\nend;",
+        "id": "78"
+    },
+    {
+        "instruction": "Write a function to find the intersection of two sorted lists.",
+        "output": "function SortedListIntersection(list1: array of integer; list2: array of integer): array of integer;\nbegin\n  var intersection := new List<integer>;\n  var i := 0;\n  var j := 0;\n  \n  while (i < list1.Length) and (j < list2.Length) do\n  begin\n    if list1[i] = list2[j] then\n    begin\n      intersection.Add(list1[i]);\n      i += 1;\n      j += 1;\n    end\n    else if list1[i] < list2[j] then\n      i += 1\n    else\n      j += 1;\n  end;\n  \n  Result := intersection.ToArray();\nend;",
+        "id": "79"
+    },
+    {
+        "instruction": "Write a function to convert a string of digits into the integer it represents. However, the function should handle string representations of both positive and negative numbers, where the negative numbers are represented with a '-' sign at the beginning of the string.",
+        "output": "function StringToInteger(s: string): integer;\nbegin\n  if s[1] = '-' then\n    Result := -StrToInt(s.Substring(2))\n  else\n    Result := StrToInt(s);\nend;",
+        "id": "80"
+    },
+    {
+        "instruction": "Write a python function to return the maximum profit you can achieve from trading stocks given the stock prices. You may complete as many transactions as you like (i.e., buy one and sell one share of the stock multiple times) with the condition that you must sell the stock before you buy again.",
+        "output": "function StockTrading(prices: array of integer): integer;\nbegin\n  var maxProfit := 0;\n  for var i := 1 to prices.Length - 1 do\n    if prices[i] > prices[i - 1] then\n      maxProfit += prices[i] - prices[i - 1];\n  Result := maxProfit;\nend;",
+        "id": "81"
+    },
+    {
+        "instruction": "Write a function to generate all possible n-pairs of a given list of numbers. An n-pair is a subset of the list with exactly n elements.",
+        "output": "procedure GenerateCombination(start: integer; current: List<integer>; n: integer; nums: array of integer; combinations: List<array of integer>);\nbegin\n  if current.Count = n then\n  begin\n    combinations.Add(current.ToArray());\n    exit;\n  end;\n  \n  for var i := start to nums.Length - 1 do\n  begin\n    current.Add(nums[i]);\n    GenerateCombination(i + 1, current, n, nums, combinations);\n    current.RemoveAt(current.Count - 1);\n  end;\nend;\n\nfunction GenerateNPairs(nums: array of integer; n: integer): array of array of integer;\nbegin\n  var combinations := new List<array of integer>;\n  GenerateCombination(0, new List<integer>, n, nums, combinations);\n  Result := combinations.ToArray();\nend;",
+        "id": "82"
+    },
+    {
+        "instruction": "Write a python function to find the minimum number of Fibonacci numbers whose sum is equal to the given number. The same Fibonacci number can be used multiple times.",
+        "output": "function FindFibonacciNumbers(n: integer): integer;\nbegin\n  var fib := new List<integer>;\n  fib.Add(1);\n  fib.Add(1);\n  while fib[fib.Count - 1] < n do\n    fib.Add(fib[fib.Count - 1] + fib[fib.Count - 2]);\n  \n  var count := 0;\n  var i := fib.Count - 1;\n  var tempN := n;\n  \n  while (tempN > 0) and (i >= 0) do\n  begin\n    while tempN >= fib[i] do\n    begin\n      tempN -= fib[i];\n      count += 1;\n    end;\n    i -= 1;\n  end;\n  \n  Result := count;\nend;",
+        "id": "83"
+    },
+    {
+        "instruction": "Write a function to calculate the number of matches that can be played in a round robin tournament given the number of participating teams. In a round robin tournament, each team plays every other team exactly once.",
+        "output": "function MatchesInTournament(teams: integer): integer;\nbegin\n  Result := teams * (teams - 1) div 2;\nend;",
+        "id": "84"
+    },
+    {
+        "instruction": "Write a function to find the minimum height trees in a given undirected graph represented as a list of edges.",
+        "output": "function FindMinHeightTrees(n: integer; edges: array of (integer, integer)): array of integer;\nbegin\n  if n = 0 then\n  begin\n    Result := new integer[0];\n    exit;\n  end;\n\n  var res := new List<integer>;\n  if n <= 2 then\n  begin\n    for var i := 0 to n - 1 do\n      res.Add(i);\n    Result := res.ToArray();\n    exit;\n  end;\n\n  var adjList := new Dictionary<integer, List<integer>>;\n  for var i := 0 to n - 1 do\n    adjList[i] := new List<integer>;\n\n  var degree := ArrFill(n, 0);\n  \n  foreach var (u, v) in edges do\n  begin\n    adjList[u].Add(v);\n    adjList[v].Add(u);\n    degree[u] += 1;\n    degree[v] += 1;\n  end;\n\n  var nodeQueue := new Queue<integer>;\n  for var i := 0 to n - 1 do\n    if degree[i] = 1 then\n      nodeQueue.Enqueue(i);\n\n  var remainingNodes := n;\n  while remainingNodes > 2 do\n  begin\n    var length := nodeQueue.Count;\n    remainingNodes -= length;\n    \n    for var x := 0 to length - 1 do\n    begin\n      var a := nodeQueue.Dequeue();\n      foreach var neighbor in adjList[a] do\n      begin\n        degree[neighbor] -= 1;\n        if degree[neighbor] = 1 then\n          nodeQueue.Enqueue(neighbor);\n      end;\n    end;\n  end;\n\n  while nodeQueue.Count > 0 do\n    res.Add(nodeQueue.Dequeue());\n  \n  Result := res.ToArray();\nend;",
+        "id": "85"
+    },
+    {
+        "instruction": "Write a python function to check if the given list of integers is a valid permutation of the first N natural numbers.",
+        "output": "function ValidPermutation(list1: array of integer): boolean;\nbegin\n  var sortedList := list1.OrderBy(x -> x).ToArray();\n  for var i := 0 to sortedList.Length - 1 do\n    if sortedList[i] <> i + 1 then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;",
+        "id": "86"
+    },
+    {
+        "instruction": "Write a python function named `get_longest_palindrome` that takes a string as input and returns the longest palindromic substring in the string. A palindrome is a word, phrase, number, or other sequence of characters that reads the same backward or forward. Examples of palindromes are \"racecar\", \"madam\", and \"12321\".",
+        "output": "function GetLongestPalindrome(s: string): string;\nbegin\n  if s.Length = 0 then\n  begin\n    Result := '';\n    exit;\n  end;\n  \n  var maxLength := 1;\n  var start := 1;\n  \n  for var i := 1 to s.Length do\n  begin\n    if (i - maxLength >= 1) and \n       (s.Substring(i - maxLength - 1, maxLength + 1) = \n        string.Create(s.Substring(i - maxLength - 1, maxLength + 1).Reverse().ToArray())) then\n    begin\n      start := i - maxLength - 1;\n      maxLength += 2;\n      continue;\n    end;\n    \n    if (i - maxLength >= 0) and \n       (s.Substring(i - maxLength, maxLength + 1) = \n        string.Create(s.Substring(i - maxLength, maxLength + 1).Reverse().ToArray())) then\n    begin\n      start := i - maxLength;\n      maxLength += 1;\n    end;\n  end;\n  \n  Result := s.Substring(start, maxLength);\nend;",
+        "id": "87"
+    },
+    {
+        "instruction": "Write a function to find the largest number in a list of integers using a heap data structure.",
+        "output": "function MaxHeapLargest(nums: array of integer): integer;\nbegin\n  var heap := new SortedSet<integer>(Comparer&<integer>.Create((x, y) -> y.CompareTo(x)));\n  foreach var num in nums do\n    heap.Add(num);\n  Result := heap.Max;\nend;",
+        "id": "88"
+    },
+    {
+        "instruction": "Write a python function to check whether it is possible to make the given string a valid parentheses string by adding the minimum number of parentheses. The function should return the minimum number of parentheses that need to be added.",
+        "output": "function MinAddToMakeValid(S: string): integer;\nbegin\n  var stack := new Stack<char>;\n  var cnt := 0;\n  foreach var ch in S do\n  begin\n    if ch = '(' then\n      stack.Push(ch)\n    else if stack.Count = 0 then\n      cnt += 1\n    else\n      stack.Pop();\n  end;\n  Result := stack.Count + cnt;\nend;",
+        "id": "89"
+    },
+    {
+        "instruction": "Write a function to find the maximum number of unique elements in a list.",
+        "output": "function MaxUniqueElements(nums: array of integer): integer;\nbegin\n  var uniqueElements := new HashSet<integer>(nums);\n  Result := uniqueElements.Count;\nend;",
+        "id": "90"
+    },
+    {
+        "instruction": "Write a python function to check if a given string is a valid parenthesis sequence.",
+        "output": "function IsValidParenthesis(s: string): boolean;\nbegin\n  var stack := new Stack<char>;\n  var mapping := new Dictionary<char, char>;\n  mapping[')'] := '(';\n  mapping['}'] := '{';\n  mapping[']'] := '[';\n\n  foreach var ch in s do\n  begin\n    if mapping.ContainsKey(ch) then\n    begin\n      var topElement := if stack.Count > 0 then stack.Pop() else '#';\n      if mapping[ch] <> topElement then\n      begin\n        Result := False;\n        exit;\n      end;\n    end\n    else\n      stack.Push(ch);\n  end;\n\n  Result := stack.Count = 0;\nend;",
+        "id": "91"
+    },
+    {
+        "instruction": "Write a python function to find the number of unique characters in a string.",
+        "output": "function UniqueChars(s: string): integer;\nbegin\n  var uniqueChars := new HashSet<char>;\n  foreach var ch in s do\n    uniqueChars.Add(ch);\n  Result := uniqueChars.Count;\nend;",
+        "id": "92"
+    },
+    {
+        "instruction": "Write a python function to find the number of unique binary search trees (BSTs) that store values 1...n.",
+        "output": "function CountUniqueBsts(n: integer): integer;\nbegin\n  var dp := ArrFill(n + 1, 0);\n  dp[0] := 1;\n  dp[1] := 1;\n\n  for var i := 2 to n do\n    for var j := 0 to i - 1 do\n      dp[i] += dp[j] * dp[i - j - 1];\n\n  Result := dp[n];\nend;",
+        "id": "93"
+    },
+    {
+        "instruction": "Write a function to determine if a given string is a valid URL or not using regex.",
+        "output": "function CheckURL(url: string): string;\nbegin\n  var regex := new Regex('^(?:http|ftp)s?://' +\n    '(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\\.)+(?:[A-Z]{2,6}\\.?|[A-Z0-9-]{2,}\\.?)|' +\n    'localhost|' +\n    '\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})' +\n    '(?::\\d+)?' +\n    '(?:/?|[/?]\\S+)$', RegexOptions.IgnoreCase);\n\n  if regex.IsMatch(url) then\n    Result := 'Valid URL'\n  else\n    Result := 'Invalid URL';\nend;",
+        "id": "94"
+    },
+    {
+        "instruction": "Write a function to find the length of the longest common subarray between two given arrays.",
+        "output": "function LongestCommonSubarray(nums1: array of integer; nums2: array of integer): integer;\nbegin\n  var subArray1 := new List<string>;\n  var subArray2 := new List<string>;\n  var temp := '';\n  \n  for var i := 0 to nums1.Length - 1 do\n  begin\n    temp := nums1[i].ToString();\n    subArray1.Add(temp);\n\n    for var j := i + 1 to nums1.Length - 1 do\n    begin\n      temp += '->' + nums1[j].ToString();\n      subArray1.Add(temp);\n    end;\n    temp := '';\n  end;\n\n  for var i := 0 to nums2.Length - 1 do\n  begin\n    temp := nums2[i].ToString();\n    subArray2.Add(temp);\n\n    for var j := i + 1 to nums2.Length - 1 do\n    begin\n      temp += '->' + nums2[j].ToString();\n      subArray2.Add(temp);\n    end;\n    temp := '';\n  end;\n\n  var ans := new List<string>;\n  foreach var i in subArray1 do\n    if subArray2.Contains(i) then\n      ans.Add(i);\n\n  if ans.Count = 0 then\n    Result := 0\n  else\n  begin\n    var newLis := ans.OrderByDescending(k -> k.Length).ToArray();\n    var actualAns := newLis[0].Split(|'->'|, System.StringSplitOptions.RemoveEmptyEntries)\n      .Select(x -> StrToInt(x)).ToArray();\n    Result := actualAns.Length;\n  end;\nend;",
+        "id": "95"
+    },
+    {
+        "instruction": "Write a python function to find the balanced index in a list. The balanced index is an index where the sum of the elements at lower indexes is equal to the sum of the elements at higher indexes.",
+        "output": "function BalancedIndex(arr: array of integer): integer;\nbegin\n  for var i := 0 to arr.Length - 1 do\n  begin\n    var leftSum := arr[0:i].Sum();\n    var rightSum := arr[i+1:arr.Length].Sum();\n    if leftSum = rightSum then\n    begin\n      Result := i;\n      exit;\n    end;\n  end;\n  Result := -1;\nend;",
+        "id": "96"
+    },
+    {
+        "instruction": "Write a function that takes a list of numbers and returns a list with the sum of adjacent numbers.",
+        "output": "function SumAdjacent(numbers: array of integer): array of integer;\nbegin\n  var res := new List<integer>;\n  for var i := 0 to numbers.Length - 2 do\n    res.Add(numbers[i] + numbers[i + 1]);\n  Result := res.ToArray();\nend;",
+        "id": "97"
+    },
+    {
+        "instruction": "Write a python function to find a pair of numbers from the given list that adds up to a specific target sum.",
+        "output": "function FindPair(arr: array of integer; targetSum: integer): array of integer;\nbegin\n  var hashSet := new HashSet<integer>;\n  foreach var num in arr do\n  begin\n    var complement := targetSum - num;\n    if hashSet.Contains(complement) then\n    begin\n      Result := [complement, num];\n      exit;\n    end;\n    hashSet.Add(num);\n  end;\n  Result := new integer[0];\nend;",
+        "id": "98"
+    },
+    {
+        "instruction": "Write a python function to calculate the total number of uppercase letters in a string.",
+        "output": "function UppercaseCount(inputString: string): integer;\nbegin\n  var count := 0;\n  foreach var ch in inputString do\n    if ch.IsUpper then\n      count += 1;\n  Result := count;\nend;",
+        "id": "99"
+    },
+    {
+        "instruction": "Create a python function to check if a given list of integers contains a subarray with a sum of zero.",
+        "output": "function ZeroSumSubarray(arr: array of integer): boolean;\nbegin\n  var s := new HashSet<integer>;\n  s.Add(0);\n  var sum := 0;\n  for var i := 0 to arr.Length - 1 do\n  begin\n    sum += arr[i];\n    if s.Contains(sum) then\n    begin\n      Result := True;\n      exit;\n    end;\n    s.Add(sum);\n  end;\n  Result := False;\nend;",
+        "id": "100"
+    },
+    {
+        "instruction": "Write a python function to calculate the probability of two boxes having the same number of distinct balls given a list of balls of different colors. The balls are distributed between the two boxes in all possible ways, and the probability is calculated based on the number of valid distributions.",
+        "output": "function Factorial(n: integer): integer;\nbegin\n  Result := 1;\n  for var i := 2 to n do\n    Result *= i;\nend;\n\nfunction Comb(n: integer; m: integer): integer;\nbegin\n  Result := Factorial(n) div (Factorial(m) * Factorial(n - m));\nend;\n\nprocedure F(i: integer; n1: integer; n2: integer; c1: integer; c2: integer; j: integer; balls: array of integer; var res: integer);\nbegin\n  if (n1 > balls.Sum() div 2) or ((i - n1) > balls.Sum() div 2) then\n    exit;\n  if i = balls.Length then\n  begin\n    if (n1 = n2) and (c1 = c2) then\n      res += j;\n    exit;\n  end;\n  var x := balls[i];\n  for var k := 0 to x do\n    F(i + 1, n1 + k, n2 + (x - k), c1 + Ord(k <> 0), c2 + Ord(k <> x), j * Comb(x, k), balls, res);\nend;\n\nfunction GetProbability(balls: array of integer): real;\nbegin\n  var n := balls.Sum();\n  var total := Factorial(n) div (Factorial(n div 2) * Factorial(n div 2));\n  var res := 0;\n  F(0, 0, 0, 0, 0, 1, balls, res);\n  Result := res / total;\nend;",
+        "id": "101"
+    },
+    {
+        "instruction": "Write a python function to find the second highest number in a given list of integers.",
+        "output": "function SecondHighest(numbers: array of integer): integer;\nbegin\n  var uniqueNumbers := numbers.Distinct().ToArray();\n  if uniqueNumbers.Length < 2 then\n    Result := 0\n  else\n  begin\n    &Array.Sort(uniqueNumbers);\n    Result := uniqueNumbers[uniqueNumbers.Length - 2];\n  end;\nend;",
+        "id": "102"
+    },
+    {
+        "instruction": "Write a Python function to check if a given triplet of numbers forms a Pythagorean triplet. A Pythagorean triplet consists of three positive integers a, b, and c, such that a^2 + b^2 = c^2.",
+        "output": "function IsPythagoreanTriplet(a: integer; b: integer; c: integer): boolean;\nbegin\n  Result := a * a + b * b = c * c;\nend;",
+        "id": "103"
+    },
+    {
+        "instruction": "Write a function to find the largest overlap between two binary matrices. A binary matrix is a matrix where all elements are 0 or 1. The overlap is the largest number of ones shared by the two matrices when one matrix is shifted in any direction (up, down, left, right) relative to the other matrix.",
+        "output": "function LargestOverlap(img1: array[,] of integer; img2: array[,] of integer): integer;\nbegin\n  var bestMax := 0;\n  var img1Ones := new List<(integer, integer)>;\n  var img2Ones := new List<(integer, integer)>;\n  var shiftCount := new Dictionary<(integer, integer), integer>;\n\n  for var i := 0 to img1.GetLength(0) - 1 do\n    for var j := 0 to img1.GetLength(1) - 1 do\n    begin\n      if img1[i, j] = 1 then\n        img1Ones.Add((i, j));\n      if img2[i, j] = 1 then\n        img2Ones.Add((i, j));\n    end;\n\n  foreach var (r1, c1) in img1Ones do\n    foreach var (r2, c2) in img2Ones do\n    begin\n      var rowShift := r1 - r2;\n      var colShift := c1 - c2;\n      var key := (rowShift, colShift);\n      if shiftCount.ContainsKey(key) then\n        shiftCount[key] += 1\n      else\n        shiftCount[key] := 1;\n      bestMax := Max(bestMax, shiftCount[key]);\n    end;\n\n  Result := bestMax;\nend;",
+        "id": "104"
+    },
+    {
+        "instruction": "Write a function that takes a string as an argument and returns the string with all spaces removed.",
+        "output": "function RemoveSpaces(inputString: string): string;\nbegin\n  Result := inputString.Replace(' ', '');\nend;",
+        "id": "105"
+    },
+    {
+        "instruction": "Write a function to find the maximum consecutive repetition of a character in a given string.",
+        "output": "function MaxConsecutiveRepetition(s: string): integer;\nbegin\n  if s.Length = 0 then\n  begin\n    Result := 0;\n    exit;\n  end;\n  var maxRepeat := 1;\n  var currentRepeat := 1;\n  for var i := 2 to s.Length do\n  begin\n    if s[i] = s[i - 1] then\n    begin\n      currentRepeat += 1;\n      maxRepeat := Max(maxRepeat, currentRepeat);\n    end\n    else\n      currentRepeat := 1;\n  end;\n  Result := maxRepeat;\nend;",
+        "id": "106"
+    },
+    {
+        "instruction": "Write a python function to find the nth Catalan number. Catalan numbers are a sequence of natural numbers that have many applications in combinatorial mathematics, including the number of correct bracket sequences of length 2n, the number of rooted binary trees with n+1 leaves, and the number of ways a convex polygon with n+2 sides can be cut into triangles by connecting vertices with straight lines.",
+        "output": "function CatalanNumber(n: integer): integer;\nbegin\n  var catalan := ArrFill(n + 1, 0);\n  catalan[0] := 1;\n  if n > 0 then\n    catalan[1] := 1;\n  for var i := 2 to n do\n  begin\n    catalan[i] := 0;\n    for var j := 0 to i - 1 do\n      catalan[i] := catalan[i] + catalan[j] * catalan[i - j - 1];\n  end;\n  Result := catalan[n];\nend;",
+        "id": "107"
+    },
+    {
+        "instruction": "Write a python function to find the symmetric difference between two sets.",
+        "output": "function SymmetricDiff(set1: HashSet<integer>; set2: HashSet<integer>): HashSet<integer>;\nbegin\n  Result := new HashSet<integer>(set1);\n  Result.SymmetricExceptWith(set2);\nend;",
+        "id": "108"
+    },
+    {
+        "instruction": "Write a function that checks if it's possible to divide a list of integers into two groups such that the sum of the first group is equal to the sum of the second group.",
+        "output": "function CanDivideIntoTwoEqualGroups(nums: array of integer): boolean;\nbegin\n  var total := nums.Sum();\n  if total mod 2 <> 0 then\n  begin\n    Result := False;\n    exit;\n  end;\n  var target := total div 2;\n  var n := nums.Length;\n  var dp := new boolean[target + 1];\n  dp[0] := True;\n  \n  for var i := 0 to n - 1 do\n    for var j := target downto nums[i] do\n      if dp[j - nums[i]] then\n        dp[j] := True;\n  \n  Result := dp[target];\nend;",
+        "id": "109"
+    },
+    {
+        "instruction": "Write a function to determine if a string is a palindrome ignoring case, spaces, and punctuation.",
+        "output": "function IsPalindromeIgnoreCaseSpacePunctuation(s: string): boolean;\nbegin\n  var cleaned := Regex.Replace(s, '\\W+', '').ToLower();\n  var reversed := string.Create(cleaned.Reverse().ToArray());\n  Result := cleaned = reversed;\nend;",
+        "id": "110"
+    },
+    {
+        "instruction": "Write a function to find the number of times a given pattern appears in a string. The pattern can have wildcards represented by the '*' character, which can match any sequence of characters (including an empty sequence).",
+        "output": "function CountPatternOccurrences(text: string; pattern: string): integer;\nbegin\n  pattern := pattern.Replace('*', '.*');\n  var regex := new Regex(pattern);\n  var matches := regex.Matches(text);\n  Result := matches.Count;\nend;",
+        "id": "111"
+    },
+    {
+        "instruction": "Write a function to find the largest number in a binary tree.",
+        "output": "type\n  TreeNode = class\n    val: integer;\n    left, right: TreeNode;\n    constructor(v: integer; l: TreeNode := nil; r: TreeNode := nil);\n    begin\n      val := v;\n      left := l;\n      right := r;\n    end;\n  end;\n\nfunction LargestInTree(root: TreeNode): integer;\nbegin\n  if root = nil then\n  begin\n    Result := integer.MinValue;\n    exit;\n  end;\n  var maxValue := root.val;\n  var leftMax := LargestInTree(root.left);\n  var rightMax := LargestInTree(root.right);\n  if leftMax > maxValue then\n    maxValue := leftMax;\n  if rightMax > maxValue then\n    maxValue := rightMax;\n  Result := maxValue;\nend;",
+        "id": "112"
+    },
+    {
+        "instruction": "Write a function to find the maximum product of lengths of two words that do not share any common letters.",
+        "output": "function MaxWordProduct(words: array of string): integer;\nbegin\n  var sortedWords := words.OrderByDescending(w -> w.Length).ToArray();\n  var ans := 0;\n  for var i := 0 to sortedWords.Length - 1 do\n    for var j := i + 1 to sortedWords.Length - 1 do\n    begin\n      var set1 := new HashSet<char>(sortedWords[i]);\n      var set2 := new HashSet<char>(sortedWords[j]);\n      set1.IntersectWith(set2);\n      if set1.Count = 0 then\n        ans := Max(ans, sortedWords[i].Length * sortedWords[j].Length);\n    end;\n  Result := ans;\nend;",
+        "id": "113"
+    },
+    {
+        "instruction": "Write a function to find the smallest sub-array length with a sum at least as large as the given target value from the given array of positive integers.",
+        "output": "function SmallestSubArray(nums: array of integer; target: integer): integer;\nbegin\n  var n := nums.Length;\n  var minLen := n + 1;\n  var left := 0;\n  var currentSum := 0;\n\n  for var right := 0 to n - 1 do\n  begin\n    currentSum += nums[right];\n    while currentSum >= target do\n    begin\n      minLen := Min(minLen, right - left + 1);\n      currentSum -= nums[left];\n      left += 1;\n    end;\n  end;\n\n  Result := if minLen <= n then minLen else 0;\nend;",
+        "id": "114"
+    },
+    {
+        "instruction": "Write a python function to find the minimum difference between any item from one array and any item from another array.",
+        "output": "function MinDifference(arr1: array of integer; arr2: array of integer): integer;\nbegin\n  &Array.Sort(arr1);\n  &Array.Sort(arr2);\n  var i := 0;\n  var j := 0;\n  var minDiff := integer.MaxValue;\n  while (i < arr1.Length) and (j < arr2.Length) do\n  begin\n    minDiff := Min(minDiff, Abs(arr1[i] - arr2[j]));\n    if arr1[i] < arr2[j] then\n      i += 1\n    else\n      j += 1;\n  end;\n  Result := minDiff;\nend;",
+        "id": "115"
+    },
+    {
+        "instruction": "Write a python function to calculate the sum of all the elements in a given list of integers using a lambda function.",
+        "output": "function SumOfElements(inputList: array of integer): integer;\nbegin\n  Result := inputList.Sum();\nend;",
+        "id": "116"
+    },
+    {
+        "instruction": "Write a python function to find the largest and second largest numbers in a given list of integers.",
+        "output": "function FindLargestAndSecondLargest(arr: array of integer): (integer, integer);\nbegin\n  var uniqueArr := arr.Distinct().ToArray();\n  if uniqueArr.Length < 2 then\n    Result := (0, 0)\n  else\n  begin\n    &Array.Sort(uniqueArr);\n    Result := (uniqueArr[uniqueArr.Length - 1], uniqueArr[uniqueArr.Length - 2]);\n  end;\nend;",
+        "id": "117"
+    },
+    {
+        "instruction": "Write a Python function to find the maximum profit that can be obtained by buying and selling stocks given a list of daily prices. The function should return the maximum profit that can be achieved, assuming you can only make one transaction (i.e., buy one and sell one share of the stock), and you must buy before you sell.",
+        "output": "function CalculateMaxProfit(prices: array of integer): integer;\nbegin\n  if prices.Length = 0 then\n  begin\n    Result := 0;\n    exit;\n  end;\n  var minPrice := prices[0];\n  var maxProfit := 0;\n  foreach var price in prices do\n  begin\n    minPrice := Min(minPrice, price);\n    var profit := price - minPrice;\n    maxProfit := Max(maxProfit, profit);\n  end;\n  Result := maxProfit;\nend;",
+        "id": "118"
+    },
+    {
+        "instruction": "Write a python function to find the maximum number of points that can be made collinear from a given list of points.",
+        "output": "function MaxCollinearPoints(points: array of (real, real)): integer;\n\n  function CalcSlope(x1: real; x2: real; y1: real; y2: real): real;\n  begin\n    if x1 = x2 then\n      Result := real.PositiveInfinity\n    else\n      Result := (y2 - y1) / (x2 - x1);\n  end;\n\nbegin\n  var res := 1;\n  for var index1 := 0 to points.Length - 1 do\n  begin\n    var slopes := new Dictionary<real, integer>;\n    var maxPoints := 1;\n    var (x1, y1) := points[index1];\n    for var index2 := index1 + 1 to points.Length - 1 do\n    begin\n      var (x2, y2) := points[index2];\n      var slope := CalcSlope(x1, x2, y1, y2);\n      if slopes.ContainsKey(slope) then\n        slopes[slope] += 1\n      else\n        slopes[slope] := 1;\n      maxPoints := Max(maxPoints, 1 + slopes[slope]);\n    end;\n    res := Max(res, maxPoints);\n  end;\n  Result := res;\nend;",
+        "id": "119"
+    },
+    {
+        "instruction": "Write a function that converts a given number from base 10 to base 8 (octal) without using the built-in functions.",
+        "output": "function ConvertToOctal(num: integer): string;\nbegin\n  if num = 0 then\n  begin\n    Result := '0';\n    exit;\n  end;\n  var octal := '';\n  var tempNum := num;\n  while tempNum > 0 do\n  begin\n    octal := (tempNum mod 8).ToString() + octal;\n    tempNum := tempNum div 8;\n  end;\n  Result := octal;\nend;",
+        "id": "120"
+    },
+    {
+        "instruction": "Write a python function to find the highest product of three numbers from a list of integers.",
+        "output": "function HighestProduct(arr: array of integer): integer;\nbegin\n  if arr.Length < 3 then\n    raise new Exception('Input array must have at least 3 elements');\n  \n  &Array.Sort(arr);\n  var n := arr.Length;\n  Result := Max(arr[n-1] * arr[n-2] * arr[n-3], arr[0] * arr[1] * arr[n-1]);\nend;",
+        "id": "121"
+    },
+    {
+        "instruction": "Write a python function to find the sum of the cubes of the first n natural numbers.",
+        "output": "function CubeSum(n: integer): integer;\nbegin\n  var sum := 0;\n  for var i := 1 to n do\n    sum += i * i * i;\n  Result := sum;\nend;",
+        "id": "122"
+    },
+    {
+        "instruction": "Implement a function that takes an array of integers and returns the first pair of integers that add up to a given sum. If no such pair exists, return an empty array.",
+        "output": "function FindPair(arr: array of integer; target: integer): array of integer;\nbegin\n  var seen := new HashSet<integer>;\n  foreach var num in arr do\n  begin\n    var complement := target - num;\n    if seen.Contains(complement) then\n    begin\n      Result := [complement, num];\n      exit;\n    end;\n    seen.Add(num);\n  end;\n  Result := new integer[0];\nend;",
+        "id": "123"
+    },
+    {
+        "instruction": "Write a python function that converts a number into a list of its digits, plus the count of digits it contains. It also reverses the order of digits.",
+        "output": "function NumberToList(n: integer): (array of integer, integer);\nbegin\n  if n = 0 then\n  begin\n    Result := ([0], 1);\n    exit;\n  end;\n  var tempN := Abs(n);\n  var digits := new List<integer>;\n  while tempN > 0 do\n  begin\n    digits.Add(tempN mod 10);\n    tempN := tempN div 10;\n  end;\n  Result := (digits.ToArray(), digits.Count);\nend;",
+        "id": "124"
+    },
+    {
+        "instruction": "Write a python function to merge k sorted lists into a single sorted list. Each list is sorted in ascending order. The function should merge these lists and return the merged list which should also be in ascending order.",
+        "output": "function MergeKLists(arrays: array of array of integer): array of integer;\nbegin\n  var heap := new SortedSet<integer>;\n  foreach var arr in arrays do\n    foreach var i in arr do\n      heap.Add(i);\n  Result := heap.ToArray();\nend;",
+        "id": "125"
+    },
+    {
+        "instruction": "Write a python function to find the second largest element in an array of integers.",
+        "output": "function FindSecondLargest(arr: array of integer): integer;\nbegin\n  var uniqueArr := arr.Distinct().ToArray();\n  if uniqueArr.Length = 1 then\n    Result := uniqueArr[0]\n  else\n  begin\n    &Array.Sort(uniqueArr);\n    Result := uniqueArr[uniqueArr.Length - 2];\n  end;\nend;",
+        "id": "126"
+    },
+    {
+        "instruction": "Write a function to find the number of pairs in an array that have a given sum.",
+        "output": "function FindPairsWithSum(arr: array of integer; targetSum: integer): integer;\nbegin\n  var count := 0;\n  var numDict := new Dictionary<integer, integer>;\n  foreach var num in arr do\n  begin\n    if numDict.ContainsKey(targetSum - num) then\n      count += numDict[targetSum - num];\n    if numDict.ContainsKey(num) then\n      numDict[num] += 1\n    else\n      numDict[num] := 1;\n  end;\n  Result := count;\nend;",
+        "id": "127"
+    },
+    {
+        "instruction": "Write a function to find the first non-repeating character in a given string.",
+        "output": "function NonRepeating(s: string): char;\nbegin\n  var charCount := new Dictionary<char, integer>;\n  foreach var c in s do\n  begin\n    if charCount.ContainsKey(c) then\n      charCount[c] += 1\n    else\n      charCount[c] := 1;\n  end;\n  foreach var c in s do\n    if charCount[c] = 1 then\n    begin\n      Result := c;\n      exit;\n    end;\n  Result := #0;\nend;",
+        "id": "128"
+    },
+    {
+        "instruction": "Write a function to find the largest number in the list of integers using a heap data structure.",
+        "output": "function HeapMax(lst: array of integer): integer;\nbegin\n  var heap := new SortedSet<integer>(Comparer&<integer>.Create((x, y) -> y.CompareTo(x)));\n  foreach var i in lst do\n    heap.Add(i);\n  Result := heap.Max;\nend;",
+        "id": "129"
+    },
+    {
+        "instruction": "Write a python function to find out if a given string is a permutation of a palindrome.",
+        "output": "function IsPalindromePermutation(s: string): boolean;\nbegin\n  var cleaned := s.Replace(' ', '').ToLower();\n  var d := new Dictionary<char, integer>;\n  foreach var i in cleaned do\n  begin\n    if d.ContainsKey(i) then\n      d[i] += 1\n    else\n      d[i] := 1;\n  end;\n  var oddCount := 0;\n  foreach var (k, v) in d do\n  begin\n    if v mod 2 <> 0 then\n    begin\n      if oddCount = 0 then\n        oddCount += 1\n      else\n      begin\n        Result := False;\n        exit;\n      end;\n    end;\n  end;\n  Result := True;\nend;",
+        "id": "130"
+    },
+    {
+        "instruction": "Write a function to perform index wise addition of tuple elements in the given two tuples.",
+        "output": "function IndexAddition(testTup1: array of (integer, integer); testTup2: array of (integer, integer)): array of (integer, integer);\nbegin\n  var res := new List<(integer, integer)>;\n  for var i := 0 to Min(testTup1.Length, testTup2.Length) - 1 do\n  begin\n    var (a1, b1) := testTup1[i];\n    var (a2, b2) := testTup2[i];\n    res.Add((a1 + a2, b1 + b2));\n  end;\n  Result := res.ToArray();\nend;",
+        "id": "131"
+    },
+    {
+        "instruction": "Write a python function to find all possible combinations of numbers from given list which sums up to given target.",
+        "output": "function AllCombinationSum(candidates: array of integer; target: integer): array of array of integer;\n\n  procedure Dfs(i: integer; cur: List<integer>; total: integer; var res: List<array of integer>);\n  begin\n    if total = target then\n    begin\n      res.Add(cur.ToArray());\n      exit;\n    end;\n    if (i >= candidates.Length) or (total > target) then\n      exit;\n    cur.Add(candidates[i]);\n    Dfs(i, cur, total + candidates[i], res);\n    cur.RemoveAt(cur.Count - 1);\n    Dfs(i + 1, cur, total, res);\n  end;\n\nbegin\n  var res := new List<array of integer>;\n  Dfs(0, new List<integer>, 0, res);\n  Result := res.ToArray();\nend;",
+        "id": "132"
+    },
+    {
+        "instruction": "Write a function to check if a tic-tac-toe game has a winner. The function should return 1 if 'O' has won, 2 if 'X' has won, 0 if the game is a draw, and -1 if the game is still in progress.",
+        "output": "function CheckWinner(board: array of array of char): integer;\nbegin\n  var oCnt := 0;\n  var xCnt := 0;\n  var oFlag := False;\n  var xFlag := False;\n  \n  foreach var line in board do\n  begin\n    var oLine := line.CountOf('O');\n    var xLine := line.CountOf('X');\n    oCnt += oLine;\n    xCnt += xLine;\n    if oLine = 3 then\n      oFlag := True;\n    if xLine = 3 then\n      xFlag := True;\n  end;\n  \n  for var idx := 0 to 2 do\n  begin\n    if (board[0][idx] = 'O') and (board[1][idx] = 'O') and (board[2][idx] = 'O') then\n      oFlag := True\n    else if (board[0][idx] = 'X') and (board[1][idx] = 'X') and (board[2][idx] = 'X') then\n      xFlag := True;\n  end;\n  \n  if ((board[0][0] = 'O') and (board[1][1] = 'O') and (board[2][2] = 'O')) or\n     ((board[0][2] = 'O') and (board[1][1] = 'O') and (board[2][0] = 'O')) then\n    oFlag := True\n  else if ((board[0][0] = 'X') and (board[1][1] = 'X') and (board[2][2] = 'X')) or\n          ((board[0][2] = 'X') and (board[1][1] = 'X') and (board[2][0] = 'X')) then\n    xFlag := True;\n  \n  if oFlag and not xFlag then\n    Result := 1\n  else if xFlag and not oFlag then\n    Result := 2\n  else if oCnt + xCnt = 9 then\n    Result := 0\n  else\n    Result := -1;\nend;",
+        "id": "133"
+    },
+    {
+        "instruction": "Write a function that returns the last element of the longest palindrome subsequence in a given string.",
+        "output": "function LastElementOfLongestPalindrome(s: string): char;\nbegin\n  var n := s.Length;\n  var dp := new integer[n, n];\n  for var i := n - 1 downto 0 do\n  begin\n    dp[i, i] := 1;\n    for var j := i + 1 to n - 1 do\n    begin\n      if s[i + 1] = s[j + 1] then\n        dp[i, j] := dp[i + 1, j - 1] + 2\n      else\n        dp[i, j] := Max(dp[i + 1, j], dp[i, j - 1]);\n    end;\n  end;\n  var lastElement := s[1];\n  for var i := 0 to n - 1 do\n    for var j := 0 to n - 1 do\n      if dp[i, j] > dp[0, 0] - 1 then\n        lastElement := s[j + 1];\n  Result := lastElement;\nend;",
+        "id": "134"
+    },
+    {
+        "instruction": "Write a python function to find the maximum length of subarray with sum equals to the given value.",
+        "output": "function MaxLength(nums: array of integer; k: integer): integer;\nbegin\n  var maxLen := 0;\n  var sumMap := new Dictionary<integer, integer>;\n  sumMap[0] := -1;\n  var currentSum := 0;\n  for var i := 0 to nums.Length - 1 do\n  begin\n    currentSum += nums[i];\n    if not sumMap.ContainsKey(currentSum) then\n      sumMap[currentSum] := i;\n    if sumMap.ContainsKey(currentSum - k) then\n      maxLen := Max(maxLen, i - sumMap[currentSum - k]);\n  end;\n  Result := maxLen;\nend;",
+        "id": "135"
+    },
+    {
+        "instruction": "Write a function to convert infix expression to postfix expression.",
+        "output": "function InfixToPostfix(expression: string): string;\nbegin\n  var prec := new Dictionary<char, integer>;\n  prec['*'] := 3;\n  prec['/'] := 3;\n  prec['+'] := 2;\n  prec['-'] := 2;\n  prec['('] := 1;\n  \n  var opStack := new Stack<char>;\n  var postfixList := new List<string>;\n  var tokenList := expression.ToWords();\n\n  foreach var token in tokenList do\n  begin\n    if (token[1] in ['A'..'Z']) or (token[1] in ['0'..'9']) then\n      postfixList.Add(token)\n    else if token = '(' then\n      opStack.Push('(')\n    else if token = ')' then\n    begin\n      var topToken := opStack.Pop();\n      while topToken <> '(' do\n      begin\n        postfixList.Add(topToken.ToString());\n        topToken := opStack.Pop();\n      end;\n    end\n    else\n    begin\n      while (opStack.Count <> 0) and (prec[opStack.Peek()] >= prec[token[1]]) do\n        postfixList.Add(opStack.Pop().ToString());\n      opStack.Push(token[1]);\n    end;\n  end;\n\n  while opStack.Count <> 0 do\n    postfixList.Add(opStack.Pop().ToString());\n  \n  Result := string.Join(' ', postfixList);\nend;",
+        "id": "136"
+    },
+    {
+        "instruction": "Write a function to find the number of occurrences of each character in a string.",
+        "output": "function CharCount(s: string): Dictionary<char, integer>;\nbegin\n  var res := new Dictionary<char, integer>;\n  foreach var ch in s do\n  begin\n    if res.ContainsKey(ch) then\n      res[ch] += 1\n    else\n      res[ch] := 1;\n  end;\n  Result := res;\nend;",
+        "id": "137"
+    },
+    {
+        "instruction": "Write a function that calculates the cube root of a non-negative integer using binary search. The function should return the largest integer part of the cube root.",
+        "output": "function CubeRoot(x: integer): integer;\nbegin\n  if x < 2 then\n  begin\n    Result := x;\n    exit;\n  end;\n\n  var left := 0;\n  var right := x;\n  while left < right do\n  begin\n    var mid := (left + right) div 2;\n    if mid * mid * mid < x then\n      left := mid + 1\n    else\n      right := mid;\n  end;\n  Result := if left * left * left > x then left - 1 else left;\nend;",
+        "id": "138"
+    },
+    {
+        "instruction": "Write a python function that takes a string as input and returns a new string where each character's case is swapped. Lowercase characters become uppercase and uppercase characters become lowercase.",
+        "output": "function CaseSwap(inputString: string): string;\nbegin\n  var res := new StringBuilder;\n  foreach var ch in inputString do\n  begin\n    if ch.IsLower then\n      res.Append(ch.ToUpper)\n    else if ch.IsUpper then\n      res.Append(ch.ToLower)\n    else\n      res.Append(ch);\n  end;\n  Result := res.ToString;\nend;",
+        "id": "139"
+    },
+    {
+        "instruction": "Write a function to find the length of the last word in a given string.",
+        "output": "function LengthOfLastWord(s: string): integer;\nbegin\n  var length := s.Length;\n  if ' ' not in s then\n  begin\n    Result := length;\n    exit;\n  end;\n  for var i := length downto 1 do\n  begin\n    if s[i] <> ' ' then\n    begin\n      for var x := i downto 1 do\n      begin\n        if s[x] = ' ' then\n        begin\n          Result := i - x;\n          exit;\n        end;\n      end;\n      Result := i;\n      exit;\n    end;\n  end;\n  Result := 0;\nend;",
+        "id": "140"
+    },
+    {
+        "instruction": "Write a function that takes a string and returns a new string with the characters in reverse order. However, the function should not reverse the order of the words within the string.",
+        "output": "function ReverseCharOrder(text: string): string;\nbegin\n  var words := text.ToWords();\n  var reversedText := '';\n  foreach var word in words do\n  begin\n    var reversedWord := string.Create(word.Reverse().ToArray());\n    reversedText += reversedWord + ' ';\n  end;\n  Result := reversedText.Trim();\nend;",
+        "id": "141"
+    },
+    {
+        "instruction": "Write a python function to check if a given number is a Disarium number or not.\nA number is said to be a Disarium number if the sum of its digits raised to the power of their respective positions is equal to the number itself. For example, 135 is a Disarium number because 1^1 + 3^2 + 5^3 = 1 + 9 + 125 = 135.",
+        "output": "function IsDisarium(number: integer): boolean;\nbegin\n  var numStr := number.ToString();\n  var sum := 0;\n  for var i := 1 to numStr.Length do\n  begin\n    var digit := StrToInt(numStr[i]);\n    sum += Round(Power(digit, i));\n  end;\n  Result := sum = number;\nend;",
+        "id": "142"
+    },
+    {
+        "instruction": "Write a function that takes a positive integer and returns the count of digits from the right until a digit larger than the rightmost digit is encountered.",
+        "output": "function FindDigitCount(num: integer): integer;\nbegin\n  if num < 10 then\n  begin\n    Result := -1;\n    exit;\n  end;\n  var rightmost := num mod 10;\n  var count := 0;\n  num := num div 10;\n  while num > 0 do\n  begin\n    count += 1;\n    var currentDigit := num mod 10;\n    if currentDigit > rightmost then\n    begin\n      Result := count;\n      exit;\n    end;\n    num := num div 10;\n  end;\n  Result := -1;\nend;",
+        "id": "143"
+    },
+    {
+        "instruction": "Write a function that determines if a given string can be decoded into a valid sequence of letters using a standard phone keypad mapping. In the standard phone keypad, each digit maps to a set of letters as follows:\n- 2: ABC\n- 3: DEF\n- 4: GHI\n- 5: JKL\n- 6: MNO\n- 7: PQRS\n- 8: TUV\n- 9: WXYZ\nA string can be decoded if it can be split into a sequence of non-overlapping substrings, each of which can be mapped to a single letter using the phone keypad mapping. The function should return True if the string can be decoded, and False otherwise.",
+        "output": "function CanDecode(s: string): boolean;\nbegin\n  var keypad := new Dictionary<integer, integer>;\n  keypad[2] := 3;\n  keypad[3] := 3;\n  keypad[4] := 3;\n  keypad[5] := 3;\n  keypad[6] := 3;\n  keypad[7] := 4;\n  keypad[8] := 3;\n  keypad[9] := 4;\n  \n  var n := s.Length;\n  var dp := ArrFill(n + 1, False);\n  dp[0] := True;\n  \n  for var i := 1 to n do\n  begin\n    for var j := 1 to Min(4, i) do\n    begin\n      if (i - j >= 0) and dp[i - j] then\n      begin\n        var substr := s.Substring(i - j, j);\n        if substr.All(ch -> ch = substr[1]) and \n           (substr[1] in ['2'..'9']) and \n           (j <= keypad[StrToInt(substr[1])]) then\n        begin\n          dp[i] := True;\n          break;\n        end;\n      end;\n    end;\n  end;\n  \n  Result := dp[n];\nend;",
+        "id": "144"
+    },
+    {
+        "instruction": "Write a python function to find the minimum length of a subarray such that all the types of gems are present in that subarray. Gems are represented by strings.",
+        "output": "function FindMinLength(gems: array of string): integer;\nbegin\n  var gemTypes := new HashSet<string>(gems);\n  var gemCount := new Dictionary<string, integer>;\n  var start := 0;\n  var minLength := integer.MaxValue;\n  for var endIdx := 0 to gems.Length - 1 do\n  begin\n    if gemCount.ContainsKey(gems[endIdx]) then\n      gemCount[gems[endIdx]] += 1\n    else\n      gemCount[gems[endIdx]] := 1;\n    while gemCount.Count = gemTypes.Count do\n    begin\n      minLength := Min(minLength, endIdx - start + 1);\n      gemCount[gems[start]] -= 1;\n      if gemCount[gems[start]] = 0 then\n        gemCount.Remove(gems[start]);\n      start += 1;\n    end;\n  end;\n  Result := if minLength <> integer.MaxValue then minLength else 0;\nend;",
+        "id": "145"
+    },
+    {
+        "instruction": "Write a function that converts a number from a given base to base 10. The function should support bases up to 36 (i.e., 0-9 and A-Z as digits).",
+        "output": "function ConvertToDecimal(number: string; base: integer): integer;\nbegin\n  var digits := '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';\n  var answer := 0;\n  for var i := 1 to number.Length do\n  begin\n    var pos := number.Length - i;\n    var num := digits.IndexOf(number[i]);\n    answer += num * Round(Power(base, pos));\n  end;\n  Result := answer;\nend;",
+        "id": "146"
+    },
+    {
+        "instruction": "Write a function to find the smallest substring containing all unique characters from a given string.",
+        "output": "function FindSmallestUniqueSubstring(s: string): string;\nbegin\n  var uniqueChars := new HashSet<char>(s);\n  var types := uniqueChars.Count;\n  var length := s.Length;\n  var l := 1;\n  var r := 1;\n  var ansl := 1;\n  var ansr := length;\n  var current := new Dictionary<char, integer>;\n  current[s[1]] := 1;\n  \n  while (l < length) and (r < length) do\n  begin\n    if current.Count < types then\n    begin\n      r += 1;\n      if r > length then\n        break;\n      if current.ContainsKey(s[r]) then\n        current[s[r]] += 1\n      else\n        current[s[r]] := 1;\n    end\n    else\n    begin\n      if (r - l) < (ansr - ansl) then\n      begin\n        ansl := l;\n        ansr := r;\n      end;\n      current[s[l]] -= 1;\n      if current[s[l]] = 0 then\n        current.Remove(s[l]);\n      l += 1;\n    end;\n  end;\n  \n  Result := s.Substring(ansl, ansr - ansl + 1);\nend;",
+        "id": "147"
+    },
+    {
+        "instruction": "Write a function that takes a list of tuples, each tuple containing a person's name and their scores in three subjects, and returns a list of tuples containing the name and total score of each person.",
+        "output": "function CalculateScores(scores: array of (string, integer, integer, integer)): array of (string, integer);\nbegin\n  var totalScores := new List<(string, integer)>;\n  foreach var score in scores do\n  begin\n    var total := score[1] + score[2] + score[3];\n    totalScores.Add((score[0], total));\n  end;\n  Result := totalScores.ToArray();\nend;",
+        "id": "148"
+    },
+    {
+        "instruction": "Write a function to generate a list that contains the elements of the given list twice.",
+        "output": "function DuplicateList(nums: array of integer): array of integer;\nbegin\n  Result := nums + nums;\nend;",
+        "id": "149"
+    },
+    {
+        "instruction": "Write a python function to check if the given list of strings are anagrams or not.",
+        "output": "function AreAnagrams(strList: array of string): boolean;\nbegin\n  var sortedList := strList.Select(s -> string.Create(s.ToLower().OrderBy(ch -> ch).ToArray())).ToArray();\n  Result := sortedList.Distinct().Count() = 1;\nend;",
+        "id": "150"
+    },
+    {
+        "instruction": "Write a function to find the number of continuous subarrays whose sum equals to k.",
+        "output": "function FindContinuousSubarrays(nums: array of integer; k: integer): integer;\nbegin\n  var length := nums.Length;\n  var ans := 0;\n  var dic := new Dictionary<integer, integer>;\n  dic[0] := 1;\n\n  var currentSum := 0;\n  for var i := 0 to length - 1 do\n  begin\n    currentSum += nums[i];\n    var reminder := currentSum - k;\n    if dic.ContainsKey(reminder) then\n      ans += dic[reminder];\n\n    if dic.ContainsKey(currentSum) then\n      dic[currentSum] += 1\n    else\n      dic[currentSum] := 1;\n  end;\n  \n  Result := ans;\nend;",
+        "id": "151"
+    },
+    {
+        "instruction": "Write a python function to check if the given string is a valid parentheses string. A valid parentheses string is a string that starts and ends with parentheses and each parentheses is properly closed.",
+        "output": "function CheckValidParentheses(s: string): boolean;\nbegin\n  if s.Length mod 2 <> 0 then\n    Result := false\n  else\n  begin\n    var stack := new Stack<char>;\n    for var i := 1 to s.Length do\n    begin\n      var ch := s[i];\n      if ch = '(' then\n        stack.Push(ch)\n      else if ch = ')' then\n      begin\n        if stack.Count = 0 then\n        begin\n          Result := false;\n          exit;\n        end\n        else\n          stack.Pop;\n      end;\n    end;\n    Result := stack.Count = 0;\n  end;\nend;",
+        "id": "152"
+    },
+    {
+        "instruction": "Write a python function to find the second minimum number in a list.",
+        "output": "function SecondMin(nums: array of integer): integer;\nbegin\n  var uniqueList := new List<integer>;\n  for var i := 0 to nums.Length - 1 do\n  begin\n    if not uniqueList.Contains(nums[i]) then\n      uniqueList.Add(nums[i]);\n  end;\n  \n  if uniqueList.Count < 2 then\n    Result := -1\n  else\n  begin\n    uniqueList.Sort;\n    Result := uniqueList[1];\n  end;\nend;",
+        "id": "153"
+    },
+    {
+        "instruction": "Write a python function to find the number of unique words in a given string. A word is considered unique if it does not repeat in the string. Words are separated by spaces.",
+        "output": "function NumUniqueWords(s: string): integer;\nbegin\n  var words := s.ToWords;\n  var uniqueWords := new HashSet<string>(words);\n  var repeatWords := new HashSet<string>;\n  \n  for var i := 0 to words.Length - 1 do\n  begin\n    var count := 0;\n    for var j := 0 to words.Length - 1 do\n    begin\n      if words[i] = words[j] then\n        count += 1;\n    end;\n    if count > 1 then\n      repeatWords.Add(words[i]);\n  end;\n  \n  uniqueWords.ExceptWith(repeatWords);\n  Result := uniqueWords.Count;\nend;",
+        "id": "154"
+    },
+    {
+        "instruction": "Write a function in Python that checks if a given stack sequence is valid based on a set of operations. The operations include 'push' and 'pop' on a stack, and the function should return True if the sequence of operations is valid, and False otherwise. A stack sequence is valid if every 'pop' operation happens after a corresponding 'push' operation for the same element.",
+        "output": "function IsValidStackSequence(operations: array of string): boolean;\nbegin\n  var stack := new Stack<integer>;\n  for var i := 0 to operations.Length - 1 do\n  begin\n    if operations[i].StartsWith('push') then\n    begin\n      var elementStr := operations[i].Substring(5, operations[i].Length - 6);\n      var element := StrToInt(elementStr);\n      stack.Push(element);\n    end\n    else if operations[i].StartsWith('pop') then\n    begin\n      if stack.Count = 0 then\n      begin\n        Result := false;\n        exit;\n      end;\n      stack.Pop;\n    end;\n  end;\n  Result := stack.Count = 0;\nend;",
+        "id": "155"
+    },
+    {
+        "instruction": "Write a python function to count the number of ways to partition a positive integer n using positive integers up to m.",
+        "output": "function CountPartitions(n, m: integer): integer;\nbegin\n  if n = 0 then\n    Result := 1\n  else if (n < 0) or (m = 0) then\n    Result := 0\n  else\n    Result := CountPartitions(n - m, m) + CountPartitions(n, m - 1);\nend;",
+        "id": "156"
+    },
+    {
+        "instruction": "Write a function to find the largest product of two adjacent elements in a list of integers.",
+        "output": "function AdjProduct(nums: array of integer): integer;\nbegin\n  var maxProduct := nums[0] * nums[1];\n  for var i := 1 to nums.Length - 2 do\n  begin\n    maxProduct := Max(maxProduct, nums[i] * nums[i + 1]);\n  end;\n  Result := maxProduct;\nend;",
+        "id": "157"
+    },
+    {
+        "instruction": "Write a function that checks if a given string is a palindrome (reads the same backward as forward) using recursion.",
+        "output": "function IsPalindromeRecursive(s: string): boolean;\nbegin\n  if s.Length <= 1 then\n    Result := true\n  else if s[1] <> s[s.Length] then\n    Result := false\n  else\n    Result := IsPalindromeRecursive(s.Substring(2, s.Length - 2));\nend;",
+        "id": "158"
+    },
+    {
+        "instruction": "Write a function to find the maximum number of vowels in any substring of the given length.",
+        "output": "function MaxVowels(s: string; k: integer): integer;\nbegin\n  var vowels := HSet('a', 'e', 'i', 'o', 'u');\n  var currentVowels := 0;\n  \n  for var i := 1 to k do\n  begin\n    if vowels.Contains(s[i]) then\n      currentVowels += 1;\n  end;\n  \n  var maxVowels := currentVowels;\n  \n  for var i := k + 1 to s.Length do\n  begin\n    if vowels.Contains(s[i]) then\n      currentVowels += 1;\n    if vowels.Contains(s[i - k]) then\n      currentVowels -= 1;\n    maxVowels := Max(maxVowels, currentVowels);\n  end;\n  \n  Result := maxVowels;\nend;",
+        "id": "159"
+    },
+    {
+        "instruction": "Write a function that returns the index of the first occurrence of a substring within a string. If the substring is not found, return -1. Implement this function without using the built-in string methods like find() or index().",
+        "output": "function FindSubstring(haystack, needle: string): integer;\nbegin\n  if needle = '' then\n    Result := 0\n  else\n  begin\n    for var i := 1 to haystack.Length - needle.Length + 1 do\n    begin\n      var found := true;\n      for var j := 1 to needle.Length do\n      begin\n        if haystack[i + j - 1] <> needle[j] then\n        begin\n          found := false;\n          break;\n        end;\n      end;\n      if found then\n      begin\n        Result := i - 1;\n        exit;\n      end;\n    end;\n    Result := -1;\n  end;\nend;",
+        "id": "160"
+    },
+    {
+        "instruction": "Write a function that takes a list of integers and returns the maximum product that can be obtained by multiplying any three integers from the list.",
+        "output": "function MaxProductOfThree(nums: array of integer): integer;\nbegin\n  &Array.Sort(nums);\n  Result := Max(nums[0] * nums[1] * nums[nums.Length - 1], \n               nums[nums.Length - 1] * nums[nums.Length - 2] * nums[nums.Length - 3]);\nend;",
+        "id": "161"
+    },
+    {
+        "instruction": "Write a python function to find the number of ways to express n as a sum of 1, 3, and 4.",
+        "output": "function WaysToExpressNAsSum(n: integer): integer;\nbegin\n  if n = 0 then\n    Result := 1\n  else if n < 0 then\n    Result := 0\n  else\n    Result := WaysToExpressNAsSum(n - 1) + WaysToExpressNAsSum(n - 3) + WaysToExpressNAsSum(n - 4);\nend;\n\nfunction WaysToExpressNAsSumDP(n: integer): integer;\nbegin\n  var dp := new integer[n + 1];\n  dp[0] := 1;\n  for var i := 1 to n do\n  begin\n    if i - 1 >= 0 then\n      dp[i] += dp[i - 1];\n    if i - 3 >= 0 then\n      dp[i] += dp[i - 3];\n    if i - 4 >= 0 then\n      dp[i] += dp[i - 4];\n  end;\n  Result := dp[n];\nend;",
+        "id": "162"
+    },
+    {
+        "instruction": "Write a python function to find the maximum length of a subsequence of consecutive 1's in a binary array that can be obtained by flipping at most k 0's to 1's.",
+        "output": "function MaxOnesSubsequence(A: array of integer; k: integer): integer;\nbegin\n  var left := 0;\n  var zeros := 0;\n  var maxLength := 0;\n  \n  for var right := 0 to A.Length - 1 do\n  begin\n    if A[right] = 0 then\n      zeros += 1;\n    \n    while zeros > k do\n    begin\n      if A[left] = 0 then\n        zeros -= 1;\n      left += 1;\n    end;\n    \n    maxLength := Max(maxLength, right - left + 1);\n  end;\n  \n  Result := maxLength;\nend;",
+        "id": "163"
+    },
+    {
+        "instruction": "Write a function to find the median of two sorted arrays.",
+        "output": "function MedianArrays(nums1, nums2: array of integer): real;\nbegin\n  var combined := new List<integer>;\n  combined.AddRange(nums1);\n  combined.AddRange(nums2);\n  combined.Sort;\n  \n  var length := combined.Count;\n  if length mod 2 = 0 then\n    Result := (combined[length div 2 - 1] + combined[length div 2]) / 2\n  else\n    Result := combined[length div 2];\nend;",
+        "id": "164"
+    },
+    {
+        "instruction": "Write a function to convert a given decimal number to its equivalent in base 8 (octal).",
+        "output": "function DecToOct(num: integer): string;\nbegin\n  var isNeg := num < 0;\n  num := Abs(num);\n  var ans := '';\n  \n  if num = 0 then\n  begin\n    Result := '0';\n    exit;\n  end;\n  \n  while num > 0 do\n  begin\n    var remainder := num mod 8;\n    ans := remainder.ToString + ans;\n    num := num div 8;\n  end;\n  \n  if isNeg then\n    Result := '-' + ans\n  else\n    Result := ans;\nend;",
+        "id": "165"
+    },
+    {
+        "instruction": "Write a python function to find the largest power of 2 less than or equal to a given number.",
+        "output": "function LargestPowerOf2(n: integer): integer;\nbegin\n  var power := 1;\n  while power * 2 <= n do\n    power *= 2;\n  Result := power;\nend;",
+        "id": "166"
+    },
+    {
+        "instruction": "Write a function to find the number of times a number can be divided by 2 before it becomes odd.",
+        "output": "function DivideBy2(num: integer): integer;\nbegin\n  var count := 0;\n  while num mod 2 = 0 do\n  begin\n    num := num div 2;\n    count += 1;\n  end;\n  Result := count;\nend;",
+        "id": "167"
+    },
+    {
+        "instruction": "Write a python function to find the minimum absolute difference between the sum of two parts of an array after splitting it at any index.",
+        "output": "function MinDiffSplit(A: array of integer): integer;\nbegin\n  var first := A[0];\n  var second := 0;\n  for var i := 1 to A.Length - 1 do\n    second += A[i];\n  \n  var best := Abs(first - second);\n  var p := 2;\n  \n  while p < A.Length do\n  begin\n    first += A[p - 1];\n    second -= A[p - 1];\n    best := Min(best, Abs(first - second));\n    p += 1;\n  end;\n  \n  Result := best;\nend;",
+        "id": "168"
+    },
+    {
+        "instruction": "Write a python function to check if a number is a Harshad number. A Harshad number is an integer that is divisible by the sum of its digits.",
+        "output": "function CheckHarshadNumber(num: integer): boolean;\nbegin\n  if num <= 0 then\n    Result := false\n  else\n  begin\n    var sumOfDigits := 0;\n    var numStr := num.ToString;\n    for var i := 1 to numStr.Length do\n      sumOfDigits += StrToInt(numStr[i]);\n    \n    Result := num mod sumOfDigits = 0;\n  end;\nend;",
+        "id": "169"
+    },
+    {
+        "instruction": "Write a function to find the number of unique pairs in a sorted array that sum up to a given target value.",
+        "output": "function FindUniquePairs(nums: array of integer; target: integer): integer;\nbegin\n  var left := 0;\n  var right := nums.Length - 1;\n  var pairs := new HashSet<(integer, integer)>;\n  \n  while left < right do\n  begin\n    var currentSum := nums[left] + nums[right];\n    \n    if currentSum = target then\n    begin\n      pairs.Add((nums[left], nums[right]));\n      left += 1;\n      right -= 1;\n    end\n    else if currentSum < target then\n      left += 1\n    else\n      right -= 1;\n  end;\n  \n  Result := pairs.Count;\nend;",
+        "id": "170"
+    },
+    {
+        "instruction": "Write a function to find the maximum subarray sum from a given list of integers.\n\nThe function should take a list of integers as input and return the maximum sum of any contiguous subarray within the list.",
+        "output": "function MaxSubarraySum(nums: array of integer): integer;\nbegin\n  var maxSum := integer.MinValue;\n  var currSum := 0;\n  \n  for var i := 0 to nums.Length - 1 do\n  begin\n    currSum := Max(nums[i], currSum + nums[i]);\n    maxSum := Max(maxSum, currSum);\n  end;\n  \n  Result := maxSum;\nend;",
+        "id": "171"
+    },
+    {
+        "instruction": "Write a python function to find the largest prime factor from a list of numbers.",
+        "output": "function LargestPrimeFactor(numbers: array of integer): integer;\nbegin\n  var primeNumbers := new List<integer>;\n  for var i := 0 to numbers.Length - 1 do\n  begin\n    var num := numbers[i];\n    if num > 1 then\n    begin\n      var isPrime := true;\n      for var j := 2 to num - 1 do\n      begin\n        if num mod j = 0 then\n        begin\n          isPrime := false;\n          break;\n        end;\n      end;\n      if isPrime then\n        primeNumbers.Add(num);\n    end;\n  end;\n  \n  if primeNumbers.Count > 0 then\n    Result := primeNumbers.Max\n  else\n    Result := -1;\nend;",
+        "id": "172"
+    },
+    {
+        "instruction": "Write a function that takes a string and a number of rows as input and returns the string in a zigzag pattern. The zigzag pattern is formed by writing the string in a zigzag pattern across a number of rows, then reading the string row by row.",
+        "output": "function NumToSkip(rowNum, numRows: integer): (integer, integer);\nbegin\n  var down := (numRows - rowNum - 1) * 2 - 1;\n  var up := rowNum * 2 - 1;\n  Result := (up + 1, down + 1);\nend;\n\nfunction ZigzagConversion(s: string; numRows: integer): string;\nbegin\n  if numRows = 1 then\n  begin\n    Result := s;\n    exit;\n  end;\n  \n  var resultStr := '';\n  \n  for var firstLetterIndex := 0 to numRows - 1 do\n  begin\n    var (upSkip, downSkip) := NumToSkip(firstLetterIndex, numRows);\n    var goingDown := true;\n    var doNotAppend := false;\n    var cursor := firstLetterIndex;\n    \n    while cursor < s.Length do\n    begin\n      if not doNotAppend then\n        resultStr += s[cursor + 1];\n      doNotAppend := false;\n      \n      if goingDown then\n      begin\n        goingDown := false;\n        if downSkip <= 0 then\n        begin\n          doNotAppend := true;\n          continue;\n        end;\n        cursor += downSkip;\n      end\n      else\n      begin\n        goingDown := true;\n        if upSkip <= 0 then\n        begin\n          doNotAppend := true;\n          continue;\n        end;\n        cursor += upSkip;\n      end;\n    end;\n  end;\n  \n  Result := resultStr;\nend;",
+        "id": "173"
+    },
+    {
+        "instruction": "Write a python function to find the maximum and minimum elements in a given array using divide and conquer approach.",
+        "output": "function FindMaxMin(arr: array of integer): (integer, integer);\nbegin\n  if arr.Length = 1 then\n    Result := (arr[0], arr[0])\n  else if arr.Length = 2 then\n    Result := (Max(arr[0], arr[1]), Min(arr[0], arr[1]))\n  else\n  begin\n    var mid := arr.Length div 2;\n    var (leftMax, leftMin) := FindMaxMin(arr[:mid]);\n    var (rightMax, rightMin) := FindMaxMin(arr[mid:]);\n    Result := (Max(leftMax, rightMax), Min(leftMin, rightMin));\n  end;\nend;",
+        "id": "174"
+    },
+    {
+        "instruction": "Write a function to find the n-th pentagonal number.",
+        "output": "function FindPentNum(n: integer): integer;\nbegin\n  Result := n * (3 * n - 1) div 2;\nend;",
+        "id": "175"
+    },
+    {
+        "instruction": "Write a function that takes a list of numbers as input and returns the sum of all the numbers in the list that are not multiples of 3.",
+        "output": "function SumNotMultipleOfThree(numbers: array of integer): integer;\nbegin\n  var total := 0;\n  for var i := 0 to numbers.Length - 1 do\n  begin\n    if numbers[i] mod 3 <> 0 then\n      total += numbers[i];\n  end;\n  Result := total;\nend;",
+        "id": "176"
+    },
+    {
+        "instruction": "Create a python function to find the kth smallest divisor of a given number. If the kth smallest divisor does not exist, return -1.",
+        "output": "function KthSmallestDivisor(n, k: integer): integer;\nbegin\n  var factors := new List<integer>;\n  for var x := 1 to Trunc(Sqrt(n)) do\n  begin\n    if n mod x = 0 then\n    begin\n      k -= 1;\n      if k = 0 then\n      begin\n        Result := x;\n        exit;\n      end\n      else\n        factors.Add(x);\n    end;\n  end;\n  \n  if (factors.Count > 0) and (factors[factors.Count - 1] * factors[factors.Count - 1] = n) then\n    k += 1;\n  \n  var f := factors.Count;\n  if k <= f then\n    Result := n div factors[f - k]\n  else\n    Result := -1;\nend;",
+        "id": "177"
+    },
+    {
+        "instruction": "Write a python function to find the length of the longest subarray with a sum of zero.",
+        "output": "function LongestSubarraySumZero(arr: array of integer): integer;\nbegin\n  var maxLen := 0;\n  var sumMap := new Dictionary<integer, integer>;\n  var currSum := 0;\n  \n  for var i := 0 to arr.Length - 1 do\n  begin\n    currSum += arr[i];\n    \n    if (arr[i] = 0) and (maxLen = 0) then\n      maxLen := 1;\n    \n    if currSum = 0 then\n      maxLen := i + 1;\n    \n    if sumMap.ContainsKey(currSum) then\n      maxLen := Max(maxLen, i - sumMap[currSum])\n    else\n      sumMap[currSum] := i;\n  end;\n  \n  Result := maxLen;\nend;",
+        "id": "178"
+    },
+    {
+        "instruction": "Write a python function to find the smallest and second smallest elements in a list.",
+        "output": "function SmallestPair(lst: array of integer): (integer, integer);\nbegin\n  var sortedList := lst.ToArray;\n  &Array.Sort(sortedList);\n  Result := (sortedList[0], sortedList[1]);\nend;",
+        "id": "179"
+    },
+    {
+        "instruction": "Create a function that converts a given number to its base 8 representation as a string.",
+        "output": "function ConvertToBase8(num: integer): string;\nbegin\n  if num = 0 then\n  begin\n    Result := '0';\n    exit;\n  end;\n  \n  var res := '';\n  var tempNum := Abs(num);\n  \n  while tempNum <> 0 do\n  begin\n    var r := tempNum mod 8;\n    res := r.ToString + res;\n    tempNum := tempNum div 8;\n  end;\n  \n  if num < 0 then\n    Result := '-' + res\n  else\n    Result := res;\nend;",
+        "id": "180"
+    },
+    {
+        "instruction": "Write a function to find the number of buses required to reach a destination from a source given the bus routes. Each bus route is represented as a list of stops. The function should return the minimum number of buses required to reach the destination or -1 if it's not possible.",
+        "output": "function NumBusesToDestination(routes: array of array of integer; source, target: integer): integer;\nbegin\n  if source = target then\n  begin\n    Result := 0;\n    exit;\n  end;\n\n  var stopToRoutes := new Dictionary<integer, HashSet<integer>>;\n  for var i := 0 to routes.Length - 1 do\n  begin\n    for var j := 0 to routes[i].Length - 1 do\n    begin\n      var stop := routes[i][j];\n      if not stopToRoutes.ContainsKey(stop) then\n        stopToRoutes[stop] := new HashSet<integer>;\n      stopToRoutes[stop].Add(i);\n    end;\n  end;\n\n  var queue := new Queue<(integer, integer)>;\n  queue.Enqueue((source, 0));\n  var visitedStops := new HashSet<integer>;\n  visitedStops.Add(source);\n  var visitedRoutes := new HashSet<integer>;\n\n  while queue.Count > 0 do\n  begin\n    var (currStop, buses) := queue.Dequeue;\n    \n    if stopToRoutes.ContainsKey(currStop) then\n    begin\n      foreach var route in stopToRoutes[currStop] do\n      begin\n        if visitedRoutes.Contains(route) then\n          continue;\n        \n        visitedRoutes.Add(route);\n        \n        for var k := 0 to routes[route].Length - 1 do\n        begin\n          var stop := routes[route][k];\n          if stop = target then\n          begin\n            Result := buses + 1;\n            exit;\n          end;\n          \n          if not visitedStops.Contains(stop) then\n          begin\n            visitedStops.Add(stop);\n            queue.Enqueue((stop, buses + 1));\n          end;\n        end;\n      end;\n    end;\n  end;\n  \n  Result := -1;\nend;",
+        "id": "181"
+    },
+    {
+        "instruction": "Write a function to generate the nth Gray Code.\n\nThe gray code is a binary numeral system where two successive values differ in only one bit.\n\nAs a sequence, the gray code for a given number of bits begins at \"0\" and proceeds through the sequence of integers to \"2^n - 1\", where n is the number of bits.\n\nFor example, the gray code for 2-bit numbers is [\"00\", \"01\", \"11\", \"10\"].",
+        "output": "function GenerateGrayCode(n: integer): array of string;\nbegin\n  var res := new List<string>;\n  for var i := 0 to (1 shl n) - 1 do\n  begin\n    var gray := i xor (i shr 1);\n    var binaryStr := '';\n    \n    for var bit := n - 1 downto 0 do\n    begin\n      if (gray and (1 shl bit)) <> 0 then\n        binaryStr += '1'\n      else\n        binaryStr += '0';\n    end;\n    \n    res.Add(binaryStr);\n  end;\n  \n  Result := res.ToArray;\nend;",
+        "id": "182"
+    },
+    {
+        "instruction": "Write a function to generate all possible combinations of a given list with a specific length.",
+        "output": "procedure GenerateCombinations(start: integer; current: List<integer>; length: integer; myList: array of integer; res: List<array of integer>);\nbegin\n  if current.Count = length then\n  begin\n    res.Add(current.ToArray);\n    exit;\n  end;\n  \n  for var i := start to myList.Length - 1 do\n  begin\n    current.Add(myList[i]);\n    GenerateCombinations(i + 1, current, length, myList, res);\n    current.RemoveAt(current.Count - 1);\n  end;\nend;\n\nfunction CombinationsList(myList: array of integer; length: integer): array of array of integer;\nbegin\n  var res := new List<array of integer>;\n  GenerateCombinations(0, new List<integer>, length, myList, res);\n  Result := res.ToArray;\nend;",
+        "id": "183"
+    },
+    {
+        "instruction": "Write a function to find the repeated elements in a given list and return them as a list.",
+        "output": "function FindRepeatedElements(lst: array of integer): array of integer;\nbegin\n  var elementCount := new Dictionary<integer, integer>;\n  var repeatedElements := new List<integer>;\n  \n  for var i := 0 to lst.Length - 1 do\n  begin\n    var element := lst[i];\n    if elementCount.ContainsKey(element) then\n      elementCount[element] += 1\n    else\n      elementCount[element] := 1;\n  end;\n  \n  foreach var pair in elementCount do\n  begin\n    if pair.Value > 1 then\n      repeatedElements.Add(pair.Key);\n  end;\n  \n  Result := repeatedElements.ToArray;\nend;",
+        "id": "184"
+    },
+    {
+        "instruction": "Write a python function to find the length of the longest subsequence that is strictly increasing in a given list of integers.",
+        "output": "function FindLongestIncreasingSubsequence(nums: array of integer): integer;\nbegin\n  if nums.Length = 0 then\n  begin\n    Result := 0;\n    exit;\n  end;\n  \n  var dp := new integer[nums.Length];\n  for var i := 0 to nums.Length - 1 do\n    dp[i] := 1;\n  \n  for var i := 1 to nums.Length - 1 do\n  begin\n    var maxLength := 0;\n    for var j := 0 to i - 1 do\n    begin\n      if nums[i] > nums[j] then\n        maxLength := Max(maxLength, dp[j]);\n    end;\n    dp[i] := maxLength + 1;\n  end;\n  \n  Result := dp.Max;\nend;",
+        "id": "185"
+    },
+    {
+        "instruction": "Write a function that takes in a string and returns all possible partitions of the string where each partition is a palindrome. A palindrome is a string that reads the same backward as forward.",
+        "output": "function IsPal(str: string): boolean;\nbegin\n  var left := 1;\n  var right := str.Length;\n  while left < right do\n  begin\n    if str[left] <> str[right] then\n    begin\n      Result := false;\n      exit;\n    end;\n    left += 1;\n    right -= 1;\n  end;\n  Result := true;\nend;\n\nprocedure Dfs(remaining: string; path: List<string>; res: List<array of string>);\nbegin\n  if remaining = '' then\n  begin\n    res.Add(path.ToArray);\n    exit;\n  end;\n  \n  for var i := 1 to remaining.Length do\n  begin\n    var substr := remaining.Substring(1, i);\n    if IsPal(substr) then\n    begin\n      var newPath := new List<string>(path);\n      newPath.Add(substr);\n      Dfs(remaining.Substring(i + 1), newPath, res);\n    end;\n  end;\nend;\n\nfunction PalindromePartitions(s: string): array of array of string;\nbegin\n  var res := new List<array of string>;\n  Dfs(s, new List<string>, res);\n  Result := res.ToArray;\nend;",
+        "id": "186"
+    },
+    {
+        "instruction": "Write a python function to check if a given string is a valid HTML tag or not. A valid HTML tag starts with '<', followed by a valid tag name, and ends with '>'. The tag name must consist of only lowercase letters, digits, and one or more of the following characters: '-', '_'. The tag name must start with a letter.",
+        "output": "function IsValidHtmlTag(tag: string): boolean;\nbegin\n  if (tag.Length < 3) or (tag[1] <> '<') or (tag[tag.Length] <> '>') then\n  begin\n    Result := false;\n    exit;\n  end;\n  \n  var tagName := tag.Substring(2, tag.Length - 2);\n  \n  if tagName.Length = 0 then\n  begin\n    Result := false;\n    exit;\n  end;\n  \n  if not (tagName[1] in ['a'..'z']) then\n  begin\n    Result := false;\n    exit;\n  end;\n  \n  for var i := 2 to tagName.Length do\n  begin\n    var ch := tagName[i];\n    if not (ch in ['a'..'z']) and not (ch in ['0'..'9']) and (ch <> '-') and (ch <> '_') then\n    begin\n      Result := false;\n      exit;\n    end;\n  end;\n  \n  Result := true;\nend;",
+        "id": "187"
+    },
+    {
+        "instruction": "Write a python function to find the majority element in a given array. The majority element is the element that appears more than len(arr)/2 times.",
+        "output": "function FindMajority(arr: array of integer): integer;\nbegin\n  var count := 0;\n  var candidate := 0;\n  \n  for var i := 0 to arr.Length - 1 do\n  begin\n    if count = 0 then\n      candidate := arr[i];\n    \n    if arr[i] = candidate then\n      count += 1\n    else\n      count -= 1;\n  end;\n  \n  Result := candidate;\nend;",
+        "id": "188"
+    },
+    {
+        "instruction": "Write a function to find the minimum number of elements that should be removed from the array to make it a palindrome.",
+        "output": "function MinRemovalsForPalindrome(arr: array of integer): integer;\nbegin\n  var left := 0;\n  var right := arr.Length - 1;\n  var removals := 0;\n  \n  while left < right do\n  begin\n    if arr[left] <> arr[right] then\n      removals += 1;\n    left += 1;\n    right -= 1;\n  end;\n  \n  Result := removals;\nend;",
+        "id": "189"
+    },
+    {
+        "instruction": "Write a python function to find the word with the most vowels in it from a list of words. If there are multiple words with the same number of vowels, return the first one.",
+        "output": "function FindMaxVowelWord(words: array of string): string;\nbegin\n  var vowels := HSet('a', 'e', 'i', 'o', 'u');\n  var maxVowels := 0;\n  var maxWord := '';\n  \n  for var i := 0 to words.Length - 1 do\n  begin\n    var count := 0;\n    for var j := 1 to words[i].Length do\n    begin\n      if vowels.Contains(words[i][j]) then\n        count += 1;\n    end;\n    \n    if count > maxVowels then\n    begin\n      maxVowels := count;\n      maxWord := words[i];\n    end;\n  end;\n  \n  Result := maxWord;\nend;",
+        "id": "190"
+    },
+    {
+        "instruction": "Write a function to find the most occurring character in a string.",
+        "output": "function MostOccurringCharacter(str: string): char;\nbegin\n  var count := new Dictionary<char, integer>;\n  \n  for var i := 1 to str.Length do\n  begin\n    var ch := str[i];\n    if count.ContainsKey(ch) then\n      count[ch] += 1\n    else\n      count[ch] := 1;\n  end;\n  \n  var maxChar := ' ';\n  var maxCount := 0;\n  \n  foreach var pair in count do\n  begin\n    if pair.Value > maxCount then\n    begin\n      maxCount := pair.Value;\n      maxChar := pair.Key;\n    end;\n  end;\n  \n  Result := maxChar;\nend;",
+        "id": "191"
+    },
+    {
+        "instruction": "Write a function to remove all occurrences of a specified value from a list and return the modified list. The function should modify the list in place and return the new length of the list after removal. Do not use extra space for another list; you must do this by only modifying the input list in-place with O(1) extra memory.",
+        "output": "function RemoveElements(var nums: array of integer; val: integer): integer;\nbegin\n  var i := 0;\n  var j := 0;\n  \n  while j < nums.Length do\n  begin\n    if nums[j] <> val then\n    begin\n      nums[i] := nums[j];\n      i += 1;\n    end;\n    j += 1;\n  end;\n  \n  Result := i;\nend;",
+        "id": "192"
+    },
+    {
+        "instruction": "Write a function to find the greatest common divisor (GCD) of two positive integers using the Euclidean algorithm.",
+        "output": "function GCD(a, b: integer): integer;\nbegin\n  while b <> 0 do\n  begin\n    var temp := b;\n    b := a mod b;\n    a := temp;\n  end;\n  Result := a;\nend;",
+        "id": "193"
+    },
+    {
+        "instruction": "Write a function that returns the total number of substrings of a given string where each substring consists of the same character.",
+        "output": "function CountEqualCharSubstrings(s: string): integer;\nbegin\n  var total := 0;\n  var count := 1;\n  \n  for var i := 2 to s.Length do\n  begin\n    if s[i] = s[i - 1] then\n      count += 1\n    else\n    begin\n      total += (count * (count + 1)) div 2;\n      count := 1;\n    end;\n  end;\n  \n  total += (count * (count + 1)) div 2;\n  Result := total;\nend;",
+        "id": "194"
+    },
+    {
+        "instruction": "Write a function to return the largest number possible from a list of integers, ignoring any negative numbers.",
+        "output": "function MaxNonNegative(numbers: array of integer): integer;\nbegin\n  var maxNum := -1;\n  \n  for var i := 0 to numbers.Length - 1 do\n  begin\n    if (numbers[i] >= 0) and (numbers[i] > maxNum) then\n      maxNum := numbers[i];\n  end;\n  \n  if maxNum = -1 then\n    Result := 0\n  else\n    Result := maxNum;\nend;",
+        "id": "195"
+    },
+    {
+        "instruction": "Write a python function to find the maximum number of points that can be covered by a circle of given radius. The points are represented as a list of tuples, where each tuple contains the x and y coordinates of a point. The function should return the maximum number of points that can be covered by a circle of the given radius.",
+        "output": "function GetMid(a, b: (real, real); r: real): ((real, real), (real, real));\nbegin\n  var (ax, ay) := a;\n  var (bx, by) := b;\n  var lx := bx - ax;\n  var ly := by - ay;\n  var lxy := Sqrt(lx * lx + ly * ly);\n  var r2 := r * r;\n  \n  if (lxy / 2) * (lxy / 2) > r2 then\n    Result := ((0.0, 0.0), (0.0, 0.0))\n  else\n  begin\n    var l := Sqrt(r2 - (lxy / 2) * (lxy / 2));\n    var yy := l * lx / lxy;\n    var xx := l * ly / lxy;\n    var mx := (ax + bx) / 2;\n    var my := (ay + by) / 2;\n    Result := ((mx + xx, my - yy), (mx - xx, my + yy));\n  end;\nend;\n\nfunction IsIn(rx, ry, x, y, r: real): boolean;\nbegin\n  var r2 := r * r;\n  Result := (rx - x) * (rx - x) + (ry - y) * (ry - y) <= r2 + 0.01;\nend;\n\nfunction CountIn(rx, ry: real; points: array of (real, real); r: real): integer;\nbegin\n  var cnt := 0;\n  for var i := 0 to points.Length - 1 do\n  begin\n    var (x, y) := points[i];\n    if IsIn(rx, ry, x, y, r) then\n      cnt += 1;\n  end;\n  Result := cnt;\nend;\n\nfunction MaxPointsCovered(points: array of (real, real); r: real): integer;\nbegin\n  var maxRes := 1;\n  var mapT := new HashSet<(real, real)>;\n\n  for var ii := 0 to points.Length - 1 do\n  begin\n    for var jj := ii + 1 to points.Length - 1 do\n    begin\n      var (c1, c2) := GetMid(points[ii], points[jj], r);\n      var (rx1, ry1) := c1;\n      var (rx2, ry2) := c2;\n      \n      if rx1 = 0.0 then\n        continue;\n        \n      var cnt1 := 0;\n      if not mapT.Contains((rx1, ry1)) then\n        cnt1 := CountIn(rx1, ry1, points, r);\n        \n      var cnt2 := 0;\n      if not mapT.Contains((rx2, ry2)) then\n        cnt2 := CountIn(rx2, ry2, points, r);\n        \n      mapT.Add((rx1, ry1));\n      mapT.Add((rx2, ry2));\n      maxRes := Max(maxRes, Max(cnt1, cnt2));\n    end;\n  end;\n  \n  Result := maxRes;\nend;",
+        "id": "196"
+    },
+    {
+        "instruction": "Write a python function to find the sum of all divisors of a number excluding the number itself.",
+        "output": "function GetSumOfDivisors(n: integer): integer;\nbegin\n  var res := 0;\n  var i := 1;\n  \n  while i <= n div 2 do\n  begin\n    if n mod i = 0 then\n      res += i;\n    i += 1;\n  end;\n  \n  Result := res;\nend;",
+        "id": "197"
+    },
+    {
+        "instruction": "Write a function that finds the length of the longest subarray with a sum less than or equal to a given value 'k'. If no such subarray exists, return 0.",
+        "output": "function LongestSubarraySum(arr: array of integer; k: integer): integer;\nbegin\n  var maxLen := 0;\n  var currentSum := 0;\n  var left := 0;\n\n  for var right := 0 to arr.Length - 1 do\n  begin\n    currentSum += arr[right];\n\n    while (currentSum > k) and (left <= right) do\n    begin\n      currentSum -= arr[left];\n      left += 1;\n    end;\n\n    maxLen := Max(maxLen, right - left + 1);\n  end;\n\n  Result := maxLen;\nend;",
+        "id": "198"
+    },
+    {
+        "instruction": "Write a function to calculate the total number of leaf nodes in a binary tree.",
+        "output": "type\n  TreeNode = class\n    val: integer;\n    left, right: TreeNode;\n    \n    constructor Create(v: integer; l, r: TreeNode);\n    begin\n      val := v;\n      left := l;\n      right := r;\n    end;\n  end;\n\nfunction CountLeafNodes(root: TreeNode): integer;\nbegin\n  if root = nil then\n  begin\n    Result := 0;\n    exit;\n  end;\n\n  var queue := new Queue<TreeNode>;\n  queue.Enqueue(root);\n  var leafCount := 0;\n\n  while queue.Count > 0 do\n  begin\n    var node := queue.Dequeue;\n    if (node.left = nil) and (node.right = nil) then\n      leafCount += 1;\n    \n    if node.left <> nil then\n      queue.Enqueue(node.left);\n    \n    if node.right <> nil then\n      queue.Enqueue(node.right);\n  end;\n\n  Result := leafCount;\nend;",
+        "id": "199"
+    },
+    {
+        "instruction": "Write a function to calculate the sum of the first n Fibonacci numbers.",
+        "output": "function SumFibonacci(n: integer): integer;\nbegin\n  if n <= 0 then\n  begin\n    Result := 0;\n    exit;\n  end;\n  \n  var fib := new List<integer>;\n  fib.Add(0);\n  fib.Add(1);\n  \n  for var i := 2 to n - 1 do\n    fib.Add(fib[fib.Count - 1] + fib[fib.Count - 2]);\n  \n  Result := fib.Sum;\nend;",
+        "id": "200"
+    },
+    {
+        "instruction": "Write a python function to find the number of unique binary search trees that can be created with 'n' distinct nodes.\n\nThe binary search tree property: for any node, all elements on its left subtree are less than the node, and all elements on its right subtree are greater than the node.",
+        "output": "function UniqueBinarySearchTrees(n: integer): integer;\nbegin\n  var catalan := new integer[n + 1];\n  for var i := 0 to n do\n    catalan[i] := 0;\n  \n  catalan[0] := 1;\n  catalan[1] := 1;\n  \n  for var i := 2 to n do\n  begin\n    for var j := 0 to i - 1 do\n    begin\n      catalan[i] += catalan[j] * catalan[i - j - 1];\n    end;\n  end;\n  \n  Result := catalan[n];\nend;",
+        "id": "201"
+    },
+    {
+        "instruction": "Write a python function that takes a list of integers as input and returns the sum of all numbers that are divisible by 3.",
+        "output": "function SumDivisibleBy3(numbers: array of integer): integer;\nbegin\n  var total := 0;\n  for var i := 0 to numbers.Length - 1 do\n  begin\n    if numbers[i] mod 3 = 0 then\n      total += numbers[i];\n  end;\n  Result := total;\nend;",
+        "id": "202"
+    },
+    {
+        "instruction": "Write a function to calculate the total cost of gas for a journey based on the distance of the journey and the price of gas per liter. Assume the car's average consumption is 10 kilometers per liter.",
+        "output": "function GasCost(distance, gasPrice: real): real;\nbegin\n  var liters := distance / 10;\n  var totalCost := liters * gasPrice;\n  Result := totalCost;\nend;",
+        "id": "203"
+    },
+    {
+        "instruction": "Write a python function to find the sum of the series 1^3 + 2^3 + 3^3 + ... + n^3.",
+        "output": "function SumOfCubes(n: integer): integer;\nbegin\n  var sum := 0;\n  for var i := 1 to n do\n  begin\n    sum += i * i * i;\n  end;\n  Result := sum;\nend;",
+        "id": "204"
+    },
+    {
+        "instruction": "Create a function that takes a list of strings (representing a list of tweets) and a number k. The function should return a list of tweet authors who have had at least k tweets. If no author has reached this threshold, an empty list should be returned.",
+        "output": "function AuthorsWithKTweets(tweets: array of string; k: integer): array of string;\nbegin\n  if tweets.Length = 0 then\n  begin\n    Result := new string[0];\n    exit;\n  end;\n  \n  var authors := new List<string>;\n  for var i := 0 to tweets.Length - 1 do\n  begin\n    var parts := tweets[i].ToWords;\n    if parts.Length > 0 then\n      authors.Add(parts[parts.Length - 1]);\n  end;\n  \n  var authorCounts := new Dictionary<string, integer>;\n  for var i := 0 to authors.Count - 1 do\n  begin\n    var author := authors[i];\n    if authorCounts.ContainsKey(author) then\n      authorCounts[author] += 1\n    else\n      authorCounts[author] := 1;\n  end;\n  \n  var authorsWithKTweets := new List<string>;\n  foreach var pair in authorCounts do\n  begin\n    if pair.Value >= k then\n      authorsWithKTweets.Add(pair.Key);\n  end;\n  \n  Result := authorsWithKTweets.ToArray;\nend;",
+        "id": "205"
+    },
+    {
+        "instruction": "Write a function to find the number of zeros at the end of a factorial of a given number.",
+        "output": "function ZerosInFactorial(n: integer): integer;\nbegin\n  if n = 0 then\n  begin\n    Result := 0;\n    exit;\n  end;\n  \n  var count := 0;\n  var i := 5;\n  \n  while n div i >= 1 do\n  begin\n    count += n div i;\n    i *= 5;\n  end;\n  \n  Result := count;\nend;",
+        "id": "206"
+    },
+    {
+        "instruction": "Write a python function to find the number of ways to tile a 2xn rectangle with 2x1 tiles.",
+        "output": "function TileWays(n: integer): integer;\nbegin\n  if (n = 0) or (n = 1) then\n  begin\n    Result := n;\n    exit;\n  end;\n  \n  var a := 1;\n  var b := 2;\n  \n  for var i := 2 to n - 1 do\n  begin\n    var temp := b;\n    b := a + b;\n    a := temp;\n  end;\n  \n  Result := b;\nend;",
+        "id": "207"
+    },
+    {
+        "instruction": "Write a python function that takes in a string and returns the last non-repeating character in it. If it doesn't exist, return None.",
+        "output": "function LastNonRepeating(s: string): char;\nbegin\n  var count := new Dictionary<char, integer>;\n  \n  for var i := 1 to s.Length do\n  begin\n    var ch := s[i];\n    if count.ContainsKey(ch) then\n      count[ch] += 1\n    else\n      count[ch] := 1;\n  end;\n  \n  for var i := s.Length downto 1 do\n  begin\n    if count[s[i]] = 1 then\n    begin\n      Result := s[i];\n      exit;\n    end;\n  end;\n  \n  Result := #0;\nend;",
+        "id": "208"
+    },
+    {
+        "instruction": "Write a Python function that takes a list of integers and returns True if all the integers in the list are below a certain threshold, and False otherwise.",
+        "output": "function BelowThreshold(numbers: array of integer; threshold: integer): boolean;\nbegin\n  for var i := 0 to numbers.Length - 1 do\n  begin\n    if numbers[i] >= threshold then\n    begin\n      Result := false;\n      exit;\n    end;\n  end;\n  Result := true;\nend;",
+        "id": "209"
+    },
+    {
+        "instruction": "Write a Python function that takes a list of integers as input and returns a dictionary where the keys are the integers from the input list and the values are their corresponding squares.",
+        "output": "function SquareDict(nums: array of integer): Dictionary<integer, integer>;\nbegin\n  var res := new Dictionary<integer, integer>;\n  for var i := 0 to nums.Length - 1 do\n  begin\n    res[nums[i]] := nums[i] * nums[i];\n  end;\n  Result := res;\nend;",
+        "id": "210"
+    },
+    {
+        "instruction": "Write a Python function that takes a list of strings (representing names) and returns a dictionary where the keys are the first letters of the names and the values are lists of names that start with that letter.",
+        "output": "function CategorizeByInitial(names: array of string): Dictionary<char, List<string>>;\nbegin\n  var categorizedNames := new Dictionary<char, List<string>>;\n  \n  for var i := 0 to names.Length - 1 do\n  begin\n    var name := names[i];\n    if name.Length > 0 then\n    begin\n      var initial := name[1];\n      if categorizedNames.ContainsKey(initial) then\n        categorizedNames[initial].Add(name)\n      else\n      begin\n        var newList := new List<string>;\n        newList.Add(name);\n        categorizedNames[initial] := newList;\n      end;\n    end;\n  end;\n  \n  Result := categorizedNames;\nend;",
+        "id": "211"
+    },
+    {
+        "instruction": "Write a function that finds the sum of the largest contiguous subarray within a given array of integers.",
+        "output": "function LargestSum(nums: array of integer): integer;\nbegin\n  if nums.Length = 0 then\n  begin\n    Result := 0;\n    exit;\n  end;\n\n  var currentSum := nums[0];\n  var maxSum := nums[0];\n  \n  for var i := 1 to nums.Length - 1 do\n  begin\n    currentSum := Max(nums[i], currentSum + nums[i]);\n    maxSum := Max(maxSum, currentSum);\n  end;\n  \n  Result := maxSum;\nend;",
+        "id": "212"
+    },
+    {
+        "instruction": "Write a function to count the number of distinct numbers in a given list of integers.",
+        "output": "function CountDistinctNumbers(numbers: array of integer): integer;\nbegin\n  var uniqueSet := new HashSet<integer>;\n  for var i := 0 to numbers.Length - 1 do\n  begin\n    uniqueSet.Add(numbers[i]);\n  end;\n  Result := uniqueSet.Count;\nend;",
+        "id": "213"
+    },
+    {
+        "instruction": "Write a function that takes a list of strings and returns a list of strings with the duplicates removed, but instead of removing the duplicates, replace the duplicates with a custom string.",
+        "output": "function ReplaceDuplicates(lst: array of string): array of string;\nbegin\n  var seen := new HashSet<string>;\n  var res := new List<string>;\n  \n  for var i := 0 to lst.Length - 1 do\n  begin\n    if seen.Contains(lst[i]) then\n      res.Add('DUPLICATE')\n    else\n    begin\n      seen.Add(lst[i]);\n      res.Add(lst[i]);\n    end;\n  end;\n  \n  Result := res.ToArray;\nend;",
+        "id": "214"
+    },
+    {
+        "instruction": "Write a function `group_by_owners` that takes a list of tuples containing file names and their owners, and returns a dictionary where keys are the owners and values are lists of files owned by that person.",
+        "output": "function GroupByOwners(files: array of (string, string)): Dictionary<string, List<string>>;\nbegin\n  var res := new Dictionary<string, List<string>>;\n  \n  for var i := 0 to files.Length - 1 do\n  begin\n    var (fileName, owner) := files[i];\n    if res.ContainsKey(owner) then\n      res[owner].Add(fileName)\n    else\n    begin\n      var newList := new List<string>;\n      newList.Add(fileName);\n      res[owner] := newList;\n    end;\n  end;\n  \n  Result := res;\nend;",
+        "id": "215"
+    },
+    {
+        "instruction": "Write a function to calculate the area of a triangle given its base and height.",
+        "output": "function CalculateTriangleArea(base, height: real): real;\nbegin\n  Result := 0.5 * base * height;\nend;",
+        "id": "216"
+    },
+    {
+        "instruction": "Write a python function to find the number of ways to reach the last cell of a grid from the first cell, given that you can only move right or down.",
+        "output": "function NumWaysToReachLastCell(m, n: integer): integer;\nbegin\n  if (m = 1) or (n = 1) then\n  begin\n    Result := 1;\n    exit;\n  end;\n  \n  var dp := new integer[m, n];\n  \n  for var i := 0 to m - 1 do\n    dp[i, 0] := 1;\n  \n  for var j := 0 to n - 1 do\n    dp[0, j] := 1;\n  \n  for var i := 1 to m - 1 do\n  begin\n    for var j := 1 to n - 1 do\n    begin\n      dp[i, j] := dp[i - 1, j] + dp[i, j - 1];\n    end;\n  end;\n  \n  Result := dp[m - 1, n - 1];\nend;",
+        "id": "217"
+    },
+    {
+        "instruction": "Write a function to find the intersection of two lists using set and lambda function.",
+        "output": "function IntersectList(list1, list2: array of integer): array of integer;\nbegin\n  var set1 := new HashSet<integer>(list1);\n  var set2 := new HashSet<integer>(list2);\n  set1.IntersectWith(set2);\n  Result := set1.ToArray;\nend;",
+        "id": "218"
+    },
+    {
+        "instruction": "Write a function that takes a string and returns the string with all occurrences of consecutive duplicate characters collapsed to a single character.",
+        "output": "function CollapseDuplicates(inputString: string): string;\nbegin\n  if inputString.Length = 0 then\n  begin\n    Result := '';\n    exit;\n  end;\n  \n  var res := new StringBuilder;\n  var prevChar := inputString[1];\n  res.Append(prevChar);\n  \n  for var i := 2 to inputString.Length do\n  begin\n    var currentChar := inputString[i];\n    if currentChar <> prevChar then\n    begin\n      res.Append(currentChar);\n      prevChar := currentChar;\n    end;\n  end;\n  \n  Result := res.ToString;\nend;",
+        "id": "219"
+    },
+    {
+        "instruction": "Write a python function to find the minimum number of swaps required to sort an array in ascending order.",
+        "output": "function MinimumSwaps(arr: array of integer): integer;\nbegin\n  var n := arr.Length;\n  var ans := 0;\n  var temp := arr.ToArray;\n  &Array.Sort(temp);\n  var visited := new boolean[n];\n  \n  for var i := 0 to n - 1 do\n  begin\n    if visited[i] or (temp[i] = arr[i]) then\n      continue;\n  \n    var cycleSize := 0;\n    var j := i;\n    \n    while not visited[j] do\n    begin\n      visited[j] := true;\n      var index := &Array.IndexOf(temp, arr[j]);\n      j := index;\n      cycleSize += 1;\n    end;\n  \n    if cycleSize > 0 then\n      ans += cycleSize - 1;\n  end;\n  \n  Result := ans;\nend;",
+        "id": "220"
+    },
+    {
+        "instruction": "Write a python function to find the minimum unique value in a given array. A unique value is a value that appears exactly once in the array.",
+        "output": "function FindMinUnique(arr: array of integer): integer;\nbegin\n  var frequency := new Dictionary<integer, integer>;\n  \n  for var i := 0 to arr.Length - 1 do\n  begin\n    var num := arr[i];\n    if frequency.ContainsKey(num) then\n      frequency[num] += 1\n    else\n      frequency[num] := 1;\n  end;\n  \n  var uniqueNums := new List<integer>;\n  foreach var pair in frequency do\n  begin\n    if pair.Value = 1 then\n      uniqueNums.Add(pair.Key);\n  end;\n  \n  if uniqueNums.Count > 0 then\n    Result := uniqueNums.Min\n  else\n    Result := -1;\nend;",
+        "id": "221"
+    },
+    {
+        "instruction": "Write a function that takes a list of strings as an argument and returns a list of strings that contain at least one vowel.",
+        "output": "function FilterVowelStrings(strings: array of string): array of string;\nbegin\n  var vowels := HSet('a', 'e', 'i', 'o', 'u');\n  var res := new List<string>;\n  \n  for var i := 0 to strings.Length - 1 do\n  begin\n    var hasVowel := false;\n    for var j := 1 to strings[i].Length do\n    begin\n      if vowels.Contains(strings[i][j]) then\n      begin\n        hasVowel := true;\n        break;\n      end;\n    end;\n    \n    if hasVowel then\n      res.Add(strings[i]);\n  end;\n  \n  Result := res.ToArray;\nend;",
+        "id": "222"
+    },
+    {
+        "instruction": "Write a function that performs a binary insertion sort on a given list. Binary insertion sort is an optimization of the traditional insertion sort algorithm, which uses binary search to find the proper location to insert the selected item at each iteration.",
+        "output": "function BinaryInsertionSort(arr: array of integer): array of integer;\nbegin\n  var res := arr.ToArray;\n  \n  for var i := 1 to res.Length - 1 do\n  begin\n    var val := res[i];\n    var left := 0;\n    var right := i - 1;\n    \n    while left <= right do\n    begin\n      var mid := (left + right) div 2;\n      if res[mid] > val then\n        right := mid - 1\n      else\n        left := mid + 1;\n    end;\n    \n    for var j := i - 1 downto left do\n      res[j + 1] := res[j];\n    \n    res[left] := val;\n  end;\n  \n  Result := res;\nend;",
+        "id": "223"
+    },
+    {
+        "instruction": "Write a function that takes in a list of integers and returns the list after sorting it using the quicksort algorithm.",
+        "output": "function QuickSort(arr: array of integer): array of integer;\nbegin\n  if arr.Length <= 1 then\n  begin\n    Result := arr;\n    exit;\n  end;\n  \n  var pivot := arr[arr.Length div 2];\n  var left := new List<integer>;\n  var middle := new List<integer>;\n  var right := new List<integer>;\n  \n  for var i := 0 to arr.Length - 1 do\n  begin\n    if arr[i] < pivot then\n      left.Add(arr[i])\n    else if arr[i] = pivot then\n      middle.Add(arr[i])\n    else\n      right.Add(arr[i]);\n  end;\n  \n  Result := QuickSort(left.ToArray) + middle.ToArray + QuickSort(right.ToArray);\nend;",
+        "id": "224"
+    },
+    {
+        "instruction": "Write a function to find the kth largest element in an unsorted array.\nNote: The array may contain duplicate elements.",
+        "output": "function FindKthLargest(nums: array of integer; k: integer): integer;\nbegin\n  if (nums.Length = 0) or (k <= 0) then\n  begin\n    Result := -1;\n    exit;\n  end;\n\n  var heap := new List<integer>;\n  \n  for var i := 0 to nums.Length - 1 do\n  begin\n    heap.Add(nums[i]);\n    \n    if heap.Count > k then\n    begin\n      heap.Sort;\n      heap.RemoveAt(0);\n    end;\n  end;\n  \n  heap.Sort;\n  Result := heap[0];\nend;",
+        "id": "225"
+    },
+    {
+        "instruction": "Write a python function which returns an array of n length, where each element is the sum of its index and the previous element. The first element should always be 1.",
+        "output": "function SumIndexPrev(n: integer): array of integer;\nbegin\n  if n = 1 then\n  begin\n    Result := new integer[1];\n    Result[0] := 1;\n    exit;\n  end;\n  \n  var arr := new integer[n];\n  arr[0] := 1;\n  \n  for var i := 1 to n - 1 do\n  begin\n    arr[i] := arr[i - 1] + i + 1;\n  end;\n  \n  Result := arr;\nend;",
+        "id": "226"
+    },
+    {
+        "instruction": "Write a python function to find the smallest difference between two elements in a given list.",
+        "output": "function SmallestDiff(arr: array of integer): integer;\nbegin\n  var sortedArr := arr.ToArray;\n  &Array.Sort(sortedArr);\n  \n  var minDiff := integer.MaxValue;\n  for var i := 1 to sortedArr.Length - 1 do\n  begin\n    var diff := sortedArr[i] - sortedArr[i - 1];\n    if diff < minDiff then\n      minDiff := diff;\n  end;\n  \n  Result := minDiff;\nend;",
+        "id": "227"
+    },
+    {
+        "instruction": "Write a Python function that takes a list of integers as an input and returns a tuple. The first element in the tuple is the sum of all even numbers in the list. The second element is the product of all odd numbers in the list. If there are no even numbers, the sum should be 0. If there are no odd numbers, the product should be 1.",
+        "output": "function SumEvenProductOdd(nums: array of integer): (integer, integer);\nbegin\n  var sumEven := 0;\n  var productOdd := 1;\n  var hasOdd := false;\n  \n  for var i := 0 to nums.Length - 1 do\n  begin\n    if nums[i] mod 2 = 0 then\n      sumEven += nums[i]\n    else\n    begin\n      productOdd *= nums[i];\n      hasOdd := true;\n    end;\n  end;\n  \n  if not hasOdd then\n    productOdd := 1;\n  \n  Result := (sumEven, productOdd);\nend;",
+        "id": "228"
+    },
+    {
+        "instruction": "Write a function that takes a list of integers and returns the sum of the digits of the largest number in the list.",
+        "output": "function SumLargestDigits(nums: array of integer): integer;\nbegin\n  var maxNum := nums.Max;\n  var maxNumStr := maxNum.ToString;\n  var sum := 0;\n  \n  for var i := 1 to maxNumStr.Length do\n  begin\n    sum += StrToInt(maxNumStr[i]);\n  end;\n  \n  Result := sum;\nend;",
+        "id": "229"
+    },
+    {
+        "instruction": "Write a function that takes a list of integers and returns a new list where each element is the count of how many elements in the original list are smaller than the current element.\n\nExample:\nInput: [8, 1, 2, 2, 3]\nOutput: [4, 0, 1, 1, 3]",
+        "output": "function SmallerNumbersThanCurrent(nums: array of integer): array of integer;\nbegin\n  var res := new integer[nums.Length];\n  \n  for var i := 0 to nums.Length - 1 do\n  begin\n    var count := 0;\n    for var j := 0 to nums.Length - 1 do\n    begin\n      if (i <> j) and (nums[j] < nums[i]) then\n        count += 1;\n    end;\n    res[i] := count;\n  end;\n  \n  Result := res;\nend;",
+        "id": "230"
+    },
+    {
+        "instruction": "Write a python function to find the largest divisor of a given number among a list of divisors.",
+        "output": "function LargestDivisor(num: integer; divisors: array of integer): integer;\nbegin\n  var sortedDivisors := divisors.ToArray;\n  &Array.Sort(sortedDivisors);\n  &Array.Reverse(sortedDivisors);\n  \n  for var i := 0 to sortedDivisors.Length - 1 do\n  begin\n    if num mod sortedDivisors[i] = 0 then\n    begin\n      Result := sortedDivisors[i];\n      exit;\n    end;\n  end;\n  \n  Result := 1;\nend;",
+        "id": "231"
+    },
+    {
+        "instruction": "Write a function that converts a given date in the format \"DD Month YYYY\" to the ISO 8601 standard format \"YYYY-MM-DD\". The month should be in full name format (e.g., \"January\", \"February\", etc.).",
+        "output": "function ConvertToISO(date: string): string;\nbegin\n  var months := new Dictionary<string, string>;\n  months['January'] := '01';\n  months['February'] := '02';\n  months['March'] := '03';\n  months['April'] := '04';\n  months['May'] := '05';\n  months['June'] := '06';\n  months['July'] := '07';\n  months['August'] := '08';\n  months['September'] := '09';\n  months['October'] := '10';\n  months['November'] := '11';\n  months['December'] := '12';\n  \n  var parts := date.ToWords;\n  if parts.Length <> 3 then\n  begin\n    Result := '';\n    exit;\n  end;\n  \n  var dayStr := parts[0];\n  if dayStr.Length > 2 then\n    dayStr := dayStr.Substring(1, dayStr.Length - 2);\n  \n  if dayStr.Length = 1 then\n    dayStr := '0' + dayStr;\n  \n  var month := months[parts[1]];\n  var year := parts[2];\n  \n  Result := year + '-' + month + '-' + dayStr;\nend;",
+        "id": "232"
+    },
+    {
+        "instruction": "Write a function to calculate the sum of the absolute values of all numbers in a list.",
+        "output": "function SumOfAbs(lst: array of integer): integer;\nbegin\n  var sum := 0;\n  for var i := 0 to lst.Length - 1 do\n  begin\n    sum += Abs(lst[i]);\n  end;\n  Result := sum;\nend;",
+        "id": "233"
+    },
+    {
+        "instruction": "Write a python function to find the level of a given binary tree.",
+        "output": "type\n  TreeNode = class\n    val: integer;\n    left, right: TreeNode;\n    \n    constructor Create(v: integer; l, r: TreeNode);\n    begin\n      val := v;\n      left := l;\n      right := r;\n    end;\n  end;\n\nfunction FindLevel(root: TreeNode; k: integer): integer;\nbegin\n  if root = nil then\n  begin\n    Result := 0;\n    exit;\n  end;\n  \n  if root.val = k then\n  begin\n    Result := 1;\n    exit;\n  end;\n  \n  var leftLevel := FindLevel(root.left, k);\n  if leftLevel > 0 then\n  begin\n    Result := leftLevel + 1;\n    exit;\n  end;\n  \n  var rightLevel := FindLevel(root.right, k);\n  if rightLevel > 0 then\n  begin\n    Result := rightLevel + 1;\n    exit;\n  end;\n  \n  Result := 0;\nend;",
+        "id": "234"
+    },
+    {
+        "instruction": "Write a function that takes a list of integers and returns a new list with each element squared, but only if the element is odd. If the element is even, it should be replaced with 0.",
+        "output": "function SquareOdd(nums: array of integer): array of integer;\nbegin\n  var res := new integer[nums.Length];\n  \n  for var i := 0 to nums.Length - 1 do\n  begin\n    if nums[i] mod 2 <> 0 then\n      res[i] := nums[i] * nums[i]\n    else\n      res[i] := 0;\n  end;\n  \n  Result := res;\nend;",
+        "id": "235"
+    },
+    {
+        "instruction": "Write a function to find the greatest common divisor (GCD) and least common multiple (LCM) of two given numbers.",
+        "output": "function GCDLCM(a, b: integer): (integer, integer);\nbegin\n  var c := Max(a, b);\n  var d := Min(a, b);\n  var t := 1;\n  \n  while t > 0 do\n  begin\n    t := c mod d;\n    c := d;\n    d := t;\n  end;\n  \n  var gcd := c;\n  var lcm := (a * b) div gcd;\n  \n  Result := (gcd, lcm);\nend;",
+        "id": "236"
+    },
+    {
+        "instruction": "Write a function to reorder a given string according to the specified indices.",
+        "output": "function ReorderString(s: string; indices: array of integer): string;\nbegin\n  var resultArr := new char[s.Length];\n  \n  for var i := 0 to indices.Length - 1 do\n  begin\n    resultArr[indices[i]] := s[i + 1];\n  end;\n  \n  Result := new string(resultArr);\nend;",
+        "id": "237"
+    },
+    {
+        "instruction": "Write a function to simulate a simplified version of a file system path simplifier. Given a string which represents an absolute path, you need to return the simplified version of it. The simplified version of the path should not contain the following three types of parts:\n1. \".\" which represents the current directory.\n2. \"..\" which represents the parent directory.\n3. Any consecutive \"/\" in the path should be replaced by a single \"/\".",
+        "output": "function SimplifyPath(path: string): string;\nbegin\n  var parts := path.Split('/');\n  var stack := new Stack<string>;\n  \n  for var i := 0 to parts.Length - 1 do\n  begin\n    if (parts[i] = '') or (parts[i] = '.') then\n      continue\n    else if parts[i] = '..' then\n    begin\n      if stack.Count > 0 then\n        stack.Pop;\n    end\n    else\n      stack.Push(parts[i]);\n  end;\n  \n  var resultParts := stack.ToArray;\n  &Array.Reverse(resultParts);\n  \n  Result := '/' + string.Join('/', resultParts);\nend;",
+        "id": "238"
+    },
+    {
+        "instruction": "Write a function which takes in a list of integers and returns a dictionary where the keys are the original numbers and the values are their corresponding squares.",
+        "output": "function SquareDictionary(numbers: array of integer): Dictionary<integer, integer>;\nbegin\n  var res := new Dictionary<integer, integer>;\n  for var i := 0 to numbers.Length - 1 do\n  begin\n    res[numbers[i]] := numbers[i] * numbers[i];\n  end;\n  Result := res;\nend;",
+        "id": "239"
+    },
+    {
+        "instruction": "Write a Python function to determine if a given number is present in a sorted 2D matrix. The matrix is sorted such that each row and each column is in ascending order.",
+        "output": "function FindInMatrix(matrix: array of array of integer; target: integer): boolean;\nbegin\n  if (matrix.Length = 0) or (matrix[0].Length = 0) then\n  begin\n    Result := false;\n    exit;\n  end;\n  \n  var m := matrix.Length;\n  var n := matrix[0].Length;\n  \n  var row := 0;\n  var col := n - 1;\n  \n  while (row < m) and (col >= 0) do\n  begin\n    if matrix[row, col] = target then\n    begin\n      Result := true;\n      exit;\n    end\n    else if matrix[row, col] < target then\n      row += 1\n    else\n      col -= 1;\n  end;\n  \n  Result := false;\nend;",
+        "id": "240"
+    },
+    {
+        "instruction": "Write a python function to find the k smallest elements in an array.",
+        "output": "function KSmallest(arr: array of integer; k: integer): array of integer;\nbegin\n  if (k = 0) or (arr.Length = 0) then\n  begin\n    Result := new integer[0];\n    exit;\n  end;\n  \n  var sortedArr := arr.ToArray;\n  &Array.Sort(sortedArr);\n  \n  var res := new integer[k];\n  for var i := 0 to k - 1 do\n    res[i] := sortedArr[i];\n  \n  Result := res;\nend;",
+        "id": "241"
+    },
+    {
+        "instruction": "Write a function to subtract two given numbers using bitwise operators.",
+        "output": "function BitwiseSubtract(x, y: integer): integer;\nbegin\n  while y <> 0 do\n  begin\n    var borrow := (not x) and y;\n    x := x xor y;\n    y := borrow shl 1;\n  end;\n  Result := x;\nend;",
+        "id": "242"
+    },
+    {
+        "instruction": "Write a function to find the intersection of two lists of intervals. The intervals in the list are represented by a pair of integers [start, end]. The intersection of two intervals is a new interval [max(start1, start2), min(end1, end2)] where start1, end1 are the start and end of the first interval, and start2, end2 are the start and end of the second interval. The intersection of two lists of intervals is a list of the intersections of all pairs of intervals, one from each list.",
+        "output": "function IntervalsIntersection(list1, list2: array of (integer, integer)): array of (integer, integer);\nbegin\n  var res := new List<(integer, integer)>;\n  var i := 0;\n  var j := 0;\n  \n  while (i < list1.Length) and (j < list2.Length) do\n  begin\n    var start := Max(list1[i].Item1, list2[j].Item1);\n    var endVal := Min(list1[i].Item2, list2[j].Item2);\n    \n    if start <= endVal then\n      res.Add((start, endVal));\n    \n    if list1[i].Item2 < list2[j].Item2 then\n      i += 1\n    else\n      j += 1;\n  end;\n  \n  Result := res.ToArray;\nend;",
+        "id": "243"
+    },
+    {
+        "instruction": "Write a python function to check whether the given number is a perfect power or not. A perfect power is a positive integer that can be expressed as an integer power of another positive integer. More formally, n is a perfect power if there exist natural numbers m > 1, and k > 1 such that mk = n.",
+        "output": "function IsPerfectPower(n: integer): boolean;\nbegin\n  if n < 2 then\n  begin\n    Result := false;\n    exit;\n  end;\n  \n  for var base := 2 to Trunc(Sqrt(n)) do\n  begin\n    var exponent := 2;\n    while Power(base, exponent) <= n do\n    begin\n      if Power(base, exponent) = n then\n      begin\n        Result := true;\n        exit;\n      end;\n      exponent += 1;\n    end;\n  end;\n  \n  Result := false;\nend;",
+        "id": "244"
+    },
+    {
+        "instruction": "Write a python function to find the length of the longest continuous increasing subsequence (LCIS) in a list of numbers.",
+        "output": "function LongestLCIS(nums: array of integer): integer;\nbegin\n  if nums.Length = 0 then\n  begin\n    Result := 0;\n    exit;\n  end;\n  \n  var maxLen := 1;\n  var currentLen := 1;\n  \n  for var i := 1 to nums.Length - 1 do\n  begin\n    if nums[i] > nums[i - 1] then\n    begin\n      currentLen += 1;\n      maxLen := Max(maxLen, currentLen);\n    end\n    else\n      currentLen := 1;\n  end;\n  \n  Result := maxLen;\nend;",
+        "id": "245"
+    },
+    {
+        "instruction": "Write a python function to check if a given number is a power of 2 or not.",
+        "output": "function IsPowerOf2(n: integer): boolean;\nbegin\n  if n <= 0 then\n  begin\n    Result := false;\n    exit;\n  end;\n  \n  while n <> 1 do\n  begin\n    if n mod 2 <> 0 then\n    begin\n      Result := false;\n      exit;\n    end;\n    n := n div 2;\n  end;\n  \n  Result := true;\nend;",
+        "id": "246"
+    },
+    {
+        "instruction": "Create a function to perform matrix addition for two given matrices. The matrices will have the same dimensions. The function should return the resulting matrix after the addition.",
+        "output": "function MatrixAddition(A, B: array[,] of integer): array[,] of integer;\nbegin\n  var n1 := A.GetLength(0);\n  var n2 := A.GetLength(1);\n  var newA := new integer[n1, n2];\n  \n  for var i := 0 to n1 - 1 do\n  begin\n    for var j := 0 to n2 - 1 do\n    begin\n      newA[i, j] := A[i, j] + B[i, j];\n    end;\n  end;\n  \n  Result := newA;\nend;",
+        "id": "247"
+    },
+    {
+        "instruction": "Write a function to find the mode(s) of a list of numbers. The mode is the number that appears most frequently in a list. If there are multiple numbers that appear the same maximum number of times, return all of them in a list sorted in ascending order.",
+        "output": "function Modes(numbers: array of integer): array of integer;\nbegin\n  var count := new Dictionary<integer, integer>;\n  \n  for var i := 0 to numbers.Length - 1 do\n  begin\n    if count.ContainsKey(numbers[i]) then\n      count[numbers[i]] += 1\n    else\n      count[numbers[i]] := 1;\n  end;\n  \n  var maxCount := count.Values.Max;\n  var res := new List<integer>;\n  \n  foreach var pair in count do\n  begin\n    if pair.Value = maxCount then\n      res.Add(pair.Key);\n  end;\n  \n  res.Sort;\n  Result := res.ToArray;\nend;",
+        "id": "248"
+    },
+    {
+        "instruction": "Write a python function to find the number of provinces in a given list of connections between cities. A province is a group of cities where every city is directly or indirectly connected to every other city in the group. Your function should take a list of lists as input, where each inner list represents the connections between cities, and return the number of provinces.",
+        "output": "procedure DFS(city: integer; visit: HashSet<integer>; isConnected: array of array of integer);\nbegin\n  visit.Add(city);\n  for var another := 0 to isConnected.Length - 1 do\n  begin\n    if (another <> city) and (isConnected[city, another] = 1) and (not visit.Contains(another)) then\n      DFS(another, visit, isConnected);\n  end;\nend;\n\nfunction FindCircleNum(isConnected: array of array of integer): integer;\nbegin\n  var visit := new HashSet<integer>;\n  var province := 0;\n  var n := isConnected.Length;\n\n  for var city := 0 to n - 1 do\n  begin\n    if not visit.Contains(city) then\n    begin\n      province += 1;\n      DFS(city, visit, isConnected);\n    end;\n  end;\n\n  Result := province;\nend;",
+        "id": "249"
+    }
+]

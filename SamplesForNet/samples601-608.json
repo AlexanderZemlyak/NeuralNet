@@ -1,0 +1,30 @@
+[
+  {
+    "instruction": "Create a traffic light drawing procedure using GraphWPF that draws a gray rectangle with three colored circles (red, yellow, green) in vertical arrangement.",
+    "output": "uses GraphWPF;\n\nprocedure Светофор(x,y,r: real);\nbegin\n  Rectangle(x,y,4*r,10*r,Colors.LightGray);\n  x += 2*r;\n  y += 2*r;\n  var dy := 3*r;\n\n  Circle(x,y,r,Colors.Red);\n  Circle(x,y + dy,r,Colors.Yellow);\n  Circle(x,y + 2*dy,r,Colors.Green);\nend;\n\nbegin\n  Pen.Width := 2;\n  Window.Title := 'Traffic Light';\n  Светофор(150,40,50);\nend."
+  },
+  {
+    "instruction": "Create a mathematical coordinate system using GraphWPF with grid lines and a polygon with labeled vertices.",
+    "output": "uses GraphWPF;\n\nbegin\n  Window.Title := 'Coordinate System';\n  Font.Size := 20;\n\n  SetMathematicCoords(-10,10,-9.2);\n  DrawGrid;\n \n  Print('Visible coordinates:',XMin,XMax,YMin,YMax);\n  \n  Polygon(Arr((-3,2),(2,1),(-2,-4)),ARGB(100,255,228,196));\n  TextOut(-3,2,'A(-3,2)',Alignment.RightBottom);\n  TextOut(2,1,'B(2,1)',Alignment.LeftBottom);\n  TextOut(-2,-4,'C(-2,-4)',Alignment.CenterTop);\nend."
+  },
+  {
+    "instruction": "Create a 3D scene with interactive color changing where clicking on objects changes their color to a random color.",
+    "output": "uses Graph3D;\n\nbegin \n  var s := Sphere(3,0,1,1);\n  var b := Box(0,2,0.5,3,2,1);\n  var t := Text3D(-5,0,1,'Graph3D',2);\n  OnMouseDown += procedure (x,y,mb) -> begin\n    if mb<>1 then exit;\n    var v := FindNearestObject(x,y);\n    if v<>nil then\n      v.Color := RandomColor;\n  end;\nend."
+  },
+  {
+    "instruction": "Create a multiplication table display using GraphWPF that shows a 9x9 grid with multiplication results.",
+    "output": "uses GraphWPF;\n\nbegin\n  Window.Title := 'Multiplication Table';\n  Font.Size := 16;\n  var n := 9;\n  var w := 40;\n  var (x0,y0) := (50,50);\n  for var i:=0 to n-1 do\n  for var j:=0 to n-1 do\n  begin\n    var (xx,yy) := (x0+i*w,y0+j*w);\n    Rectangle(xx,yy,w,w);\n    DrawText(xx,yy,w,w,(i+1)*(j+1));\n  end;  \nend."
+  },
+  {
+    "instruction": "Create an animated 3D clock with rotating second and minute hands using Graph3D.",
+    "output": "uses Graph3D;\n\nbegin\n  View3D.ShowGridLines := False;\n  var Циферблат := Cylinder(0,0,-0.4,0.2,6,Colors.DeepPink);\n  var Сек := Arrow(0,0,0,0,-5.5,0,0.2,Colors.Yellow);\n  var Мин := Arrow(0,0,0,0,-6.0,0,0.3,Colors.Red);\n  \n  var a := 0;\n  var r := 5.8;\n  loop 60 do\n  begin\n    Sphere(r*cos(a*Pi/180),r*sin(a*Pi/180),-0.2,0.1,Colors.White);\n    a += 6;\n  end;\n  \n  while True do\n  begin\n    Sleep(10);\n    Сек.Rotate(v3D(0,0,1),-6);\n    Мин.Rotate(v3D(0,0,1),-6/60);\n  end;\nend."
+  },
+  {
+    "instruction": "Create a 3D castle structure using cloning and grouping of 3D objects with random colors and save it to a file.",
+    "output": "uses Graph3D;\n\nfunction MultipleClones(c: Object3D; N: integer): Group3D;\nbegin\n  var g := Group(c);\n  loop N-1 do\n  begin\n    c := c.Clone;\n    c.MoveByX(-1.5);\n    if c is ObjectWithMaterial3D then \n      (c as ObjectWithMaterial3D).Color := RandomColor;\n    g.AddChild(c);\n  end;\n  Result := g;\nend;\n\nbegin\n  HideObjects;\n  var b := Box(0,0,2,14.5,1,4,Colors.Orange);\n  var c := Cube(6.75,0,4.5,1,RandomColor);\n  var c1 := Cone(6.75,0,5,1.5,0.4,RandomColor);\n  var g := MultipleClones(c,10);\n  var gp := MultipleClones(c1,10);\n  var gg := Group(g,b,gp);\n  var g1 := gg.Clone.MoveByY(6);\n  var g2 := gg.Clone.MoveByY(-6);\n  gg.Rotate(OrtZ,90);\n  var g3 := gg.Clone.MoveByX(-6);\n  gg.MoveByX(6);\n  var ggg := Group(gg,g1,g2,g3);\n  ShowObjects;\n\n  ggg.Save('Замок.xaml');\nend."
+  },
+  {
+    "instruction": "Create procedures to draw regular polygons with different numbers of sides using GraphWPF.",
+    "output": "uses GraphWPF;\n\nprocedure Многоугольник(x0,y0,r: real; n: integer);\nbegin\n  var a := Pi / 2;\n  MoveTo(x0 + r * Cos(a), y0 - r * Sin(a));\n  loop n do \n  begin\n    a += 2 * Pi / n;\n    LineTo(x0 + r * Cos(a), y0 - r * Sin(a));\n  end;\nend;\n\nbegin\n  var (x0,y0) := (400.0,300.0);\n  var r := 30.0;\n  for var n := 3 to 11 do\n    Многоугольник(x0,y0,r+(n-3)*30,n)\nend.\n\nuses GraphWPF;\n\nbegin\n  var (n,r) := (9,250);\n  var a := ArrGen(n, i -> Window.Center + r * Vect(Cos(i*2*Pi/n),Sin(i*2*Pi/n)));\n  foreach var p in a.Combinations(2) do\n    Line(p[0], p[1]);\nend."
+  }
+]

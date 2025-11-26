@@ -1,0 +1,82 @@
+[
+  {
+    "instruction": "Create a menu system with file operations using Controls module in PascalABC.NET",
+    "output": "uses Controls,GraphWPF;\n\nbegin\n  LeftPanel(150, Colors.Orange);\n  var m := new MenuWPF;\n  var mi1 := m.Add('File');\n  mi1.Add('New');\n  mi1.Add('Open');\n  mi1.Add('Save');\n  mi1.AddSeparator;\n  mi1.Add('Exit').Click := procedure->Window.Close;\n  m.Add('Edit');\n  m.Add('Options');\n  var mi := m.Add('Help');\nend."
+  },
+  {
+    "instruction": "Create a compact menu using AddRange method in Controls module with PascalABC.NET",
+    "output": "uses Controls,GraphWPF;\n\nbegin\n  LeftPanel(150, Colors.Orange);\n  var m := new MenuWPF;\n  m.AddRange('File','Edit','Options','Help');\n  m[0].AddRange('New','Open','Save','-','Exit');\n  m[0][3].Click := procedure->Window.Close;\nend."
+  },
+  {
+    "instruction": "Implement file dialogs for opening and saving text files with menu integration in PascalABC.NET",
+    "output": "uses Controls,GraphWPF;\n\nbegin\n  Window.Title := 'Controls module - OpenFileDialog and SaveFileDialog';\n  LeftPanel(150, Colors.Orange);\n  var tb := SetMainControl.AsTextBox;\n  tb.FontSize := 16;\n  tb.ReadOnly := False;\n  tb.FontName := 'Courier new Cyr';\n  \n  var dopen := new OpenFileDialogWPF('c:\\PABCWork.NET','Programs|*.pas');\n  var dSave := new SaveFileDialogWPF('c:\\PABCWork.NET','Programs|*.pas');\n  \n  var OpenHandler: procedure := procedure -> begin\n    var res := dopen.ShowDialog;\n    if res then\n      tb.Text := ReadAllText(dopen.FileName);\n  end;\n  var SaveHandler: procedure := procedure -> begin\n    var res := dSave.ShowDialog;\n    if res then\n      WriteAllText(dSave.FileName,tb.Text);\n  end;\n  \n  var bOpen := Button('Open');\n  bOpen.Click := OpenHandler;\n  \n  var bSave := Button('Save');\n  bSave.Click := SaveHandler;\n  \n  var m := Menu;\n  var m1 := m.Add('File');\n  var mm1 := m1.Add('Open');\n  mm1.Click := OpenHandler;\n  m1.Add('Save',SaveHandler);\n  m1.AddSeparator;\n  m1.Add('Exit',procedure->Window.Close);\nend."
+  },
+  {
+    "instruction": "Demonstrate different MessageBox types with button handlers in PascalABC.NET",
+    "output": "uses GraphWPF,Controls;\n\nbegin\n  Window.Title := 'Controls module - MessageBox';\n  LeftPanel(150, Colors.Orange);\n  Button('MsgBoxOK').Click := () -> MessageBox.Show('Message','Title');\n  Button('MsgBoxYesNo').Click := () -> begin\n    if MessageBox.Show('Message','Title',MessageBoxButton.YesNo) = MessageBoxResult.Yes then\n      Print('Yes')\n    else Print('No');\n  end;  \n  Button('MsgBoxWithQuestion').Click := () -> begin\n    if MessageBox.Show('Are you sure?','Title',MessageBoxButton.YesNo,MessageBoxImage.Question) \n      = MessageBoxResult.Yes then\n        Print('Sure')\n    else Print('No');\n  end;  \nend."
+  },
+  {
+    "instruction": "Create 3D sphere generator with button control using Graph3D in PascalABC.NET",
+    "output": "uses Graph3D,Controls;\n\nfunction R := Random(-7,7);\n\nbegin\n  Window.Title := 'Random spheres';\n  LeftPanel(150,Colors.Orange);\n  var b := new ButtonWPF('Create sphere');\n  b.Click := () → begin\n    Sphere(P3D(R,R,R),1);\n  end; \nend."
+  },
+  {
+    "instruction": "Implement RGB color mixer with sliders and real-time updates in PascalABC.NET",
+    "output": "uses GraphWPF,Controls;\n\nbegin\n  Window.Title := 'Colors';\n  Font.Size := 40;\n  LeftPanel(150);\n\n  var r := Slider('Red: ',0,255,255,16);\n  var g := Slider('Green: ',0,255,255,16);\n  var b := Slider('Blue: ',0,255,255,16);\n  \n  Button('Exit').Click := procedure → Window.Close;\n\n  var p: procedure := () → begin\n    var c := RGB(r.Value,g.Value,b.Value);\n    Window.Clear(c);\n    DrawText(GraphWindow.ClientRect,$'R={c.R}, G={c.G}, B={c.B}');\n  end;\n  r.ValueChanged := p;\n  g.ValueChanged := p;\n  b.ValueChanged := p;\n  p;\nend."
+  },
+  {
+    "instruction": "Create object movement controls with keyboard and button handlers in PascalABC.NET",
+    "output": "uses WPFObjects,Controls;\n\nbegin\n  Window.Title := 'Controls module - movement buttons + keyboard';\n\n  LeftPanel;\n\n  var c := new CircleWPF(GraphWindow.Center,30,Colors.Blue);\n  \n  OnKeyDown := k -> begin\n    case k of\n      Key.Left: c.MoveBy(-2,0);\n      Key.Right: c.MoveBy(2,0);\n      Key.Up: c.MoveBy(0,-2);\n      Key.Down: c.MoveBy(0,2);\n    end;\n  end;\n  \n  var l := Button('Left');\n  var r := Button('Right');\n  var u := Button('Up');\n  var d := Button('Down');\n  l.Click := ()->c.MoveBy(-2,0);\n  r.Click := ()->c.MoveBy(2,0);\n  u.Click := ()->c.MoveBy(0,-2);\n  d.Click := ()->c.MoveBy(0,2);\nend."
+  },
+  {
+    "instruction": "Implement object positioning with IntegerBox and IntegerBlock synchronization in PascalABC.NET",
+    "output": "uses WPFObjects,Controls;\n\nbegin\n  Window.Title := 'Controls module - IntegerBlock, IntegerBox and object movement';\n\n  LeftPanel;\n\n  var c := new CircleWPF(300,300,30,Colors.Blue);\n  \n  var X := IntegerBox('X:',0,600);\n  X.Value := 300;\n  var Y := IntegerBox('Y:',0,600);\n  Y.Value := 300;\n\n  var XX := IntegerBlock('X:',300);\n  var YY := IntegerBlock('Y:',300);\n  \n  X.ValueChanged := procedure → begin\n    c.Center := Pnt(X.Value,Y.Value);\n    XX.Value := X.Value;\n  end;\n  Y.ValueChanged := procedure → begin\n    c.Center := Pnt(X.Value,Y.Value);\n    YY.Value := Y.Value;\n  end;\nend."
+  },
+  {
+    "instruction": "Create country-capital dictionary application with ListBox selection in PascalABC.NET",
+    "output": "uses Controls,GraphWPF;\n\nbegin\n  Window.Title := 'Country capitals';\n  LeftPanel(150,Colors.Orange);\n  var l := ListBox('Country list');\n  l.Height := 110;\n  l.Add('Russia');\n  l.Add('USA');\n  l.Add('China');\n  l.Add('Germany');\n  l.Add('France');\n  \n  var d := Dict(('Russia','Moscow'),\n    ('USA','Washington'),\n    ('China','Beijing'),\n    ('Germany','Berlin'),\n    ('France','Paris')\n  );\n  \n  Font.Size := 70;\n  l.SelectionChanged := procedure -> begin\n    Window.Clear;\n    DrawText(GraphWindow.ClientRect,'Capital:'+#10+d[l.SelectedText]);\n  end;\nend."
+  },
+  {
+    "instruction": "Implement country-capital selector using ComboBox with dictionary in PascalABC.NET",
+    "output": "uses Controls,GraphWPF;\n\nbegin\n  Window.Title := 'Country capitals';\n  LeftPanel(150,Colors.Orange);\n  var l := ComboBox('Country list');\n  l.Tooltip := 'Select country - capital will be displayed';\n  l.Add('Russia');\n  l.Add('USA');\n  l.Add('China');\n  l.Add('Germany');\n  l.Add('France');\n  \n  var d := Dict(('Russia','Moscow'),\n    ('USA','Washington'),\n    ('China','Beijing'),\n    ('Germany','Berlin'),\n    ('France','Paris')\n  );\n  \n  Font.Size := 70;\n  l.SelectionChanged := procedure -> begin\n    Window.Clear;\n    DrawText(GraphWindow.ClientRect,d[l.SelectedText]);\n  end;\nend."
+  },
+  {
+    "instruction": "Create function graph selector using ComboBox with dynamic redrawing in PascalABC.NET",
+    "output": "uses GraphWPF,Controls;\n\nbegin\n  Window.Title := 'Controls module - ComboBox and function graphs';\n  LeftPanel(150, Colors.Orange);\n  var cb := ComboBox('Function graphs');\n  cb.AddRange('x*sin(x)','exp(x)','x*x','sin(x)-cos(2.5*x)');\n  \n  var Redraw: procedure := () -> begin\n    case cb.SelectedIndex of\n      0: DrawGraph(x->x*sin(x));\n      1: DrawGraph(x->exp(x));\n      2: DrawGraph(x->x*x);\n      3: DrawGraph(x->sin(x)-cos(2.5*x));\n    end;\n  end;\n  \n  cb.SelectionChanged := Redraw;\n  OnResize := Redraw;\n  Redraw;\nend."
+  },
+  {
+    "instruction": "Demonstrate text wrapping functionality in TextBlock controls using PascalABC.NET",
+    "output": "uses GraphWPF,Controls;\n\nbegin\n  Window.Title := 'Controls module - TextBlock wrapping mode';\n  LeftPanel(150,Colors.Orange);\n  var b := Button('No Wrap');\n  b.Tooltip := 'Click to change word wrap mode';\n  \n  var tb1 := TextBlock('This text does not fit on one line and in Wrapping mode automatically wraps');\n  b.Click := procedure → begin\n    tb1.Wrapping := not tb1.Wrapping;\n    b.Text := if tb1.Wrapping then 'Wrap' else 'No Wrap';\n  end;\n  var tb := TextBlock('This text is truncated,'#10'but you can explicitly'#10'split into lines');\nend."
+  },
+  {
+    "instruction": "Implement toggle for control titles visibility in PascalABC.NET UI",
+    "output": "uses Controls, GraphWPF;\n\nbegin\n  Window.Title := 'Controls module - controls with titles';\n  LeftPanel(170, Colors.Orange);\n  \n  var b := Button('Titles enabled');\n  \n  var tb := new TextBoxWPF('TextBox');\n  tb.Height := 40;\n  tb.Text := 'Multiple lines of text';\n  tb.Wrapping := True;\n  \n  var ib := new IntegerBoxWPF('IntegerBox', 0, 10);\n  var lb := new ListBoxWPF('ListBox',100);\n  lb.AddRange('1 2 3 4 5'.ToWords);\n  var cb := new ComboBoxWPF('ComboBox');\n  cb.AddRange('1 2 3 4 5'.ToWords);\n  var sl := new SliderWPF('Slider:');\n  \n  b.Click := procedure -> begin\n    if b.Text = 'Titles enabled' then\n      b.Text = 'Titles disabled'\n    else b.Text = 'Titles enabled';\n    tb.TitleVisible := not tb.TitleVisible;\n    ib.TitleVisible := not ib.TitleVisible;\n    lb.TitleVisible := not lb.TitleVisible;\n    cb.TitleVisible := not cb.TitleVisible;\n    sl.TitleVisible := not sl.TitleVisible;\n  end;\nend."
+  },
+  {
+    "instruction": "Demonstrate Canvas control usage for custom element positioning in PascalABC.NET",
+    "output": "uses Controls,GraphWPF;\n\nbegin\n  Window.Title := 'Controls module - replacing graphic panel with Canvas control';\n  var left := LeftPanel(150,Colors.Orange);\n  var can := SetMainControl.AsCanvas;\n  can.Color := Colors.AntiqueWhite;\n\n  Button(100,100,'On Canvas you can place elements');\n  Button(50,300,'in any location,');\n  TextBlock(150,500,'specifying their coordinates');\n  \n  SetActivePanel(left);\n  Button('Close').Click := procedure → Window.Close;\nend."
+  },
+  {
+    "instruction": "Implement ListView control with custom class data binding in PascalABC.NET",
+    "output": "uses Controls,GraphWPF;\n\ntype My = class\npublic\n  auto property Field1: integer;\n  auto property Field2: integer;\n  constructor (f1,f2: integer) := (Field1,Field2) := (f1,f2);\nend;\n\nbegin\n  Window.Title := 'Controls module - replacing graphic window with ListView element';\n  LeftPanel(150,Colors.Orange);\n  \n  var l := SetMainControl.AsListView;\n  \n  l.Fill(Arr(new My(2,5),new My(4,6)));\n  \n  Button('Clear list').Click := procedure -> l.Clear;\n  Button('Fill with data').Click := procedure -> l.Fill(|('Ivanov',20),('Petrov',19)|);\n  Button('Fill headers').Click := procedure -> l.SetHeaders('Last Name','Age');\nend."
+  },
+  {
+    "instruction": "Create database query visualization with country data using ListView in PascalABC.NET",
+    "output": "uses GraphWPF,Controls,ABCDatabases;\n\nbegin\n  Window.Title := 'Controls module - database query visualization';\n  LeftPanel(150,Colors.Orange);\n  var l := SetMainControl.AsListView;\n\n  var countries := FillCountriesArray;\n  l.Fill(countries);\n\n  Button('All').Click := procedure -> l.Fill(countries);\n  \n  Button('Asia').Click := procedure -> \n    l.Fill(countries.Where(country -> country.Continent='Asia'));\n    \n  Button('Sort by population').Click := procedure -> \n    l.Fill(countries.OrderByDescending(s -> s.Population));\nend."
+  },
+  {
+    "instruction": "Implement country-capital selector with database integration in PascalABC.NET",
+    "output": "uses GraphWPF, Controls, ABCDatabases;\n\nbegin\n  Window.Title := 'Country capitals';\n  LeftPanel(220, Colors.LightGoldenrodYellow);\n  var countries := FillCountriesArray;\n\n  var a := ListBox('Countries',550);\n  a.AddRange(countries.ConvertAll(country -> country.Name));\n  \n  var d := DictStr;\n  foreach var country in countries do\n    d[country.Name] := country.Capital;\n   \n  Font.Size := 70;\n  a.SelectionChanged := procedure -> begin\n    Window.Clear;\n    DrawText(GraphWindow.ClientRect,d[a.SelectedText])\n  end;\nend."
+  },
+  {
+    "instruction": "Create simple calculator interface with IntegerBox controls in PascalABC.NET",
+    "output": "uses Controls,GraphWPF;\n\nbegin\n  Window.Title := 'Calculator Light';\n  LeftPanel(150, Colors.Orange);\n  var tb := SetMainControl.AsTextBox;\n  tb.FontSize := 30;\n  var x := IntegerBox('X:',1,9);\n  var y := IntegerBox('Y:',1,9);\n  Button('Sum').Click := procedure -> begin\n    tb.Println($'{x.Value} + {y.Value} = {x.Value + y.Value}');\n  end;\nend."
+  },
+  {
+    "instruction": "Implement full calculator with operation selection and status tracking in PascalABC.NET",
+    "output": "uses Controls,GraphWPF;\n\nbegin\n  Window.Title := 'Calculator with TextBox output';\n  LeftPanel(150, Colors.Orange);\n  var tb := SetMainControl.AsTextBox;\n  tb.FontSize := 30;\n  var x := IntegerBox('X:');\n  var y := IntegerBox('Y:');\n  x.Value := Random(0,10);\n  y.Value := Random(0,10);\n  \n  var cb := new ComboBoxWPF('Operation');\n  cb.AddRange('+','-','*','/');\n  \n  var count := 0;\n  var sb := StatusBar;\n  sb.Text := 'Calculation count: ' + count;\n  \n  var b := Button('+');\n  b.Click := procedure -> begin\n    case cb.SelectedText of\n      '+': tb.Println($'{x.Value} + {y.Value} = {x.Value + y.Value}');\n      '-': tb.Println($'{x.Value} - {y.Value} = {x.Value - y.Value}');\n      '*': tb.Println($'{x.Value} * {y.Value} = {x.Value * y.Value}');\n      '/': tb.Println($'{x.Value} / {y.Value} = {x.Value / y.Value}');\n    end;\n    x.Value := Random(0,10);\n    y.Value := Random(0,10);\n    count += 1;\n    sb.Text := 'Calculation count: ' + count;\n  end;\n  \n  Button('Clear').Click := () -> begin\n    count := 0;\n    sb.Text := 'Calculation count: ' + count;\n    tb.Clear;\n  end;\n  \n  cb.SelectionChanged := procedure -> begin\n    b.Text := cb.SelectedText\n  end;\nend."
+  },
+  {
+    "instruction": "Create status bar with window dimension tracking in PascalABC.NET",
+    "output": "uses Controls,GraphWPF;\n\nbegin\n  Window.Title := 'Controls module - StatusBar';\n  var l := LeftPanel(150,Colors.Orange);\n  l.Tooltip := 'Change window size';\n  var sb := StatusBar(24,55);\n  sb.AddText('',55);\n  Button('Clear W field').Click := procedure -> sb.ItemText[0] := '';\n  Button('Clear H field').Click := procedure -> sb.ItemText[1] := '';\n  OnResize := () -> begin\n    sb.ItemText[0] := 'W=' + Window.Width.Round;\n    sb.ItemText[1] := 'H=' + Window.Height.Round;\n  end;\n  OnResize();\nend."
+  }
+]

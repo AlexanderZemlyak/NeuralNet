@@ -1,0 +1,74 @@
+[
+  {
+    "instruction": "Demonstrate string concatenation and character access in PascalABC.NET",
+    "output": "var s: string := 'Pascal';\n\nbegin\n  writeln(s);\n  s := s + '.';\n  writeln(s);\n  s += 'NET';\n  writeln(s);\n  writeln(s[1],' ',s[2],' ',s[3],' ',s[4],' ',s[5],' ',s[6]);\nend."
+  },
+  {
+    "instruction": "Demonstrate string length manipulation using SetLength and Length in PascalABC.NET",
+    "output": "var s: string;\n\nbegin\n  writeln('Length(s) = ',Length(s));\n  SetLength(s,3);\n  s[1] := 'N';\n  s[2] := 'E';\n  s[3] := 'T';\n  writeln(s,'     Length(s) = ',Length(s));\n  for var i:= 1 to s.Length do\n    write(s[i],' ');\nend."
+  },
+  {
+    "instruction": "Demonstrate dynamic string length capabilities in PascalABC.NET",
+    "output": "var s: string;\n    \nbegin\n  s := 'abcdefghijklmnopqrstuvwxyz';\n  s := s + Uppercase(s);\n  s += s; \n  s += s; \n  s += s;\n  writeln('String length = ',s.Length);\n  writeln('String: ',s);\nend."
+  },
+  {
+    "instruction": "Demonstrate fixed-length strings and shortstring in PascalABC.NET",
+    "output": "var \n  s: string[9];\n  s1: shortstring;\n  slong: string;\n    \nbegin\n  slong := 'PascalABC.NET';\n  writeln('Variable length string: ',slong);\n  s := slong;\n  writeln('Fixed length string gets truncated: ',s);\nend."
+  },
+  {
+    "instruction": "Use standard string procedures for string manipulation in PascalABC.NET",
+    "output": "var \n  s: string := '  Pascal__NET  ';\n  s1: string := 'NET';\n    \nbegin\n  writeln('Original string: ''',s,'''');\n  s := Trim(s);\n  writeln('After Trim function: ''',s,'''');\n  var p := Pos(s1,s);\n  writelnFormat('Position of substring ''{0}'' in string ''{1}'' equals {2}',s1,s,p);\n  Delete(s,7,2);\n  writeln('After deleting __ characters: ',s);\n  Insert('ABC.',s,7);\n  writeln('After inserting substring ''ABC.'': ',s);\n  writeln('First part of string: ',Copy(s,1,9));\n  writeln('Last part of string: ',Copy(s,11,3));\nend."
+  },
+  {
+    "instruction": "Use string class methods for string manipulation in PascalABC.NET",
+    "output": "var \n  s: string := '  Pascal__NET  ';\n  s1: string := 'NET';\n    \nbegin\n  writeln('Original string: ''',s,'''');\n  s := s.Trim;\n  writeln('After s.Trim: ''',s,'''');\n  var p := s.IndexOf(s1);\n  writelnFormat('Position of substring ''{0}'' in string ''{1}'' equals {2}',s1,s,p);\n  s := s.Remove(6,2);\n  writeln('After deleting __ characters: ',s);\n  s := s.Insert(6,'ABC.');\n  writeln('After inserting substring ''ABC.'': ',s);\n  writeln('First part of string: ',s.Substring(0,9));\n  writeln('Last part of string: ',s.Substring(10,3));\nend."
+  },
+  {
+    "instruction": "Convert between strings and numbers using TryParse in PascalABC.NET",
+    "output": "begin\n  var s := '123,3443';\n  var r: real;\n  if not real.TryParse(s, r) then\n    Writeln('String s is not a valid real number representation')\n  else Writeln(r);\n     \n  var i: integer;\n  if not integer.TryParse(s, i) then\n    Writeln('String s is not a valid integer representation');\n     \n  i := 10;\n  s := i.ToString;\n  Writeln(s);\n  \n  s := '';\n  for i:=1 to 9 do\n    s += i.ToString;\n  Writeln(s);\nend."
+  },
+  {
+    "instruction": "Convert between integers and strings using ToString and TryParse in PascalABC.NET",
+    "output": "var \n  s: string;\n  i: integer;\n\nbegin\n  i := 234;\n  s := i.ToString;\n  writelnFormat('Integer: {0}. After conversion to string: ''{1}''',i,s);\n  \n  s := '567';\n  if integer.TryParse(s,i) then\n    writelnFormat('String: ''{0}''. After conversion to integer: {1}',s,i);\nend."
+  },
+  {
+    "instruction": "Convert between integers and strings using IntToStr and StrToInt in PascalABC.NET",
+    "output": "var \n  s: string;\n  i: integer;\n\nbegin\n  i := 234;\n  s := IntToStr(i);\n  writelnFormat('Integer: {0}. After conversion to string: ''{1}''',i,s);\n  \n  s := '567';\n  i := StrToInt(s);\n  writelnFormat('String: ''{0}''. After conversion to integer: {1}',s,i);\nend."
+  },
+  {
+    "instruction": "Convert between integers and strings using Val and Str procedures in PascalABC.NET",
+    "output": "var \n  s: string;\n  i: integer;\n\nbegin\n  i := 234;\n  Str(i,s);\n  writelnFormat('Integer: {0}. After conversion to string: ''{1}''',i,s);\n  \n  s := '567';\n  var err: integer;\n  Val(s,i,err);\n  if err=0 then\n    writelnFormat('String: ''{0}''. After conversion to integer: {1}',s,i);\nend."
+  },
+  {
+    "instruction": "Convert between real numbers and strings in PascalABC.NET",
+    "output": "var \n  s: string;\n  r: real;\n\nbegin\n  r := 3.1415;\n  s := FloatToStr(r);\n  writelnFormat('Real: {0}. After conversion to string: ''{1}''',r,s);\n  \n  s := '3.1415';\n  r := StrToFloat(s);\n  writelnFormat('String: ''{0}''. After conversion to real: {1}',s,r);\nend."
+  },
+  {
+    "instruction": "Demonstrate various string methods including length and comparison in PascalABC.NET",
+    "output": "begin\n  var s1 := 'ABCDEFGH';\n  Writeln(s1.Length);\n\n  s1 := 'AAA';\n  var s2 := 'aaa';\n  if String.Compare(s1, s2, true) = 0 then\n    Writeln('Strings match ignoring case');\n  \n  s1 := 'Long string';\n  s2 := 'string';\n  if s1.EndsWith(s2) then\n    Writeln('String s1 ends with substring s2');\n    \n  Writeln(s1.IndexOf(s2));\n    \n  s1 := 'ABCDEFGH';\n  s2 := s1.Substring(3);\n  Writeln(s2);\n  \n  s2 := s1.Substring(3, 2);\n  Writeln(s2);\nend."
+  },
+  {
+    "instruction": "Demonstrate string manipulation methods including insert, replace and remove in PascalABC.NET",
+    "output": "begin\n  var s1 := 'ABCDEFGH';\n  var s2 := s1.Substring(3);\n  Writeln(s2);\n  \n  s2 := s1.Substring(3, 2);\n  Writeln(s2);\n  \n  s1 := 'ABCDEFGH';\n  s2 := s1.Insert(2, 'xxx');\n  Writeln(s2);\n  \n  s2 := s2.Replace('x', '!');\n  Writeln(s2);\n  \n  s2 := s2.Remove(2, 3);\n  Writeln(s2);\n  \n  s1 := 'слово слово слово';\n  s2 := s1.Replace('слов', 'молок');\n  Writeln(s2);\n  \n  s1 := '    xxx  xxx    ';\n  Writeln('|', s1, '|');\n  s1 := s1.Trim;\n  Writeln('|', s1, '|');\n  \n  s1 := 'абвгд';\n  s1 := s1.ToUpper;\n  Writeln(s1);\nend."
+  },
+  {
+    "instruction": "Demonstrate string concatenation with plus operator in PascalABC.NET",
+    "output": "var s1: string := 'Pascal';\nvar s2: string := 'NET';\n\nbegin \n  Writeln(s2+'-'+s1);\n  Writeln(s1+'.'+s2);\nend."
+  },
+  {
+    "instruction": "Split string into array and process numeric values in PascalABC.NET",
+    "output": "begin\n  var s: string := '12 765 765 76';\n  var str_arr: array of string := s.Split;\n  \n  s := str_arr.JoinToString(' + ');\n  Write(s, ' = ');\n  \n  var int_arr := new integer[str_arr.Length];\n  for var i:=0 to int_arr.Length-1 do\n    integer.TryParse(str_arr[i], int_arr[i]);\n  \n  var sum := 0;\n  foreach var v: integer in int_arr do\n    sum += v;\n  Writeln(sum);\nend."
+  },
+  {
+    "instruction": "Demonstrate different string types and their memory usage in PascalABC.NET",
+    "output": "var \n  s: string;\n  s10: string[10];\n  ss: shortstring := s;\n  f: file of string[10];\n\nbegin\n  s := '12345678901234567890';\n  s10 := s;\n  writeln(s10);\n  s += s; s += s;\n  s += s; s += s;\n  writeln(s);\n  writeln('String length = ',s.Length);\nend."
+  },
+  {
+    "instruction": "Demonstrate structural type equivalence in PascalABC.NET",
+    "output": "var \n  a: array of integer;\n  a1: array of integer;\n  s: set of real;\n  s1: set of real;\n  p: procedure (i: integer);\n  p1: procedure (i: integer);\n  r: ^integer;\n  r1: ^integer;\n\nprocedure proc(aa: array of integer; ss: set of real; pp: procedure (i: integer); rr: ^integer);\nbegin\n  \nend;\n\nbegin\n  a := a1;\n  s := s1;\n  p := p1;\n  r := r1;\n  proc(a,s,p,r);\nend."
+  },
+  {
+    "instruction": "Compare string parameter passing by value vs by reference performance in PascalABC.NET",
+    "output": "var ss:int64 := 0;\n\nprocedure p(s: string);\nbegin\n  s[1] := '1';\nend;\n\nprocedure q(var s: string);\nbegin\n  s[1] := '1';\nend;\n\nbegin\n  var n := 100000000;\n  var s := 'a'*n;\n  MillisecondsDelta;\n  loop 10 do\n    p(s);\n  Println(s[:3]);\n  MillisecondsDelta.Println;\n  loop 10 do\n    q(s);\n  Println(s[:3]);\n  MillisecondsDelta.Println;\nend."
+  }
+]

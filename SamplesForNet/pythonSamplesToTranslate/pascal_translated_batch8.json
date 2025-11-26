@@ -1,0 +1,92 @@
+[
+  {
+    "instruction": "Write a function that takes a list of strings, removes duplicates, and returns the list in alphabetical order.",
+    "output": "function SortAndDeduplicate(lst: array of string): array of string;\nbegin\n  Result := lst.Distinct().Order().ToArray();\nend;",
+    "id": "0"
+  },
+  {
+    "instruction": "Write a function to multiply two matrices.",
+    "output": "function Multiply(mat1, mat2: array [,] of integer): array [,] of integer;\nbegin\n  var m := mat1.GetLength(0);\n  var n := mat2.GetLength(1);\n  var p := mat1.GetLength(1);\n  Result := new integer[m, n];\n  \n  for var i := 0 to m - 1 do\n    for var j := 0 to n - 1 do\n    begin\n      var tmp := 0;\n      for var k := 0 to p - 1 do\n        tmp += mat1[i, k] * mat2[k, j];\n      Result[i, j] := tmp;\n    end;\nend;",
+    "id": "1"
+  },
+  {
+    "instruction": "Write a function to merge two sorted arrays into one sorted array without using extra space.",
+    "output": "function UnionArray(nums1, nums2: List<integer>): List<integer>;\nbegin\n  nums1.RemoveAll(x -> x = 0);\n  nums2.RemoveAll(x -> x = 0);\n  \n  var i := 0;\n  var j := 0;\n  \n  while (i < nums1.Count) and (j < nums2.Count) do\n  begin\n    if nums1[i] <= nums2[j] then\n      i += 1\n    else\n    begin\n      nums1.Insert(i, nums2[j]);\n      i += 1;\n      j += 1;\n    end;\n  end;\n  \n  if j < nums2.Count then\n    nums1.AddRange(nums2.Skip(j));\n    \n  Result := nums1;\nend;",
+    "id": "2"
+  },
+  {
+    "instruction": "Write a function to find the maximum frequency of elements in a list that can be increased up to k times.",
+    "output": "function MaxFreq(nums: array of integer; k: integer): integer;\nbegin\n  &Array.Sort(nums);\n  var left := 0;\n  var right := 0;\n  var maxFreq := 0;\n  var total := 0;\n  \n  while right < nums.Length do\n  begin\n    total += nums[right];\n    if nums[right] * (right - left + 1) <= total + k then\n      maxFreq := Max(maxFreq, right - left + 1)\n    else\n    begin\n      total -= nums[left];\n      left += 1;\n    end;\n    right += 1;\n  end;\n  \n  Result := maxFreq;\nend;",
+    "id": "3"
+  },
+  {
+    "instruction": "Write a function that takes a list of tuples, where each tuple contains a student's name and their grade for a particular assignment. The function should return a dictionary with the student's name as the key and their grade as the value, but with any students who received a grade below 60 removed.",
+    "output": "function RemoveFailingStudents(grades: array of (string, integer)): Dictionary<string, integer>;\nbegin\n  Result := new Dictionary<string, integer>();\n  foreach var item in grades do\n    if item[1] >= 60 then\n      Result[item[0]] := item[1];\nend;",
+    "id": "4"
+  },
+  {
+    "instruction": "Write a python function to find the longest sequence of consecutive zeros that is surrounded by ones at both ends in the binary representation of a given positive number.",
+    "output": "function FindLongestZeros(number: integer): integer;\nbegin\n  var binaryStr := Convert.ToString(number, 2);\n  var maxGap := 0;\n  var currentGap := 0;\n  \n  foreach var bit in binaryStr do\n  begin\n    if bit = '0' then\n      currentGap += 1\n    else if bit = '1' then\n    begin\n      if currentGap > maxGap then\n        maxGap := currentGap;\n      currentGap := 0;\n    end;\n  end;\n  \n  Result := maxGap;\nend;",
+    "id": "5"
+  },
+  {
+    "instruction": "Write a python function to find the sum of the factorial of each digit in a given number.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  Result := 1;\n  for var i := 2 to n do\n    Result *= i;\nend;\n\nfunction SumOfDigitFactorials(n: integer): integer;\nbegin\n  Result := 0;\n  foreach var digitChar in n.ToString() do\n  begin\n    var digit := StrToInt(digitChar);\n    Result += Factorial(digit);\n  end;\nend;",
+    "id": "6"
+  },
+  {
+    "instruction": "Write a function to find the most frequent numbers in a list of integers.",
+    "output": "function MostFrequentNumbers(numbers: array of integer): array of integer;\nbegin\n  var freqDict := new Dictionary<integer, integer>();\n  foreach var num in numbers do\n  begin\n    if freqDict.ContainsKey(num) then\n      freqDict[num] += 1\n    else\n      freqDict[num] := 1;\n  end;\n  \n  var maxCount := freqDict.Values.Max();\n  Result := freqDict.Where(x -> x.Value = maxCount).Select(x -> x.Key).ToArray();\nend;",
+    "id": "7"
+  },
+  {
+    "instruction": "Write a python function to find perfect numbers within a given range.",
+    "output": "function IsPerfect(n: integer): boolean;\nbegin\n  if n = 1 then\n  begin\n    Result := False;\n    exit;\n  end;\n  \n  var sum := 1;\n  var i := 2;\n  while i <= n / i do\n  begin\n    if n mod i = 0 then\n      sum += i + (n div i);\n    i += 1;\n  end;\n  \n  if i * i = n then\n    sum -= i;\n    \n  Result := sum = n;\nend;\n\nfunction FindPerfectNumbers(startVal, endVal: integer): array of integer;\nbegin\n  var perfectNumbers := new List<integer>();\n  \n  for var num := startVal to endVal do\n    if IsPerfect(num) then\n      perfectNumbers.Add(num);\n      \n  Result := perfectNumbers.ToArray();\nend;",
+    "id": "8"
+  },
+  {
+    "instruction": "Write a python function to find the number of set bits in a given integer.",
+    "output": "function CountSetBits(n: integer): integer;\nbegin\n  var count := 0;\n  var temp := n;\n  while temp > 0 do\n  begin\n    count += temp and 1;\n    temp := temp shr 1;\n  end;\n  Result := count;\nend;",
+    "id": "9"
+  },
+  {
+    "instruction": "Write a python function to find the length of the longest substring without repeating characters.",
+    "output": "function LengthLongestSubstring(s: string): integer;\nbegin\n  var charMap := new Dictionary<char, integer>();\n  var left := 0;\n  var maxLength := 0;\n  \n  for var right := 0 to s.Length - 1 do\n  begin\n    var currentChar := s[right + 1];\n    if charMap.ContainsKey(currentChar) then\n      left := Max(left, charMap[currentChar] + 1);\n    \n    charMap[currentChar] := right;\n    maxLength := Max(maxLength, right - left + 1);\n  end;\n  \n  Result := maxLength;\nend;",
+    "id": "10"
+  },
+  {
+    "instruction": "Write a python function to find the second largest digit in a given string. If there is no second largest digit, return -1.",
+    "output": "function SecondLargestDigit(s: string): integer;\nbegin\n  var digits := new List<integer>();\n  foreach var c in s do\n    if c.IsDigit() then\n      digits.Add(StrToInt(c));\n  \n  var uniqueDigits := digits.Distinct().Order().ToArray();\n  if uniqueDigits.Length < 2 then\n    Result := -1\n  else\n    Result := uniqueDigits[uniqueDigits.Length - 2];\nend;",
+    "id": "11"
+  },
+  {
+    "instruction": "Write a function that finds all possible combinations of a given list of numbers with a specific length.",
+    "output": "function FindCombinations(nums: array of integer; k: integer): List<array of integer>;\nbegin\n  if nums.Length < k then\n  begin\n    Result := new List<array of integer>();\n    exit;\n  end;\n  \n  if nums.Length = k then\n  begin\n    Result := new List<array of integer>();\n    Result.Add(nums);\n    exit;\n  end;\n  \n  if k = 1 then\n  begin\n    Result := new List<array of integer>();\n    foreach var x in nums do\n      Result.Add(|x|);\n    exit;\n  end;\n  \n  Result := new List<array of integer>();\n  for var i := 0 to nums.Length - 1 do\n  begin\n    var remaining := nums.Skip(i + 1).ToArray();\n    var subsets := FindCombinations(remaining, k - 1);\n    foreach var subset in subsets do\n    begin\n      var newComb := new integer[subset.Length + 1];\n      newComb[0] := nums[i];\n      for var j := 0 to subset.Length - 1 do\n        newComb[j + 1] := subset[j];\n      Result.Add(newComb);\n    end;\n  end;\nend;",
+    "id": "12"
+  },
+  {
+    "instruction": "Write a function to find the number of times a given pattern appears in a text as a subsequence.\n\nA pattern is a subsequence of a text if it can be derived from the text by deleting some or no characters without changing the order of the remaining characters.",
+    "output": "function DpCountPattern(i, j: integer; text, pattern: string; lenText, lenPattern: integer): integer;\nbegin\n  if j = lenPattern then\n    Result := 1\n  else if i = lenText then\n    Result := 0\n  else if text[i + 1] = pattern[j + 1] then\n    Result := DpCountPattern(i + 1, j + 1, text, pattern, lenText, lenPattern) + DpCountPattern(i + 1, j, text, pattern, lenText, lenPattern)\n  else\n    Result := DpCountPattern(i + 1, j, text, pattern, lenText, lenPattern);\nend;\n\nfunction CountPatternAsSubsequence(text, pattern: string): integer;\nbegin\n  var lenText := text.Length;\n  var lenPattern := pattern.Length;\n  Result := DpCountPattern(0, 0, text, pattern, lenText, lenPattern);\nend;",
+    "id": "13"
+  },
+  {
+    "instruction": "Write a function that takes a list of integers and returns a new list with each element's sign converted to 1 (positive) or -1 (negative), except for zero, which is converted to 0.",
+    "output": "function ConvertSigns(nums: array of integer): array of integer;\nbegin\n  Result := new integer[nums.Length];\n  for var i := 0 to nums.Length - 1 do\n  begin\n    if nums[i] > 0 then\n      Result[i] := 1\n    else if nums[i] < 0 then\n      Result[i] := -1\n    else\n      Result[i] := 0;\n  end;\nend;",
+    "id": "14"
+  },
+  {
+    "instruction": "Write a function to find the minimum number of changes required to make a binary string alternating. A binary string is alternating if no two adjacent characters are the same. The function should take a binary string as input and return the minimum number of changes required.",
+    "output": "function MinChangesAlternating(s: string): integer;\nbegin\n  var count1 := 0;\n  var count2 := 0;\n  \n  for var i := 0 to s.Length - 1 do\n  begin\n    if i mod 2 = 0 then\n    begin\n      if s[i + 1] <> '1' then\n        count1 += 1\n      else\n        count2 += 1;\n    end\n    else\n    begin\n      if s[i + 1] <> '1' then\n        count2 += 1\n      else\n        count1 += 1;\n    end;\n  end;\n  \n  Result := Min(count1, count2);\nend;",
+    "id": "15"
+  },
+  {
+    "instruction": "Write a function to return the largest number in a list of integers. However, there's a twist: the function should ignore any negative numbers in the list.",
+    "output": "function LargestPositive(numbers: array of integer): integer;\nbegin\n  var positiveNumbers := numbers.Where(x -> x >= 0).ToArray();\n  if positiveNumbers.Length = 0 then\n    raise new System.ArgumentException('No positive numbers in the list')\n  else\n    Result := positiveNumbers.Max();\nend;",
+    "id": "16"
+  },
+  {
+    "instruction": "Write a python function to find the longest cycle in a directed graph represented as a list of edges. A cycle is a path that starts and ends at the same node. If no cycle exists, return -1.",
+    "output": "function FindCycleSize(node: integer; var localInDegree: array of integer; edges: array of integer): integer;\nbegin\n  if localInDegree[node] = 0 then\n  begin\n    Result := 0;\n    exit;\n  end;\n  \n  localInDegree[node] -= 1;\n  Result := 1 + FindCycleSize(edges[node], localInDegree, edges);\nend;\n\nfunction LongestCycle(edges: array of integer): integer;\nbegin\n  var inDegree := new integer[edges.Length];\n  var queue := new Queue<integer>();\n  \n  for var i := 0 to edges.Length - 1 do\n    if edges[i] <> -1 then\n      inDegree[edges[i]] += 1;\n  \n  for var i := 0 to edges.Length - 1 do\n    if inDegree[i] = 0 then\n      queue.Enqueue(i);\n  \n  while queue.Count > 0 do\n  begin\n    var node := queue.Dequeue();\n    if edges[node] <> -1 then\n    begin\n      inDegree[edges[node]] -= 1;\n      if inDegree[edges[node]] = 0 then\n        queue.Enqueue(edges[node]);\n    end;\n  end;\n  \n  var maxCycle := -1;\n  var tempInDegree := Copy(inDegree);\n  for var i := 0 to edges.Length - 1 do\n  begin\n    if tempInDegree[i] <> 0 then\n    begin\n      var cycleSize := FindCycleSize(i, tempInDegree, edges);\n      if cycleSize > maxCycle then\n        maxCycle := cycleSize;\n    end;\n  end;\n  \n  Result := maxCycle;\nend;",
+    "id": "17"
+  }
+]

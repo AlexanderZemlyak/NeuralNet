@@ -1,0 +1,78 @@
+[
+  {
+    "instruction": "Split string into words using custom delimiters in PascalABC.NET",
+    "output": "begin\n  var s := '123.4, 6.6; 67';\n  s.ToWords(' ,;').PrintLines  \nend."
+  },
+  {
+    "instruction": "Draw a recursive tree using Turtle graphics in PascalABC.NET",
+    "output": "uses Turtle;\n\nprocedure DrawTree(length: real; depth: integer);\nbegin\n  if depth > 0 then\n  begin\n    forw(length);\n    turn(-35);\n    DrawTree(length*0.65, depth-1);\n    turn(70);\n    DrawTree(length*0.65, depth-1);\n    turn(-35);\n    forw(-length);\n  end;\nend;\n\nbegin\n  toPoint(0, -8);\n  down;\n  \n  DrawTree(6, 11);\nend."
+  },
+  {
+    "instruction": "Draw a binary tree recursively using GraphWPF in PascalABC.NET",
+    "output": "uses GraphWPF;\n\nconst \n  LevelHeight = 50;\n  Levels = 8;\n  delay = 10;\n\nprocedure DrawTree(x,y,dx: real; level: integer);\nbegin\n  if level>0 then \n  begin\n    DrawTree(x-dx,y+LevelHeight,dx / 2,level-1);\n    Line(x,y,x-dx,y+LevelHeight);\n    Line(x,y,x+dx,y+LevelHeight);\n    Sleep(delay);\n    DrawTree(x+dx,y+LevelHeight,dx / 2,level-1);\n  end;\nend;\n\nbegin\n  Window.Title := 'Recursive binary tree drawing';\n  Window.SetSize(800,30+Levels*LevelHeight);\n  DrawTree(Window.Width / 2,10,Window.Width / 5,Levels);\nend."
+  },
+  {
+    "instruction": "Implement basic exception handling for input errors in PascalABC.NET",
+    "output": "var a: integer;\n\nbegin\n  try \n    writeln('Enter number: ');\n    readln(a);\n    writeln('Number entered correctly');\n  except\n    writeln('Input error');\n  end;\n  writeln('Program execution continues');\nend."
+  },
+  {
+    "instruction": "Handle multiple specific exceptions in PascalABC.NET",
+    "output": "var x: integer;\n\nbegin\n  try \n    writeln('Enter number (1 - division by zero error): ');\n    readln(x);\n    x := 10 div (x-1);\n  except\n    on System.FormatException do\n      writeln('Input error');\n    on System.DivideByZeroException do\n      writeln('Division by zero');  \n  end;\nend."
+  },
+  {
+    "instruction": "Demonstrate finally block in exception handling in PascalABC.NET",
+    "output": "var x: integer := 0;\n\nbegin\n  try \n    if Random(2)=0 then\n      x := 10 div x;\n    writeln('Execution continues');   \n  finally\n    writeln('Finally block executed'); \n  end;\n  writeln('After finally block'); \nend."
+  },
+  {
+    "instruction": "Create a starfield animation through space in PascalABC.NET",
+    "output": "uses GraphABC;\n \n type\n   TStar = record\n     X, Y, Z : real;\n   end;\n\n const\n   MAX_STARS = 1000;\n   SPEED = 200;\n\n var\n   i     : Integer;\n   Stars : array [1..MAX_STARS] of TStar;\n   scr_W : Integer;\n   scr_H : Integer;\n   time, dt : Integer;\n\n   procedure SetPix(c: Integer);\n   var\n     sx, sy : Integer;\n   begin\n   try\n     sx := trunc(scr_W / 2 + Stars[i].X * 200 / (Stars[i].Z + 200));\n     sy := trunc(scr_H / 2 - Stars[i].Y * 200 / (Stars[i].Z + 200));\n     except\n     end;\n     \n     try\n      SetPixel(sx, sy, Color.FromArgb(c, c, c));\n     except\n     end;\n   end;\n\n begin\n   MaximizeWindow();\n   scr_W := Window.Width;  \n   scr_H := Window.Height;\n\n   randomize;\n   for i := 1 to MAX_STARS do\n   begin\n     Stars[i].X := random(scr_W * 4) - scr_W * 2;\n     Stars[i].Y := random(scr_H * 4) - scr_H * 2;\n     Stars[i].Z := random(1900);\n   end;\n   \n   ClearWindow(Color.Black); \n   \n   time := Milliseconds;\n   repeat\n     scr_W := Window.Width;  \n     scr_H := Window.Height;\n     dt   := Milliseconds - time;\n     time := Milliseconds;\n     for i := 1 to MAX_STARS do\n       begin\n       SetPix(0);\n       Stars[i].Z := Stars[i].Z - SPEED * dt/1000;\n       if Stars[i].Z <= -200 then\n       begin\n         Stars[i].X := random(scr_W * 4) - scr_W * 2;\n         Stars[i].Y := random(scr_H * 4) - scr_H * 2;\n         Stars[i].Z := 1900;\n       end;\n       SetPix(trunc(255 - 255 * (Stars[i].Z + 200) / 2100));\n     end;\n     sleep(10);\n   until false;\n end."
+  },
+  {
+    "instruction": "Measure execution time of nested loops in PascalABC.NET",
+    "output": "begin\n  var n := 60000;\n  var t1 := Milliseconds;\n  var sm := 0.0;\n  var i := 1.0;\n  while i < n do\n  begin\n    var j := 1.0;\n    while j < n do\n    begin\n      sm += 1.0 / i / j;\n      j += 1;\n    end;\n    i += 1;\n  end;\n  var t2 := Milliseconds;\n  print(t2 - t1);\nend."
+  },
+  {
+    "instruction": "Create a program that uses two timers: one prints '!' every 200ms and another prints '?' every 300ms. Run them for 10 seconds.",
+    "output": "uses Timers;\n\nprocedure OnTimer1 := Write('!');\n\nprocedure OnTimer2 := Write('?');\n\nbegin\n  var t1 := new Timer(200, OnTimer1);\n  var t2 := new Timer(300, OnTimer2);\n  t1.Start;\n  t2.Start;\n  Sleep(10000);\nend."
+  },
+  {
+    "instruction": "Create a program that implements a 'puppy' animation where a black circle follows the mouse cursor with smooth movement using a timer.",
+    "output": "uses GraphWPF, Timers;\n\nvar\n  xx,yy,px,py: real;\n\nprocedure Draw;\nbegin\n  FillCircle(xx,yy,11);\nend;\n\nprocedure TimerProc;\nbegin\n  if (xx<>px) or (yy<>py) then\n  begin\n    var t := 1/10;\n    var newx := round((1-t)*xx+t*px);\n    var newy := round((1-t)*yy+t*py);\n    (xx,yy) := (newx,newy);\n  end;\nend;\n\nbegin\n  Window.Title := '\"Puppy\"';\n  Brush.Color := Colors.Black;\n\n  xx := 100; yy := 100;\n\n  OnMouseMove := procedure(x,y,mb) -> (px,py) := (x,y);\n\n  OnDrawFrame := dt -> begin\n    FillCircle(xx,yy,11);\n  end;\n\n  var t := new Timer(20,TimerProc);\n  t.Start;\nend."
+  },
+  {
+    "instruction": "Create a turtle graphics program that draws different fractal patterns using L-system rules. Include implementations for Dragon curve, Koch curve, Quadratic Koch Island, and Gosper hexagonal curve.",
+    "output": "uses Turtle,GraphWPF;\n\nvar \n  Atom,FStr,XStr,YStr: string;\n  angle,len,x0,y0: real;\n  n: integer;\n\nprocedure Init1; // Dragon\nbegin\n  (Atom,FStr,XStr,YStr) := ('fx','f','x+yf+','-fx-y');\n  (angle,len,n,x0,y0) := (90,3,15,300,450);\nend;\n\nprocedure Init2; // Koch curve\nbegin\n  (Atom,FStr,XStr,YStr) := ('F', 'F-F++F-F', '', '');\n  (angle,len,n,x0,y0) := (60,5,7,10,550);\nend;\n\nprocedure Init3; // Quadratic Koch Island\nbegin\n  (Atom,FStr,XStr,YStr) := ('F+F+F+F', 'F+F-FF+F+F-F', '', '');\n  (angle,len,n,x0,y0) := (90,0.15,4,8,-1);\nend;\n\nprocedure Init4; // Gosper hexagonal curve\nbegin\n  (Atom,FStr,XStr,YStr) := ('XF', 'F', 'X+YF++YF-FX--FXFX-YF+','-FX+YFYF++YF+FX--FX-Y');\n  (angle,len,n,x0,y0) := (60,4,5,580,56);\nend;\n\nprocedure RunStr(s: string; n: integer);\nbegin\n  foreach var c in s do\n    case c of\n      '+': Turn(angle);\n      '-': Turn(-angle);\n      'f','F': if n>0 then RunStr(FStr,n-1) else Forw(len);\n      'x','X': if n>0 then RunStr(XStr,n-1);\n      'y','Y': if n>0 then RunStr(YStr,n-1);\n      else Print('error')\n    end;\nend;\n\nbegin\n  Init3;\n  ToPoint(x0,y0);\n  SetWidth(0.5);\n  Down;\n  RunStr(Atom,n);\n  Up;\nend."
+  },
+  {
+    "instruction": "Create a turtle graphics program that draws a colorful spiral pattern with changing colors.",
+    "output": "uses Turtle,GraphWPF;\n\nbegin\n  SetWidth(5);\n  ToPoint(-10,0);\n  loop 70 do\n  begin\n    SetColor(RandomColor);\n    Down;\n    Forw(5);\n    Up;\n    Back(5);\n    TurnRight(90);\n    Forw(0.3);\n    TurnLeft(90);\n  end;\nend."
+  },
+  {
+    "instruction": "Create a turtle graphics program that draws a Hilbert curve using recursion.",
+    "output": "uses Turtle;\n\nprocedure Hilbert(level: integer; angle,step: real);\nbegin\n  if level = 0 then\n    exit;\n  TurnRight(angle);\n  Hilbert(level-1, -angle, step);\n\n  Forw(step);\n  TurnLeft(angle);\n  Hilbert(level-1, angle, step);\n\n  Forw(step);\n  Hilbert(level-1, angle, step);\n\n  TurnLeft(angle);\n  Forw(step);\n  Hilbert(level-1, -angle, step);\n  TurnRight(angle);\nend;\n\nbegin\n  SetWidth(2);\n  ToPoint(-9,-9);\n  Down;\n  Hilbert(6,90,0.3);\nend."
+  },
+  {
+    "instruction": "Create a turtle graphics program that draws a colorful spiral with gradually changing colors.",
+    "output": "uses TurtleWPF;\n\nbegin\n  Down;\n  SetSpeed(11);\n  SetColor(Colors.Red);\n  for var i:=1 to 450 do\n  begin\n    SetColor(RGB(128+i,0,i));\n    Forw(i);\n    Turn(96);\n  end;\nend."
+  },
+  {
+    "instruction": "Create a program that demonstrates the use of external units by calculating Fibonacci sequence and factorials for numbers 1 to 10.",
+    "output": "Uses unit_example;\n\nconst N: integer = 10;\n\nbegin\n    println('Fibonacci sequence:');\n    for var i := 1 to N do\n        println('F(' + i + ')=', fibonacci(i));\n    println();\n\n    println('Factorial sequence:');\n    for var i := 1 to N do\n        println(i + '!=', factorial(i));\n    println();\nend."
+  },
+  {
+    "instruction": "Create a turtle graphics program that draws different fractal patterns using L-system rules. Include implementations for Dragon curve, Koch curve, Quadratic Koch Island, and Gosper hexagonal curve with configurable parameters.",
+    "output": "uses Turtle;\n\nvar \n  Atom,FStr,XStr,YStr: string;\n  angle,len,x0,y0: real;\n  n: integer;\n\nprocedure Init1; // Dragon\nbegin\n  (Atom,FStr,XStr,YStr) := ('fx','f','x+yf+','-fx-y');\n  (angle,len,n,x0,y0) := (90,0.1,15,7,0);\nend;\n\nprocedure Init2; // Koch curve\nbegin\n  (Atom,FStr,XStr,YStr) := ('F', 'F-F++F-F', '', '');\n  (angle,len,n,x0,y0) := (60,5,7,10,550);\nend;\n\nprocedure Init3; // Quadratic Koch Island\nbegin\n  (Atom,FStr,XStr,YStr) := ('F+F+F+F', 'F+F-FF+F+F-F', '', '');\n  (angle,len,n,x0,y0) := (90,4,4,250,450);\nend;\n\nprocedure Init4; // Gosper hexagonal curve\nbegin\n  (Atom,FStr,XStr,YStr) := ('XF', 'F', 'X+YF++YF-FX--FXFX-YF+','-FX+YFYF++YF+FX--FX-Y');\n  (angle,len,n,x0,y0) := (60,4,5,580,56);\nend;\n\nprocedure RunStr(s: string; n: integer);\nbegin\n  foreach var c in s do\n    case c of\n      '+': Turn(angle);\n      '-': Turn(-angle);\n      'f','F': if n>0 then RunStr(FStr,n-1) else Forw(len);\n      'x','X': if n>0 then RunStr(XStr,n-1);\n      'y','Y': if n>0 then RunStr(YStr,n-1);\n      else Print('error')\n    end;\nend;\n\nbegin\n  Sleep(100);\n  Init1;\n  ToPoint(x0,y0);\n  SetWidth(0.5);\n  Down;\n  RunStr(Atom,n);\n  Up;\nend."
+  },
+  {
+    "instruction": "Create a turtle graphics program that draws a Koch curve using L-system rules with specific starting position and rotation.",
+    "output": "uses Turtle;\n\nvar \n  Atom,FStr,XStr,YStr: string;\n  angle,len,x0,y0: real;\n  n: integer;\n\nprocedure Init1; // Dragon\nbegin\n  (Atom,FStr,XStr,YStr) := ('fx','f','x+yf+','-fx-y');\n  (angle,len,n,x0,y0) := (90,0.1,15,7,0);\nend;\n\nprocedure Init2; // Koch curve\nbegin\n  (Atom,FStr,XStr,YStr) := ('F', 'F-F++F-F', '', '');\n  (angle,len,n,x0,y0) := (60,0.012,7,-13,0);\nend;\n\nprocedure Init3; // Quadratic Koch Island\nbegin\n  (Atom,FStr,XStr,YStr) := ('F+F+F+F', 'F+F-FF+F+F-F', '', '');\n  (angle,len,n,x0,y0) := (90,4,4,250,450);\nend;\n\nprocedure Init4; // Gosper hexagonal curve\nbegin\n  (Atom,FStr,XStr,YStr) := ('XF', 'F', 'X+YF++YF-FX--FXFX-YF+','-FX+YFYF++YF+FX--FX-Y');\n  (angle,len,n,x0,y0) := (60,4,5,580,56);\nend;\n\nprocedure RunStr(s: string; n: integer);\nbegin\n  foreach var c in s do\n    case c of\n      '+': Turn(angle);\n      '-': Turn(-angle);\n      'f','F': if n>0 then RunStr(FStr,n-1) else Forw(len);\n      'x','X': if n>0 then RunStr(XStr,n-1);\n      'y','Y': if n>0 then RunStr(YStr,n-1);\n      else Print('error')\n    end;\nend;\n\nbegin\n  Init2;\n  ToPoint(x0,y0);\n  SetWidth(0.5);\n  Down;\n  Turn(90);\n  RunStr(Atom,n);\n  Up;\nend."
+  },
+  {
+    "instruction": "Create a program that demonstrates exception handling by raising an exception when a function receives zero as input parameter.",
+    "output": "function f(x: integer): integer;\nbegin\n  if x=0 then\n    raise new System.Exception('Function f argument cannot be zero');\n  Result := 10 mod x;\nend;\n\nbegin\n  writeln(f(0));    \nend."
+  },
+  {
+    "instruction": "Create a program that demonstrates tuple creation and access to tuple elements using both index notation and named properties.",
+    "output": "begin\n  var a := ('Ivanov',24);\n  Println(a[0],a[1]);\n\n  var b := ('Petrov',17,1,11);\n  Println(b.Item1,b.Item2,b.Item3,b.Item4);\nend."
+  }
+]

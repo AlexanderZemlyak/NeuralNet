@@ -1,0 +1,66 @@
+[
+  {
+    "instruction": "Generate the Mandelbrot fractal set in PascalABC.NET using GraphWPF by iterating complex numbers and coloring pixels based on iteration count.",
+    "output": "uses GraphWPF;\n\nconst\n  max = 10;\n  coef1 = 0.5;\n  coef2 = 0.88;\n  scalex = 0.0035;\n  scaley = 0.0035;\n  dx = 430;\n  dy = 300;\n\nbegin\n  Window.Title := 'Fractals: Mandelbrot Set';\n  Window.SetSize(600,600);\n  Window.CenterOnScreen;\n  var m := Window.Width.Round;\n  var n := Window.Height.Round;\n  var a := new Color[m,n];\n  for var ix:=0 to m-1 do\n  for var iy:=0 to n-1 do\n  begin\n    var cx := scalex * (ix - dx);\n    var cy := scaley * (iy - dy);\n    var c := Cplx(cx,cy);\n    var z := Cplx(0,0);\n    var i := 1;\n    while i<255 do\n    begin\n      z := z*z+c; \n      if z.Magnitude>max then break;\n      i += 1;\n    end;\n    if i>=255 then a[ix,iy] := Colors.Red\n      else a[ix,iy] := RGB(255,255-i,255-i);\n  end;\n  DrawPixels(0,0,a);\n  Writeln('Calculation time = ',Milliseconds/1000,' s');\nend."
+  },
+  {
+    "instruction": "Demonstrate delegate pattern matching in PascalABC.NET by storing different function types in a System.Delegate variable and using match to invoke them.",
+    "output": "begin\n  var s: real->real := x -> x * x;\n  var add: (real,real)->real := (x, y)-> x + y;\n  var d: System.Delegate := s;  \n  d := add;\n  match d with\n    Func<real, real>(var i): Print(i(2));\n    Func2<real, real, real>(var i): Print(i(2,3));\n  end;\nend."
+  },
+  {
+    "instruction": "Implement the 'Matches' game in PascalABC.NET where players take turns removing 1-3 matches, with computer AI and win/lose conditions.",
+    "output": "const InitialCount=15;\n\nvar\n  Count: integer;\n  Num: integer;\n  Player: integer;\n\nbegin\n  Player := 1;\n  Count := InitialCount;\n  repeat\n    if Player=1 then\n    begin\n      var Correct: boolean;\n      repeat\n        Write('Your turn. There are ',Count,' matches. ');\n        Write('How many matches do you take? ');\n        Readln(Num);\n        Correct := (Num>=1) and (Num<=3) and (Num<=Count);\n        if not Correct then\n          writeln('Incorrect! Repeat input!');\n      until Correct;\n    end\n    else\n    begin\n      Num := Random(1,3);\n      if Num>Count then \n        Num := Count;\n      Writeln('My turn. I took ',Num,' matches');\n    end;\n    Count -= Num;\n    if Player=1 then \n      Player := 2\n    else Player := 1;\n  until Count=0;\n  if Player=1 then\n    Writeln('You won!')\n  else Writeln('You lost!');\nend."
+  },
+  {
+    "instruction": "Use tuple pattern matching with when conditions in PascalABC.NET to compare two variables and print the relationship between them.",
+    "output": "begin\n  var (a,b) := (3,2);\n  match (a,b) with\n  (var x,var y) when x < y: Print('a < b');\n  (var x,var y) when x = y: Print('a = b');\n  (var x,var y) when x > y: Print('a > b');\n  end;\nend."
+  },
+  {
+    "instruction": "Create 3D objects with different material properties in PascalABC.NET using Graph3D, combining diffuse, specular, and emissive materials.",
+    "output": "uses Graph3D;\n\nbegin\n  var m := DiffuseMaterial(Colors.Green) + SpecularMaterial(128,30) + EmissiveMaterial(RGB(0,64,0));\n  Sphere(4,0,0,2,m);\n  Cube(8,0,0,4,RainbowMaterial);\n  Cube(0,0,0,4,DiffuseMaterial(Colors.Green) + ImageMaterial('dog.jpg',0.5,0.5));\nend."
+  },
+  {
+    "instruction": "Demonstrate material properties variation in PascalABC.NET by creating spheres with different specular and emissive parameters arranged in rows.",
+    "output": "uses Graph3D;\n\nbegin\n  for var i:=0 to 6 do\n    Sphere(6-2*i,-3,0,1,\n      Materials.Diffuse(Colors.Green) + \n      Materials.Specular(255-32*i,100));\n  for var i:=0 to 6 do\n    Sphere(6-2*i,0,0,1,\n      Materials.Diffuse(Colors.Green) +\n      Materials.Specular(255,100-15*i));\n  for var i:=0 to 6 do\n    Sphere(6-2*i,3,0,1,\n      Materials.Diffuse(Colors.Green) + \n      Materials.Specular(128,100) + \n      Materials.Emissive(GrayColor(15*i)));\nend."
+  },
+  {
+    "instruction": "Search for a specific value in a random matrix using goto statement for early exit from nested loops in PascalABC.NET.",
+    "output": "const \n  sz = 10;\n  m = 4;\n  n = 5;\n\ntype Matrix = array [1..sz,1..sz] of integer;\n\nlabel 1;\n\nvar matr: Matrix;\n\nbegin\n  for var i := 1 to m do\n  for var j := 1 to n do\n    matr[i,j] := Random(100);\n  for var i := 1 to m do\n  begin\n    for var j := 1 to n do\n      write(matr[i,j]:3);\n    writeln;\n  end;  \n  var found5 := False;\n  for var i := 1 to m do\n  for var j := 1 to n do\n    if matr[i,j]=5 then\n    begin\n      found5 := True;\n      goto 1;\n    end;\n1: \n  if found5 then \n    writeln('Element 5 found')\n  else writeln('Element 5 not found')  \nend."
+  },
+  {
+    "instruction": "Create and manipulate dynamic matrix arrays in PascalABC.NET with functions for creation, random filling, and display.",
+    "output": "type Matrix = array of array of integer;\n\nfunction CreateMatrix(m,n: integer): Matrix;\nbegin\n  SetLength(Result,m);\n  for var i:=0 to m-1 do\n    SetLength(Result[i],n);\nend;\n\nprocedure FillMatrByRandom(matr: Matrix);\nbegin\n  for var i:=0 to matr.Length-1 do\n  for var j:=0 to matr[0].Length-1 do\n    matr[i][j] := Random(100);  \nend;\n\nprocedure WriteMatrix(matr: Matrix);\nbegin\n  for var i := 0 to matr.Length-1 do\n  begin\n    for var j := 0 to matr[0].Length-1 do\n      write(matr[i,j]:3);\n    writeln;\n  end;  \nend;\n\nvar matr: Matrix;\n\nbegin\n  var m := 5;\n  var n := 7;\n  matr := CreateMatrix(m,n);\n  FillMatrByRandom(matr);\n  WriteMatrix(matr);\nend."
+  },
+  {
+    "instruction": "Perform linear algebra operations in PascalABC.NET using NumLibABC to calculate matrix determinant of complex expression.",
+    "output": "uses NumLibABC;\n\nbegin\n  var A:=new Matrix(2,4,-3,0,4,-1,2,-7,5,6);\n  var B:=new Matrix(2,3,8,1,-5,6,7,2);\n  var C:=new Matrix(3,4,1,-1,7,0,3,2,9,4,5,0,-2,-4);\n  var M:=(((A-B*C).Transpose)*A).Det;\n  Writeln(M)\nend."
+  },
+  {
+    "instruction": "Generate random mazes using recursive backtracking algorithm in PascalABC.NET with GraphWPF visualization.",
+    "output": "uses GraphWPF;\n\nconst \n  w = 60;\n  h = 40;\n  cellSize = 10;\n  wallColor = Colors.Black;\n  pathColor = Colors.White;\n  startColor = Colors.Green;\n  endColor = Colors.Red;\n\nvar maze := MatrGen(w*2+1, h*2+1, (x,y) -> True);\n\nvar dirs := Arr(\n    (0, -2),\n    (2,  0),\n    (0,  2),\n    (-2, 0)\n  );\n\nprocedure DrawCell(x, y: integer; c: Color)\n  := FillRectangle(x*cellSize/2, y*cellSize/2, \n       cellSize/2, cellSize/2, c);\n\nprocedure GenerateMaze(x, y: integer);\nbegin\n  maze[x, y] := false;\n  dirs.Shuffle;\n  foreach var (dx, dy) in dirs do\n  begin\n    var (nx, ny) := (x + dx, y + dy);\n    if (nx in 1..w*2-1) and (ny in 1..h*2-1) and maze[nx, ny] then\n    begin\n      var (wx, wy) := (x + dx div 2, y + dy div 2);\n      maze[wx, wy] := false;\n      GenerateMaze(nx, ny);\n    end;\n  end;\nend;\n\nprocedure DrawMaze;\nbegin\n  Window.SetSize(w*cellSize + 5, h*cellSize + 5);\n  Window.Clear(Colors.White);\n  for var x := 0 to w*2 do\n    for var y := 0 to h*2 do\n      if maze[x, y] then\n        DrawCell(x, y, wallColor)\n      else DrawCell(x, y, pathColor);\n  DrawCell(0, 1, startColor);\n  DrawCell(w*2, h*2-1, endColor);\nend;\n\nbegin\n  Window.Title := 'Random Maze Generator';\n  GenerateMaze(1, 1);\n  DrawMaze;\nend."
+  },
+  {
+    "instruction": "Call Windows API MessageBox function from PascalABC.NET using external DLL declaration.",
+    "output": "function MessageBox(h:integer;m,c:string;t:integer):integer;\nexternal 'User32.dll' name 'MessageBox';\n\nbegin\n  MessageBox(0,'Hello!','Message',0);\nend."
+  },
+  {
+    "instruction": "Compare performance between static array and matrix filling operations in PascalABC.NET for large datasets.",
+    "output": "const n = 20000;\n\nvar a: array [1..n,1..n] of real;\n\nbegin\n  for var i:=1 to n do\n  for var j:=1 to n do\n    a[i,j] := 1;\n  Println(MillisecondsDelta/1000);\n  var m := MatrFill(n,n,1);\n  Println(MillisecondsDelta/1000);\nend."
+  },
+  {
+    "instruction": "Calculate Pi using Monte Carlo method in PascalABC.NET by generating random points and counting those inside unit circle.",
+    "output": "begin\n  var n := 10000000;\n  var pp := (1..n).Select(x->(Random(),Random())).Where(p->sqr(p[0])+sqr(p[1])<1).Count/n*4;\n  Print(pp);\nend."
+  },
+  {
+    "instruction": "Create animated mosaic pattern in PascalABC.NET by randomly swapping colored squares in a grid with continuous animation.",
+    "output": "uses GraphABC;\n\nconst \n  w  = 25;\n  w1 = 1;\n  m  = 50;\n  n  = 70;\n  x0 = 0;\n  y0 = 0;\n  delay = 10;\n\nvar a: array [0..n,0..m] of Color;\n\nbegin\n  Window.Title := 'Mosaic';\n  Window.SetSize(800,600);\n  for var i:=0 to n-1 do\n  for var j:=0 to m-1 do\n  begin\n    a[i,j] := clRandom;\n    Brush.Color := a[i,j];\n    FillRect(x0+i*w,y0+j*w,x0+(i+1)*w-w1,y0+(j+1)*w-w1);\n  end;\n  var k := 0;\n  while true do\n  begin\n    k += 1;\n    if k mod 1000 = 0 then \n    begin\n      k := 0;\n      Sleep(delay);\n    end;  \n    var i := Random(1,n-2);\n    var j := Random(1,m-2);\n    var di := Random(-1,1);\n    var dj := Random(-1,1);\n    var i1 := i+di; \n    var j1 := j+dj;\n    Swap(a[i,j],a[i1,j1]);\n    Brush.Color := a[i,j];\n    FillRect(x0+i*w,y0+j*w,x0+(i+1)*w-w1,y0+(j+1)*w-w1);\n    Brush.Color := a[i1,j1];\n    FillRect(x0+i1*w,y0+j1*w,x0+(i1+1)*w-w1,y0+(j1+1)*w-w1);\n  end;\nend."
+  },
+  {
+    "instruction": "Handle mouse and keyboard events in PascalABC.NET using GraphWPF to draw circles on mouse click and print key codes.",
+    "output": "uses GraphWPF;\n\nbegin\n  OnMouseDown := (x,y,mb) -> if mb=1 then Circle(x,y,5);\n  OnKeyDown := k -> Print(k);\nend."
+  },
+  {
+    "instruction": "Generate the Mandelbrot fractal set in PascalABC.NET using GraphABC by iterating complex numbers and setting pixels based on iteration count.",
+    "output": "uses GraphABC;\n\nconst\n  max = 10;\n  coef1 = 0.5;\n  coef2 = 0.88;\n  scalex = 0.0035;\n  scaley = 0.0035;\n  dx = 430;\n  dy = 300;\n\nbegin\n  Window.Title := 'Fractals: Mandelbrot Set';\n  SetWindowSize(600,600);\n  CenterWindow;\n  for var ix:=0 to Window.Width-1 do\n  for var iy:=0 to Window.Height-1 do\n  begin\n    var cx := scalex * (ix - dx);\n    var cy := scaley * (iy - dy);\n    var c := Cplx(cx,cy);\n    var z := Cplx(0,0);\n    var i := 1;\n    while i<255 do\n    begin\n      z := z*z+c; \n      if z.Magnitude>max then break;\n      i += 1;\n    end;\n    if i>=255 then SetPixel(ix,iy,clRed)\n      else SetPixel(ix,iy,RGB(255,255-i,255-i));\n  end;\n  writeln('Calculation time = ',Milliseconds/1000,' s');\nend."
+  }
+]
