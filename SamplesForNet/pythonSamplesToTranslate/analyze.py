@@ -12,7 +12,7 @@ if __name__ == '__main__':
     # Функция для извлечения названия функции/процедуры
     def extract_function_name(output):
         # Ищем function Name(... или procedure Name(...
-        match = re.search(r'\b(function|procedure)\s+([a-zA-Z_][a-zA-Z0-9_]*)<', output)
+        match = re.search(r'\b(function|procedure)\s+([a-zA-Z_][a-zA-Z0-9_]*)', output)
         if match:
             return match.group(2)  # возвращаем только имя
         return None

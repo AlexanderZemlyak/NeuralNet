@@ -44,7 +44,7 @@
     "output": "function SeqGen<T>(count: integer; first: T; next: T->T): sequence of T;\nbegin\n  if count < 1 then\n    raise new System.ArgumentOutOfRangeException('count', count, 'Parameter must be > 0');\n  Result := Iterate(first, next).Take(count);\nend;"
   },
   {
-    "instruction": "Implementrray generator with count, two initial elements and next function",
+    "instruction": "Implement standard array generator with count, two initial elements and next function",
     "output": "function ArrGen<T>(count: integer; first, second: T; next: (T,T) ->T): array of T;\nbegin\n  if count < 2 then\n    raise new System.ArgumentOutOfRangeException('count', count, 'Parameter must be > 1');\n  var a := new T[count];\n  a[0] := first;\n  a[1] := second;\n  for var i := 2 to a.Length - 1 do\n    a[i] := next(a[i - 2], a[i - 1]);\n  Result := a;\nend;"
   },
   {
@@ -156,10 +156,6 @@
     "output": "function LeftStr(s: string; count: integer): string;\nbegin\n  if count > s.Length then\n    count := s.Length;\n  Result := s.Substring(0, count)\nend;"
   },
   {
-    "instruction": "Implement standard right string extraction function",
-    "output": "function RightStr(s: string; count: integer): string;\nbegin\n  if count > s.Length then\n    count := s.Length;\n  Result := s.Substring(s.Length - count, count);\nend;"
-  },
-  {
     "instruction": "Implement standard string reversal function",
     "output": "function ReverseString(s: string): string;\nbegin\n  var ca := s.ToCharArray;\n  &Array.Reverse(ca);\n  Result := new string(ca);\nend;"
   },
@@ -168,7 +164,7 @@
     "output": "function StringOfChar(ch: char; count: integer): string;\nbegin\n  Result := new string(ch, count);\nend;"
   },
   {
-    "instruction": "Implementrray sorting with custom comparison function",
+    "instruction": "Implement standard array sorting with custom comparison function",
     "output": "procedure Sort<T>(a: array of T; cmp: (T,T)->integer);\nbegin\n  System.Array.Sort(a, cmp);\nend;"
   },
   {
@@ -212,7 +208,7 @@
     "output": "procedure Sleep(ms: integer);\nbegin\n  System.Threading.Thread.Sleep(ms);\nend;"
   },
   {
-    "instruction": "Implementssertion procedure with message",
+    "instruction": "Implement standard assertion procedure with message",
     "output": "procedure Assert(cond: boolean; message: string; sourceFile: string; line: integer);\nbegin\n  if (Environment.OSVersion.Platform = PlatformID.Unix) or (Environment.OSVersion.Platform = PlatformID.MacOSX) or IsWDE then\n  begin\n    if not IsWDE then\n      System.Diagnostics.Debug.Assert(cond, 'File ' + sourceFile + ', line ' + line.ToString() + ': ' + message)\n    else if not cond then\n    begin\n      var err := 'Assertion failure: ' + message + Environment.NewLine + 'File ' + sourceFile + ', line ' + line.ToString();\n      Writeln(err);\n      System.Threading.Thread.Sleep(500);\n      raise new Exception();\n    end;\n  end\n  else\n    System.Diagnostics.Contracts.Contract.Assert(cond,'File '+sourceFile+', line '+line.ToString() + ': ' + message)\nend;"
   },
   {
@@ -248,15 +244,15 @@
     "output": "function Cosh(x: real) := Math.Cosh(x);"
   },
   {
-    "instruction": "Implementrc sine function",
+    "instruction": "Implement standard sine function",
     "output": "function ArcSin(x: real) := Math.Asin(x);"
   },
   {
-    "instruction": "Implementrc cosine function",
+    "instruction": "Implement standard cosine function",
     "output": "function ArcCos(x: real) := Math.Acos(x);"
   },
   {
-    "instruction": "Implementrc tangent function",
+    "instruction": "Implement standard tangent function",
     "output": "function ArcTan(x: real) := Math.Atan(x);"
   },
   {
@@ -328,14 +324,6 @@
     "output": "function TryRead(var x: real; message: string): boolean;\nbegin\n  Result := True;\n  try\n    if message<>'' then\n      Print(message);\n    Read(x)\n  except\n    Result := False;\n  end\nend;"
   },
   {
-    "instruction": "Implement standard readln function for integer",
-    "output": "function ReadlnInteger: integer;\nbegin\n  Result := ReadInteger;\n  Readln();\nend;"
-  },
-  {
-    "instruction": "Implement standard readln function for real number",
-    "output": "function ReadlnReal: real;\nbegin\n  Result := ReadReal;\n  Readln();\nend;"
-  },
-  {
     "instruction": "Implement standard read function for text file integer",
     "output": "function ReadInteger(f: Text): integer;\nbegin\n  Read(f, Result);\nend;"
   },
@@ -358,10 +346,6 @@
   {
     "instruction": "Implement standard try string to integer conversion function",
     "output": "function TryStrToInt(s: string; var value: integer): boolean;\nbegin\n  Result := True;\n  var Res := 0;\n  var j := 1;\n  while (j <= s.Length) and char.IsWhiteSpace(s[j]) do\n    j += 1;\n  if (j > s.Length) then \n  begin\n    Result := False;\n    exit\n  end;  \n  var sign := 0;  \n  if s[j] = '-' then\n  begin\n    sign := -1;\n    j += 1;\n  end  \n  else if s[j] = '+' then\n  begin\n    sign := 1;\n    j += 1;\n  end;\n  if (j > s.Length) then \n  begin\n    Result := False;\n    exit\n  end;  \n  var c := integer(s[j]);\n  if (c < 48) or (c > 57) then\n  begin\n    Result := False;\n    exit\n  end;  \n  Res := c - 48;\n  j += 1;  \n  while j <= s.Length do\n  begin\n    c := integer(s[j]);\n    if c > 57 then\n      break;\n    if c < 48 then\n      break;\n  if Res > 214748364 then\n    begin\n      Result := False;\n      exit\n    end;  \n    Res := Res * 10 + (c - 48);\n    j += 1;\n  end;\n  if Res < 0 then \n    if (Res = -2147483648) and (sign = -1) then\n      exit\n    else \n    begin\n      Result := False;\n      exit\n    end;  \n  if sign = -1 then\n    Res := -Res;\n  while (j <= s.Length) and char.IsWhiteSpace(s[j]) do\n    j += 1;\n  if j <= s.Length then  \n  begin\n    Result := False;\n    exit\n  end;  \n  value := Res;\nend;"
-  },
-  {
-    "instruction": "Implement standard try string to real conversion function",
-    "output": "function TryStrToReal(s: string; var value: real) := real.TryParse(s,System.Globalization.NumberStyles.Float,new System.Globalization.NumberFormatInfo,value);"
   },
   {
     "instruction": "Implement standard complex number exponential function",
@@ -400,7 +384,7 @@
     "output": "procedure Shuffle<T>(l: List<T>);\nbegin\n  var n := l.Count;\n  for var i := 0 to n - 1 do\n  begin\n    var v := l[i];\n    l[i] := l[Random(n)];\n    l[Random(n)] := v;\n  end;\nend;"
   },
   {
-    "instruction": "Implementrray copy function",
+    "instruction": "Implement standard array copy function",
     "output": "function Copy(a: &Array): &Array;\nbegin\n  Result := &Array(a.Clone());\nend;"
   },
   {
@@ -440,14 +424,6 @@
     "output": "function ReadRealFromString(s: string; var from: integer): real;\nbegin\n  Result := real.Parse(ReadWordFromString(s, from));  \nend;"
   },
   {
-    "instruction": "Implement standard function to try read real number from string with position tracking",
-    "output": "function TryReadRealFromString(s: string; var from: integer; var res: real): boolean;\nbegin\n  Result := real.TryParse(ReadWordFromString(s, from), res);\nend;"
-  },
-  {
-    "instruction": "Implement standard function to try read integer from string with position tracking",
-    "output": "function TryReadIntegerFromString(s: string; var from: integer; var res: integer): boolean;\nbegin\n  Result := TryStrToInt(ReadWordFromString(s, from), res);\nend;"
-  },
-  {
     "instruction": "Implement standard function for maximum of three integers",
     "output": "function Max(a, b, c: integer): integer;\nbegin\n  Result := a;\n  if b > Result then Result := b;\n  if c > Result then Result := c;\nend;"
   },
@@ -464,32 +440,8 @@
     "output": "function ChrUnicode(a: word): char;\nbegin\n  Result := Convert.ToChar(a);\nend;"
   },
   {
-    "instruction": "Implement standard function to read real number with prompt",
-    "output": "function ReadReal(prompt: string): real;\nbegin\n  Print(prompt);\n  Result := ReadReal;\nend;"
-  },
-  {
     "instruction": "Implement standard function to read boolean from text file",
     "output": "function ReadBoolean(f: Text): boolean;\nbegin\n  Read(f, Result);\nend;"
-  },
-  {
-    "instruction": "Implement standard function to read integer from text file with newline",
-    "output": "function ReadlnInteger(f: Text): integer;\nbegin\n  Result := ReadInteger(f);\n  Readln(f);\nend;"
-  },
-  {
-    "instruction": "Implement standard function to read real number from text file with newline",
-    "output": "function ReadlnReal(f: Text): real;\nbegin\n  Result := ReadReal(f);\n  Readln(f);\nend;"
-  },
-  {
-    "instruction": "Implement standard function to read character from text file with newline",
-    "output": "function ReadlnChar(f: Text): char;\nbegin\n  Result := ReadChar(f);\n  Readln(f);\nend;"
-  },
-  {
-    "instruction": "Implement standard function to read boolean from text file with newline",
-    "output": "function ReadlnBoolean(f: Text): boolean;\nbegin\n  Result := ReadBoolean(f);\n  Readln(f);\nend;"
-  },
-  {
-    "instruction": "Implement standard function to read short string from file",
-    "output": "procedure ReadShortStringFromFile(f: Text; var s: string; n: integer);\nbegin\n  var i := 1;\n  var sb := new System.Text.StringBuilder;\n  repeat\n    if f.sr.EndOfStream then\n      break;\n    if f.sr.Peek = 13 then\n      break;\n    if f.sr.Peek = 10 then\n      break;\n    if i > n then break;\n    sb.Append(Convert.ToChar(f.sr.Read));\n    i := i + 1;\n  until False;\n  s := sb.ToString; {}\n  if s = nil then \n    s := string.Empty;\n  if s.Length > n then s := s.Substring(0, n);\nend;"
   },
   {
     "instruction": "Implement standard text file flush procedure",
@@ -500,220 +452,16 @@
     "output": "procedure TextFileInit(var f: Text);\nbegin\n  f := new Text;  \nend;"
   },
   {
-    "instruction": "Implement standard function to read array of int64 from standard input",
-    "output": "function ReadArrInt64(n: integer): array of int64;\nbegin\n  Result := new int64[n];\n  for var i := 0 to Result.Length - 1 do\n    Result[i] := ReadInt64;\nend;"
-  },
-  {
-    "instruction": "Implement standard function to read sequence of real numbers with condition and prompt",
-    "output": "function ReadSeqRealWhile(prompt: string; cond: real->boolean): sequence of real;\nbegin\n  Print(prompt);\n  Result := ReadSeqRealWhile(cond);\nend;"
-  },
-  {
     "instruction": "Implement standard function to read sequence of strings with condition and prompt",
     "output": "function ReadSeqStringWhile(prompt: string; cond: string->boolean): sequence of string;\nbegin\n  Print(prompt);\n  Result := ReadSeqStringWhile(cond);\nend;"
-  },
-  {
-    "instruction": "Implement standard function to read two integers from standard input",
-    "output": "function ReadInteger2 := (ReadInteger, ReadInteger);"
-  },
-  {
-    "instruction": "Implement standard function to read two real numbers from standard input",
-    "output": "function ReadReal2 := (ReadReal, ReadReal);"
-  },
-  {
-    "instruction": "Implement standard function to read two characters from standard input",
-    "output": "function ReadChar2 := (ReadChar, ReadChar);"
-  },
-  {
-    "instruction": "Implement standard function to read two strings from standard input",
-    "output": "function ReadString2 := (ReadString, ReadString);"
-  },
-  {
-    "instruction": "Implement standard function to read two integers with newline",
-    "output": "function ReadlnInteger2 := (ReadInteger, ReadlnInteger);"
-  },
-  {
-    "instruction": "Implement standard function to read two real numbers with newline",
-    "output": "function ReadlnReal2 := (ReadReal, ReadlnReal);"
-  },
-  {
-    "instruction": "Implement standard function to read two characters with newline",
-    "output": "function ReadlnChar2 := (ReadChar, ReadlnChar);"
-  },
-  {
-    "instruction": "Implement standard function to read two strings with newline",
-    "output": "function ReadlnString2 := (ReadString, ReadlnString);"
-  },
-  {
-    "instruction": "Implement standard function to read three integers from standard input",
-    "output": "function ReadInteger3 := (ReadInteger, ReadInteger, ReadInteger);"
-  },
-  {
-    "instruction": "Implement standard function to read three real numbers from standard input",
-    "output": "function ReadReal3 := (ReadReal, ReadReal, ReadReal);"
-  },
-  {
-    "instruction": "Implement standard function to read three characters from standard input",
-    "output": "function ReadChar3 := (ReadChar, ReadChar, ReadChar);"
-  },
-  {
-    "instruction": "Implement standard function to read three strings from standard input",
-    "output": "function ReadString3 := (ReadString, ReadString, ReadString);"
-  },
-  {
-    "instruction": "Implement standard function to read three integers with newline",
-    "output": "function ReadlnInteger3 := (ReadInteger, ReadInteger, ReadlnInteger);"
-  },
-  {
-    "instruction": "Implement standard function to read three real numbers with newline",
-    "output": "function ReadlnReal3 := (ReadReal, ReadReal, ReadlnReal);"
-  },
-  {
-    "instruction": "Implement standard function to read three characters with newline",
-    "output": "function ReadlnChar3 := (ReadChar, ReadChar, ReadlnChar);"
-  },
-  {
-    "instruction": "Implement standard function to read three strings with newline",
-    "output": "function ReadlnString3 := (ReadString, ReadString, ReadlnString);"
-  },
-  {
-    "instruction": "Implement standard function to read four integers from standard input",
-    "output": "function ReadInteger4 := (ReadInteger, ReadInteger, ReadInteger, ReadInteger);"
-  },
-  {
-    "instruction": "Implement standard function to read four real numbers from standard input",
-    "output": "function ReadReal4 := (ReadReal, ReadReal, ReadReal, ReadReal);"
-  },
-  {
-    "instruction": "Implement standard function to read four characters from standard input",
-    "output": "function ReadChar4 := (ReadChar, ReadChar, ReadChar, ReadChar);"
-  },
-  {
-    "instruction": "Implement standard function to read four strings from standard input",
-    "output": "function ReadString4 := (ReadString, ReadString, ReadString, ReadString);"
-  },
-  {
-    "instruction": "Implement standard function to read four integers with newline",
-    "output": "function ReadlnInteger4 := (ReadInteger, ReadInteger, ReadInteger, ReadlnInteger);"
-  },
-  {
-    "instruction": "Implement standard function to read four real numbers with newline",
-    "output": "function ReadlnReal4 := (ReadReal, ReadReal, ReadReal, ReadlnReal);"
-  },
-  {
-    "instruction": "Implement standard function to read four characters with newline",
-    "output": "function ReadlnChar4 := (ReadChar, ReadChar, ReadChar, ReadlnChar);"
-  },
-  {
-    "instruction": "Implement standard function to read four strings with newline",
-    "output": "function ReadlnString4 := (ReadString, ReadString, ReadString, ReadlnString);"
-  },
-  {
-    "instruction": "Implement standard function to read two integers with prompt",
-    "output": "function ReadInteger2(prompt: string) := (ReadInteger(prompt), ReadInteger);"
-  },
-  {
-    "instruction": "Implement standard function to read two real numbers with prompt",
-    "output": "function ReadReal2(prompt: string) := (ReadReal(prompt), ReadReal);"
   },
   {
     "instruction": "Implement standard function to read two characters with prompt",
     "output": "function ReadChar2(prompt: string) := (ReadChar(prompt), ReadChar);"
   },
   {
-    "instruction": "Implement standard function to read two strings with prompt",
-    "output": "function ReadString2(prompt: string) := (ReadString(prompt), ReadString);"
-  },
-  {
-    "instruction": "Implement standard function to read two integers with prompt and newline",
-    "output": "function ReadlnInteger2(prompt: string) := (ReadInteger(prompt), ReadlnInteger);"
-  },
-  {
-    "instruction": "Implement standard function to read two real numbers with prompt and newline",
-    "output": "function ReadlnReal2(prompt: string) := (ReadReal(prompt), ReadlnReal);"
-  },
-  {
-    "instruction": "Implement standard function to read two characters with prompt and newline",
-    "output": "function ReadlnChar2(prompt: string) := (ReadChar(prompt), ReadlnChar);"
-  },
-  {
-    "instruction": "Implement standard function to read two strings with prompt and newline",
-    "output": "function ReadlnString2(prompt: string) := (ReadString(prompt), ReadlnString);"
-  },
-  {
-    "instruction": "Implement standard function to read three integers with prompt",
-    "output": "function ReadInteger3(prompt: string) := (ReadInteger(prompt), ReadInteger, ReadInteger);"
-  },
-  {
     "instruction": "Implement standard function to read three real numbers with prompt",
     "output": "function ReadReal3(prompt: string) := (ReadReal(prompt), ReadReal, ReadReal);"
-  },
-  {
-    "instruction": "Implement standard function to read three characters with prompt",
-    "output": "function ReadChar3(prompt: string) := (ReadChar(prompt), ReadChar, ReadChar);"
-  },
-  {
-    "instruction": "Implement standard function to read three strings with prompt",
-    "output": "function ReadString3(prompt: string) := (ReadString(prompt), ReadString, ReadString);"
-  },
-  {
-    "instruction": "Implement standard function to read three integers with prompt and newline",
-    "output": "function ReadlnInteger3(prompt: string) := (ReadInteger(prompt), ReadInteger, ReadlnInteger);"
-  },
-  {
-    "instruction": "Implement standard function to read three real numbers with prompt and newline",
-    "output": "function ReadlnReal3(prompt: string) := (ReadReal(prompt), ReadReal, ReadlnReal);"
-  },
-  {
-    "instruction": "Implement standard function to read three characters with prompt and newline",
-    "output": "function ReadlnChar3(prompt: string) := (ReadChar(prompt), ReadChar, ReadlnChar);"
-  },
-  {
-    "instruction": "Implement standard function to read three strings with prompt and newline",
-    "output": "function ReadlnString3(prompt: string) := (ReadString(prompt), ReadString, ReadlnString);"
-  },
-  {
-    "instruction": "Implement standard function to read four integers with prompt",
-    "output": "function ReadInteger4(prompt: string) := (ReadInteger(prompt), ReadInteger, ReadInteger, ReadInteger);"
-  },
-  {
-    "instruction": "Implement standard function to read four real numbers with prompt",
-    "output": "function ReadReal4(prompt: string) := (ReadReal(prompt), ReadReal, ReadReal, ReadReal);"
-  },
-  {
-    "instruction": "Implement standard function to read four characters with prompt",
-    "output": "function ReadChar4(prompt: string) := (ReadChar(prompt), ReadChar, ReadChar, ReadChar);"
-  },
-  {
-    "instruction": "Implement standard function to read four strings with prompt",
-    "output": "function ReadString4(prompt: string) := (ReadString(prompt), ReadString, ReadString, ReadString);"
-  },
-  {
-    "instruction": "Implement standard function to read four integers with prompt and newline",
-    "output": "function ReadlnInteger4(prompt: string) := (ReadInteger(prompt), ReadInteger, ReadInteger, ReadlnInteger);"
-  },
-  {
-    "instruction": "Implement standard function to read four real numbers with prompt and newline",
-    "output": "function ReadlnReal4(prompt: string) := (ReadReal(prompt), ReadReal, ReadReal, ReadlnReal);"
-  },
-  {
-    "instruction": "Implement standard function to read four characters with prompt and newline",
-    "output": "function ReadlnChar4(prompt: string) := (ReadChar(prompt), ReadChar, ReadChar, ReadlnChar);"
-  },
-  {
-    "instruction": "Implement standard function to read four strings with prompt and newline",
-    "output": "function ReadlnString4(prompt: string) := (ReadString(prompt), ReadString, ReadString, ReadlnString);"
-  },
-  {
-    "instruction": "Implement standard function to read int64 with prompt and newline",
-    "output": "function ReadlnInt64(prompt: string): int64;\nbegin\n  Print(prompt);\n  Result := ReadlnInt64;\nend;"
-  },
-  {
-    "instruction": "Implement standard function to read BigInteger with prompt",
-    "output": "function ReadBigInteger(prompt: string): BigInteger;\nbegin\n  Print(prompt);\n  Result := ReadBigInteger;\nend;"
-  },
-  {
-    "instruction": "Implement standard function to read BigInteger with prompt and newline",
-    "output": "function ReadlnBigInteger(prompt: string): BigInteger;\nbegin\n  Print(prompt);\n  Result := ReadlnBigInteger;\nend;"
   },
   {
     "instruction": "Implement standard function to create HashSet from sequence",
@@ -790,14 +538,6 @@
   {
     "instruction": "Implement standard function to expand file name to full path",
     "output": "function ExpandFileName(fname: string): string;\nbegin\n  var fi := new System.IO.FileInfo(fname);\n  Result := fi.FullName;\nend;"
-  },
-  {
-    "instruction": "Implement standard procedure to set string length for short strings",
-    "output": "procedure SetLengthForShortString(var s: string; n, sz: integer);\nbegin\n  if n < 0 then\n    raise new System.ArgumentOutOfRangeException('n');\n  if n = 0 then\n    s := String.Empty\n  else if s.Length > n then\n    s := s.Substring(0, n)\n  else if s.Length < n then\n    if n <= sz then\n      s += new string(' ', n - s.Length)\n    else \n      s += new String(' ', sz - s.Length)\nend;"
-  },
-  {
-    "instruction": "Implement standard procedure to insert into short string with length limit",
-    "output": "procedure InsertInShortString(subs: string; var s: string; index, n: integer);\nbegin\n  if index < 1 then \n    index := 1;\n  if index > n then\n    exit;\n  try\n    s := s.Insert(index - 1, subs);\n    if s.Length > n then s := s.Substring(0, n);\n  except\n    s := s.Insert(s.Length, subs);\n    if s.Length > n then s := s.Substring(0, n);\n  end;\nend;"
   },
   {
     "instruction": "Implement standard procedure for string conversion from longword",
@@ -1328,28 +1068,12 @@
     "output": "function ToBigInteger(Self: string): BigInteger; extensionmethod := BigInteger.Parse(Self);"
   },
   {
-    "instruction": "Implement standard extension method that tries to convert string to integer and returns success status",
-    "output": "function TryToInteger(Self: string; var value: integer): boolean; extensionmethod := TryStrToInt(Self,value);"
-  },
-  {
-    "instruction": "Implement standard extension method that tries to convert string to real number and returns success status",
-    "output": "function TryToReal(Self: string; var value: real): boolean; extensionmethod := TryStrToReal(Self,value);"
-  },
-  {
     "instruction": "Implement standard extension method that checks if string can be converted to real number",
     "output": "function IsReal(Self: string): boolean; extensionmethod;\nbegin\n  var r: real;\n  Result := TryStrToReal(Self, r);\nend;"
   },
   {
-    "instruction": "Implement standard extension method that checks if string can be converted to integer",
-    "output": "function IsInteger(Self: string): boolean; extensionmethod;\nbegin\n  var i: integer;\n  Result := TryStrToInt(Self, i);\nend;"
-  },
-  {
     "instruction": "Implement standard extension method that converts string to integer with default value",
     "output": "function ToInteger(Self: string; defaultvalue: integer): integer; extensionmethod;\nbegin\n  var b := TryStrToInt(Self,Result);\n  if not b then\n    Result := defaultvalue\nend;"
-  },
-  {
-    "instruction": "Implement standard extension method that converts string to real number with default value",
-    "output": "function ToReal(Self: string; defaultvalue: real): real; extensionmethod;\nbegin\n  var b := TryStrToReal(Self,Result);\n  if not b then\n    Result := defaultvalue\nend;"
   },
   {
     "instruction": "Implement standard extension method that splits string into words using delimiter string",
@@ -1416,10 +1140,6 @@
     "output": "function MatrGen<T>(m, n: integer; gen: (integer,integer)->T): array [,] of T;\nbegin\n  Result := new T[m, n];\n  for var i := 0 to Result.RowCount - 1 do\n    for var j := 0 to Result.ColCount - 1 do\n      Result[i, j] := gen(i, j);\nend;"
   },
   {
-    "instruction": "Implement standard function that reads 2D integer array from input",
-    "output": "function ReadMatrInteger(m, n: integer): array [,] of integer;\nbegin\n  Result := new integer[m, n];\n  for var i := 0 to m - 1 do\n    for var j := 0 to n - 1 do\n      Result[i, j] := ReadInteger;\nend;"
-  },
-  {
     "instruction": "Implement standard function that reads 2D real array from input",
     "output": "function ReadMatrReal(m, n: integer): array [,] of real;\nbegin\n  Result := new real[m, n];\n  for var i := 0 to m - 1 do\n    for var j := 0 to n - 1 do\n      Result[i, j] := ReadReal;\nend;"
   },
@@ -1464,24 +1184,8 @@
     "output": "function CompareToTup2<T1, T2>(v1: (T1, T2); v2: (T1, T2)) := (v1 as System.IComparable).CompareTo(v2);"
   },
   {
-    "instruction": "Implement standard helper function to get character in short string with bounds checking",
-    "output": "function GetCharInShortString(s: string; ind, n: integer): char;\nbegin\n  if ind < 0 then \n    raise new IndexOutOfRangeException;\n  if ind = 0 then \n    Result := char(s.Length)\n  else \n    try\n      Result := s[ind];\n    except \n      on e: Exception do\n        if ind > n then raise;\n    end;\nend;"
-  },
-  {
-    "instruction": "Implement standard helper function to set character in short string with bounds checking",
-    "output": "function SetCharInShortString(s: string; ind, n: integer; c: char): string;\nbegin\n  if ind < 0 then \n    raise new IndexOutOfRangeException;\n  if ind <> 0 then\n  begin\n    var sb := new System.Text.StringBuilder();\n    sb.Append(s);\n    if ind - 1 < sb.Length then\n      sb[ind - 1] := c;\n    if ind > n then raise new IndexOutOfRangeException;\n    Result := sb.ToString;\n  end\n  else\n  begin\n    raise new IndexOutOfRangeException;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement standard helper function to clip short string to specified length",
-    "output": "function ClipShortString(s: string; len: integer): string;\nbegin\n  if s.Length <= len then \n    Result := s\n  else Result := s.Substring(0, len);\nend;"
-  },
-  {
     "instruction": "Implement standard helper function to get resource stream",
     "output": "function GetResourceStream(ResourceFileName: string): Stream;\nbegin\n  Result := System.Reflection.Assembly.GetEntryAssembly().GetManifestResourceStream(ResourceFileName);\nend;"
-  },
-  {
-    "instruction": "Implement standard helper procedure to set string default property",
-    "output": "procedure StringDefaultPropertySet(var s: string; index: integer; c: char);\nbegin\n  var chars := s.ToCharArray;\n  chars[index] := c;\n  s := new String(chars);\nend;"
   },
   {
     "instruction": "Implement standard helper procedure to change character value",
@@ -1492,7 +1196,7 @@
     "output": "function DQNToNullable<T>(v: T): System.Nullable<T>; where T: record;\nbegin\n  Result := new System.Nullable<T>(v);\nend;"
   },
   {
-    "instruction": "Implement standard extension methods for adding elements to tuples",
-    "output": "function Add<T1, T2, T3>(Self: (T1, T2); v: T3): (T1, T2, T3); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], v);\nend;\n\nfunction Add<T1, T2, T3, T4>(Self: (T1, T2, T3); v: T4): (T1, T2, T3, T4); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], v);\nend;\n\nfunction Add<T1, T2, T3, T4, T5>(Self: (T1, T2, T3, T4); v: T5): (T1, T2, T3, T4, T5); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], Self[3], v);\nend;\n\nfunction Add<T1, T2, T3, T4, T5, T6>(Self: (T1, T2, T3, T4, T5); v: T6): (T1, T2, T3, T4, T5, T6); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], Self[3], Self[4], v);\nend;\n\nfunction Add<T1, T2, T3, T4, T5, T6, T7>(Self: (T1, T2, T3, T4, T5, T6); v: T7): (T1, T2, T3, T4, T5, T6, T7); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], Self[3], Self[4], Self[5], v);\nend;"
+    "instruction": "Implement standard extension method for adding elements to tuples",
+    "output": "function Add<T1, T2, T3>(Self: (T1, T2); v: T3): (T1, T2, T3); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], v);\nend;"
   }
 ]
