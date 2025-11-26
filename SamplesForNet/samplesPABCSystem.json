@@ -4,16 +4,12 @@
     "output": "function string.operator*(str: string; n: integer): string;\nbegin\n  var sb := new StringBuilder;\n  loop n do\n    sb.Append(str);\n  Result := sb.ToString;\nend;\n\nfunction string.operator*(n: integer; str: string): string;\nbegin\n  var sb := new StringBuilder;\n  loop n do\n    sb.Append(str);\n  Result := sb.ToString;\nend;"
   },
   {
-    "instruction": "Implement Range functions for generating sequences of integers and characters",
-    "output": "function Range(a, b: integer): sequence of integer;\nbegin\n  if b < a then \n    Result := System.Linq.Enumerable.Empty&<integer>\n  else Result := System.Linq.Enumerable.Range(a, b - a + 1);\nend;\n\nfunction Range(c1, c2: char): sequence of char;\nbegin\n  Result := Range(integer(c1), integer(c2)).Select(x -> Chr(x));\nend;\n\nfunction Range(c1, c2: char; step: integer): sequence of char;\nbegin\n  Result := Range(integer(c1), integer(c2), step).Select(x -> Chr(x));\nend;\n\nfunction Range(a, b, step: integer): sequence of integer;\nbegin\n  if step = 0 then\n    raise new System.ArgumentException('step=0');\n  if (step > 0) and (b < a) or (step < 0) and (b > a) then\n  begin\n    Result := System.Linq.Enumerable.Empty&<integer>;\n    exit;\n  end;\n  var n := abs((b - a) div step) + 1;\n  var ar: ArithmSeq;\n  ar := new ArithmSeq(a, step);\n  Result := System.Linq.Enumerable.Range(0, n).Select(ar.f);\nend;"
+    "instruction": "Implement Range functions for generating sequences of integers with parameters a, b: integer and a, b, step: integer",
+    "output": "function Range(a, b: integer): sequence of integer;\nbegin\n  if b < a then \n    Result := System.Linq.Enumerable.Empty&<integer>\n  else Result := System.Linq.Enumerable.Range(a, b - a + 1);\nend;\n\ntype\n  ArithmSeq = auto class\n    a, step: integer;\n    function f(x: integer): integer;\n    begin\n      Result := x * step + a;\n    end;\n  end;\n\nfunction Range(a, b, step: integer): sequence of integer;\nbegin\n  if step = 0 then\n    raise new System.ArgumentException('step=0');\n  if (step > 0) and (b < a) or (step < 0) and (b > a) then\n  begin\n    Result := System.Linq.Enumerable.Empty&<integer>;\n    exit;\n  end;\n  var n := abs((b - a) div step) + 1;\n  var ar: ArithmSeq;\n  ar := new ArithmSeq(a, step);\n  Result := System.Linq.Enumerable.Range(0, n).Select(ar.f);\nend;"
   },
   {
     "instruction": "Implement functions for generating random arrays and sequences",
     "output": "function ArrRandom(n: integer; a: integer; b: integer): array of integer;\nbegin\n  Result := new integer[n];\n  for var i := 0 to Result.Length - 1 do\n    Result[i] := Random(a, b);\nend;\n\nfunction ArrRandomReal(n: integer; a: real; b: real): array of real;\nbegin\n  Result := new real[n];\n  for var i := 0 to Result.Length - 1 do\n    Result[i] := Random() * (b - a) + a;\nend;\n\nfunction SeqRandom(n: integer; a: integer; b: integer): sequence of integer;\nbegin\n  loop n do\n    yield Random(a, b)\nend;\n\nfunction SeqRandomReal(n: integer; a: real; b: real): sequence of real;\nbegin\n  loop n do\n    yield Random() * (b - a) + a\nend;"
-  },
-  {
-    "instruction": "Implement BigInteger range generator function",
-    "output": "function Range(a, b: BigInteger): sequence of BigInteger := Range(a,b,1);"
   },
   {
     "instruction": "Implement partition points generation for real number ranges",
@@ -24,34 +20,6 @@
     "output": "function ArrRandomInteger(n: integer; a: integer; b: integer): array of integer;\nbegin\n  Result := ArrRandom(n, a, b);\nend;\n\nfunction SeqRandomInteger(n: integer; a: integer; b: integer): sequence of integer;\nbegin\n  loop n do\n    yield Random(a, b)\nend;"
   },
   {
-    "instruction": "Implement internal equality comparison for HashSet collections",
-    "output": "function InternalEqual<T>(x,y: HashSet<T>): boolean;\nbegin\n  var xn := Object.ReferenceEquals(x,nil);\n  var yn := Object.ReferenceEquals(y,nil);\n  if xn then\n    Result := yn\n  else if yn then \n    Result := xn\n  else Result := x.SetEquals(y);\nend;"
-  },
-  {
-    "instruction": "Implement internal equality comparison for SortedSet collections",
-    "output": "function InternalEqual<T>(x,y: SortedSet<T>): boolean; \nbegin\n  var xn := Object.ReferenceEquals(x,nil);\n  var yn := Object.ReferenceEquals(y,nil);\n  if xn then\n    Result := yn\n  else if yn then \n    Result := xn\n  else Result := x.SetEquals(y);\nend;"
-  },
-  {
-    "instruction": "Implement ArithmSeq helper type for range generation",
-    "output": "type\n  ArithmSeq = auto class\n    a, step: integer;\n    function f(x: integer): integer;\n    begin\n      Result := x * step + a;\n    end;\n  end;"
-  },
-  {
-    "instruction": "Implement HashSet internal equality helper function",
-    "output": "function InternalEqual<T>(x,y: HashSet<T>): boolean;\nbegin\n  var xn := Object.ReferenceEquals(x,nil);\n  var yn := Object.ReferenceEquals(y,nil);\n  if xn then\n    Result := yn\n  else if yn then \n    Result := xn\n  else Result := x.SetEquals(y);\nend;"
-  },
-  {
-    "instruction": "Implement SortedSet internal equality helper function",
-    "output": "function InternalEqual<T>(x,y: SortedSet<T>): boolean; \nbegin\n  var xn := Object.ReferenceEquals(x,nil);\n  var yn := Object.ReferenceEquals(y,nil);\n  if xn then\n    Result := yn\n  else if yn then \n    Result := xn\n  else Result := x.SetEquals(y);\nend;"
-  },
-  {
-    "instruction": "Implement BigInteger range generation with step parameter",
-    "output": "function Range(a, b, step: BigInteger): sequence of BigInteger;\nbegin\n  if step = 0 then\n    raise new System.ArgumentException('step=0');\n  if step > 0 then\n    while a<=b do\n    begin\n      yield a;\n      a += step;\n    end\n  else  \n    while a>=b do\n    begin\n      yield a;\n      a += step;\n    end\nend;"
-  },
-  {
-    "instruction": "Implement range generation with arithmetic sequence helper",
-    "output": "function Range(a, b, step: integer): sequence of integer;\nbegin\n  if step = 0 then\n    raise new System.ArgumentException('step=0');\n  if (step > 0) and (b < a) or (step < 0) and (b > a) then\n  begin\n    Result := System.Linq.Enumerable.Empty&<integer>;\n    exit;\n  end;\n  var n := abs((b - a) div step) + 1;\n  var ar: ArithmSeq;\n  ar := new ArithmSeq(a, step);\n  Result := System.Linq.Enumerable.Range(0, n).Select(ar.f);\nend;"
-  },
-  {
     "instruction": "Implement List element existence check operator (operator in)",
     "output": "function List<T>.operator in(x: T; Self: List<T>): boolean;\nbegin\n  Result := Self.Contains(x);\nend;"
   },
@@ -60,20 +28,12 @@
     "output": "function operator**(x, y: integer): real; extensionmethod := Power(real(x), y);"
   },
   {
-    "instruction": "Implement a generic function to create an array from parameters",
+    "instruction": "Implement a generic function to create an array from params",
     "output": "function Arr<T>(params a: array of T): array of T;\nbegin\n  Result := new T[a.Length];\n  if a.Length > 0 then\n    System.Array.Copy(a, Result, a.Length);\nend;"
-  },
-  {
-    "instruction": "Implement a function to create an array from a sequence",
-    "output": "function Arr<T>(a: sequence of T): array of T;\nbegin\n  Result := a.ToArray;\nend;"
   },
   {
     "instruction": "Implement a function to create a sequence from parameters",
     "output": "function Seq<T>(params a: array of T): sequence of T;\nbegin\n  var res := new T[a.Length];\n  System.Array.Copy(a, res, a.Length);\n  Result := res;\nend;"
-  },
-  {
-    "instruction": "Implement an infinite recurrent sequence with initial element and next function",
-    "output": "function Iterate<T>(first: T; next: T->T): sequence of T;\nbegin\n  yield first;\n  while True do\n  begin\n    first := next(first);\n    yield first;\n  end;\nend;"
   },
   {
     "instruction": "Implement an infinite recurrent sequence with two initial elements and next function",
@@ -82,14 +42,6 @@
   {
     "instruction": "Implement a sequence generator with count, first element and next function",
     "output": "function SeqGen<T>(count: integer; first: T; next: T->T): sequence of T;\nbegin\n  if count < 1 then\n    raise new System.ArgumentOutOfRangeException('count', count, 'Parameter must be > 0');\n  Result := Iterate(first, next).Take(count);\nend;"
-  },
-  {
-    "instruction": "Implement a sequence generator with count, two initial elements and next function",
-    "output": "function SeqGen<T>(count: integer; first, second: T; next: (T,T) ->T): sequence of T;\nbegin\n  if count < 1 then\n    raise new System.ArgumentOutOfRangeException('count', count, 'Parameter must be > 0');\n  Result := Iterate(first, second, next).Take(count);\nend;"
-  },
-  {
-    "instruction": "Implement an array generator with count, first element and next function",
-    "output": "function ArrGen<T>(count: integer; first: T; next: T->T): array of T;\nbegin\n  if count < 1 then\n    raise new System.ArgumentOutOfRangeException('count', count, 'Parameter must be > 0');\n  var a := new T[count];\n  a[0] := first;\n  for var i := 1 to a.Length - 1 do\n    a[i] := next(a[i - 1]);\n  Result := a;\nend;"
   },
   {
     "instruction": "Implement an array generator with count, two initial elements and next function",
@@ -108,36 +60,12 @@
     "output": "function Rec<T1, T2>(x1: T1; x2: T2) := Tuple.Create(x1, x2);"
   },
   {
-    "instruction": "Implement a function to create a tuple with three elements",
-    "output": "function Rec<T1, T2, T3>(x1: T1; x2: T2; x3: T3) := Tuple.Create(x1, x2, x3);"
-  },
-  {
-    "instruction": "Implement a function to create a List from parameters",
-    "output": "function Lst<T>(params a: array of T): List<T> := new List<T>(a);"
-  },
-  {
-    "instruction": "Implement a function to create a HashSet from parameters",
-    "output": "function HSet<T>(params a: array of T): HashSet<T> := new HashSet<T>(a);"
-  },
-  {
-    "instruction": "Implement a function to create a SortedSet from parameters",
-    "output": "function SSet<T>(params a: array of T): SortedSet<T> := new SortedSet<T>(a);"
-  },
-  {
-    "instruction": "Implement a function to create a Dictionary from key-value pairs",
-    "output": "function Dict<TKey, TVal>(params pairs: array of KeyValuePair<TKey, TVal>): Dictionary<TKey, TVal>;\nbegin\n  Result := new Dictionary<TKey, TVal>();\n  for var i := 0 to pairs.Length - 1 do\n    Result.Add(pairs[i].Key, pairs[i].Value);\nend;"
-  },
-  {
     "instruction": "Implement a function to create a KeyValuePair",
     "output": "function KV<TKey, TVal>(key: TKey; value: TVal): KeyValuePair<TKey, TVal>;\nbegin\n  Result := new KeyValuePair<TKey, TVal>(key, value);\nend;"
   },
   {
     "instruction": "Implement function to get absolute value of integer",
     "output": "function Abs(x: integer): integer := Math.Abs(x);"
-  },
-  {
-    "instruction": "Implement function to get absolute value of real number",
-    "output": "function Abs(x: real): real := Math.Abs(x);"
   },
   {
     "instruction": "Implement sine function",
@@ -180,10 +108,6 @@
     "output": "function Random(a, b: integer): integer;\nbegin\n  if a > b then Swap(a, b);\n  Result := (new System.Random()).Next(a, b + 1);\nend;"
   },
   {
-    "instruction": "Implement random real number generator within range",
-    "output": "function Random(a, b: real): real;\nbegin\n  if a > b then Swap(a, b);\n  Result := a + Random()*(b-a);\nend;"
-  },
-  {
     "instruction": "Implement maximum function for two integers",
     "output": "function Max(a, b: integer) := Math.Max(a, b);"
   },
@@ -196,24 +120,12 @@
     "output": "function Odd(i: integer) := (i mod 2) <> 0;"
   },
   {
-    "instruction": "Implement function to get substring",
-    "output": "function Copy(s: string; index, count: integer): string;\nbegin\n  if index < 1 then\n    index := 1;\n  if (index > s.Length) or (count <= 0) then\n  begin\n    Result := '';\n    exit;\n  end;\n  if index + count - 1 > s.Length then\n    count := s.Length - index + 1;\n  Result := s.SubString(index - 1, count);\nend;"
-  },
-  {
     "instruction": "Implement function to find substring position",
     "output": "function Pos(subs, s: string; from: integer): integer;\nbegin\n  if (subs = nil) or (subs.Length = 0) or (from > s.Length) then\n    Result := 0\n  else Result := s.IndexOf(subs, from - 1, System.StringComparison.Ordinal) + 1;\nend;"
   },
   {
     "instruction": "Implement function to convert integer to string",
     "output": "function IntToStr(a: integer): string;\nbegin\n  Result := a.ToString;\nend;"
-  },
-  {
-    "instruction": "Implement increment procedure for integer",
-    "output": "procedure Inc(var i: integer);\nbegin\n  i += 1;\nend;"
-  },
-  {
-    "instruction": "Implement decrement procedure for integer",
-    "output": "procedure Dec(var i: integer);\nbegin\n  i -= 1;\nend;"
   },
   {
     "instruction": "Implement successor function for integer",
@@ -256,24 +168,8 @@
     "output": "function StringOfChar(ch: char; count: integer): string;\nbegin\n  Result := new string(ch, count);\nend;"
   },
   {
-    "instruction": "Implement array sorting function for generic types",
-    "output": "procedure Sort<T>(a: array of T);\nbegin\n  System.Array.Sort(a);\nend;"
-  },
-  {
     "instruction": "Implement array sorting with custom comparison function",
     "output": "procedure Sort<T>(a: array of T; cmp: (T,T)->integer);\nbegin\n  System.Array.Sort(a, cmp);\nend;"
-  },
-  {
-    "instruction": "Implement array reversal function",
-    "output": "procedure Reverse<T>(a: array of T);\nbegin\n  System.Array.Reverse(a);\nend;"
-  },
-  {
-    "instruction": "Implement array shuffling function",
-    "output": "procedure Shuffle<T>(a: array of T);\nbegin\n  var n := a.Length;\n  for var i := 0 to n - 1 do\n    Swap(a[i], a[Random(n)]);\nend;"
-  },
-  {
-    "instruction": "Implement function to get array length",
-    "output": "function Length(a: &Array): integer;\nbegin\n  if a = nil then\n    Result := 0\n  else Result := a.Length;\nend;"
   },
   {
     "instruction": "Implement function to get array low bound",
@@ -380,16 +276,8 @@
     "output": "function Sqr(x: integer): int64 := int64(x) * int64(x);"
   },
   {
-    "instruction": "Implement square function for real numbers",
-    "output": "function Sqr(x: real): real := x * x;"
-  },
-  {
     "instruction": "Implement sign function for integers",
     "output": "function Sign(x: integer): integer := Math.Sign(x);"
-  },
-  {
-    "instruction": "Implement sign function for real numbers",
-    "output": "function Sign(x: real): integer := Math.Sign(x);"
   },
   {
     "instruction": "Implement character to uppercase conversion",
@@ -416,36 +304,12 @@
     "output": "procedure Delete(var s: string; index, count: integer);\nbegin\n  if (index < 1) or (index > s.Length) or (count <= 0) then\n    Exit;\n  if index + count - 1 > s.Length then\n    count := s.Length - index + 1;\n  s := s.Remove(index - 1, count);\nend;"
   },
   {
-    "instruction": "Implement string length function",
-    "output": "function Length(s: string): integer;\nbegin\n  if s <> nil then \n    Result := s.Length\n  else Result := 0;\nend;"
-  },
-  {
     "instruction": "Implement string length setting procedure",
     "output": "procedure SetLength(var s: string; n: integer);\nbegin\n  if n < 0 then\n    raise new System.ArgumentOutOfRangeException('n');\n  if n = 0 then\n    s := String.Empty  \n  else if s.Length > n then\n    s := s.Substring(0, n)\n  else if s.Length < n then\n    s += new string(' ', n - s.Length);\nend;"
   },
   {
     "instruction": "Implement function to read sequence of integers from standard input",
     "output": "function ReadSeqInteger(n: integer): sequence of integer;\nbegin\n  Result := Range(1, n).Select(i -> ReadInteger());\nend;"
-  },
-  {
-    "instruction": "Implement function to read sequence of real numbers from standard input",
-    "output": "function ReadSeqReal(n: integer): sequence of real;\nbegin\n  Result := Range(1, n).Select(i -> ReadReal());\nend;"
-  },
-  {
-    "instruction": "Implement function to read sequence of strings from standard input",
-    "output": "function ReadSeqString(n: integer): sequence of string;\nbegin\n  Result := Range(1, n).Select(i -> ReadString());\nend;"
-  },
-  {
-    "instruction": "Implement function to read sequence of integers with condition",
-    "output": "function ReadSeqIntegerWhile(cond: integer->boolean): sequence of integer;\nbegin\n  while True do\n  begin\n    var x := ReadInteger();\n    if not cond(x) then\n      break;\n    yield x;  \n  end;\nend;"
-  },
-  {
-    "instruction": "Implement function to read array of integers from standard input",
-    "output": "function ReadArrInteger(n: integer): array of integer;\nbegin\n  Result := new integer[n];\n  for var i := 0 to Result.Length - 1 do\n    Result[i] := ReadInteger;\nend;"
-  },
-  {
-    "instruction": "Implement function to read array of real numbers from standard input",
-    "output": "function ReadArrReal(n: integer): array of real;\nbegin\n  Result := new real[n];\n  for var i := 0 to Result.Length - 1 do\n    Result[i] := ReadReal;\nend;"
   },
   {
     "instruction": "Implement function to read array of strings from standard input",
@@ -456,16 +320,8 @@
     "output": "function SeqGen<T>(count: integer; f: integer->T): sequence of T;\nbegin\n  Result := Range(0, count - 1).Select(f)\nend;"
   },
   {
-    "instruction": "Implement array generator with index function",
-    "output": "function ArrGen<T>(count: integer; gen: integer->T): array of T;\nbegin\n  Result := new T[count];\n  for var i := 0 to Result.Length - 1 do\n    Result[i] := gen(i);\nend;"
-  },
-  {
     "instruction": "Implement sequence filled with repeated value",
     "output": "function SeqFill<T>(count: integer; x: T): sequence of T;\nbegin\n  Result := System.Linq.Enumerable.Repeat(x, count);\nend;"
-  },
-  {
-    "instruction": "Implement try-read function for integer with message",
-    "output": "function TryRead(var x: integer; message: string): boolean;\nbegin\n  Result := True;\n  try\n    if message<>'' then\n      Print(message);\n    Read(x)\n  except\n    Result := False;\n  end\nend;"
   },
   {
     "instruction": "Implement try-read function for real number with message",
@@ -484,14 +340,6 @@
     "output": "function ReadInteger(f: Text): integer;\nbegin\n  Read(f, Result);\nend;"
   },
   {
-    "instruction": "Implement read function for text file real number",
-    "output": "function ReadReal(f: Text): real;\nbegin\n  Read(f, Result);\nend;"
-  },
-  {
-    "instruction": "Implement read function for text file string",
-    "output": "function ReadString(f: Text): string;\nbegin\n  Read(f, Result);\n  Readln(f);\nend;"
-  },
-  {
     "instruction": "Implement file enumeration function",
     "output": "function EnumerateFiles(path: string; searchPattern: string): sequence of string;\nbegin\n  Result := System.IO.Directory.EnumerateFiles(path, searchPattern, System.IO.SearchOption.TopDirectoryOnly)\nend;"
   },
@@ -506,14 +354,6 @@
   {
     "instruction": "Implement recursive directory enumeration function",
     "output": "function EnumerateAllDirectories(path: string): sequence of string;\nbegin\n  Result := System.IO.Directory.EnumerateDirectories(path, '*.*', System.IO.SearchOption.AllDirectories)\nend;"
-  },
-  {
-    "instruction": "Implement string validation procedure",
-    "output": "procedure Val(s: string; var value: integer; var err: integer);\nbegin\n  if TryStrToInt(s, value) then\n    err := 0\n  else err := 1;  \nend;"
-  },
-  {
-    "instruction": "Implement real number validation procedure",
-    "output": "procedure Val(s: string; var value: real; var err: integer);\nbegin\n  if TryStrToFloat(s, value) then\n    err := 0\n  else err := 1;  \nend;"
   },
   {
     "instruction": "Implement try string to integer conversion function",
@@ -554,14 +394,6 @@
   {
     "instruction": "Implement list sorting procedure",
     "output": "procedure Sort<T>(l: List<T>);\nbegin\n  l.Sort();\nend;"
-  },
-  {
-    "instruction": "Implement list sorting with comparison function",
-    "output": "procedure Sort<T>(l: List<T>; cmp: (T,T)->integer);\nbegin\n  l.Sort(cmp);\nend;"
-  },
-  {
-    "instruction": "Implement list reversal procedure",
-    "output": "procedure Reverse<T>(a: List<T>);\nbegin\n  a.Reverse\nend;"
   },
   {
     "instruction": "Implement list shuffling procedure",
@@ -616,80 +448,12 @@
     "output": "function TryReadIntegerFromString(s: string; var from: integer; var res: integer): boolean;\nbegin\n  Result := TryStrToInt(ReadWordFromString(s, from), res);\nend;"
   },
   {
-    "instruction": "Implement procedure for increment with step for integer",
-    "output": "procedure Inc(var i: integer; n: integer);\nbegin\n  i += n;\nend;"
-  },
-  {
-    "instruction": "Implement procedure for decrement with step for integer",
-    "output": "procedure Dec(var i: integer; n: integer);\nbegin\n  i -= n;\nend;"
-  },
-  {
-    "instruction": "Implement procedure for increment with step for character",
-    "output": "procedure Inc(var c: char; n: integer);\nbegin\n  c := ChrUnicode(word(c) + n);\nend;"
-  },
-  {
-    "instruction": "Implement procedure for decrement with step for character",
-    "output": "procedure Dec(var c: char; n: integer);\nbegin\n  c := ChrUnicode(word(c) - n);\nend;"
-  },
-  {
-    "instruction": "Implement procedure for increment with step for byte",
-    "output": "procedure Inc(var b: byte; n: integer);\nbegin\n  b += n;\nend;"
-  },
-  {
-    "instruction": "Implement procedure for decrement with step for byte",
-    "output": "procedure Dec(var b: byte; n: integer);\nbegin\n  b -= n;\nend;"
-  },
-  {
-    "instruction": "Implement function for successor with step for character",
-    "output": "function Succ(x: char; n: integer): char;\nbegin\n  Result := char(integer(x)+n);\nend;"
-  },
-  {
-    "instruction": "Implement function to generate random pair of integers",
-    "output": "function Random2(a, b: integer) := (Random(a, b), Random(a, b));"
-  },
-  {
-    "instruction": "Implement function to generate random pair of real numbers",
-    "output": "function Random2(a, b: real) := (Random(a, b), Random(a, b));"
-  },
-  {
-    "instruction": "Implement function to generate random triple of integers",
-    "output": "function Random3(a, b: integer) := (Random(a, b), Random(a, b), Random(a, b));"
-  },
-  {
-    "instruction": "Implement function to generate random triple of real numbers",
-    "output": "function Random3(a, b: real) := (Random(a, b), Random(a, b), Random(a, b));"
-  },
-  {
     "instruction": "Implement function for maximum of three integers",
     "output": "function Max(a, b, c: integer): integer;\nbegin\n  Result := a;\n  if b > Result then Result := b;\n  if c > Result then Result := c;\nend;"
   },
   {
-    "instruction": "Implement function for maximum of four integers",
-    "output": "function Max(a, b, c, d: integer): integer;\nbegin\n  Result := a;\n  if b > Result then Result := b;\n  if c > Result then Result := c;\n  if d > Result then Result := d;\nend;"
-  },
-  {
     "instruction": "Implement function for minimum of three integers",
     "output": "function Min(a, b, c: integer): integer;\nbegin\n  Result := a;\n  if b < Result then Result := b;\n  if c < Result then Result := c;\nend;"
-  },
-  {
-    "instruction": "Implement function for minimum of four integers",
-    "output": "function Min(a, b, c, d: integer): integer;\nbegin\n  Result := a;\n  if b < Result then Result := b;\n  if c < Result then Result := c;\n  if d < Result then Result := d;\nend;"
-  },
-  {
-    "instruction": "Implement function for maximum of array of integers",
-    "output": "function Max(params a: array of integer): integer := a.Max;"
-  },
-  {
-    "instruction": "Implement function for minimum of array of integers",
-    "output": "function Min(params a: array of integer): integer := a.Min;"
-  },
-  {
-    "instruction": "Implement function for maximum of generic array",
-    "output": "function Max<T>(params a: array of T): T := a.Max;"
-  },
-  {
-    "instruction": "Implement function for minimum of generic array",
-    "output": "function Min<T>(params a: array of T): T := a.Min;"
   },
   {
     "instruction": "Implement function to convert character to Unicode code point",
@@ -700,56 +464,8 @@
     "output": "function ChrUnicode(a: word): char;\nbegin\n  Result := Convert.ToChar(a);\nend;"
   },
   {
-    "instruction": "Implement procedure to toggle boolean value",
-    "output": "procedure Inc(var f: boolean);\nbegin\n  f := not f;\nend;"
-  },
-  {
-    "instruction": "Implement procedure to toggle boolean value using Dec",
-    "output": "procedure Dec(var f: boolean);\nbegin\n  f := not f;\nend;"
-  },
-  {
-    "instruction": "Implement function for successor of boolean",
-    "output": "function Succ(x: boolean): boolean;\nbegin\n  Result := not x;\nend;"
-  },
-  {
-    "instruction": "Implement function to read integer with prompt",
-    "output": "function ReadInteger(prompt: string): integer;\nbegin\n  Print(prompt);\n  Result := ReadInteger;\nend;"
-  },
-  {
     "instruction": "Implement function to read real number with prompt",
     "output": "function ReadReal(prompt: string): real;\nbegin\n  Print(prompt);\n  Result := ReadReal;\nend;"
-  },
-  {
-    "instruction": "Implement function to read string with prompt",
-    "output": "function ReadString(prompt: string): string;\nbegin\n  Print(prompt);\n  Result := ReadString;\nend;"
-  },
-  {
-    "instruction": "Implement function to read array of integers with prompt",
-    "output": "function ReadArrInteger(prompt: string; n: integer): array of integer;\nbegin\n  Print(prompt);\n  Result := ReadArrInteger(n);\nend;"
-  },
-  {
-    "instruction": "Implement function to read array of real numbers with prompt",
-    "output": "function ReadArrReal(prompt: string; n: integer): array of real;\nbegin\n  Print(prompt);\n  Result := ReadArrReal(n);\nend;"
-  },
-  {
-    "instruction": "Implement function to read array of strings with prompt",
-    "output": "function ReadArrString(prompt: string; n: integer): array of string;\nbegin\n  Print(prompt);\n  Result := ReadArrString(n);\nend;"
-  },
-  {
-    "instruction": "Implement function to read sequence of integers with prompt",
-    "output": "function ReadSeqInteger(prompt: string; n: integer): sequence of integer;\nbegin\n  Print(prompt);\n  Result := ReadSeqInteger(n);\nend;"
-  },
-  {
-    "instruction": "Implement function to read sequence of real numbers with prompt",
-    "output": "function ReadSeqReal(prompt: string; n: integer): sequence of real;\nbegin\n  Print(prompt);\n  Result := ReadSeqReal(n);\nend;"
-  },
-  {
-    "instruction": "Implement function to read sequence of strings with prompt",
-    "output": "function ReadSeqString(prompt: string; n: integer): sequence of string;\nbegin\n  Print(prompt);\n  Result := ReadSeqString(n);\nend;"
-  },
-  {
-    "instruction": "Implement text file writeln procedure for object",
-    "output": "procedure Writeln(f: Text; val: object);\nbegin\n  write(f, val);\n  writeln(f);\nend;"
   },
   {
     "instruction": "Implement function to read boolean from text file",
@@ -768,72 +484,8 @@
     "output": "function ReadlnChar(f: Text): char;\nbegin\n  Result := ReadChar(f);\n  Readln(f);\nend;"
   },
   {
-    "instruction": "Implement function to read string from text file with newline",
-    "output": "function ReadlnString(f: Text): string;\nbegin\n  Result := ReadString(f);\nend;"
-  },
-  {
     "instruction": "Implement function to read boolean from text file with newline",
     "output": "function ReadlnBoolean(f: Text): boolean;\nbegin\n  Result := ReadBoolean(f);\n  Readln(f);\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read from text file without parameters",
-    "output": "procedure read(f: Text);\nbegin\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read integer from text file",
-    "output": "procedure read(f: Text; var x: integer);\nbegin\n  try\n    x := Convert.ToInt32(ReadLexem(f));\n  except\n    on e: Exception do\n      raise e;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read byte from text file",
-    "output": "procedure read(f: Text; var x: byte);\nbegin\n  try\n    x := Convert.ToByte(ReadLexem(f));\n  except\n    on e: Exception do\n      raise e;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read shortint from text file",
-    "output": "procedure read(f: Text; var x: shortint);\nbegin\n  try\n    x := Convert.ToSByte(ReadLexem(f));\n  except\n    on e: Exception do\n      raise e;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read smallint from text file",
-    "output": "procedure read(f: Text; var x: smallint);\nbegin\n  try\n    x := Convert.ToInt16(ReadLexem(f));\n  except\n    on e: Exception do\n      raise e;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read word from text file",
-    "output": "procedure read(f: Text; var x: word);\nbegin\n  try\n    x := Convert.ToUInt16(ReadLexem(f));\n  except\n    on e: Exception do\n      raise e;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read longword from text file",
-    "output": "procedure read(f: Text; var x: longword);\nbegin\n  try\n    x := Convert.ToUInt32(ReadLexem(f));\n  except\n    on e: Exception do\n      raise e;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read int64 from text file",
-    "output": "procedure read(f: Text; var x: int64);\nbegin\n  try\n    x := Convert.ToInt64(ReadLexem(f));\n  except\n    on e: Exception do\n      raise e;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read uint64 from text file",
-    "output": "procedure read(f: Text; var x: uint64);\nbegin\n  try\n    x := Convert.ToUInt64(ReadLexem(f));\n  except\n    on e: Exception do\n      raise e;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read single from text file",
-    "output": "procedure read(f: Text; var x: single);\nbegin\n  try\n    x := Convert.ToSingle(ReadLexem(f));\n  except\n    on e: Exception do\n      raise e;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement procedure to read boolean from text file",
-    "output": "procedure read(f: Text; var x: boolean);\nbegin\n  var s := ReadLexem(f).ToLower;\n  if s = 'true' then\n    x := True\n  else if s = 'false' then\n    x := False  \n  else raise new System.FormatException('Input string had incorrect format');\nend;"
-  },
-  {
-    "instruction": "Implement procedure to write to text file without parameters",
-    "output": "procedure Write(f: Text);\nbegin\nend;"
-  },
-  {
-    "instruction": "Implement procedure to write multiple objects to text file",
-    "output": "procedure Write(f: Text; params args: array of object);\nbegin\n  for var i := 0 to args.length - 1 do\n    write(f, args[i]);\nend;"
-  },
-  {
-    "instruction": "Implement procedure to write object with newline to text file",
-    "output": "procedure Writeln(f: Text; val: object);\nbegin\n  write(f, val);\n  writeln(f);\nend;"
-  },
-  {
-    "instruction": "Implement procedure to write multiple objects with newline to text file",
-    "output": "procedure Writeln(f: Text; params args: array of object);\nbegin\n  for var i := 0 to args.length - 1 do\n    write(f, args[i]);\n  writeln(f);  \nend;"
   },
   {
     "instruction": "Implement function to read short string from file",
@@ -850,22 +502,6 @@
   {
     "instruction": "Implement function to read array of int64 from standard input",
     "output": "function ReadArrInt64(n: integer): array of int64;\nbegin\n  Result := new int64[n];\n  for var i := 0 to Result.Length - 1 do\n    Result[i] := ReadInt64;\nend;"
-  },
-  {
-    "instruction": "Implement function to read sequence of integers with prompt",
-    "output": "function ReadSeqInteger(prompt: string; n: integer): sequence of integer;\nbegin\n  Print(prompt);\n  Result := ReadSeqInteger(n);\nend;"
-  },
-  {
-    "instruction": "Implement function to read sequence of real numbers with prompt",
-    "output": "function ReadSeqReal(prompt: string; n: integer): sequence of real;\nbegin\n  Print(prompt);\n  Result := ReadSeqReal(n);\nend;"
-  },
-  {
-    "instruction": "Implement function to read sequence of strings with prompt",
-    "output": "function ReadSeqString(prompt: string; n: integer): sequence of string;\nbegin\n  Print(prompt);\n  Result := ReadSeqString(n);\nend;"
-  },
-  {
-    "instruction": "Implement function to read sequence of integers with condition and prompt",
-    "output": "function ReadSeqIntegerWhile(prompt: string; cond: integer->boolean): sequence of integer;\nbegin\n  Print(prompt);\n  Result := ReadSeqIntegerWhile(cond);\nend;"
   },
   {
     "instruction": "Implement function to read sequence of real numbers with condition and prompt",
@@ -1068,28 +704,8 @@
     "output": "function ReadlnString4(prompt: string) := (ReadString(prompt), ReadString, ReadString, ReadlnString);"
   },
   {
-    "instruction": "Implement function to read integer with prompt and newline",
-    "output": "function ReadlnInteger(prompt: string): integer;\nbegin\n  Print(prompt);\n  Result := ReadlnInteger;\nend;"
-  },
-  {
     "instruction": "Implement function to read int64 with prompt and newline",
     "output": "function ReadlnInt64(prompt: string): int64;\nbegin\n  Print(prompt);\n  Result := ReadlnInt64;\nend;"
-  },
-  {
-    "instruction": "Implement function to read real number with prompt and newline",
-    "output": "function ReadlnReal(prompt: string): real;\nbegin\n  Print(prompt);\n  Result := ReadlnReal;\nend;"
-  },
-  {
-    "instruction": "Implement function to read character with prompt and newline",
-    "output": "function ReadlnChar(prompt: string): char;\nbegin\n  Print(prompt);\n  Result := ReadlnChar;\nend;"
-  },
-  {
-    "instruction": "Implement function to read string with prompt and newline",
-    "output": "function ReadlnString(prompt: string): string;\nbegin\n  Print(prompt);\n  Result := ReadlnString;\nend;"
-  },
-  {
-    "instruction": "Implement function to read boolean with prompt and newline",
-    "output": "function ReadlnBoolean(prompt: string): boolean;\nbegin\n  Print(prompt);\n  Result := ReadlnBoolean;\nend;"
   },
   {
     "instruction": "Implement function to read BigInteger with prompt",
@@ -1098,14 +714,6 @@
   {
     "instruction": "Implement function to read BigInteger with prompt and newline",
     "output": "function ReadlnBigInteger(prompt: string): BigInteger;\nbegin\n  Print(prompt);\n  Result := ReadlnBigInteger;\nend;"
-  },
-  {
-    "instruction": "Implement function to create LinkedList from parameters",
-    "output": "function LLst<T>(params a: array of T): LinkedList<T> := new LinkedList<T>(a);"
-  },
-  {
-    "instruction": "Implement function to create LinkedList from sequence",
-    "output": "function LLst<T>(a: sequence of T): LinkedList<T> := new LinkedList<T>(a);"
   },
   {
     "instruction": "Implement function to create HashSet from sequence",
@@ -1132,80 +740,8 @@
     "output": "function ArrGen<T>(count: integer; gen: integer->T; from: integer): array of T;\nbegin\n  Result := new T[count];\n  for var i := 0 to Result.Length - 1 do\n    Result[i] := gen(i + from);\nend;"
   },
   {
-    "instruction": "Implement function to create sequence generator with starting index",
-    "output": "function SeqGen<T>(count: integer; f: integer->T; from: integer): sequence of T;\nbegin\n  Result := Range(from, count + from - 1).Select(f)\nend;"
-  },
-  {
     "instruction": "Implement function to create sequence while condition is true with single element",
     "output": "function SeqWhile<T>(first: T; next: T->T; pred: T->boolean): sequence of T;\nbegin\n  Result := Iterate(first, next).TakeWhile(pred);\nend;"
-  },
-  {
-    "instruction": "Implement function to create sequence while condition is true with two elements",
-    "output": "function SeqWhile<T>(first, second: T; next: (T,T) ->T; pred: T->boolean): sequence of T;\nbegin\n  Result := Iterate(first, second, next).TakeWhile(pred);\nend;"
-  },
-  {
-    "instruction": "Implement procedure for try read byte with message",
-    "output": "function TryRead(var x: byte; message: string): boolean;\nbegin\n  Result := True;\n  try\n    if message<>'' then\n      Print(message);\n    Read(x)\n  except\n    Result := False;\n  end\nend;"
-  },
-  {
-    "instruction": "Implement procedure for try read shortint with message",
-    "output": "function TryRead(var x: shortint; message: string): boolean;\nbegin\n  Result := True;\n  try\n    if message<>'' then\n      Print(message);\n    Read(x)\n  except\n    Result := False;\n  end\nend;"
-  },
-  {
-    "instruction": "Implement procedure for try read smallint with message",
-    "output": "function TryRead(var x: smallint; message: string): boolean;\nbegin\n  Result := True;\n  try\n    if message<>'' then\n      Print(message);\n    Read(x)\n  except\n    Result := False;\n  end\nend;"
-  },
-  {
-    "instruction": "Implement procedure for try read word with message",
-    "output": "function TryRead(var x: word; message: string): boolean;\nbegin\n  Result := True;\n  try\n    if message<>'' then\n      Print(message);\n    Read(x)\n  except\n    Result := False;\n  end\nend;"
-  },
-  {
-    "instruction": "Implement procedure for try read longword with message",
-    "output": "function TryRead(var x: longword; message: string): boolean;\nbegin\n  Result := True;\n  try\n    if message<>'' then\n      Print(message);\n    Read(x)\n  except\n    Result := False;\n  end\nend;"
-  },
-  {
-    "instruction": "Implement procedure for try read uint64 with message",
-    "output": "function TryRead(var x: uint64; message: string): boolean;\nbegin\n  Result := True;\n  try\n    if message<>'' then\n      Print(message);\n    Read(x)\n  except\n    Result := False;\n  end\nend;"
-  },
-  {
-    "instruction": "Implement procedure for try read single with message",
-    "output": "function TryRead(var x: single; message: string): boolean;\nbegin\n  Result := True;\n  try\n    if message<>'' then\n      Print(message);\n    Read(x)\n  except\n    Result := False;\n  end\nend;"
-  },
-  {
-    "instruction": "Implement procedure for try read boolean with message",
-    "output": "function TryRead(var x: boolean; message: string): boolean;\nbegin\n  Result := True;\n  try\n    if message<>'' then\n      Print(message);\n    Read(x)\n  except\n    Result := False;\n  end\nend;"
-  },
-  {
-    "instruction": "Implement procedure for try read BigInteger with message",
-    "output": "function TryRead(var x: BigInteger; message: string): boolean;\nbegin\n  Result := True;\n  try\n    if message<>'' then\n      Print(message);\n    Read(x)\n  except\n    Result := False;\n  end\nend;"
-  },
-  {
-    "instruction": "Implement function to generate random pair with maximum value",
-    "output": "function Random2(maxValue: integer) := (Random(maxValue), Random(maxValue));"
-  },
-  {
-    "instruction": "Implement function to generate random pair with maximum real value",
-    "output": "function Random2(maxValue: real) := (Random(maxValue), Random(maxValue));"
-  },
-  {
-    "instruction": "Implement function to generate random triple with maximum value",
-    "output": "function Random3(maxValue: integer) := (Random(maxValue), Random(maxValue), Random(maxValue));"
-  },
-  {
-    "instruction": "Implement function to generate random triple with maximum real value",
-    "output": "function Random3(maxValue: Real) := (Random(maxValue), Random(maxValue), Random(maxValue));"
-  },
-  {
-    "instruction": "Implement function to generate random pair without parameters",
-    "output": "function Random2 := (Random, Random);"
-  },
-  {
-    "instruction": "Implement function to generate random triple without parameters",
-    "output": "function Random3 := (Random, Random, Random);"
-  },
-  {
-    "instruction": "Implement procedure for validation of BigInteger from string",
-    "output": "procedure Val(s: string; var value: BigInteger; var err: integer);\nbegin\n  if BigInteger.TryParse(s, value) then\n    err := 0\n  else err := 1;\nend;"
   },
   {
     "instruction": "Implement function to round real number to BigInteger",
@@ -1214,42 +750,6 @@
   {
     "instruction": "Implement function to truncate real number to BigInteger",
     "output": "function TruncBigInteger(x: real) := BigInteger.Create(Math.Truncate(x));"
-  },
-  {
-    "instruction": "Implement function to get sign of BigInteger",
-    "output": "function Sign(x: BigInteger) := x.Sign;"
-  },
-  {
-    "instruction": "Implement function to get absolute value of BigInteger",
-    "output": "function Abs(x: BigInteger): BigInteger := BigInteger.Abs(x);"
-  },
-  {
-    "instruction": "Implement function to calculate power with BigInteger base and integer exponent",
-    "output": "function Power(x: BigInteger; y: integer) := BigInteger.Pow(x, y);"
-  },
-  {
-    "instruction": "Implement function to check if BigInteger is odd",
-    "output": "function Odd(i: BigInteger) := not i.IsEven;"
-  },
-  {
-    "instruction": "Implement function to get minimum of two BigIntegers",
-    "output": "function Min(a, b: BigInteger) := BigInteger.Min(a, b);"
-  },
-  {
-    "instruction": "Implement function to get maximum of two BigIntegers",
-    "output": "function Max(a, b: BigInteger) := BigInteger.Max(a, b);"
-  },
-  {
-    "instruction": "Implement function to get square of BigInteger",
-    "output": "function Sqr(x: BigInteger): BigInteger := x * x;"
-  },
-  {
-    "instruction": "Implement function to get successor of BigInteger",
-    "output": "function Succ(x: BigInteger): BigInteger;\nbegin\n  Result := x + 1;\nend;"
-  },
-  {
-    "instruction": "Implement procedure for printing with newline to text file",
-    "output": "procedure Println(f: Text; params args: array of object);\nbegin\n  Print(f, args);\n  Writeln(f);\nend;"
   },
   {
     "instruction": "Implement procedure to reset file with name and encoding",
@@ -1300,24 +800,8 @@
     "output": "procedure InsertInShortString(subs: string; var s: string; index, n: integer);\nbegin\n  if index < 1 then \n    index := 1;\n  if index > n then\n    exit;\n  try\n    s := s.Insert(index - 1, subs);\n    if s.Length > n then s := s.Substring(0, n);\n  except\n    s := s.Insert(s.Length, subs);\n    if s.Length > n then s := s.Substring(0, n);\n  end;\nend;"
   },
   {
-    "instruction": "Implement procedure for string conversion from integer",
-    "output": "procedure Str(i: integer; var s: string);\nbegin\n  s := i.ToString;\nend;"
-  },
-  {
     "instruction": "Implement procedure for string conversion from longword",
     "output": "procedure Str(i: longword; var s: string);\nbegin\n  s := i.ToString;\nend;"
-  },
-  {
-    "instruction": "Implement procedure for string conversion from int64",
-    "output": "procedure Str(i: int64; var s: string);\nbegin\n  s := i.ToString;\nend;"
-  },
-  {
-    "instruction": "Implement procedure for string conversion from uint64",
-    "output": "procedure Str(i: uint64; var s: string);\nbegin\n  s := i.ToString;\nend;"
-  },
-  {
-    "instruction": "Implement procedure for string conversion from string",
-    "output": "procedure Str(s1: string; var s: string);\nbegin\n  s := s1;\nend;"
   },
   {
     "instruction": "Implement function for string comparison",
@@ -1330,10 +814,6 @@
   {
     "instruction": "Implement function for string right trim",
     "output": "function TrimRight(s: string): string;\nbegin\n  Result := s.TrimEnd(' ');\nend;"
-  },
-  {
-    "instruction": "Implement function to get last position of substring in string",
-    "output": "function LastPos(subs, s: string): integer;\nbegin\n  if (subs = nil) or (subs.Length = 0) then\n    Result := 0\n  else Result := s.LastIndexOf(subs, s.Length - 1, System.StringComparison.Ordinal) + 1;\nend;"
   },
   {
     "instruction": "Implement function to get last position of substring in string from specified index",
@@ -1352,232 +832,12 @@
     "output": "procedure SortDescending<T>(a: array of T);\nbegin\n  Sort(a);\n  Reverse(a);\nend;"
   },
   {
-    "instruction": "Implement procedure to sort list in descending order",
-    "output": "procedure SortDescending<T>(l: List<T>);\nbegin\n  Sort(l);\n  Reverse(l);\nend;"
-  },
-  {
     "instruction": "Implement procedure to reverse array with specified index and count",
     "output": "procedure Reverse<T>(a: array of T; index, count: integer);\nbegin\n  System.Array.Reverse(a, index, count);\nend;"
   },
   {
     "instruction": "Implement procedure to reverse list with specified index and count",
     "output": "procedure Reverse<T>(a: List<T>; index, count: integer);\nbegin\n  a.Reverse(index, count)\nend;"
-  },
-  {
-    "instruction": "Implement procedure to sort list with comparison function",
-    "output": "procedure Sort<T>(l: List<T>; less: (T,T)->boolean);\nbegin\n  l.Sort((x, y)-> less(x, y) ? -1 : (less(y, x) ? 1 : 0));\nend;"
-  },
-  {
-    "instruction": "Implement function for successor of byte",
-    "output": "function Succ(x: byte): byte;\nbegin\n  Result := x + 1;\nend;"
-  },
-  {
-    "instruction": "Implement function for successor of shortint",
-    "output": "function Succ(x: shortint): shortint;\nbegin\n  Result := x + 1;\nend;"
-  },
-  {
-    "instruction": "Implement function for successor of smallint",
-    "output": "function succ(x: smallint): smallint;\nbegin\n  Result := x + 1;\nend;"
-  },
-  {
-    "instruction": "Implement function for successor of word",
-    "output": "function Succ(x: word): word;\nbegin\n  Result := x + 1;\nend;"
-  },
-  {
-    "instruction": "Implement function for successor of longword",
-    "output": "function Succ(x: longword): longword;\nbegin\n  Result := x + 1;\nend;"
-  },
-  {
-    "instruction": "Implement function for successor of int64",
-    "output": "function Succ(x: int64): int64;\nbegin\n  Result := x + 1;\nend;"
-  },
-  {
-    "instruction": "Implement function for successor of uint64",
-    "output": "function Succ(x: uint64): uint64;\nbegin\n  Result := x + 1;\nend;"
-  },
-  {
-    "instruction": "Implement function for successor of character",
-    "output": "function Succ(x: char): char;\nbegin\n  Result := char(integer(x)+1);\nend;"
-  },
-  {
-    "instruction": "Implement function for sign of shortint",
-    "output": "function Sign(x: shortint): integer := Math.Sign(x);"
-  },
-  {
-    "instruction": "Implement function for sign of smallint",
-    "output": "function Sign(x: smallint): integer := Math.Sign(x);"
-  },
-  {
-    "instruction": "Implement function for sign of byte",
-    "output": "function Sign(x: byte): integer := 1;"
-  },
-  {
-    "instruction": "Implement function for sign of word",
-    "output": "function Sign(x: word): integer := 1;"
-  },
-  {
-    "instruction": "Implement function for sign of longword",
-    "output": "function Sign(x: longword): integer := 1;"
-  },
-  {
-    "instruction": "Implement function for sign of uint64",
-    "output": "function Sign(x: uint64): integer := 1;"
-  },
-  {
-    "instruction": "Implement function for absolute value of shortint",
-    "output": "function Abs(x: shortint): shortint := Math.Abs(x);"
-  },
-  {
-    "instruction": "Implement function for absolute value of smallint",
-    "output": "function Abs(x: smallint): smallint := Math.Abs(x);"
-  },
-  {
-    "instruction": "Implement function for absolute value of byte",
-    "output": "function Abs(x: byte): byte := x;"
-  },
-  {
-    "instruction": "Implement function for absolute value of word",
-    "output": "function Abs(x: word): word := x;"
-  },
-  {
-    "instruction": "Implement function for absolute value of longword",
-    "output": "function Abs(x: longword): longword := x;"
-  },
-  {
-    "instruction": "Implement function for absolute value of uint64",
-    "output": "function Abs(x: uint64): uint64 := x;"
-  },
-  {
-    "instruction": "Implement function for absolute value of single",
-    "output": "function Abs(x: single): single := Math.Abs(x);"
-  },
-  {
-    "instruction": "Implement function for square of shortint",
-    "output": "function Sqr(x: shortint): integer := x * x;"
-  },
-  {
-    "instruction": "Implement function for square of smallint",
-    "output": "function Sqr(x: smallint): integer := x * x;"
-  },
-  {
-    "instruction": "Implement function for square of byte",
-    "output": "function Sqr(x: byte): integer := x * x;"
-  },
-  {
-    "instruction": "Implement function for square of word",
-    "output": "function Sqr(x: word): uint64 := uint64(x) * uint64(x);"
-  },
-  {
-    "instruction": "Implement function for square of longword",
-    "output": "function Sqr(x: longword): uint64 := uint64(x) * uint64(x);"
-  },
-  {
-    "instruction": "Implement function for square of int64",
-    "output": "function Sqr(x: int64): int64 := int64(x) * int64(x);"
-  },
-  {
-    "instruction": "Implement function for square of uint64",
-    "output": "function Sqr(x: uint64): uint64 := x * x;"
-  },
-  {
-    "instruction": "Implement function for odd check of byte",
-    "output": "function Odd(i: byte) := (i mod 2) <> 0;"
-  },
-  {
-    "instruction": "Implement function for odd check of shortint",
-    "output": "function Odd(i: shortint) := (i mod 2) <> 0;"
-  },
-  {
-    "instruction": "Implement function for odd check of word",
-    "output": "function Odd(i: word) := (i mod 2) <> 0;"
-  },
-  {
-    "instruction": "Implement function for odd check of smallint",
-    "output": "function Odd(i: smallint) := (i mod 2) <> 0;"
-  },
-  {
-    "instruction": "Implement function for odd check of longword",
-    "output": "function Odd(i: longword) := (i mod 2) <> 0;"
-  },
-  {
-    "instruction": "Implement function for odd check of int64",
-    "output": "function Odd(i: int64) := (i mod 2) <> 0;"
-  },
-  {
-    "instruction": "Implement function for odd check of uint64",
-    "output": "function Odd(i: uint64) := (i mod 2) <> 0;"
-  },
-  {
-    "instruction": "Implement function for maximum of byte values",
-    "output": "function Max(a, b: byte) := Math.Max(a, b);"
-  },
-  {
-    "instruction": "Implement function for maximum of shortint values",
-    "output": "function Max(a, b: shortint) := Math.Max(a, b);"
-  },
-  {
-    "instruction": "Implement function for maximum of word values",
-    "output": "function Max(a, b: word) := Math.Max(a, b);"
-  },
-  {
-    "instruction": "Implement function for maximum of smallint values",
-    "output": "function Max(a, b: smallint) := Math.Max(a, b);"
-  },
-  {
-    "instruction": "Implement function for maximum of longword values",
-    "output": "function Max(a, b: longword) := Math.Max(a, b);"
-  },
-  {
-    "instruction": "Implement function for maximum of int64 values",
-    "output": "function Max(a, b: int64) := Math.Max(a, b);"
-  },
-  {
-    "instruction": "Implement function for maximum of uint64 values",
-    "output": "function Max(a, b: uint64) := Math.Max(a, b);"
-  },
-  {
-    "instruction": "Implement function for minimum of byte values",
-    "output": "function Min(a, b: byte) := Math.Min(a, b);"
-  },
-  {
-    "instruction": "Implement function for minimum of shortint values",
-    "output": "function Min(a, b: shortint) := Math.Min(a, b);"
-  },
-  {
-    "instruction": "Implement function for minimum of word values",
-    "output": "function Min(a, b: word) := Math.Min(a, b);"
-  },
-  {
-    "instruction": "Implement function for minimum of smallint values",
-    "output": "function Min(a, b: smallint) := Math.Min(a, b);"
-  },
-  {
-    "instruction": "Implement function for minimum of longword values",
-    "output": "function Min(a, b: longword) := Math.Min(a, b);"
-  },
-  {
-    "instruction": "Implement function for minimum of int64 values",
-    "output": "function Min(a, b: int64) := Math.Min(a, b);"
-  },
-  {
-    "instruction": "Implement function for minimum of uint64 values",
-    "output": "function Min(a, b: uint64) := Math.Min(a, b);"
-  },
-  {
-    "instruction": "Implement function for ordinal value of integer",
-    "output": "function Ord(a: integer): integer;\nbegin\n  Result := a;\nend;"
-  },
-  {
-    "instruction": "Implement function for ordinal value of longword",
-    "output": "function Ord(a: longword): longword;\nbegin\n  Result := a;\nend;"
-  },
-  {
-    "instruction": "Implement function for ordinal value of int64",
-    "output": "function Ord(a: int64): int64;\nbegin\n  Result := a;\nend;"
-  },
-  {
-    "instruction": "Implement function for ordinal value of uint64",
-    "output": "function Ord(a: uint64): uint64;\nbegin\n  Result := a;\nend;"
   },
   {
     "instruction": "Implement function for ordinal value of boolean",
@@ -1588,32 +848,8 @@
     "output": "function UpCase(ch: char): char;\nbegin\n  Result := char.ToUpper(ch);\nend;"
   },
   {
-    "instruction": "Implement function for character lowercase (alternative name)",
-    "output": "function LowCase(ch: char): char;\nbegin\n  Result := char.ToLower(ch);\nend;"
-  },
-  {
-    "instruction": "Implement a Pred function for boolean type that returns the logical negation",
-    "output": "function Pred(x: boolean): boolean;\nbegin\n  Result := not x;\nend;"
-  },
-  {
     "instruction": "Implement a Pred function for byte type that returns the previous value",
     "output": "function Pred(x: byte): byte;\nbegin\n  Result := x - 1;\nend;"
-  },
-  {
-    "instruction": "Implement a Pred function for char type that returns the previous character",
-    "output": "function Pred(x: char): char;\nbegin\n  Result := char(integer(x)-1);\nend;"
-  },
-  {
-    "instruction": "Implement a generic Swap procedure that exchanges values of two variables",
-    "output": "procedure Swap<T>(var a, b: T);\nbegin\n  var v := a;\n  a := b;\n  b := v;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that generates an infinite recurrent sequence starting from initial element using next function",
-    "output": "function Iterate<T>(Self: T; next: T->T): sequence of T; extensionmethod;\nbegin\n  Result := Iterate&<T>(Self, next);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns infinite sequence of integers starting from current value with step 1",
-    "output": "function Step(Self: integer): sequence of integer; extensionmethod;\nbegin\n  while True do\n  begin\n    yield Self;\n    Self += 1;\n  end;\nend;"
   },
   {
     "instruction": "Implement an extension method that returns infinite sequence of integers starting from current value with specified step",
@@ -1622,14 +858,6 @@
   {
     "instruction": "Implement an extension method that repeats sequence infinite number of times",
     "output": "function Cycle<T>(Self: sequence of T): sequence of T; extensionmethod;\nbegin\n  while True do\n  begin\n    foreach var x in Self do\n      yield x;\n  end;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method Print for integer type that outputs value followed by space",
-    "output": "function Print(Self: integer): integer; extensionmethod;\nbegin\n  PABCSystem.Print(Self);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method Println for integer type that outputs value and moves to new line",
-    "output": "function Println(Self: integer): integer; extensionmethod;\nbegin\n  PABCSystem.Println(Self);\n  Result := Self;\nend;"
   },
   {
     "instruction": "Implement an extension method that prints sequence using specified delimiter",
@@ -1642,10 +870,6 @@
   {
     "instruction": "Implement an extension method that applies action to each element of sequence",
     "output": "procedure &ForEach<T>(Self: sequence of T; action: T -> ()); extensionmethod;\nbegin\n  foreach x: T in Self do\n    action(x);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns product of sequence elements",
-    "output": "function Product(Self: sequence of real): real; extensionmethod;\nbegin\n  Result := 1.0;\n  foreach var x in Self do\n    Result *= x;\nend;"
   },
   {
     "instruction": "Implement an extension method that returns sorted sequence in ascending order",
@@ -1676,20 +900,8 @@
     "output": "function Interleave<T>(Self: sequence of T; a: sequence of T): sequence of T; extensionmethod;\nbegin\n  if a = nil then\n    raise new System.ArgumentNullException('a');\n  Result := Self.ZipTuple(a).SelectMany(x -> Seq(x[0], x[1]))\nend;"
   },
   {
-    "instruction": "Implement an extension method that numerates sequence starting from 1",
-    "output": "function Numerate<T>(Self: sequence of T): sequence of (integer, T); extensionmethod;\nbegin\n  var i := 1;\n  foreach var x in Self do\n  begin\n    yield (i,x);\n    i += 1;\n  end;  \nend;"
-  },
-  {
     "instruction": "Implement an extension method that transforms sequence into sequence of pairs of adjacent elements",
     "output": "function Pairwise<T>(Self: sequence of T): sequence of (T, T); extensionmethod;\nbegin\n  var previous: T;\n  var it := Self.GetEnumerator();\n  if (it.MoveNext()) then\n    previous := it.Current;\n  \n  while (it.MoveNext()) do\n  begin\n    yield (previous, it.Current);\n    previous := it.Current;\n  end\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns sequence of differences between adjacent elements",
-    "output": "function Incremental(Self: sequence of integer): sequence of integer; extensionmethod;\nbegin\n  Result := IncrementalSeq(Self);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that shuffles list elements randomly",
-    "output": "function Shuffle<T>(Self: List<T>): List<T>; extensionmethod;\nbegin\n  var n := Self.Count;\n  for var i := 0 to n - 1 do\n  begin\n    var r := Random(n);\n    var v := Self[i];\n    Self[i] := Self[r];\n    Self[r] := v;\n  end;\n  Result := Self;  \nend;"
   },
   {
     "instruction": "Implement an extension method that finds first pair of consecutive identical elements and returns index of first element",
@@ -1702,10 +914,6 @@
   {
     "instruction": "Implement an extension method that transforms list elements using specified function",
     "output": "procedure Transform<T>(Self: List<T>; f: T->T); extensionmethod;\nbegin\n  for var i := 0 to Self.Count - 1 do\n    Self[i] := f(Self[i]);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that fills list elements with specified value",
-    "output": "procedure Fill<T>(Self: List<T>; x: T); extensionmethod;\nbegin\n  for var i := 0 to Self.Count - 1 do\n    Self[i] := x;\nend;"
   },
   {
     "instruction": "Implement an extension method that returns number of rows in 2D array",
@@ -1728,14 +936,6 @@
     "output": "procedure SetRow<T>(Self: array [,] of T; k: integer; a: array of T); extensionmethod;\nbegin\n  if a.Length <> Self.ColCount then\n    raise new System.ArgumentException('The length of the 1D array must match the size of the 2D array');\n  for var j := 0 to Self.ColCount - 1 do\n    Self[k, j] := a[j]\nend;"
   },
   {
-    "instruction": "Implement an extension method that transforms elements of 2D array using specified function",
-    "output": "procedure Transform<T>(Self: array [,] of T; f: T->T); extensionmethod;\nbegin\n  for var i := 0 to Self.RowCount - 1 do\n    for var j := 0 to Self.ColCount - 1 do\n      Self[i, j] := f(Self[i, j]);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that fills array with random values in specified range",
-    "output": "procedure FillRandom(Self: array of integer; a,b: integer); extensionmethod;\nbegin\n  for var i:=0 to Self.Length-1 do\n    Self[i] := Random(a,b);\nend;"
-  },
-  {
     "instruction": "Implement an extension method that returns random element from array",
     "output": "function RandomElement<T>(Self: array of T): T; extensionmethod;\nbegin\n  Result := Self[Random(Self.Length)];  \nend;"
   },
@@ -1750,10 +950,6 @@
   {
     "instruction": "Implement an extension method that fills array elements with specified value",
     "output": "procedure Fill<T>(Self: array of T; x: T); extensionmethod;\nbegin\n  for var i := 0 to Self.Length - 1 do\n    Self[i] := x;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that transforms array elements using specified function",
-    "output": "procedure Transform<T>(Self: array of T; f: T->T); extensionmethod;\nbegin\n  for var i := 0 to Self.Length - 1 do\n    Self[i] := f(Self[i]);\nend;"
   },
   {
     "instruction": "Implement an extension method that returns all combinations of m elements from array",
@@ -1772,20 +968,8 @@
     "output": "function IsEven(Self: integer): boolean; extensionmethod;\nbegin\n  Result := Self mod 2 = 0;\nend;"
   },
   {
-    "instruction": "Implement an extension method that generates sequence of integers from 1 to current value",
-    "output": "function Range(Self: integer): sequence of integer; extensionmethod;\nbegin\n  Result := Range(1, Self);  \nend;"
-  },
-  {
     "instruction": "Implement an extension method that generates sequence of integers from current value to n",
     "output": "function &To(Self: integer; n: integer): sequence of integer; extensionmethod;\nbegin\n  Result := Range(Self, n);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns square root of real number",
-    "output": "function Sqrt(Self: real): real; extensionmethod;\nbegin\n  Result := Sqrt(Self);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that rounds real number to nearest integer",
-    "output": "function Round(Self: real): integer; extensionmethod;\nbegin\n  Result := Round(Self);\nend;"
   },
   {
     "instruction": "Implement an extension method that checks if character is digit",
@@ -1794,18 +978,6 @@
   {
     "instruction": "Implement an extension method that converts character to lowercase",
     "output": "function ToLower(Self: char): char; extensionmethod;\nbegin\n  Result := char.ToLower(Self);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that converts string to integer",
-    "output": "function ToInteger(Self: string): integer; extensionmethod := StrToInt(Self);"
-  },
-  {
-    "instruction": "Implement an extension method that splits string into words using specified delimiters",
-    "output": "function ToWords(Self: string; params delim: array of char): array of string; extensionmethod;\nbegin\n  Result := Self.Split(delim, System.StringSplitOptions.RemoveEmptyEntries);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that converts string to array of integers",
-    "output": "function ToIntegers(Self: string): array of integer; extensionmethod;\nbegin\n  var l := new List<integer>(10);\n  var from := 1;\n  while from <= Self.Length do\n  begin\n    l.Add(ReadIntegerFromString(Self,from));\n    PassSpaces(Self,from);\n  end;  \n  Result := l.ToArray;\nend;"
   },
   {
     "instruction": "Implement an extension method that returns string inversion",
@@ -1832,10 +1004,6 @@
     "output": "function MatrByRow<T>(a: array of array of T): array [,] of T;\nbegin\n  var m := a.Length;\n  var n := if m = 0 then 0 else a.Max(aa -> aa.Length);\n  var res := new T[m,n];\n  for var i := 0 to m - 1 do\n  for var j := 0 to a[i].Length-1 do\n    res[i,j] := a[i][j];\n  Result := res;\nend;"
   },
   {
-    "instruction": "Implement a function that creates 2D array from sequence of sequences by rows",
-    "output": "function MatrByRow<T>(a: sequence of sequence of T): array [,] of T;\nbegin\n  var m := a.Count;\n  var n := if m = 0 then 0 else a.First.Count;\n  var res := new T[m,n];\n  var i := 0;\n  foreach var aa in a do\n  begin\n    var j := 0;  \n    foreach var x in aa do\n    begin  \n      res[i,j] := x;\n      j += 1;\n    end;  \n    i += 1;    \n  end;\n  Result := res;\nend;"
-  },
-  {
     "instruction": "Implement a function that creates 2D array with random integer values",
     "output": "function MatrRandom(m: integer; n: integer; a, b: integer): array [,] of integer;\nbegin\n  Result := new integer[m, n];\n  for var i := 0 to Result.RowCount - 1 do\n    for var j := 0 to Result.ColCount - 1 do\n      Result[i, j] := Random(a, b);\nend;"
   },
@@ -1848,104 +1016,12 @@
     "output": "function Transpose<T>(a: array [,] of T): array [,] of T;\nbegin\n  var m := a.RowCount;\n  var n := a.ColCount;\n  Result := new T[n, m];\n  for var i := 0 to Result.RowCount - 1 do\n    for var j := 0 to Result.ColCount - 1 do\n      Result[i, j] := a[j, i]\nend;"
   },
   {
-    "instruction": "Implement a Pred function for shortint type that returns the previous value",
-    "output": "function Pred(x: shortint): shortint;\nbegin\n  Result := x - 1;\nend;"
-  },
-  {
-    "instruction": "Implement a Pred function for smallint type that returns the previous value",
-    "output": "function Pred(x: smallint): smallint;\nbegin\n  Result := x - 1;\nend;"
-  },
-  {
-    "instruction": "Implement a Pred function for word type that returns the previous value",
-    "output": "function Pred(x: word): word;\nbegin\n  Result := x - 1;\nend;"
-  },
-  {
-    "instruction": "Implement a Pred function for longword type that returns the previous value",
-    "output": "function Pred(x: longword): longword;\nbegin\n  Result := x - 1;\nend;"
-  },
-  {
-    "instruction": "Implement a Pred function for int64 type that returns the previous value",
-    "output": "function Pred(x: int64): int64;\nbegin\n  Result := x - 1;\nend;"
-  },
-  {
-    "instruction": "Implement a Pred function for uint64 type that returns the previous value",
-    "output": "function Pred(x: uint64): uint64;\nbegin\n  Result := x - 1;\nend;"
-  },
-  {
-    "instruction": "Implement a Pred function for char type with step parameter that returns character shifted by n positions",
-    "output": "function Pred(x: char; n: integer): char;\nbegin\n  Result := char(integer(x)-n);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that generates infinite recurrent sequence from initial and second elements using next function",
-    "output": "function Iterate<T>(Self, second: T; next: (T,T) ->T): sequence of T; extensionmethod;\nbegin\n  Result := Iterate&<T>(Self, second, next);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns infinite sequence of real numbers starting from current value with specified step",
-    "output": "function Step(Self: real; step: real): sequence of real; extensionmethod;\nbegin\n  while True do\n  begin\n    yield Self;\n    Self += step;\n  end;\nend;"
-  },
-  {
     "instruction": "Implement an extension method that returns infinite sequence of elements equal to current element",
     "output": "function &Repeat<T>(Self: T): sequence of T; extensionmethod;\nbegin\n  while True do\n    yield Self;\nend;"
   },
   {
-    "instruction": "Implement an extension method Print for int64 type that outputs value followed by space",
-    "output": "function Print(Self: int64): int64; extensionmethod;\nbegin\n  PABCSystem.Print(Self);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method Print for real type that outputs value followed by space",
-    "output": "function Print(Self: real): real; extensionmethod;\nbegin\n  PABCSystem.Print(Self);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method Print for char type that outputs value followed by space",
-    "output": "function Print(Self: char): char; extensionmethod;\nbegin\n  PABCSystem.Print(Self);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method Print for boolean type that outputs value followed by space",
-    "output": "function Print(Self: boolean): boolean; extensionmethod;\nbegin\n  PABCSystem.Print(Self);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method Print for BigInteger type that outputs value followed by space",
-    "output": "function Print(Self: BigInteger): BigInteger; extensionmethod;\nbegin\n  PABCSystem.Print(Self);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method Print for string type that outputs value followed by space",
-    "output": "function Print(Self: string): string; extensionmethod;\nbegin\n  PABCSystem.Print(Self);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method Println for int64 type that outputs value and moves to new line",
-    "output": "function Println(Self: int64): int64; extensionmethod;\nbegin\n  PABCSystem.Println(Self);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method Println for real type that outputs value and moves to new line",
-    "output": "function Println(Self: real): real; extensionmethod;\nbegin\n  PABCSystem.Println(Self);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method Println for char type that outputs value and moves to new line",
-    "output": "function Println(Self: char): char; extensionmethod;\nbegin\n  PABCSystem.Println(Self);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method Println for boolean type that outputs value and moves to new line",
-    "output": "function Println(Self: boolean): boolean; extensionmethod;\nbegin\n  PABCSystem.Println(Self);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method Println for BigInteger type that outputs value and moves to new line",
-    "output": "function Println(Self: BigInteger): BigInteger; extensionmethod;\nbegin\n  PABCSystem.Println(Self);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method Println for string type that outputs value and moves to new line",
-    "output": "function Println(Self: string): string; extensionmethod;\nbegin\n  PABCSystem.Println(Self);\n  Result := Self;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that prints sequence using specified delimiter and moves to new line",
-    "output": "function Println<T>(Self: sequence of T; delim: string): sequence of T; extensionmethod;\nbegin\n  Self.Print(delim);\n  Writeln;\n  Result := Self;  \nend;"
-  },
-  {
     "instruction": "Implement an extension method that writes sequence of strings to file",
     "output": "function WriteLines(Self: sequence of string; fname: string): sequence of string; extensionmethod;\nbegin\n  WriteLines(fname, Self);\n  Result := Self\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that prints sequence with each element on new line",
-    "output": "function PrintLines<T>(Self: sequence of T): sequence of T; extensionmethod;\nbegin\n  Self.Println(NewLine);\n  Result := Self\nend;"
   },
   {
     "instruction": "Implement an extension method that prints sequence with elements transformed by map function, each on new line",
@@ -1960,14 +1036,6 @@
     "output": "function Product(Self: sequence of integer): int64; extensionmethod;\nbegin\n  Result := 1;\n  foreach var x in Self do\n    Result *= x;\nend;"
   },
   {
-    "instruction": "Implement an extension method that returns product of sequence elements projected to numeric value",
-    "output": "function Product<T>(Self: sequence of T; f: T->real): real; extensionmethod;\nbegin\n  Result := 1.0;\n  foreach var x in Self do\n    Result *= f(x);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns product of sequence elements projected to integer value",
-    "output": "function Product<T>(Self: sequence of T; f: T->integer): int64; extensionmethod;\nbegin\n  Result := 1;\n  foreach var x in Self do\n    Result *= f(x);\nend;"
-  },
-  {
     "instruction": "Implement an extension method that returns product of sequence elements projected to BigInteger value",
     "output": "function Product<T>(Self: sequence of T; f: T->BigInteger): BigInteger; extensionmethod;\nbegin\n  Result := 1;\n  foreach var x in Self do\n    Result *= f(x);\nend;"
   },
@@ -1978,10 +1046,6 @@
   {
     "instruction": "Implement an extension method that returns average of BigInteger sequence elements",
     "output": "function Average(Self: sequence of BigInteger): real; extensionmethod;\nbegin\n  var cnt := 0;\n  var sum := 0bi;\n  foreach var a in Self do\n  begin\n    sum += a;\n    cnt += 1;\n  end;  \n  if cnt <> 0 then \n    Result := sum/cnt\n  else Result := 0\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns product of BigInteger sequence elements",
-    "output": "function Product(Self: sequence of BigInteger): BigInteger; extensionmethod;\nbegin\n  Result := 1bi;\n  foreach var a in Self do\n    Result *= a\nend;"
   },
   {
     "instruction": "Implement an extension method that returns sequence sorted in descending order",
@@ -2008,44 +1072,12 @@
     "output": "function SkipLast<T>(self: sequence of T; count: integer := 1): sequence of T; extensionmethod;\nbegin\n  Result := Self.Reverse.Skip(count).Reverse;\nend;"
   },
   {
-    "instruction": "Implement an extension method that returns Cartesian product of sequences projecting each pair to value",
-    "output": "function Cartesian<T, T1, T2>(Self: sequence of T; b: sequence of T1; func: (T,T1)->T2): sequence of T2; extensionmethod;\nbegin\n  if b = nil then\n    raise new System.ArgumentNullException('b');\n  \n  foreach var x in Self do\n    foreach var y in b do\n      yield func(x, y)\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that partitions sequence into two based on condition with index",
-    "output": "function Partition<T>(Self: sequence of T; cond: (T,integer)->boolean): (sequence of T, sequence of T); extensionmethod;\nbegin\n  Result := (Self.Where(cond), Self.Where((x, i) -> not cond(x, i)));\nend;"
-  },
-  {
     "instruction": "Implement an extension method that combines two sequences into sequence of two-element tuples",
     "output": "function ZipTuple<T, T1>(Self: sequence of T; a: sequence of T1): sequence of (T, T1); extensionmethod;\nbegin\n  if a = nil then\n    raise new System.ArgumentNullException('a');\n  Result := Self.Zip(a, (x, y) -> (x, y));\nend;"
   },
   {
-    "instruction": "Implement an extension method that combines three sequences into sequence of three-element tuples",
-    "output": "function ZipTuple<T, T1, T2>(Self: sequence of T; a: sequence of T1; b: sequence of T2): sequence of (T, T1, T2); extensionmethod;\nbegin\n  if a = nil then\n    raise new System.ArgumentNullException('a');\n  if b = nil then\n    raise new System.ArgumentNullException('b');\n  Result := Self.Zip(a, (x, y) -> (x, y)).Zip(b, (p, z) -> (p[0], p[1], z));\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that combines four sequences into sequence of four-element tuples",
-    "output": "function ZipTuple<T, T1, T2, T3>(Self: sequence of T; a: sequence of T1; b: sequence of T2; c: sequence of T3): sequence of (T, T1, T2, T3); extensionmethod;\nbegin\n  if a = nil then\n    raise new System.ArgumentNullException('a');\n  if b = nil then\n    raise new System.ArgumentNullException('b');\n  if c = nil then\n    raise new System.ArgumentNullException('c');\n  Result := Self.Zip(a, (x, y)-> (x, y)).Zip(b, (p, z)-> (p[0], p[1], z)).Zip(c, (p, z)-> (p[0], p[1], p[2], z));\nend;"
-  },
-  {
     "instruction": "Implement an extension method that splits sequence of two-element tuples into two sequences",
     "output": "function UnZipTuple<T, T1>(Self: sequence of (T, T1)): (sequence of T, sequence of T1); extensionmethod;\nbegin\n  Result := (Self.Select(x -> x[0]), Self.Select(x -> x[1]))\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that splits sequence of three-element tuples into three sequences",
-    "output": "function UnZipTuple<T, T1, T2>(Self: sequence of (T, T1, T2)): (sequence of T, sequence of T1, sequence of T2); extensionmethod;\nbegin\n  Result := (Self.Select(x -> x[0]), Self.Select(x -> x[1]), Self.Select(x -> x[2]))\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that splits sequence of four-element tuples into four sequences",
-    "output": "function UnZipTuple<T, T1, T2, T3>(Self: sequence of (T, T1, T2, T3)): (sequence of T, sequence of T1, sequence of T2, sequence of T3); extensionmethod;\nbegin\n  Result := (Self.Select(x -> x[0]), Self.Select(x -> x[1]), Self.Select(x -> x[2]), Self.Select(x -> x[3]))\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that interleaves elements of three sequences",
-    "output": "function Interleave<T>(Self: sequence of T; a, b: sequence of T): sequence of T; extensionmethod;\nbegin\n  if a = nil then\n    raise new System.ArgumentNullException('a');\n  if b = nil then\n    raise new System.ArgumentNullException('b');\n  Result := Self.ZipTuple(a, b).SelectMany(x -> Seq(x[0], x[1], x[2]))\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that interleaves elements of four sequences",
-    "output": "function Interleave<T>(Self: sequence of T; a, b, c: sequence of T): sequence of T; extensionmethod;\nbegin\n  if a = nil then\n    raise new System.ArgumentNullException('a');\n  if b = nil then\n    raise new System.ArgumentNullException('b');\n  if c = nil then\n    raise new System.ArgumentNullException('c');\n  Result := Self.ZipTuple(a, b, c).SelectMany(x -> Seq(x[0], x[1], x[2], x[3]))\nend;"
   },
   {
     "instruction": "Implement an extension method that numerates sequence starting from specified number",
@@ -2056,16 +1088,8 @@
     "output": "function Tabulate<T, T1>(Self: sequence of T; F: T->T1): sequence of (T, T1); extensionmethod;\nbegin\n  Result := Self.Select(x -> (x, f(x)));\nend;"
   },
   {
-    "instruction": "Implement an extension method that transforms sequence into sequence of adjacent element pairs using function",
-    "output": "function Pairwise<T, Res>(Self: sequence of T; func: (T,T)->Res): sequence of Res; extensionmethod;\nbegin\n  var previous: T;\n  var it := Self.GetEnumerator();\n  if (it.MoveNext()) then\n    previous := it.Current;\n  \n  while (it.MoveNext()) do\n  begin\n    yield func(previous, it.Current);\n    previous := it.Current;\n  end\nend;"
-  },
-  {
     "instruction": "Implement an extension method that splits sequence into batches of specified size",
     "output": "function Batch<T>(Self: sequence of T; size: integer): sequence of sequence of T; extensionmethod;\nbegin\n  Result := SeqWhile(Self, v -> v.Skip(size), v -> v.Count > 0).Select(v -> v.Take(size))\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that splits sequence into batches of specified size and applies projection to each batch",
-    "output": "function Batch<T, Res>(Self: sequence of T; size: integer; proj: Func<IEnumerable<T>, Res>): sequence of Res; extensionmethod;\nbegin\n  Result := SeqWhile(Self, v -> v.Skip(size), v -> v.Count > 0).Select(v -> v.Take(size)).Select(ss -> proj(ss));\nend;"
   },
   {
     "instruction": "Implement an extension method that returns slice of sequence from specified index with step and maximum count",
@@ -2076,52 +1100,12 @@
     "output": "function Incremental<T, T1>(Self: sequence of T; func: (T,T)->T1): sequence of T1; extensionmethod;\nbegin\n  var iter := Self.GetEnumerator();\n  if iter.MoveNext() then\n  begin\n    var prevItem := iter.Current;\n    while iter.MoveNext() do\n    begin\n      var nextItem := iter.Current;\n      yield func(prevItem, nextItem);\n      prevItem := nextItem;\n    end\n  end\nend;"
   },
   {
-    "instruction": "Implement an extension method that returns sequence of differences between adjacent elements using function with index",
-    "output": "function Incremental<T, T1>(Self: sequence of T; func: (T,T,integer)->T1): sequence of T1; extensionmethod;\nbegin\n  var iter := Self.GetEnumerator();\n  if iter.MoveNext() then\n  begin\n    var ind := 0;\n    var prevItem := iter.Current;\n    while iter.MoveNext() do\n    begin\n      var nextItem := iter.Current;\n      ind += 1;\n      yield func(prevItem, nextItem, ind);\n      prevItem := nextItem;\n    end\n  end\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns sequence of list indices",
-    "output": "function Indices<T>(Self: List<T>): sequence of integer; extensionmethod := Range(0, Self.Count - 1);"
-  },
-  {
     "instruction": "Implement an extension method that returns sequence of list indices satisfying condition",
     "output": "function Indices<T>(Self: List<T>; cond: T->boolean): sequence of integer; extensionmethod;\nbegin\n  for var i := 0 to Self.Count - 1 do\n    if cond(Self[i]) then\n      yield i;\nend;"
   },
   {
-    "instruction": "Implement an extension method that returns sequence of list indices satisfying condition with index",
-    "output": "function Indices<T>(Self: List<T>; cond: (T,integer) ->boolean): sequence of integer; extensionmethod;\nbegin\n  for var i := 0 to Self.Count - 1 do\n    if cond(Self[i], i) then\n      yield i;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that finds first pair of consecutive identical elements using comparison function",
-    "output": "function AdjacentFind<T>(Self: IList<T>; eq: (T,T)->boolean; start: integer := 0): integer; extensionmethod;\nbegin\n  Result := -1;\n  for var i := start to Self.Count - 2 do\n    if eq(Self[i], Self[i + 1]) then \n    begin\n      Result := i;\n      exit;\n    end;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns index of first minimal element in list starting from specified position",
-    "output": "function IndexMin<T>(Self: List<T>; index: integer := 0): integer; extensionmethod; where T: IComparable<T>;\nbegin\n  var min := Self[index];\n  Result := index;\n  for var i := index + 1 to Self.Count - 1 do\n    if Self[i].CompareTo(min) < 0 then \n    begin\n      Result := i;\n      min := Self[i];\n    end;\nend;"
-  },
-  {
     "instruction": "Implement an extension method that returns index of first maximal element in list starting from specified position",
     "output": "function IndexMax<T>(Self: List<T>; index: integer := 0): integer; extensionmethod; where T: System.IComparable<T>;\nbegin\n  var max := Self[index];\n  Result := index;\n  for var i := index + 1 to Self.Count - 1 do\n    if Self[i].CompareTo(max) > 0 then \n    begin\n      Result := i;\n      max := Self[i];\n    end;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns index of last minimal element in list within range [0,index]",
-    "output": "function LastIndexMin<T>(Self: List<T>; index: integer): integer; extensionmethod; where T: System.IComparable<T>;\nbegin\n  var min := Self[index];\n  Result := index;\n  for var i := index - 1 downto 0 do\n    if Self[i].CompareTo(min) < 0 then \n    begin\n      Result := i;\n      min := Self[i];\n    end;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns index of last minimal element in list",
-    "output": "function LastIndexMin<T>(Self: List<T>): integer; extensionmethod; where T: System.IComparable<T>;\nbegin\n  Result := Self.LastIndexMin(Self.Count - 1);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns index of last maximal element in list within range [0,index]",
-    "output": "function LastIndexMax<T>(Self: List<T>; index: integer): integer; extensionmethod; where T: System.IComparable<T>;\nbegin\n  var max := Self[index];\n  Result := index;\n  for var i := index - 1 downto 0 do\n    if Self[i].CompareTo(max) > 0 then \n    begin\n      Result := i;\n      max := Self[i];\n    end;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns index of last maximal element in list",
-    "output": "function LastIndexMax<T>(Self: List<T>): integer; extensionmethod; where T: System.IComparable<T>;\nbegin\n  Result := Self.LastIndexMax(Self.Count - 1);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that transforms list elements using function with index",
-    "output": "procedure Transform<T>(Self: List<T>; f: (T,integer)->T); extensionmethod;\nbegin\n  for var i := 0 to Self.Count - 1 do\n    Self[i] := f(Self[i],i);\nend;"
   },
   {
     "instruction": "Implement an extension method that fills list elements with values computed by function",
@@ -2134,10 +1118,6 @@
   {
     "instruction": "Implement an extension method that returns size of 2D array as tuple (rows, columns)",
     "output": "function Size<T>(Self: array [,] of T): (integer,integer); extensionmethod;\nbegin\n  Result := (Self.GetLength(0),Self.GetLength(1));\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that prints 2D array with specified width and moves to new line",
-    "output": "function Println<T>(Self: array [,] of T; w: integer := 4): array [,] of T; extensionmethod;\nbegin\n  Self.Print(w);\n  Result := Self;  \nend;"
   },
   {
     "instruction": "Implement an extension method that prints 2D real array with specified format and moves to new line",
@@ -2180,20 +1160,8 @@
     "output": "procedure SetCol<T>(Self: array [,] of T; k: integer; a: array of T); extensionmethod;\nbegin\n  if a.Length <> Self.RowCount then\n    raise new System.ArgumentException('The length of the 1D array must match the size of the 2D array');\n  for var i := 0 to Self.RowCount - 1 do\n    Self[i, k] := a[i]\nend;"
   },
   {
-    "instruction": "Implement an extension method that sets k-th column of 2D array to specified sequence",
-    "output": "procedure SetCol<T>(Self: array [,] of T; k: integer; a: sequence of T); extensionmethod := Self.SetCol(k,a.ToArray);"
-  },
-  {
     "instruction": "Implement an extension method that returns sequence of elements with indices from 2D array",
     "output": "function ElementsWithIndices<T>(Self: array [,] of T): sequence of (T, integer, integer); extensionmethod;\nbegin\n  for var i := 0 to Self.RowCount - 1 do\n    for var j := 0 to Self.ColCount - 1 do\n      yield (Self[i, j], i, j)\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns sequence of indices of elements satisfying condition in 2D array",
-    "output": "function Indices<T>(Self: array [,] of T; cond: T -> boolean): sequence of (integer, integer); extensionmethod;\nbegin\n  for var i := 0 to Self.RowCount - 1 do\n    for var j := 0 to Self.ColCount - 1 do\n      if cond(Self[i,j]) then \n        yield (i, j)\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns sequence of indices of elements satisfying condition with indices in 2D array",
-    "output": "function Indices<T>(Self: array [,] of T; cond: (T,integer,integer) -> boolean): sequence of (integer, integer); extensionmethod;\nbegin\n  for var i := 0 to Self.RowCount - 1 do\n    for var j := 0 to Self.ColCount - 1 do\n      if cond(Self[i,j],i,j) then \n        yield (i, j)\nend;"
   },
   {
     "instruction": "Implement an extension method that returns sequence of 2D array elements by rows",
@@ -2208,23 +1176,11 @@
     "output": "function ConvertAll<T, T1>(Self: array [,] of T; converter: T->T1): array [,] of T1; extensionmethod;\nbegin\n  Result := new T1[Self.RowCount, Self.ColCount];\n  for var i := 0 to Self.RowCount - 1 do\n    for var j := 0 to Self.ColCount - 1 do\n      Result[i, j] := converter(Self[i, j]);  \nend;"
   },
   {
-    "instruction": "Implement an extension method that converts all elements of 2D array using converter function with indices",
-    "output": "function ConvertAll<T, T1>(Self: array [,] of T; converter: (T,integer,integer)->T1): array [,] of T1; extensionmethod;\nbegin\n  Result := new T1[Self.RowCount, Self.ColCount];\n  for var i := 0 to Self.RowCount - 1 do\n    for var j := 0 to Self.ColCount - 1 do\n      Result[i, j] := converter(Self[i, j],i,j);  \nend;"
-  },
-  {
     "instruction": "Implement an extension method that transforms elements of 2D array using function with indices",
     "output": "procedure Transform<T>(Self: array [,] of T; f: (T,integer,integer)->T); extensionmethod;\nbegin\n  for var i := 0 to Self.RowCount - 1 do\n    for var j := 0 to Self.ColCount - 1 do\n      Self[i, j] := f(Self[i, j],i,j);\nend;"
   },
   {
-    "instruction": "Implement an extension method that fills 2D array elements with values computed by function",
-    "output": "procedure Fill<T>(Self: array [,] of T; f: (integer,integer) ->T); extensionmethod;\nbegin\n  for var i := 0 to Self.RowCount - 1 do\n    for var j := 0 to Self.ColCount - 1 do\n      Self[i, j] := f(i, j);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that fills 2D integer array with random values in specified range",
-    "output": "procedure FillRandom(Self: array [,] of integer; a,b: integer); extensionmethod;\nbegin\n  for var i := 0 to Self.RowCount - 1 do\n    for var j := 0 to Self.ColCount - 1 do\n      Self[i, j] := Random(a,b);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that fills 2D real array with random values in specified range",
+    "instruction": "Implement an extension method that fills 2D real array with random real values in specified range",
     "output": "procedure FillRandom(Self: array [,] of real; a,b: real); extensionmethod;\nbegin\n  for var i := 0 to Self.RowCount - 1 do\n    for var j := 0 to Self.ColCount - 1 do\n      Self[i, j] := a + Random*(b-a);\nend;"
   },
   {
@@ -2236,60 +1192,20 @@
     "output": "procedure &ForEach<T>(Self: array [,] of T; act: (T,integer,integer) -> ()); extensionmethod;\nbegin\n  for var i := 0 to Self.RowCount - 1 do\n    for var j := 0 to Self.ColCount - 1 do\n      act(Self[i, j],i,j);\nend;"
   },
   {
-    "instruction": "Implement an extension method that returns slice of 2D array using specified row and column indices",
-    "output": "function MatrSlice<T>(Self: array[,] of T; RowIndex: array of integer; ColIndex: array of integer): array[,] of T; extensionmethod;\nbegin\n  if RowIndex = nil then\n    raise new System.ArgumentNullException('RowIndex');\n  if ColIndex = nil then\n    raise new System.ArgumentNullException('ColIndex');\n  if RowIndex.Any(i->not InR(i,0,Self.RowCount-1)) then  \n    raise new System.ArgumentOutOfRangeException('An element in the RowIndex array is out of range for the matrix row indices',new Exception);\n  if ColIndex.Any(i->not InR(i,0,Self.ColCount-1)) then  \n    raise new System.ArgumentOutOfRangeException('An element in the ColIndex array is out of range for the matrix column indices',new Exception);\n  Result := new T[RowIndex.Length, ColIndex.Length];\n  var r := 0;\n  foreach var ir in RowIndex do\n  begin\n    var c := 0;\n    foreach var jc in ColIndex do\n    begin\n      Result[r, c] := Self[ir, jc];\n      c += 1;\n    end;\n    r += 1;\n  end\nend;"
-  },
-  {
     "instruction": "Implement an extension method that returns slice of 2D array between specified row and column ranges",
     "output": "function MatrSlice<T>(Self: array[,] of T; FromRow, ToRow, FromCol, ToCol: integer): array[,] of T; extensionmethod;\nbegin\n  if not InR(FromRow,0,Self.RowCount-1) then  \n    raise new System.ArgumentOutOfRangeException('FromRow is out of range for the matrix row indices',new Exception);\n  if not InR(ToRow,0,Self.RowCount-1) then      raise new System.ArgumentOutOfRangeException('ToRow is out of range for the matrix row indices',new Exception);\n  if not InR(FromCol,0,Self.ColCount-1) then  \n    raise new System.ArgumentOutOfRangeException('FromCol is out of range for the matrix column indices',new Exception);\n  if not InR(ToCol,0,Self.ColCount-1) then  \n    raise new System.ArgumentOutOfRangeException('ToCol is out of range for the matrix column indices',new Exception);\n  Result := new T[ToRow-FromRow+1, ToCol-FromCol+1];\n  var r := 0;\n  for var ir:=FromRow to ToRow do\n  begin\n    var c := 0;\n    for var jc:=FromCol to ToCol do\n    begin\n      Result[r, c] := Self[ir, jc];\n      c += 1;\n    end;\n    r += 1;\n  end\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that fills array of real numbers with random values in specified range",
-    "output": "procedure FillRandom(Self: array of real; a,b: real); extensionmethod;\nbegin\n  for var i:=0 to Self.Length-1 do\n    Self[i] := a + Random*(b-a);\nend;"
   },
   {
     "instruction": "Implement an extension method that returns maximal element of integer array",
     "output": "function Max(Self: array of integer): integer; extensionmethod;\nbegin\n  Result := Self[0];\n  for var i := 1 to Self.Length - 1 do\n    if Self[i] > Result then \n      Result := Self[i];\nend;"
   },
   {
-    "instruction": "Implement an extension method that returns maximal element of real array",
-    "output": "function Max(Self: array of real): real; extensionmethod;\nbegin\n  Result := Self[0];\n  for var i := 1 to Self.Length - 1 do\n    if Self[i] > Result then \n      Result := Self[i];\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns index of first maximal element in array starting from specified position",
-    "output": "function IndexMax<T>(Self: array of T; index: integer := 0): integer; extensionmethod; where T: System.IComparable<T>;\nbegin\n  var max := Self[index];\n  Result := index;\n  for var i := index + 1 to Self.Count - 1 do\n    if Self[i].CompareTo(max) > 0 then \n    begin\n      Result := i;\n      max := Self[i];\n    end;\nend;"
-  },
-  {
     "instruction": "Implement an extension method that returns index of last minimal element in array within range [0,index]",
     "output": "function LastIndexMin<T>(Self: array of T; index: integer): integer; extensionmethod; where T: System.IComparable<T>;\nbegin\n  var min := Self[index];\n  Result := index;\n  for var i := index - 1 downto 0 do\n    if Self[i].CompareTo(min) < 0 then \n    begin\n      Result := i;\n      min := Self[i];\n    end;\nend;"
   },
   {
-    "instruction": "Implement an extension method that returns index of last minimal element in array",
-    "output": "function LastIndexMin<T>(Self: array of T): integer; extensionmethod; where T: System.IComparable<T>;\nbegin\n  Result := Self.LastIndexMin(Self.Length - 1);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns index of last maximal element in array within range [0,index]",
-    "output": "function LastIndexMax<T>(Self: array of T; index: integer): integer; extensionmethod; where T: System.IComparable<T>;\nbegin\n  var max := Self[index];\n  Result := index;\n  for var i := index - 1 downto 0 do\n    if Self[i].CompareTo(max) > 0 then \n    begin\n      Result := i;\n      max := Self[i];\n    end;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns index of last maximal element in array",
-    "output": "function LastIndexMax<T>(Self: array of T): integer; extensionmethod; where T: System.IComparable<T>;\nbegin\n  Result := Self.LastIndexMax(Self.Length - 1);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that transforms array elements using function with index",
-    "output": "procedure Transform<T>(Self: array of T; f: (T,integer)->T); extensionmethod;\nbegin\n  for var i := 0 to Self.Length - 1 do\n    Self[i] := f(Self[i],i);\nend;"
-  },
-  {
     "instruction": "Implement an extension method that performs binary search in sorted array",
     "output": "function BinarySearch<T>(Self: array of T; x: T): integer; extensionmethod;\nbegin\n  Result := System.Array.BinarySearch(self, x);  \nend;"
-  },
-  {
-    "instruction": "Implement an extension method that converts all array elements using converter function",
-    "output": "function ConvertAll<T, T1>(Self: array of T; converter: T->T1): array of T1; extensionmethod;\nbegin\n  Result := System.Array.ConvertAll(self, t -> converter(t));  \nend;"
-  },
-  {
-    "instruction": "Implement an extension method that converts all array elements using converter function with index",
-    "output": "function ConvertAll<T, T1>(Self: array of T; converter: (T,integer)->T1): array of T1; extensionmethod;\nbegin\n  Result := new T1[Self.Length];\n  for var i := 0 to Self.Length - 1 do\n    Result[i] := converter(Self[i],i);\nend;"
   },
   {
     "instruction": "Implement an extension method that finds first element in array satisfying predicate",
@@ -2300,20 +1216,12 @@
     "output": "function FindIndex<T>(Self: array of T; p: T->boolean): integer; extensionmethod;\nbegin\n  Result := System.Array.FindIndex(self, p);  \nend;"
   },
   {
-    "instruction": "Implement an extension method that finds index of first element in array satisfying predicate starting from index",
-    "output": "function FindIndex<T>(Self: array of T; start: integer; p: T->boolean): integer; extensionmethod;\nbegin\n  Result := System.Array.FindIndex(self, start, p);  \nend;"
-  },
-  {
     "instruction": "Implement an extension method that returns all elements in array satisfying predicate",
     "output": "function FindAll<T>(Self: array of T; p: T->boolean): array of T; extensionmethod;\nbegin\n  Result := System.Array.FindAll(self, p);  \nend;"
   },
   {
     "instruction": "Implement an extension method that finds last element in array satisfying predicate",
     "output": "function FindLast<T>(Self: array of T; p: T->boolean): T; extensionmethod;\nbegin\n  Result := System.Array.FindLast(self, p);  \nend;"
-  },
-  {
-    "instruction": "Implement an extension method that finds index of last element in array satisfying predicate",
-    "output": "function FindLastIndex<T>(Self: array of T; p: T->boolean): integer; extensionmethod;\nbegin\n  Result := System.Array.FindLastIndex(self, p);  \nend;"
   },
   {
     "instruction": "Implement an extension method that finds index of last element in array satisfying predicate in range [0,start]",
@@ -2324,43 +1232,11 @@
     "output": "function IndexOf<T>(Self: array of T; x: T): integer; extensionmethod;\nbegin\n  Result := System.Array.IndexOf(Self, x);  \nend;"
   },
   {
-    "instruction": "Implement an extension method that returns index of first occurrence of element in array starting from index",
-    "output": "function IndexOf<T>(Self: array of T; x: T; start: integer): integer; extensionmethod;\nbegin\n  Result := System.Array.IndexOf(Self, x, start);  \nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns index of last occurrence of element in array",
-    "output": "function LastIndexOf<T>(Self: array of T; x: T): integer; extensionmethod;\nbegin\n  Result := System.Array.LastIndexOf(Self, x);  \nend;"
-  },
-  {
     "instruction": "Implement an extension method that returns index of last occurrence of element in array starting from index",
     "output": "function LastIndexOf<T>(Self: array of T; x: T; start: integer): integer; extensionmethod;\nbegin\n  Result := System.Array.LastIndexOf(Self, x, start);  \nend;"
   },
   {
-    "instruction": "Implement an extension method that sorts array in ascending order",
-    "output": "procedure Sort<T>(Self: array of T); extensionmethod;\nbegin\n  System.Array.Sort(Self);  \nend;"
-  },
-  {
-    "instruction": "Implement an extension method that sorts array using comparison function",
-    "output": "procedure Sort<T>(Self: array of T; cmp: (T,T) ->integer); extensionmethod;\nbegin\n  System.Array.Sort(Self, cmp);  \nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns high index of array",
-    "output": "function High(Self: System.Array); extensionmethod := High(Self);"
-  },
-  {
-    "instruction": "Implement an extension method that returns low index of array",
-    "output": "function Low(Self: System.Array); extensionmethod := Low(Self);"
-  },
-  {
-    "instruction": "Implement an extension method that returns sequence of array indices",
-    "output": "function Indices<T>(Self: array of T): sequence of integer; extensionmethod := Range(0, Self.Length - 1);"
-  },
-  {
-    "instruction": "Implement an extension method that returns sequence of array indices satisfying condition",
-    "output": "function Indices<T>(Self: array of T; cond: T->boolean): sequence of integer; extensionmethod;\nbegin\n  for var i := 0 to Self.High do\n    if cond(Self[i]) then\n      yield i;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns sequence of array indices satisfying condition with index",
+    "instruction": "Implement an extension method that returns sequence of array indices satisfying condition. Condition function should take index of element as second argument.",
     "output": "function Indices<T>(Self: array of T; cond: (T,integer) ->boolean): sequence of integer; extensionmethod;\nbegin\n  for var i := 0 to Self.High do\n    if cond(Self[i], i) then\n      yield i;\nend;"
   },
   {
@@ -2384,22 +1260,6 @@
     "output": "function DivsAll(Self: integer; params a: array of integer): boolean; extensionmethod;\nbegin\n  Result := True;\n  for var i:=0 to a.High do\n    if Self mod a[i] <> 0 then\n    begin\n      Result := False;\n      exit\n    end;\nend;"
   },
   {
-    "instruction": "Implement an extension method that returns square root of integer",
-    "output": "function Sqrt(Self: integer): real; extensionmethod;\nbegin\n  Result := Sqrt(Self);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns square of integer",
-    "output": "function Sqr(Self: integer): integer; extensionmethod;\nbegin\n  Result := Sqr(Self);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that checks if integer value is between two other values",
-    "output": "function Between(Self: integer; a, b: integer): boolean; extensionmethod;\nbegin\n  Result := (a <= Self) and (Self <= b) or (b <= Self) and (Self <= a);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that checks if integer value is in range (alias for Between)",
-    "output": "function InRange(Self: integer; a,b: integer): boolean; extensionmethod;\nbegin\n  Result := (a <= Self) and (Self <= b) or (b <= Self) and (Self <= a);\nend;"
-  },
-  {
     "instruction": "Implement an extension method that checks if integer is odd",
     "output": "function IsOdd(Self: integer): boolean; extensionmethod;\nbegin\n  Result := Self mod 2 <> 0;\nend;"
   },
@@ -2412,76 +1272,20 @@
     "output": "function Times(Self: integer): sequence of integer; extensionmethod;\nbegin\n  Result := Range(0, Self - 1);\nend;"
   },
   {
-    "instruction": "Implement an extension method that clamps integer value between bottom and top inclusive",
-    "output": "function Clamp(Self: integer; bottom,top: integer): integer; extensionmethod;\nbegin\n  if Self < bottom then \n    Result := bottom\n  else if Self > top then \n    Result := top\n  else Result := Self;  \nend;"
-  },
-  {
     "instruction": "Implement an extension method that clamps integer value to top value",
     "output": "function ClampTop(Self: integer; top: integer): integer; extensionmethod;\nbegin\n  if Self > top then \n    Result := top\n  else Result := Self;  \nend;"
-  },
-  {
-    "instruction": "Implement an extension method that clamps integer value to bottom value",
-    "output": "function ClampBottom(Self: integer; bottom: integer): integer; extensionmethod;\nbegin\n  if Self < bottom then \n    Result := bottom\n  else Result := Self;  \nend;"
   },
   {
     "instruction": "Implement an extension method that returns square root of BigInteger",
     "output": "function Sqrt(Self: BigInteger): real; extensionmethod;\nbegin\n  Result := Sqrt(real(Self));\nend;"
   },
   {
-    "instruction": "Implement an extension method that checks if real value is between two other values",
-    "output": "function Between(Self: real; a, b: real): boolean; extensionmethod;\nbegin\n  Result := (a <= Self) and (Self <= b) or (b <= Self) and (Self <= a);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that checks if real value is in range (alias for Between)",
-    "output": "function InRange(Self: real; a,b: real): boolean; extensionmethod;\nbegin\n  Result := (a <= Self) and (Self <= b) or (b <= Self) and (Self <= a);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns square of real number",
-    "output": "function Sqr(Self: real): real; extensionmethod;\nbegin\n  Result := Sqr(Self);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that rounds real number to specified number of decimal places",
-    "output": "function Round(Self: real; digits: integer): real; extensionmethod;\nbegin\n  Result := Round(Self,digits);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that rounds real number to nearest BigInteger",
-    "output": "function RoundBigInteger(Self: real): BigInteger; extensionmethod;\nbegin\n  Result := RoundBigInteger(Self);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that truncates real number to integer",
-    "output": "function Trunc(Self: real): integer; extensionmethod;\nbegin\n  Result := Trunc(Self);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that truncates real number to BigInteger",
-    "output": "function TruncBigInteger(Self: real): BigInteger; extensionmethod;\nbegin\n  Result := TruncBigInteger(Self);\nend;"
-  },
-  {
     "instruction": "Implement an extension method that clamps real value between bottom and top inclusive",
     "output": "function Clamp(Self: real; bottom,top: real): real; extensionmethod;\nbegin\n  if Self < bottom then \n    Result := bottom\n  else if Self > top then \n    Result := top\n  else Result := Self;  \nend;"
   },
   {
-    "instruction": "Implement an extension method that clamps real value to top value",
-    "output": "function ClampTop(Self: real; top: real): real; extensionmethod;\nbegin\n  if Self > top then \n    Result := top\n  else Result := Self;  \nend;"
-  },
-  {
     "instruction": "Implement an extension method that clamps real value to bottom value",
     "output": "function ClampBottom(Self: real; bottom: real): real; extensionmethod;\nbegin\n  if Self < bottom then \n    Result := bottom\n  else Result := Self;  \nend;"
-  },
-  {
-    "instruction": "Implement an extension method that checks if character value is between two other characters",
-    "output": "function Between(Self: char; a, b: char): boolean; extensionmethod;\nbegin\n  Result := (a <= Self) and (Self <= b) or (b <= Self) and (Self <= a);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that checks if character value is in range (alias for Between)",
-    "output": "function InRange(Self: char; a,b: char): boolean; extensionmethod;\nbegin\n  Result := (a <= Self) and (Self <= b) or (b <= Self) and (Self <= a);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that returns previous character",
-    "output": "function Pred(Self: char); extensionmethod := PABCSystem.Pred(Self);"
-  },
-  {
-    "instruction": "Implement an extension method that returns next character",
-    "output": "function Succ(Self: char); extensionmethod := PABCSystem.Succ(Self);"
   },
   {
     "instruction": "Implement an extension method that returns Unicode code of character",
@@ -2514,18 +1318,6 @@
   {
     "instruction": "Implement an extension method that checks if string value is between two other strings",
     "output": "function Between(Self: string; a, b: string): boolean; extensionmethod;\nbegin\n  Result := (a <= Self) and (Self <= b) or (b <= Self) and (Self <= a);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that checks if string value is in range (alias for Between)",
-    "output": "function InRange(Self: string; a, b: string): boolean; extensionmethod;\nbegin\n  Result := (a <= Self) and (Self <= b) or (b <= Self) and (Self <= a);\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that reads integer from string starting from specified position",
-    "output": "function ReadInteger(Self: string; var from: integer): integer; extensionmethod;\nbegin\n  var from1 := from + 1;\n  Result := ReadIntegerFromString(Self, from1);\n  from := from1 - 1;\nend;"
-  },
-  {
-    "instruction": "Implement an extension method that reads real number from string starting from specified position",
-    "output": "function ReadReal(Self: string; var from: integer): real; extensionmethod;\nbegin\n  var from1 := from + 1;\n  Result := ReadRealFromString(Self, from1);\n  from := from1 - 1;\nend;"
   },
   {
     "instruction": "Implement an extension method that reads word from string starting from specified position",
@@ -2572,10 +1364,6 @@
     "output": "function ToReals(Self: string): array of real; extensionmethod;\nbegin\n  Result := Self.ToWords().ConvertAll(s -> StrToFloat(s));\nend;"
   },
   {
-    "instruction": "Implement an extension method that replaces all occurrences of regular expression using replacement function",
-    "output": "function RegexReplace(Self: string; reg: string; repl: &Match->string; options: RegexOptions := RegexOptions.None): string; extensionmethod;\nbegin\n  Result := Regex.Replace(Self, reg, repl, options)\nend;"
-  },
-  {
     "instruction": "Implement an extension method that finds first match of regular expression in string and returns its value",
     "output": "function MatchValue(Self: string; reg: string; options: RegexOptions := RegexOptions.None): string; extensionmethod;\nbegin\n  Result := (new Regex(reg, options)).&Match(Self).Value;\nend;"
   },
@@ -2604,10 +1392,6 @@
     "output": "function IndicesOf(Self, SubS: string; overlay: boolean := False): sequence of integer; extensionmethod;\nbegin\n  var L := new List<integer>;\n  var (n, m) := (Self.Length, SubS.Length);\n  var border := PrefixFunction(SubS);\n  var temp := 0;\n  for var i := 1 to n do\n  begin\n    while (temp > 0) and (SubS[temp + 1] <> Self[i]) do\n      temp := border[temp];\n    if SubS[temp + 1] = Self[i] then\n      temp += 1;\n    if temp = m then\n    begin\n      var pos := i - m + 1;\n      if overlay or (L.Count = 0) or (pos >= L[L.Count - 1] + m) then \n        L.Add(pos);\n      temp := border[m]\n    end;\n  end;\n  Result := L.Select(i -> i - 1)\nend;"
   },
   {
-    "instruction": "Implement an extension method that returns complex conjugate of complex number",
-    "output": "function Conjugate(Self: Complex): Complex; extensionmethod;\nbegin\n  Result := Complex.Conjugate(Self);\nend;"
-  },
-  {
     "instruction": "Implement an extension method that returns dictionary mapping group key to count of elements in group",
     "output": "function EachCount<Key,Source>(Self: sequence of System.Linq.IGrouping<Key,Source>): Dictionary<Key,integer>; extensionmethod;\nbegin\n  Result := Self.ToDictionary(g -> g.Key, g -> g.Count);\nend;"
   },
@@ -2616,36 +1400,12 @@
     "output": "function Each<Key,Source,Res>(Self: sequence of System.Linq.IGrouping<Key,Source>; grOperation: System.Linq.IGrouping<Key,Source> -> Res): Dictionary<Key,Res>; extensionmethod;\nbegin\n  Result := Self.ToDictionary(g -> g.Key, g -> grOperation(g));\nend;"
   },
   {
-    "instruction": "Implement a function that creates 2D array with specified dimensions and data",
-    "output": "function Matr<T>(m,n: integer; params data: array of T): array [,] of T;\nbegin\n  if data.Length<>m*n then\n    raise new System.ArgumentException('The number of initializer elements must equal the number of elements in the matrix');\n  \n  Result := new T[m, n];\n  var k := 0;\n  for var i:=0 to Result.RowCount-1 do\n  for var j:=0 to Result.ColCount-1 do\n  begin\n    Result[i,j] := data[k];\n    k += 1;\n  end;\nend;"
-  },
-  {
     "instruction": "Implement a function that creates 2D array from array of arrays",
     "output": "function Matr<T>(params aa: array of array of T): array [,] of T;\nbegin\n  var cols := aa.Max(a -> a.Length);\n  var r := new T[aa.Length,cols];\n  \n  for var i:=0 to aa.Length-1 do\n  for var j:=0 to aa[i].Length-1 do\n    r[i,j] := aa[i][j];\n  \n  Result := r;\nend;"
   },
   {
-    "instruction": "Implement a function that creates 2D array from sequence of arrays by rows",
-    "output": "function MatrByRow<T>(a: sequence of array of T): array [,] of T;\nbegin\n  var m := a.Count;\n  var n := if m = 0 then 0 else a.Max(aa -> aa.Length);\n  var res := new T[m,n];\n  var i := 0;\n  foreach var aa in a do\n  begin  \n    for var j := 0 to aa.Length-1 do\n      res[i,j] := aa[j];\n    i += 1;    \n  end;\n  Result := res;\nend;"
-  },
-  {
-    "instruction": "Implement a function that creates 2D array from sequence by rows with specified dimensions",
-    "output": "function MatrByRow<T>(m,n: integer; a: sequence of T): array [,] of T;\nbegin\n  var res := new T[m,n];\n  var (i,j,num) := (0,0,0);\n  foreach var x in a do\n  begin\n    if num >= m*n then\n      break;\n    res[i,j] := x;\n    num += 1;\n    j += 1;\n    if j >= n then\n    begin\n      j := 0;\n      i += 1;\n    end;\n  end;\n  Result := res;\nend;"
-  },
-  {
     "instruction": "Implement a function that creates 2D array from array of arrays by columns",
     "output": "function MatrByCol<T>(a: array of array of T): array [,] of T;\nbegin\n  var n := a.Length;\n  var m := if n = 0 then 0 else a.Select(aa -> aa.Length).Max;\n  var res := new T[m,n];\n  for var j := 0 to n - 1 do\n  for var i := 0 to a[j].Length-1 do\n    res[i,j] := a[j][i];\n  Result := res;\nend;"
-  },
-  {
-    "instruction": "Implement a function that creates 2D array from sequence of arrays by columns",
-    "output": "function MatrByCol<T>(a: sequence of array of T): array [,] of T;\nbegin\n  var n := a.Count;\n  var m := if n = 0 then 0 else a.Select(aa -> aa.Length).Max;\n  var res := new T[m,n];\n  var j := 0;\n  foreach var aa in a do\n  begin  \n    for var i := 0 to aa.Length-1 do\n      res[i,j] := aa[i];\n    j += 1;\n  end;\n  Result := res;\nend;"
-  },
-  {
-    "instruction": "Implement a function that creates 2D array from sequence of sequences by columns",
-    "output": "function MatrByCol<T>(a: sequence of sequence of T): array [,] of T;\nbegin\n  var n := a.Count;\n  var m := if n = 0 then 0 else a.First.Count;\n  var res := new T[m,n];\n  var j := 0;\n  foreach var aa in a do\n  begin\n    var i := 0;\n    foreach var x in aa do\n    begin  \n      res[i,j] := x;\n      i += 1;\n    end;  \n    j += 1;\n  end;\n  Result := res;\nend;"
-  },
-  {
-    "instruction": "Implement a function that creates 2D array from sequence by columns with specified dimensions",
-    "output": "function MatrByCol<T>(m,n: integer; a: sequence of T): array [,] of T;\nbegin\n  var res := new T[m,n];\n  var (i,j,num) := (0,0,0);\n  foreach var x in a do\n  begin\n    if num >= m*n then\n      break;\n    res[i,j] := x;\n    num += 1;\n    i += 1;\n    if i >= m then\n    begin\n      i := 0;\n      j += 1;\n    end;\n  end;\n  Result := res;\nend;"
   },
   {
     "instruction": "Implement a function that creates 2D array with random real values",
@@ -2676,10 +1436,6 @@
     "output": "function IncrementalSeq(Self: sequence of integer): sequence of integer; \nbegin\n  var iter := Self.GetEnumerator();\n  if iter.MoveNext() then\n  begin\n    var prevItem := iter.Current;\n    while iter.MoveNext() do\n    begin\n      var nextItem := iter.Current;\n      yield nextItem - prevItem;\n      prevItem := nextItem;\n    end\n  end\nend;"
   },
   {
-    "instruction": "Implement a helper function for incremental sequence calculation for real numbers",
-    "output": "function IncrementalSeq(Self: sequence of real): sequence of real;\nbegin\n  var iter := Self.GetEnumerator();\n  if iter.MoveNext() then\n  begin\n    var prevItem := iter.Current;\n    while iter.MoveNext() do\n    begin\n      var nextItem := iter.Current;\n      yield nextItem - prevItem;\n      prevItem := nextItem;\n    end\n  end\nend;"
-  },
-  {
     "instruction": "Implement a helper function for creating slice from list",
     "output": "function CreateSliceFromList<T>(Self: List<T>; from, step, count: integer): List<T>;\nbegin\n  Result := new List<T>(count);\n  \n  var f := from;\n  loop count do\n  begin\n    Result.Add(Self[f]);\n    f += step;\n  end;\nend;"
   },
@@ -2704,56 +1460,8 @@
     "output": "function PrefixFunction(s: string): array of integer;\nbegin\n  var n := s.Length;\n  Result := ArrFill(n + 1, 0);\n  for var i := 1 to n - 1 do\n  begin\n    var temp := Result[i];\n    while (temp > 0) and (s[i + 1] <> s[temp + 1]) do\n      temp := Result[temp];\n    Result[i + 1] := s[i + 1] = s[temp + 1] ? temp + 1 : 0\n  end\nend;"
   },
   {
-    "instruction": "Implement a helper function for internal range equality comparison for tuples",
-    "output": "function InternalEqual<T1, T2> (x: (T1,T2); y: (T1,T2)): boolean; \nbegin\n  var xn := Object.ReferenceEquals(x,nil);\n  var yn := Object.ReferenceEquals(y,nil);\n  if xn then\n    Result := yn\n  else if yn then \n    Result := xn\n  else Result := x.Equals(y);\nend;"
-  },
-  {
     "instruction": "Implement a helper function for tuple comparison for 2-element tuples",
     "output": "function CompareToTup2<T1, T2>(v1: (T1, T2); v2: (T1, T2)) := (v1 as System.IComparable).CompareTo(v2);"
-  },
-  {
-    "instruction": "Implement a helper function for internal range equality comparison for 3-element tuples",
-    "output": "function InternalEqual<T1, T2, T3> (x: (T1,T2,T3); y: (T1,T2,T3)): boolean; \nbegin\n  var xn := Object.ReferenceEquals(x,nil);\n  var yn := Object.ReferenceEquals(y,nil);\n  if xn then\n    Result := yn\n  else if yn then \n    Result := xn\n  else Result := x.Equals(y);\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for tuple comparison for 3-element tuples",
-    "output": "function CompareToTup3<T1, T2, T3>(v1: (T1, T2, T3); v2: (T1, T2, T3)) := (v1 as System.IComparable).CompareTo(v2);"
-  },
-  {
-    "instruction": "Implement a helper function for internal range equality comparison for 4-element tuples",
-    "output": "function InternalEqual<T1, T2, T3, T4> (x: (T1,T2,T3,T4); y: (T1,T2,T3,T4)): boolean; \nbegin\n  var xn := Object.ReferenceEquals(x,nil);\n  var yn := Object.ReferenceEquals(y,nil);\n  if xn then\n    Result := yn\n  else if yn then \n    Result := xn\n  else Result := x.Equals(y);\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for tuple comparison for 4-element tuples",
-    "output": "function CompareToTup4<T1, T2, T3, T4>(v1: (T1, T2, T3, T4); v2: (T1, T2, T3, T4)) := (v1 as System.IComparable).CompareTo(v2);"
-  },
-  {
-    "instruction": "Implement a helper function for internal range equality comparison for 5-element tuples",
-    "output": "function InternalEqual<T1, T2, T3, T4, T5> (x: (T1,T2,T3,T4,T5); y: (T1,T2,T3,T4,T5)): boolean; \nbegin\n  var xn := Object.ReferenceEquals(x,nil);\n  var yn := Object.ReferenceEquals(y,nil);\n  if xn then\n    Result := yn\n  else if yn then \n    Result := xn\n  else Result := x.Equals(y);\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for tuple comparison for 5-element tuples",
-    "output": "function CompareToTup5<T1, T2, T3, T4,T5>(v1: (T1, T2, T3, T4,T5); v2: (T1, T2, T3, T4,T5)) := (v1 as System.IComparable).CompareTo(v2);"
-  },
-  {
-    "instruction": "Implement a helper function for internal range equality comparison for 6-element tuples",
-    "output": "function InternalEqual<T1, T2, T3, T4, T5, T6> (x: (T1,T2,T3,T4,T5,T6); y: (T1,T2,T3,T4,T5,T6)): boolean; \nbegin\n  var xn := Object.ReferenceEquals(x,nil);\n  var yn := Object.ReferenceEquals(y,nil);\n  if xn then\n    Result := yn\n  else if yn then \n    Result := xn\n  else Result := x.Equals(y);\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for internal range equality comparison for 7-element tuples",
-    "output": "function InternalEqual<T1, T2, T3, T4, T5, T6, T7> (x: (T1,T2,T3,T4,T5,T6,T7); y: (T1,T2,T3,T4,T5,T6,T7)): boolean; \nbegin\n  var xn := Object.ReferenceEquals(x,nil);\n  var yn := Object.ReferenceEquals(y,nil);\n  if xn then\n    Result := yn\n  else if yn then \n    Result := xn\n  else Result := x.Equals(y);\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for internal range check",
-    "output": "function InRangeInternal(x: integer; a,b: integer): boolean; \nbegin\n  Result := (a <= x) and (x <= b)\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for internal range check for real numbers",
-    "output": "function InRangeInternal(x: real; a,b: real): boolean; \nbegin\n  Result := (a <= x) and (x <= b)\nend;"
-  },
-  {
-    "instruction": "Implement a helper function for internal range check for characters",
-    "output": "function InRangeInternal(x: char; a,b: char): boolean; \nbegin\n  Result := (a <= x) and (x <= b)\nend;"
   },
   {
     "instruction": "Implement a helper function to get character in short string with bounds checking",
@@ -2786,25 +1494,5 @@
   {
     "instruction": "Implement extension methods for adding elements to tuples",
     "output": "function Add<T1, T2, T3>(Self: (T1, T2); v: T3): (T1, T2, T3); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], v);\nend;\n\nfunction Add<T1, T2, T3, T4>(Self: (T1, T2, T3); v: T4): (T1, T2, T3, T4); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], v);\nend;\n\nfunction Add<T1, T2, T3, T4, T5>(Self: (T1, T2, T3, T4); v: T5): (T1, T2, T3, T4, T5); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], Self[3], v);\nend;\n\nfunction Add<T1, T2, T3, T4, T5, T6>(Self: (T1, T2, T3, T4, T5); v: T6): (T1, T2, T3, T4, T5, T6); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], Self[3], Self[4], v);\nend;\n\nfunction Add<T1, T2, T3, T4, T5, T6, T7>(Self: (T1, T2, T3, T4, T5, T6); v: T7): (T1, T2, T3, T4, T5, T6, T7); extensionmethod;\nbegin\n  Result := (Self[0], Self[1], Self[2], Self[3], Self[4], Self[5], v);\nend;"
-  },
-  {
-    "instruction": "Implement extension methods for printing tuples of various sizes",
-    "output": "procedure Print<T1, T2>(Self: (T1, T2)); extensionmethod := Print(Self);\nprocedure Print<T1, T2, T3>(Self: (T1, T2, T3)); extensionmethod := Print(Self);\nprocedure Print<T1, T2, T3, T4>(Self: (T1, T2, T3, T4)); extensionmethod := Print(Self);\nprocedure Print<T1, T2, T3, T4, T5>(Self: (T1, T2, T3, T4, T5)); extensionmethod := Print(Self);\nprocedure Print<T1, T2, T3, T4, T5, T6>(Self: (T1, T2, T3, T4, T5, T6)); extensionmethod := Print(Self);\nprocedure Print<T1, T2, T3, T4, T5, T6, T7>(Self: (T1, T2, T3, T4, T5, T6, T7)); extensionmethod := Print(Self);"
-  },
-  {
-    "instruction": "Implement extension methods for printing tuples with new line of various sizes",
-    "output": "procedure Println<T1, T2>(Self: (T1, T2)); extensionmethod := Println(Self);\nprocedure Println<T1, T2, T3>(Self: (T1, T2, T3)); extensionmethod := Println(Self);\nprocedure Println<T1, T2, T3, T4>(Self: (T1, T2, T3, T4)); extensionmethod := Println(Self);\nprocedure Println<T1, T2, T3, T4, T5>(Self: (T1, T2, T3, T4, T5)); extensionmethod := Println(Self);\nprocedure Println<T1, T2, T3, T4, T5, T6>(Self: (T1, T2, T3, T4, T5, T6)); extensionmethod := Println(Self);\nprocedure Println<T1, T2, T3, T4, T5, T6, T7>(Self: (T1, T2, T3, T4, T5, T6, T7)); extensionmethod := Println(Self);"
-  },
-  {
-    "instruction": "Implement extension methods for combinations and permutations of sequences",
-    "output": "function Combinations<T>(Self: sequence of T; m: integer): sequence of array of T; extensionmethod;\nbegin\n  Result := Self.ToArray.Combinations(m);\nend;\n\nfunction Permutations<T>(Self: sequence of T): sequence of array of T; extensionmethod;\nbegin\n  Result := Self.ToArray.Permutations\nend;\n\nfunction Permutations<T>(Self: sequence of T; m: integer): sequence of array of T; extensionmethod;\nbegin\n  Result := Self.ToArray.Permutations(m);\nend;\n\nfunction Cartesian<T>(Self: sequence of T; n: integer): sequence of array of T; extensionmethod;\nbegin\n  Result := Self.ToArray.Cartesian(n);\nend;"
-  },
-  {
-    "instruction": "Implement extension methods for incremental operations on various collection types",
-    "output": "function Incremental(Self: array of integer): sequence of integer; extensionmethod;\nbegin\n  Result := IncrementalSeq(Self);\nend;\n\nfunction Incremental(Self: List<integer>): sequence of integer; extensionmethod;\nbegin\n  Result := IncrementalSeq(Self);\nend;\n\nfunction Incremental(Self: LinkedList<integer>): sequence of integer; extensionmethod;\nbegin\n  Result := IncrementalSeq(Self);\nend;\n\nfunction Incremental(Self: array of real): sequence of real; extensionmethod;\nbegin\n  Result := IncrementalSeq(Self);\nend;\n\nfunction Incremental(Self: List<real>): sequence of real; extensionmethod;\nbegin\n  Result := IncrementalSeq(Self);\nend;\n\nfunction Incremental(Self: LinkedList<real>): sequence of real; extensionmethod;\nbegin\n  Result := IncrementalSeq(Self);\nend;"
-  },
-  {
-    "instruction": "Implement extension method for setting row of 2D array using sequence",
-    "output": "procedure SetRow<T>(Self: array [,] of T; k: integer; a: sequence of T); extensionmethod := Self.SetRow(k,a.ToArray);"
   }
 ]
