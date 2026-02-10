@@ -1,2 +1,13 @@
 
+# большие файлы
 /SamplesForNet/pythonSamplesToTranslate/educational_instruct_train.json
+/SamplesForNet/CodeFeedbackFiltered/CodeFeedback-Filtered-Instruction.json
+/SamplesForNet/CodeFeedbackFiltered/CodeFeedback-Filtered-Instruction.jsonl
+
+/Samples/
+/SamplesFlatten/
+/StandardModules/
+**/*.dll
+**/*.exe
+**/*.pdb
+/TestSamples/*.pas

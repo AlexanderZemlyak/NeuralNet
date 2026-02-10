@@ -14,11 +14,11 @@
 
 uses PascalABCCompiler;
 
-const filesCount = 1795;
+const filesCount = 60;
 
 begin
   
-  Languages.Integration.LanguageIntegrator.LoadStandardLanguages();
+  Languages.Integration.LanguageIntegrator.LoadAllLanguages();
   
   for var i := 0 to filesCount - 1 do
   begin
@@ -33,8 +33,7 @@ begin
     
     var co: CompilerOptions := new CompilerOptions(fullFilename, CompilerOptions.OutputType.ConsoleApplicaton);
     co.Debug := false;
-    co.ParserSearchPaths := |'C:\Users\alex\Desktop\Дипломная\PABCNet source\pascalabcnet\bin\Lib'|;
-    co.SearchDirectories := co.ParserSearchPaths.ToList();
+    co.SearchDirectories := ['C:\Users\alex\Desktop\Дипломная\PABCNet source\pascalabcnet\bin\Lib'].ToList();
     co.OutputDirectory := baseDir;
     co.UseDllForSystemUnits := false;
     co.RunWithEnvironment := false; 
@@ -45,11 +44,11 @@ begin
     
     if comp.ErrorsList.Count > 0 then
     begin
-      var err := comp.ErrorsList.Last(); CurrentIOSystem
+      var err := comp.ErrorsList.Last();
       
       Println($'Ошибка при компиляции файла {fileName}:{NewLine}{err}{NewLine}');
-//      if not err.ToString().Contains('а ожидался оператор') then
-//        System.IO.File.Create(baseDir + $'{i}.exe');
+      //if not err.ToString().Contains('а ожидался идентификатор') then
+      //  System.IO.File.Create(baseDir + $'{i}.exe');
     end
     else
     begin
@@ -61,7 +60,10 @@ begin
       stat.CalcHealth(nh, ph);
       
       if nh > 0 then
+      begin
+        Println('Bad code style in ' + fileName);
         System.IO.File.Delete(baseDir + $'{i}.exe');
+      end;
     end;
     
     
