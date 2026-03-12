@@ -1,0 +1,1142 @@
+[
+  {
+    "instruction": "Write a PascalABC.NET program that reads two integers from the user and displays the results of various bitwise operations on them: NOT, AND, OR, XOR, shift left, and shift right. The program should use the ReadInteger2 function to read both integers at once and use string interpolation for output formatting.",
+    "output": "begin\n  var (a,b) := ReadInteger2;\n  Println($'not {a} = {not a}');\n  Println($'{a} and {b} = {a and b}');\n  Println($'{a} or {b} = {a or b}');\n  Println($'{a} xor {b} = {a xor b}');\n  Println($'{a} shl {b} = {a shl b}');\n  Println($'{a} shr {b} = {a shr b}');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements a loop which continues indefinitely. In each iteration, generate a random integer between 0 and 19 inclusive. Print the number. If the number equals 10, exit the loop. Otherwise, print another random number between 0 and 19.",
+    "output": "begin\n  while True do\n  begin\n    var x := Random(0,19);\n    Print(x);\n    if x = 10 then\n      break;\n    Print(Random(0,19));    \n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints the string 'Code Golf' using two different methods. First, use a regular string literal. Second, use character codes in decimal format to construct the same string.",
+    "output": "###\nPr('Code Golf');\nPr(#67#111#100#101#32#71#111#108#102);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates working with sequences and a custom iterator function. Define two enumerations: DayOfWeek (Monday through Sunday) and Colors (Red, Green, Blue, Yellow, White). Create an array of all days and a list of colors. Then create a function called Elements145 that returns the 1st, 4th, and 5th elements from any sequence. Also create a function called Elements145FromTheEnd that returns the same positions but from the end of a sequence. Test these functions on both data structures and print all results.",
+    "output": "type \n  DayOfWeek = (Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday);\n  Colors = (Red,Green,Blue,Yellow,White);\n\nfunction Elements145<T>(sq: sequence of T): sequence of T;\nbegin\n  var en := sq.GetEnumerator;\n  en.MoveNext;\n  yield en.Current;\n  en.MoveNext;\n  en.MoveNext;\n  en.MoveNext;\n  yield en.Current;\n  en.MoveNext;\n  yield en.Current;\nend;\n\nfunction Elements145FromTheEnd<T>(sq: sequence of T): sequence of T \n  := Elements145(sq.Reverse);\n\nbegin\n  var a := Arr(Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday);\n  var L := Lst(Red,Green,White,Blue,Yellow);\n  a.Println;\n  L.Println;\n  Elements145(a).Println;\n  Elements145(L).Println;\n  Elements145FromTheEnd(a).Println;\n  Elements145FromTheEnd(L).Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates various conditional structures. Include examples of: if statements with single and multiple conditions, if-else statements, nested if-else chains, case statements for month-based season detection, the ternary conditional operator using 'if' syntax, and the C-style ternary operator using '?' syntax.",
+    "output": "// if statement\nif condition then\n  operator;\n\nif condition then\n  operator\nelse operator;\n\nif condition then\n  operator\nelse if condition then\n  operator\nelse operator;\n\n// case statement\ncase Month of\n  3..5: Print('Spring');\n  6..8: Print('Summer');\n  9..11: Print('Autumn');\n  12,1,2: Print('Winter');\n  else throw ArgumentException('Bad Month')\nend;\n\n// ternary operator\nvar min := if a < b then a else b;\n\n// ternary operator in C style\nvar min := a < b ? a : b;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates the 'continue' statement in a loop. Loop from 1 to 10. For each number, print it without a newline. If the number is divisible by 5, print a newline and continue to the next iteration. Otherwise, print a comma and a space after the number.",
+    "output": "begin\n  for var i:=1 to 10 do\n  begin\n    Write(i);\n    if i mod 5 = 0 then\n    begin\n      Writeln;\n      continue\n    end;\n    Write(', ');\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that performs prime factorization of numbers. Create a function called Factors that takes an integer N and returns a List of its prime factors. Handle N=1 as a special case. Then, for numbers 1 through 10 and also for numbers 6351 through 6359, display each number followed by its factors separated by ' x '.",
+    "output": "function Factors(N: integer): List<integer>;\nbegin\n  var lst := new List<integer>;\n  if N = 1 then\n    lst.Add(N);\n  var i := 2;\n  while i * i <= N do\n  begin\n    while N.Divs(i) do\n    begin\n      lst.Add(i);\n      N := N div i;\n    end;\n    i += 1;\n  end;\n  if N >= 2 then\n    lst.Add(N);\n  Result := lst;\nend;\n\nbegin\n  foreach var x in (1..10) + (6351..6359) do\n    Println($'{x} = {Factors(x).JoinToString('' x '')}');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that counts in octal. Use a short script syntax (starting with ##) to loop from 0 to 20 and print each number converted to octal using the Convert.ToString function with base 8.",
+    "output": "##\nfor var i:=0 to 20 do\n  Println(Convert.ToString(i,8));"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates creating a pointer to an integer and allocating memory for it using the New procedure. This demonstrates basic pointer operations in PascalABC.NET.",
+    "output": "begin\n  var pi: ^integer;\n  New(pi);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that converts between nested string format (using dots for indentation) and indented format (with numeric levels followed by content). The program should define two functions: NestedToIndented that converts nested format (where indentation is shown by 4 dots per level) to indented format (where each line starts with a level number and then the content), and IndentedToNested that converts back. Test with a sample nested string containing 'Rosetta Code' and various indented items. Verify the conversion works correctly by checking that initial and restored strings are equal.",
+    "output": "{$zerobasedstrings}\nfunction NestedToIndented(nested: string): string;\nbegin\n  var lst := new List<string>;\n  foreach var line in Regex.Split(nested,NewLine) do\n  begin\n    var ind := Regex.Match(line,'[^\\.]').Index;\n    lst.Add($'{ind div 4} {line[ind:]}');\n  end;\n  Result := lst.JoinToString(NewLine);\nend;\n\nfunction IndentedToNested(indented: string): string;\nbegin\n  var lst := new List<string>;\n  foreach var line in Regex.Split(indented,NewLine) do\n  begin\n    var ind := line.IndexOf(' ');\n    var level := line[:ind].ToInteger;\n    lst.Add((level*4) * '.' + line[ind+1:]);\n  end;\n  Result := lst.JoinToString(NewLine);\nend;\n\nbegin\n  var initialNested := '''\n    Rosetta Code\n    ....rocks\n    ........code\n    ........comparison\n    ........wiki\n    ....mocks\n    ........trolling\n    ''';\n\tWriteln(initialNested,NewLine);\n\tvar indented := NestedToIndented(initialNested);\n\tWriteln(indented,NewLine);\n\tvar nested := IndentedToNested(indented);\n\tWriteln(nested,NewLine);\n\tWriteln($'Initial = Restored: {initialNested = nested}');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements Dijkstra's shortest path algorithm. Define Edge and Graph classes. The Graph should be initialized with a list of edges (start node, end node, and cost as a tuple). The Dijkstra method should find the shortest path from source to destination and return the sequence of nodes. Test with a graph of 6 nodes (a through f) with given connections and costs, finding the shortest path from 'a' to 'e'.",
+    "output": "type\n  Edge = auto class\n    start, &end: char;\n    cost: real;\n  end;\n\n  Graph = auto class\n    edges: array of Edge;\n    vertices: HashSet<char>;\n    \n    constructor(params edges: array of (char, char, real));\n    begin\n      Self.edges := edges.Select(e -> new Edge(e[0], e[1], e[2])).ToArray;\n      Self.vertices := new HashSet<char>(\n        Self.edges.Select(e -> e.start) + Self.edges.Select(e -> e.end)\n      );\n    end;\n    \n    function Dijkstra(source, dest: char): sequence of char;\n    begin\n      assert(vertices.Contains(source));\n      \n      var inf := real.MaxValue;\n      var dist := Dict(vertices.Select(v -> (v, inf)));\n      var previous := Dict(vertices.Select(v -> (v, ' ')));\n      dist[source] := 0;\n      \n      var q := vertices.ToHashSet;\n      var neighbours := Dict(vertices.Select(v -> (v, new HashSet<(char, real)>)));\n      \n      foreach var edge in edges do\n      begin\n        neighbours[edge.start].Add((edge.end, edge.cost));\n        neighbours[edge.end].Add((edge.start, edge.cost));\n      end;\n      \n      while q.Count > 0 do\n      begin\n        var u := q.MinBy(v -> dist[v]);\n        q.Remove(u);\n        \n        if (dist[u] = inf) or (u = dest) then\n          break;\n        \n        foreach var (v, cost) in neighbours[u] do\n        begin\n          var alt := dist[u] + cost;\n          if alt < dist[v] then\n          begin\n            dist[v] := alt;\n            previous[v] := u;\n          end;\n        end;\n      end;\n      \n      var s := new List<char>;\n      var u := dest;\n      \n      while previous[u] <> ' ' do\n      begin\n        s.Insert(0, u);\n        u := previous[u];\n      end;\n      \n      s.Insert(0, u);\n      Result := s;\n    end;\n  end;\n\nbegin\n  var gr := new Graph(\n    ('a', 'b', 7.0), ('a', 'c', 9.0), ('a', 'f', 14.0),\n    ('b', 'c', 10.0), ('b', 'd', 15.0), ('c', 'd', 11.0),\n    ('c', 'f', 2.0), ('d', 'e', 6.0), ('e', 'f', 9.0)\n  );\n\n  gr.Dijkstra('a', 'e').Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements a command abbreviation expander. Define a string of commands with various capitalizations. Create a dictionary that maps each command to the minimum number of characters needed for a unique abbreviation (based on uppercase prefix length). Then process an input string containing abbreviated commands with possible errors. For each word, find the matching command that starts with the same letters (case-insensitive) and has sufficient length, or output '*error*' if not found. Output the corrected command line with expanded uppercase commands.",
+    "output": "begin\n  var commands := \n    '''\n    Add ALTer BAckup Bottom CAppend Change SCHANGE CInsert CLAst COMPress COpy\n    COUnt COVerlay CURsor DELete CDelete Down DUPlicate Xedit EXPand EXTract Find\n    NFind NFINDUp NFUp CFind FINdup FUp FOrward GET Help HEXType Input POWerinput\n    Join SPlit SPLTJOIN LOAD Locate CLocate LOWercase UPPercase LPrefix MACRO\n    MErge MODify MOve MSG Next Overlay PARSE PREServe PURge PUT PUTD Query QUIT\n    READ RECover REFRESH RENum REPeat Replace CReplace RESet RESTore RGTLEFT\n    RIght LEft SAVE SET SHift SI SORT SOS STAck STATus TOP TRAnsfer Type Up\n    '''.ToWords(AllDelimiters);\n\n  var countDict := commands.Each(word -> word.TakeWhile(c -> c.IsUpper).Count);\n\n  var correctedLine := 'riG   rePEAT copies  put mo   rest    types   fup.    6       poweRin'\n    .ToWords\n    .Select(word -> \n      commands.FirstOrDefault(\n        cmd -> cmd.ToLower.StartsWith(word.ToLower) and \n               (word.Length >= countDict[cmd])\n      )?.ToUpper ?? '*error*'\n    )\n    .JoinToString;\n\n  Print(correctedLine);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that expands simple command abbreviations. Enable zero-based string indexing with the compiler directive. Define a string containing command names paired with minimum abbreviation lengths. Build a dictionary mapping all possible abbreviations (from minimum length up to full command length) to the uppercase command name. Then test with an input string containing various abbreviations, converting each to the full uppercase command or '*error*' if not found. Include an empty string test case.",
+    "output": "{$zerobasedstrings on}\n\nbegin\n  var commandData := \n    '''\n    add 1 alter 3 backup 2 bottom 1 Cappend 2 change 1 Schange Cinsert 2 Clast 3\n    compress 4 copy 2 count 3 Coverlay 3 cursor 3 delete 3 Cdelete 2 down 1 duplicate\n    3 xEdit 1 expand 3 extract 3 find 1 Nfind 2 Nfindup 6 NfUP 3 Cfind 2 findUP 3 fUP 2\n    forward 2 get help 1 hexType 4 input 1 powerInput 3 join 1 split 2 spltJOIN load\n    locate 1 Clocate 2 lowerCase 3 upperCase 3 Lprefix 2 macro merge 2 modify 3 move 2\n    msg next 1 overlay 1 parse preserve 4 purge 3 put putD query 1 quit read recover 3\n    refresh renum 3 repeat 3 replace 1 Creplace 2 reset 3 restore 4 rgtLEFT right 2 left\n    2 save set shift 2 si sort sos stack 3 status 4 top transfer 3 type 1 up 1\n    '''.ToWords(AllDelimiters);\n\n  var abbrDict := Dict('' to '');\n  \n  var i := 0;\n  while i < commandData.Length do\n  begin\n    var cmd := commandData[i];\n    i += 1;\n    \n    // If the next element is missing or not a number, use the command length\n    var minLen := cmd.Length;\n    if (i < commandData.Length) and commandData[i].All(char.IsDigit) then\n    begin\n      minLen := commandData[i].ToInteger;\n      i += 1;\n    end;\n    \n    var cmdLower := cmd.ToLower;\n    for var len := minLen to cmd.Length do\n    begin\n      var abbr := cmdLower[:len];\n      abbrDict[abbr] := cmd.ToUpper;\n    end;\n  end;\n\n  var testStr := 'riG   rePEAT copies  put mo   rest    types   fup.    6       poweRin';\n  Writeln(' Input: ', testStr);\n  Writeln('Output: ', testStr.ToWords()\n    .Select(w -> abbrDict.Get(w.Trim.ToLower,'*error*'))\n    .JoinToString);\n\n  testStr := '';\n  Writeln(' Input: ', testStr);\n  Writeln('Output: ', testStr.ToWords()\n    .Select(w -> abbrDict.Get(w.Trim.ToLower,'*error*'))\n    .JoinToString);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates integer arithmetic by incrementing a variable until it becomes divisible by 6. Start with a = 0, repeatedly add 1 and print the current value, stopping when a mod 6 equals 0.",
+    "output": "begin\n  var a := 0;\n  repeat\n    a += 1;\n    Print(a);\n  until a mod 6 = 0;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements an arithmetic expression evaluator. Define an expression node interface and classes for numbers and binary operations. Create an ExpressionParser class that can parse and evaluate arithmetic expressions with +, -, *, / operators and parentheses. Support floating-point numbers. Test with a list of sample expressions and print each expression with its evaluated result formatted to three decimal places.",
+    "output": "type\n  IExprNode = interface\n    function Evaluate: real;\n  end;\n\n  NumberNode = auto class(IExprNode)\n  public\n    value: real;\n    function Evaluate: real := value;\n  end;\n\n  BinaryOpNode = auto class(IExprNode)\n  public\n    op: char;\n    left, right: IExprNode;\n    \n    function Evaluate: real;\n    begin\n      case op of\n        '+': Result := left.Evaluate + right.Evaluate;\n        '-': Result := left.Evaluate - right.Evaluate;\n        '*': Result := left.Evaluate * right.Evaluate;\n        '/': Result := left.Evaluate / right.Evaluate;\n      else\n        raise new Exception($'Unknown operator {op}');\n      end;\n    end;\n  end;\n\n  ExpressionParser = class\n    s: string;\n    pos: integer;\n    \n    constructor Create(input: string);\n    begin\n      s := input;\n      pos := 1;\n    end;\n    \n    function NextChar: char := \n      if pos <= s.Length then s[pos] else #0;\n    \n    procedure SkipSpaces := \n      while NextChar = ' ' do pos += 1;\n    \n    function ParseNumber: IExprNode;\n    begin\n      SkipSpaces;\n      var start := pos;\n      while NextChar.IsDigit do pos += 1;\n      if NextChar = '.' then\n      begin\n        pos += 1;\n        while NextChar.IsDigit do pos += 1;\n      end;\n      var value := s[start:pos].ToReal;\n      Result := new NumberNode(value);\n    end;\n    \n    function ParseFactor: IExprNode;\n    begin\n      SkipSpaces;\n      if NextChar = '(' then\n      begin\n        pos += 1;\n        Result := ParseExpr;\n        SkipSpaces;\n        if NextChar = ')' then\n          pos += 1\n        else raise new Exception('Expected )');\n      end\n      else\n        Result := ParseNumber;\n    end;\n    \n    function ParseTerm: IExprNode;\n    begin\n      Result := ParseFactor;\n      while true do\n      begin\n        SkipSpaces;\n        var ch := NextChar;\n        if (ch = '*') or (ch = '/') then\n        begin\n          pos += 1;\n          Result := new BinaryOpNode(ch, Result, ParseFactor);\n        end\n        else break;\n      end;\n    end;\n    \n    function ParseExpr: IExprNode;\n    begin\n      Result := ParseTerm;\n      while true do\n      begin\n        SkipSpaces;\n        var ch := NextChar;\n        if (ch = '+') or (ch = '-') then\n        begin\n          pos += 1;\n          Result := new BinaryOpNode(ch, Result, ParseTerm);\n        end\n        else break;\n      end;\n    end;\n    \n    function Parse: IExprNode := ParseExpr; \n  end;\n\nbegin\n  var inputs := [\n    '2+3*(4-1)',\n    '10 + 2 / 3', \n    '(7+3)*(2+2)', \n    '8*(5+(2-3))', \n    '1/3',\n    '2.5 + 4.1 * (3 - 1.1/2)'];\n  \n  foreach var expr in inputs do\n  begin\n    var parser := new ExpressionParser(expr);\n    var tree := parser.Parse;\n    Println($'{expr} = {tree.Evaluate:0.###}');\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds arithmetic numbers (numbers where the average of their divisors is an integer). Count how many such numbers exist up to 1,000,000. For the first 100 arithmetic numbers, print them in rows of 10. At the 1000th, 10000th, 100000th, and 1000000th arithmetic number, print the number itself and how many of the arithmetic numbers up to that point are composite (have more than 2 divisors).",
+    "output": "function Factors(n: integer): set of integer;\nbegin\n  Result := SetOf(1, n);\n  var i := 2;\n  while True do\n  begin\n    var j := n div i;\n    if j < i then\n      break;\n    if i * j = n then\n      Result += SetOf(i,j);\n    i += 1;\n  end;\nend;\n\nbegin\n  var arithmeticCount := 0;\n  var compositeCount := 0;\n  var n := 1;\n  \n  while arithmeticCount <= 1000000 do\n  begin\n    var f := Factors(n);\n    var avg := f.Average;\n    \n    if frac(avg) = 0 then\n    begin\n      arithmeticCount += 1;\n      \n      if f.Count > 2 then\n        compositeCount += 1;\n      \n      if arithmeticCount <= 100 then\n      begin\n        Print($'{n,3} ');\n        if arithmeticCount mod 10 = 0 then\n          Println;\n      end;\n      \n      if arithmeticCount in [1000, 10000, 100000, 1000000] then\n      begin\n        Println(NewLine + $'{arithmeticCount}th arithmetic number is {n}');\n        Println($'Number of composite arithmetic numbers <= {n}: {compositeCount}');\n      end;\n    end;\n    \n    n += 1;\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that creates and uses an associative array (dictionary). Create a dictionary mapping strings to integers. Add entries for three animals with their counts: 'crocodile' with 2, 'jiraffe' with 3, and 'behemoth' with 1. Then print the entire dictionary.",
+    "output": "begin\n  var zoo := new Dictionary<string,integer>;\n  zoo['crocodile'] := 2;\n  zoo['jiraffe'] := 3;\n  zoo['behemoth'] := 1;\n  zoo.Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that iterates over an associative array. Create a dictionary with animal names and counts. Then demonstrate two ways to iterate: iterating over key-value pairs directly, and iterating over keys and accessing values through the dictionary.",
+    "output": "begin\n  var zoo := new Dictionary<string,integer>;\n  zoo['crocodile'] := 2;\n  zoo['jiraffe'] := 3;\n  zoo['behemoth'] := 1;\n  foreach var kv in zoo do\n    Println(kv.Key, kv.Value);\n  Println;\n  foreach var key in zoo.Keys do\n    Println(key,zoo[key]);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds all attractive numbers up to 120 (numbers where the count of prime factors is itself prime). Use the School unit for prime checking. For numbers 1 through 120, factorize each, count the prime factors, and check if that count is prime. Display the count and the list of attractive numbers.",
+    "output": "##\nuses School;\n\nvar attractive :=\n  (1..120)\n    .Where(n -> IsPrime(n.Factorize.Count))\n    .ToList;\n\nPrintln($'There are {attractive.Count} attractive numbers up to and including 120:');\nPrintln(attractive);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements binary search in both iterative and recursive forms. Create a function BinarySearch that iteratively searches for an integer x in a sorted array and returns its index or -1 if not found. Create a recursive version BinarySearchRecursive. Generate a random sorted array, then search for a specific value (10) and a random element from the array, printing the results for both search methods.",
+    "output": "function BinarySearch(a: array of integer; x: integer): integer;\nbegin\n  var (l,r) := (0, a.Length-1); \n  repeat\n    var mid := (l + r) div 2;\n    if x = a[mid] then \n    begin\n      Result := mid;\n      exit\n    end;\n    if x > a[mid] then\n      l := mid + 1\n    else r := mid - 1;\n  until l > r;\n  Result := -1;\nend;\n\nfunction BinarySearchRecursive(a: array of integer; x: integer): integer;\n  function BinarySearchHelper(a: array of integer; x: integer; l,r: integer): integer;\n  begin\n    if l > r then\n      Result := -1\n    else begin\n      var mid := (l + r) div 2;\n      if x = a[mid] then\n        Result := mid\n      else if x < a[mid] then\n        Result := BinarySearchHelper(a, x, l, mid - 1)\n      else Result := BinarySearchHelper(a, x, mid + 1, r)\n    end;  \n  end;\nbegin\n  Result := BinarySearchHelper(a,x,0,a.Length-1);\nend;\n\nbegin\n  var a := ArrRandomInteger(10,1,20);\n  a.Sort;\n  a.Println;\n  var x := 10;\n  var ind := BinarySearch(a,x);\n  if ind >= 0 then\n    Println($'{x} found at index {ind}')\n  else Println($'{x} not found');\n\n  ind := BinarySearchRecursive(a,x);\n  if ind >= 0 then\n    Println($'{x} found at index {ind}')\n  else Println($'{x} not found');\n  \n  x := a.RandomElement;\n  ind := BinarySearch(a,x);\n  if ind >= 0 then\n    Println($'{x} found at index {ind}')\n  else Println($'{x} not found');\n\n  ind := BinarySearchRecursive(a,x);\n  if ind >= 0 then\n    Println($'{x} found at index {ind}')\n  else Println($'{x} not found');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds the first power of 2 whose decimal representation starts with a given number L, for a specified occurrence n. The program should define a function p(L, n) that takes two integers and returns the exponent i such that 2^i starts with the digits L for the nth occurrence. Test this function with various (n, L) pairs and print the results.",
+    "output": "function p(L,n: integer): integer;\nbegin\n  var logof2 := log10(2);\n  var places := trunc(log10(L));\n  var nfound := 0;\n  var i := 1;\n  while True do\n  begin\n    var a := i * logof2;\n    var b := trunc(power(10,a-trunc(a)+places));\n    if L = b then\n    begin\n      nfound += 1;\n      if nfound = n then break\n    end;\n    i += 1;\n  end;\n  Result := i;\nend;\n\nbegin\n  foreach var (n,L)in Arr() do\n    Println($'p({n},{L}) = {p(n, L)}')\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates the use of first-class functions with numbers. Create three numbers x, y, z and their inverses xi, yi, zi. Store these in arrays. Then use the Zip function to create a list of multiplier functions, each multiplying its input by the product of a number and its inverse. Finally, test each multiplier with the value 0.5 and print the results.",
+    "output": "begin\n  var x, xi, y, yi, z, zi: real;\n  x := 2.0;\n  xi := 0.5;\n  y := 4.0;\n  yi := 0.25;\n  z := x + y;\n  zi := 1.0 / (x + y);\n\n  var numlist := new real[] ( x, y, z );\n  var numlisti := new real[] ( xi, yi, zi );\n  var multiplied := numlist.Zip(numlisti, (n1, n2) -> begin\n    var multiplier: real -> real := m -> n1 * n2 * m;\n    Result := multiplier;\n  end);\n\n  foreach var multiplier in multiplied do\n    Println(multiplier(0.5));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program to generate and analyze the Fusc sequence. Define a recursive function Fusc with memoization up to 100,000,000. Print the first 61 Fusc numbers (0 through 60). Then, find and print the first 7 occurrences where a Fusc number has more digits than any previous Fusc number, showing the Fusc value, its index, and the milliseconds elapsed at the time of discovery.",
+    "output": "const maxcalc = 100000000;\n\nvar cache := new integer[maxcalc];\n\nfunction Fusc(n: integer): integer;\nbegin\n  if (n = 0) or (n = 1) then \n  begin\n    Result := n;\n    exit\n  end;\n  if (n < maxcalc) and (cache[n] > 0) then\n  begin\n    Result := cache[n];\n    exit;\n  end;\n  if n.IsEven then\n    Result := Fusc(n div 2)\n  else Result := Fusc((n-1) div 2) + Fusc((n+1) div 2);\n  if n < maxcalc then\n    cache[n] := Result\nend;\n\nfunction Digits(n: integer): integer;\nbegin\n  Result := 0;\n  while n > 0 do\n  begin\n    Result += 1;\n    n := n div 10;\n  end;\nend;\n\nbegin\n  (0..60).Select(Fusc).Println;\n  var maxdigits := 1;\n  var num := 0;\n  var prevfun := 0;\n  for var i:=1 to integer.MaxValue - 1 do\n  begin\n    var fun := Fusc(i);\n    if fun > prevfun then\n    begin\n      var dig := Digits(fun);\n      if dig > maxdigits then\n      begin\n        maxdigits := dig;\n        Println(fun,i,Milliseconds);\n        num +=1;\n        if num = 7 then exit;\n      end;\n    end;\n    prevfun := fun;\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements the classic FizzBuzz problem. For numbers from 1 to 100, print each number, but for multiples of 3 print 'Fizz' instead, for multiples of 5 print 'Buzz', and for multiples of both 3 and 5 print 'FizzBuzz'.",
+    "output": "begin\n  for var i:=1 to 100 do\n    if i mod 15 = 0 then\n      Print('FizzBuzz')\n    else if i mod 3 = 0 then\n      Print('Fizz')   \n    else if i mod 5 = 0 then\n      Print('Buzz')   \n    else Print(i)   \nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that computes and displays the forward difference of a sequence. Create a function Convert that takes an array of integers and returns a new array containing the differences between consecutive elements. Start with the array [90, 47, 58, 29, 22, 32, 55, 5, 55, 73] and repeatedly apply the conversion, printing each resulting array until it becomes empty.",
+    "output": "function Convert(a: array of integer): array of integer;\nbegin\n  var n := a.Length;\n  var res := new integer[n-1];\n  for var i:=0 to n-2 do\n    res[i] := a[i+1]-a[i];\n  Result := res;\nend;\n\nbegin\n  var a := |90, 47, 58, 29, 22, 32, 55, 5, 55, 73|;\n  while a.Length > 0 do\n  begin\n    Println(a);\n    a := Convert(a);\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that draws a fractal tree using turtle graphics. Use the Turtle and GraphWPF units. Create a recursive procedure FractalTree that takes a recursion depth, branch length, and angle parameter. At each step, draw a branch, recursively draw two sub-branches at the given angle, and return. Set up the window title, initial position, and orientation, then call FractalTree with depth 10, length 100, and angle 22 degrees.",
+    "output": "uses Turtle,GraphWPF;\n\nprocedure FractalTree(n: integer; len,angle: real);\nbegin\n  if n = 0 then exit;\n  len := len * 0.8;\n  Turn(angle);\n  Forw(len);\n  FractalTree(n-1,len,angle);\n  Turn(180);\n  Forw(len);\n  Turn(180-2*angle);\n  Forw(len);\n  FractalTree(n-1,len,angle);\n  Turn(180);\n  Forw(len);\n  Turn(180+angle);\nend;\n\nbegin\n  Window.Title := 'Fractal Tree';\n  var len := 100;\n  var angle := 22;\n  ToPoint(400,500);\n  Turn(-90);\n  Down;\n  Forw(100);\n  FractalTree(10,len,angle);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates function composition. Create a generic Compose function that takes two functions f and g and returns a new function that applies g then f. Test it by composing Sin and ArcSin, then applying the result to 1.0 and printing the output.",
+    "output": "function Compose<T,T1,T2>(f: T1 -> T2; g: T -> T1): T -> T2 := x -> f(g(x));\n\nbegin\n  Compose(Sin,ArcSin)(1.0).Print\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that traverses a doubly linked list. Create a LinkedList of integers from 1 to 10. Then traverse the list from the first node to the last, printing each node's value.",
+    "output": "begin\n  var lst := new LinkedList<integer>(1..10);\n  var current := lst.First;\n  while current <> nil do\n  begin\n    Print(current.Value);\n    current := current.Next;\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates a do-while loop using repeat-until. Initialize a variable a to 0. In each iteration, increment a by 1 and print its value. Continue until a is divisible by 6.",
+    "output": "begin\n  var a := 0;\n  repeat\n    a += 1;\n    Print(a);\n  until a mod 6 = 0;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates exception handling with nested procedure calls. Define two exception types U0 and U1 inheriting from Exception. Create procedures Baz, Bar, and Foo. In Baz, raise U0 if a global variable i is 0, otherwise raise U1. In Foo, call Bar inside a try-except block that catches only U0. After catching U0, change i to 1 and call Bar again in another try-except block.",
+    "output": "type\n  U0 = class(Exception) end;\n  U1 = class(Exception) end;\n  \nvar i := 0; \n  \nprocedure Baz;\nbegin\n  if i = 0 then \n    raise new U0\n  else raise new U1;\nend;\n\nprocedure Bar;\nbegin\n  Baz;\nend;  \n  \nprocedure Foo;\nbegin\n  try\n    bar;\n  except\n    on e: U0 do\n      Println('U0 catched')\n  end;\n  i := 1;\n  try\n    bar;\n  except\n    on e: U0 do\n      Println('U0 catched')\n  end;\nend;\n\nbegin\n  Foo;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds all factors of an integer. Create a function Factors that returns a sorted list of all divisors of a given integer n. Test the function with the numbers 45, 53, and 64, printing each number and its factors.",
+    "output": "function Factors(n: integer): List<integer>;\nbegin\n  var res := HSet(1,n);\n  for var i:=2 to n.Sqrt.Trunc do\n    if n.Divs(i) then\n    begin\n      res.Add(i);\n      res.Add(n div i);\n    end;\n  Result := res.Order.ToList;\nend;\n\nbegin\n  foreach var x in |45,53,64| do\n    Println(x,Factors(x));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that gets and sets the last write time of a file. Using the System.IO.File class, print the last write time of 'a.txt', then set it to the current date and time.",
+    "output": "##\nPrintln(System.IO.File.GetLastWriteTime('a.txt'));\nSystem.IO.File.SetLastWriteTime('a.txt', DateTime.Now);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that filters an array to keep only even numbers. Create an array of integers from 1 to 10. Use the Where method to select only even numbers and print the result.",
+    "output": "begin\n  var a := Arr(1..10);\n  var even := a.Where(x -> x mod 2 = 0);\n  even.Print\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that determines whether a point lies within a given triangle. Define a Point class with x and y coordinates. Implement a Sign function to compute the signed area. Then implement an InTriangle function using the sign-based method. Test by checking if points (0,0) through (5,0) are inside a triangle with vertices (1.5,2.4), (5.1,-3.1), and (-3.8,0.5).",
+    "output": "type Point = auto class\n  x,y: real;\nend;\n\nfunction Sign(pt1,pt2,pt3: Point)\n  := (pt1.x - pt3.x) * (pt2.y - pt3.y) - (pt2.x - pt3.x) * (pt1.y - pt3.y);\n  \nfunction InTriangle(p,pt1,pt2,pt3: Point): boolean;\nbegin\n  var val1 := Sign(p, pt1, pt2);\n  var val2 := Sign(p, pt2, pt3);\n  var val3 := Sign(p, pt3, pt1);\n  var notanyneg := (val1 >= 0) and (val2 >= 0) and (val3 >= 0);\n  var notanypos := (val1 <= 0) and (val2 <= 0) and (val3 <= 0);\n  Result := notanyneg or notanypos;  \nend;  \n  \nbegin\n  var p1 := new Point(1.5, 2.4);\n  var p2 := new Point(5.1, -3.1);\n  var p3 := new Point(-3.8, 0.5);\n  for var x := 0 to 5 do\n  begin\n    var p := new Point(x,0);\n    Println($'{p} is in triangle ({p1},{p2},{p3}): {InTriangle(p,p1,p2,p3)}');\n  end\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds palindromic numbers that are palindromic in both binary and ternary bases. Use the School unit. Create a function ToBase to convert a number to a string in any base. Create a function IsPalindrome to check if a string is a palindrome. For numbers from 0 to 1,000,000, construct potential ternary palindromes of the form d3 + '1' + reverse(d3), convert to decimal, check if the binary representation is also a palindrome, and print those that satisfy the condition (including 0).",
+    "output": "uses School;\n  \nfunction ToBase(n: int64; base: integer): string; \nbegin\n  var sb := new StringBuilder;\n  while n>0 do\n  begin\n    sb.Insert(0,n mod base);\n    n := n div base;\n  end;\n  Result := sb.ToString;\nend;\n\nfunction IsPalindrome(s: string): boolean := s = s.Inverse;\n  \nbegin\n  Println(0,0,0);\n  for var i: int64 := 0 to 1000000 do\n  begin\n    var d3 := ToBase(i,3);\n    d3 := d3 + '1' + d3.Inverse;\n    var d := Dec(d3,3);\n    var d2 := ToBase(d,2);\n    if IsPalindrome(d2) then\n      Println(d,d3,d2)\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds the intersection point of a line with a plane. Define a Point class with x,y,z coordinates and overload operators for subtraction, dot product, and scalar multiplication. Create a function IntersectionPoint that computes the intersection using vector math. Test with a ray from (0,0,10) in direction (0,-1,-1) intersecting a plane at z=5 with normal (0,0,1). Print the intersection point.",
+    "output": "type Point = auto class\n  x,y,z: real;\n  static function operator-(p1,p2: Point): Point := new Point (p1.x-p2.x, p1.y-p2.y, p1.z-p2.z);\n  static function operator*(p1,p2: Point): real := p1.x*p2.x + p1.y*p2.y + p1.z*p2.z;\n  static function operator*(p: Point; r: real): Point := new Point (p.x*r, p.y*r, p.z*r);\nend;\n\nfunction IntersectionPoint(RayDir, RayPoint, PlaneNormal, PlanePoint: Point): Point\n  := RayPoint - RayDir * (((RayPoint - PlanePoint) * PlaneNormal) / (RayDir * PlaneNormal));\n\nbegin\n  var RayDir := new Point(0.0, -1.0, -1.0);\n  var RayPoint := new Point(0.0, 0.0, 10.0);\n  var PlaneNormal := new Point(0.0, 0.0, 1.0);\n  var PlanePoint := new Point(0.0, 0.0, 5.0);\n  Print(IntersectionPoint(RayDir, RayPoint, PlaneNormal, PlanePoint));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds the intersection point of two lines. Define a Point class with x and y coordinates. Create a helper function Pnt for easy point creation. Implement a FindIntersection function that computes the intersection using line equations. Test with two pairs of lines: (4,0)-(6,10) with (0,3)-(10,7) and (0,0)-(1,1) with (1,2)-(4,5). Print the results (use infinity for parallel lines).",
+    "output": "type Point = auto class\n  x,y: real;\nend;\n\nfunction Pnt(x,y: real) := new Point(x,y);\n\nfunction FindIntersection(s1,e1,s2,e2: Point): Point;\nbegin\n  var a1 := e1.Y - s1.Y;\n  var b1 := s1.X - e1.X;\n  var c1 := a1 * s1.X + b1 * s1.Y;\n\n  var a2 := e2.Y - s2.Y;\n  var b2 := s2.X - e2.X;\n  var c2 := a2 * s2.X + b2 * s2.Y;\n\n  var delta := a1 * b2 - a2 * b1;  \n  \n  if delta = 0 then \n    Result := Pnt(real.PositiveInfinity,real.PositiveInfinity)\n  else\n    Result := Pnt((b2 * c1 - b1 * c2) / delta, (a1 * c2 - a2 * c1) / delta)\nend;\n\nbegin\n  Println(FindIntersection(Pnt(4, 0), Pnt(6, 10), Pnt(0, 3), Pnt(10, 7)));\n  Println(FindIntersection(Pnt(0, 0), Pnt(1, 1), Pnt(1, 2), Pnt(4, 5)));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds the last Sunday of each month for a given year. Create a function LastSunday that takes a month and year, and returns a DateTime object representing the last Sunday of that month. Then, for each month of the year 2024, print the last Sunday in yyyy-MM-dd format.",
+    "output": "function LastSunday(month,year: integer): DateTime;\nbegin\n  var date := new DateTime(year,month,DateTime.DaysInMonth(year, month));\n  while date.DayOfWeek <> System.DayOfWeek.Sunday do\n    date := date.AddDays(-1);\n  Result := Date;\nend;\n\nbegin\n  for var month:=1 to 12 do\n    Println(LastSunday(month,2024).ToString('yyyy-MM-dd'));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds the missing permutation from a list of all permutations of 'ABCD' except one. Given a multiline string containing 23 permutations, split it into lines, convert to a set, and compare with the set of all permutations of 'ABCD' generated by the Permutations method. Print the missing permutation.",
+    "output": "begin\n  var s := '''\n  ABCD\n  CABD\n  ACDB\n  DACB\n  BCDA\n  ACBD\n  ADCB\n  CDAB\n  DABC\n  BCAD\n  CADB\n  CDBA\n  CBAD\n  ABDC\n  ADBC\n  BDCA\n  DCBA\n  BACD\n  BADC\n  BDAC\n  CBDA\n  DBCA\n  DCAB\n  ''';\n  var perms := s.ToLines;\n  Print(('ABCD'.Permutations.ToHashSet - perms.ToHashSet).First);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds the smallest perfect square in a given base that contains all digits of that base exactly once. Use the School unit. Create a function ToBase that converts a number to a string in any base using characters 0-9 and A-Z. For bases 2 through 15, search for the smallest integer n such that n^2, when represented in the given base, has a length equal to the base and contains all digits unique. Print the base, the root in base representation, and the square in base representation.",
+    "output": "uses School;\n\nconst\n  valid_chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';\n\nfunction ToBase(number: int64; base: integer): string;\nbegin\n  var sb := new System.Text.StringBuilder('');\n  while number > 0 do \n  begin\n    sb.Insert(0, valid_chars[integer(number mod base) + 1]);\n    number := number div base\n  end;\n  Result := if sb.Length = 0 then '0'\n    else sb.ToString\nend;\n\nbegin\n  var n: Int64 := 1;\n  for var base := 2 to 15 do\n  begin  \n    while True do\n    begin\n      var nn: int64 := n * n;\n      var dd := ToBase(nn,base);\n      if (dd.Length >= base) and (dd.ToHashSet.Count = base) then\n      begin  \n        Println($'{base,2} {ToBase(n,base),8}^2 = {ToBase(n*n,base)}');\n        break;\n      end;\n      n += 1;\n    end;\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds the first 8 happy numbers. A happy number is defined by repeatedly replacing the number with the sum of the squares of its digits until it equals 1 (happy) or enters a cycle (unhappy). Use a HashSet to detect cycles. Print the first 8 happy numbers found starting from 1.",
+    "output": "uses School;\n\nfunction IsHappy(n: integer): boolean;\nbegin\n  Result := False;\n  var cache := new HashSet<integer>;\n  while n <> 1 do\n  begin\n    if n in cache then\n      exit;\n    cache.Add(n);\n    n := n.Digits.Sum(d -> d*d);\n  end;\n  Result := True;\nend;\n\nbegin\n  var n := 1;\n  var happyNums := new List<integer>;\n  while happyNums.Count < 8 do\n  begin\n    if IsHappy(n) then\n      happyNums.Add(n);\n    n += 1;\n  end;\n  happyNums.Print\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that computes the harmonic series H(n) = sum_{k=1}^n 1/k. Print the first 20 harmonic numbers formatted to 8 decimal places. Then find the position of the first harmonic number exceeding each integer from 1 to 10.",
+    "output": "function H(n: integer): real := (1..n).Sum(i -> 1/i);\n\nbegin\n  for var i:=1 to 20 do\n    Println($'{i,2}:  {H(i),10:f8}');\n  var i := 1;\n  var num := 1;\n  while num < 11 do\n  begin\n    if H(i) > num then\n    begin\n      Println('Position of the first harmonic number >',num,':',i);\n      num += 1;\n    end;\n    i += 1;\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that generates Harshad (Niven) numbers. A Harshad number is divisible by the sum of its digits. Using the School unit, create a function IsHarshad to check this. Then generate and print the first 20 Harshad numbers. Also find the first Harshad number greater than 1000.",
+    "output": "##\nuses School;\n\nfunction IsHarshad(n: integer) := n.Divs(n.Digits.Sum);\n\n1.Step.Where(IsHarshad).Take(20).Println;\n1.Step.Where(i -> (i > 1000) and IsHarshad(i)).First.Println;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates a here document (multiline string). Create a string literal using triple quotes that contains multiple lines and includes apostrophes. Then output the string.",
+    "output": "begin\n  var s := ''' \n  Multiline\n  string\n  with apostrophes ' and '' \n  ''';\n  Write(s);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that draws a Hilbert curve using turtle graphics. Use the Turtle unit. Create a recursive procedure Hilbert that takes level, angle, and step parameters. At level 0, return. Otherwise, recursively draw the Hilbert curve segments with appropriate turns. Set up the turtle with line width 2, start at (-9,-9), and call Hilbert with level 6, angle 90, and step 0.3.",
+    "output": "uses Turtle;\n\nprocedure Hilbert(level: integer; angle,step: real);\nbegin\n  if level = 0 then\n    exit;\n  TurnRight(angle);\n  Hilbert(level-1, -angle, step);\n  \n  Forw(step);\n  TurnLeft(angle);\n  Hilbert(level-1, angle, step);\n  \n  Forw(step);\n  Hilbert(level-1, angle, step);\n  \n  TurnLeft(angle);\n  Forw(step);\n  Hilbert(level-1, -angle, step);\n  TurnRight(angle);\nend;\n\nbegin\n  SetWidth(2);\n  ToPoint(-9,-9);\n  Down;\n  Hilbert(6,90,0.3);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that evaluates a polynomial using Horner's rule. Create a function Horner that takes an array of coefficients (from highest to lowest degree) and a value x, and efficiently computes the polynomial value. Test with coefficients [-19, 7, -4, 6] representing -19 + 7x - 4x^2 + 6x^3 at x = 3.",
+    "output": "function Horner(coeffs: array of real; x: real): real;\nbegin\n  Result := 0;\n  foreach var coeff in coeffs.Reverse do\n    Result := Result * x + coeff\nend;\n\nbegin\n  Print(Horner(|-19.0, 7, -4, 6|, 3))\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds gapful numbers. A gapful number is divisible by the number formed by its first and last digits. Create a function IsGapful to check this. Then create a function FindGapful that finds the first n gapful numbers starting from a given number. Find and print: the first 30 gapful numbers starting at 100, the first 15 gapful numbers starting at 1,000,000, and the first 10 gapful numbers starting at 1,000,000,000.",
+    "output": "function IsGapful(n: integer): boolean;\nbegin\n  var first := n.ToString[1].ToDigit;\n  var num := first * 10 + n mod 10;\n  Result := n.Divs(num);\nend;\n\nfunction FindGapful(from,n: integer): List<integer>;\nbegin\n  Result := new List<integer>;\n  var i := from;\n  while Result.Count < n do\n  begin\n    if IsGapful(i) then\n      Result.Add(i);\n    i += 1\n  end;\nend;\n\nbegin\n  Println('First 30 gapful numbers starting at 100:');\n  FindGapful(100,30).Println;\n  Println('First 15 gapful numbers starting at 1,000,000:');\n  FindGapful(1000000,15).Println;\n  Println('First 10 gapful numbers starting at 1,000,000,000:');\n  FindGapful(1000000000,10).Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates generators for exponential sequences. Create a function ms that generates an infinite sequence of m-th powers. Generate squares (m=2) and cubes (m=3). Then create a filtered sequence that contains squares that are not cubes (i.e., not perfect sixth powers). Skip the first 20 and take the next 10 from this filtered sequence, printing the results.",
+    "output": "##\nvar ms: integer -> sequence of BigInteger := m -> 0.Step.Select(i -> BigInteger(i)**m);\nvar squares := ms(2);\nvar cubes := ms(3);\nvar filtered := squares.Where(square -> cubes.First(cube -> cube >= square) <> square);\nfiltered.Skip(20).Take(10).Println;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements a general FizzBuzz solution with three factors: 3, 5, and 7. For numbers 1 to 20, print 'Fizz' for multiples of 3, 'Buzz' for multiples of 5, 'Baxx' for multiples of 7, and combinations for multiples of multiple factors. Print the number itself if it has none of these factors.",
+    "output": "##\nfor var i:=1 to 20 do\nbegin  \n  var s := '';\n  if i mod 3 = 0 then\n    s += 'Fizz';\n  if i mod 5 = 0 then\n    s += 'Buzz';\n  if i mod 7 = 0 then\n    s += 'Baxx';\n  if s = '' then\n    Println(i)\n  else Println(s);\nend"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that executes a system command and captures its output. Use the System.Diagnostics namespace. Create a ProcessStartInfo for cmd.exe with arguments '/c echo Hello World', redirect standard output, and hide the window. Start the process, read the output, and print it.",
+    "output": "uses System.Diagnostics;\n\nbegin\n  var pr := new Process();\n  var startInfo := new ProcessStartInfo();\n  startInfo.WindowStyle := ProcessWindowStyle.Hidden;\n  startInfo.FileName := 'cmd.exe';\n  startInfo.Arguments := '/c echo Hello World';\n  startInfo.RedirectStandardOutput := true;\n  startInfo.UseShellExecute := false;\n  pr.StartInfo := startInfo;\n  pr.Start;\n  \n  var output := pr.StandardOutput.ReadToEnd;\n  Print($'Output is {output}');  \nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds Giuga numbers. A Giuga number is a composite number n such that for each of its prime factors p, (n/p - 1) is divisible by p. Using the School unit for factorization, find and print the first 4 Giuga numbers.",
+    "output": "uses School;\n\nbegin\n  var n := 1;\n  var cnt := 0;\n  while cnt < 4 do\n  begin\n    if n.Factorize.All(f -> (f <> n) and (n div f - 1).Divs(f)) then\n    begin\n      cnt += 1;\n      Print(n);\n    end;\n    n += 1;\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that globally replaces text in multiple files. Use a short script syntax. Find all .txt files in the current directory using EnumerateFiles. For each file, read all text, replace 'Goodbye London!' with 'Hello, New York!', and write the modified text back to the file.",
+    "output": "##\nforeach var name in EnumerateFiles('.','*.txt') do\n  WriteAllText(name,ReadAllText(name).Replace('Goodbye London!', 'Hello, New York!'));"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that approximates the golden ratio φ using the iterative formula φ = 1 + 1/φ. Start with φ = 1.0, and iterate until the change between successive iterations is less than or equal to 1e-5. Print the resulting φ, the number of iterations, and the error from the exact value (1+√5)/2.",
+    "output": "begin\n  var phi := 1.0;\n  var phiprev := 0.0;\n  var n := 0;\n  var err := 0.0;\n  while True do\n  begin\n    n += 1;\n    phi := 1 + 1/phi;\n    err := Abs(phi - phiprev);\n    if err <= 1e-5 then\n      break;\n    phiprev := phi;\n  end;\n  Println($'Result = {phi} after {n} iterations');\n  Println($'The error is approximately = {phi - (1+sqrt(5)) / 2}');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that encodes and decodes Gray code. Use the School unit. Create functions GrayEncode (n xor (n shr 1)) and GrayDecode (iterative xor of shifted bits). For numbers 0 to 31, print the decimal number, its binary representation, the binary Gray code, and the decoded value to verify correctness.",
+    "output": "uses School;\n\nfunction GrayEncode(n: longword): longword := n xor (n shr 1);\n\nfunction GrayDecode(n: longword): longword;\nbegin\n  Result := 0;\n  while n > 0 do\n  begin\n    Result := Result xor n;\n    n := n shr 1;\n  end;\nend;\n\nbegin\n  for var i := 0 to 31 do\n    Writeln($'{i,-7} {Bin(i),-7} {Bin(grayEncode(i)),-7} {grayDecode(grayEncode(i)),-7}');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds the greatest element in a list. Create a list of integers [1,7,4,6,3,5,2,6] and print its maximum value using the Max method.",
+    "output": "##\nvar values := Lst(1,7,4,6,3,5,2,6);\nvalues.Max.Print;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds the maximum subsequence sum in an array using Kadane's algorithm. Given the array [-1, -2, 3, 5, 6, -2, -1, 4, -4, 2, -1], find the contiguous subsequence with the largest sum, print the subsequence, and its sum.",
+    "output": "function MaxSumSeq(a: array of integer): (integer,integer,integer);\nbegin\n  var (maxSum,thisSum) := (0,0);\n  var (f,t) := (0,-1);\n  var k := 0;\n  for var j:=0 to a.Length-1 do\n  begin\n    thisSum += a[j];\n    if thisSum < 0 then\n    begin\n      k := j + 1;\n      thisSum := 0;\n    end\n    else if thisSum > maxSum then\n    begin\n      maxSum := thisSum;\n      f := k;\n      t := j\n    end;\n  end;\n  Result := (f,t,maxSum);\nend;\n\nbegin\n  var a := Arr(-1 , -2 , 3 , 5 , 6 , -2 , -1 , 4 , -4 , 2 , -1);\n  var (f,t,max) := MaxSumSeq(a);\n  Print('Subsequence with max sum:', a[f:t+1], 'It''s sum:', max);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements a number guessing game. Generate a random number between 1 and 10. Prompt the user to guess the number. Continue prompting until the user guesses correctly, giving feedback after each wrong guess. Congratulate the user when they guess correctly.",
+    "output": "begin\n  var randomNumber := Random(1..10);\n  Println('I''m thinking of a number between 1 and 10. Can you guess it?');\n  while True do\n  begin\n    Print('Guess:');\n    var x := ReadlnInteger;\n    if x = randomNumber then\n      break;\n    Println('That''s not it. Guess again.');\n  end;\n  Println('Congrats!! You guessed right!');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates the Halt and Catch Fire concept by raising an exception. Use a short script syntax to raise a new Exception with an empty string.",
+    "output": "## raise new Exception('');"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that generates Hamming numbers (numbers whose prime factors are only 2, 3, and 5). Implement a function Hamming that returns the nth Hamming number using a dynamic programming approach. Print the first 20 Hamming numbers, the 1691st, and the 1,000,000th Hamming number.",
+    "output": "function Hamming(n: integer): BigInteger;\nbegin\n  var (two,three,five) := (2bi, 3bi, 5bi);\n  var h := new BigInteger[n];\n  h[0] := 1;\n  var (x2,x3,x5) := (2bi, 3bi, 5bi);\n  var (i,j,k) := (0, 0, 0);\n  for var ind := 1 to n-1 do\n  begin\n    h[ind] := Min(x2, x3, x5);\n    if h[ind] = x2 then \n    begin\n      i += 1;\n      x2 := two * h[i];\n    end;\n    if h[ind] = x3 then \n    begin\n      j += 1;\n      x3 := three * h[j];\n    end;\n    if h[ind] = x5 then \n    begin\n      k += 1;\n      x5 := five * h[k];  \n    end;\n  end;\n  Result := h[n-1];\nend;\n\nbegin\n  (1..20).Select(x -> Hamming(x)).Println;\n  Hamming(1691).Println;\n  Hamming(1000000).Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that handles a console signal (Ctrl+C). Create an infinite loop that prints an incrementing counter every 500 milliseconds. Add an event handler for Console.CancelKeyPress that prints the elapsed milliseconds and halts the program when Ctrl+C is pressed.",
+    "output": "begin\n  var counter := 0;\n  while True do\n  begin\n    Print(counter);\n    counter += 1;\n    Sleep(500);\n  end;\n  Console.CancelKeyPress += (o,e) -> begin\n    Println(Milliseconds);\n    halt\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that iterates over multiple ranges defined by various parameters, calculates the sum of absolute values of all numbers in the ranges, and computes the product of non-zero numbers in the ranges, stopping if the product exceeds 2^27. Use the given values: x=5, y=-5, z=-2, one=1, three=3, seven=7. Combine ranges: -three to 3^3 step three, -seven to +seven step x, 555 to 550-y, 22 to -28 step -three, 1927 to 1939, x to y step z, and 11^x to 11^x+one. Print the sum and product.",
+    "output": "##\nvar (x,y,z) := (+5,-5,-2);\nvar (one,three,seven) := (1,3,7);\n\nvar seq := (-three .. Round(3 ** 3)).Step(three) \n           + (-seven .. +seven).Step(x)\n           + (555 .. 550 - y)\n           + (22 .. -28).Step(-three)\n           + (1927 .. 1939)\n           + (x .. y).Step(z)\n           + (Round(11 ** x) .. Round(11 ** x) + one);\n           \nvar sum := seq.Sum(x -> Abs(x));\n\nvar prod := 1;\nforeach var t in seq do\n  if (Abs(prod) < 2bi ** 27) and (t <> 0) then\n    prod *= t;\nPrintln('sum =',sum);\nPrintln('prod =',prod);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds the first 42 prime numbers greater than a starting number, incrementing the loop index within the loop body. Start with n = 42. For each number, check if it's prime. When a prime is found, print its index and value, increment the index, and set n to 2n-1. Continue until 42 primes are found.",
+    "output": "function IsPrime(n: BigInteger) \n  := (2..n.Sqrt.Round).All(x -> n mod x <> 0);\n\nbegin\n  var i := 1;\n  var n := 42bi;\n  while i <= 42 do\n  begin\n    if IsPrime(n) then\n    begin\n      Println($'{i,3} {n,15}');\n      i += 1;\n      n += n - 1;\n    end;\n    n += 1;\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates nested loops with an early exit using goto. Create a 3x4 matrix of random integers between 1 and 10. Print the matrix. Then search for the value 5 using nested loops. If found, set a flag and use goto to exit the loops. Print whether 5 was found.",
+    "output": "label 1;\n\nbegin\n  var a: array [,] of integer := MatrRandomInteger(3,4,1,10);  \n  a.Println;\n  \n  var found := False;\n  for var i:=0 to a.RowCount-1 do\n  for var j:=0 to a.ColCount-1 do\n    if a[i,j] = 5 then\n    begin \n      found := True;\n      goto 1;\n    end;\n  1: Println(found);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates a while loop with a decreasing counter. Start with n = 1024. While n > 0, print n and then divide n by 2 in each iteration.",
+    "output": "##\nvar n := 1024;\nwhile n > 0 do\nbegin\n  Println(n);\n  n := n div 2;\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints numbers 1 through 10 with commas between them, but without a comma after the last number. Use the ternary operator to conditionally print a comma.",
+    "output": "##\nfor var i:=1 to 10 do\n  Write(i, i = 10 ? '' : ', ');"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that checks if a string is a palindrome (reads the same forwards and backwards). Define a function IsPalindrome that uses string reversal. Test with 'arozaupalanalapuazora' (should be true) and 'abcd' (should be false).",
+    "output": "function IsPalindrome(s: string) := s = s[::-1];\n\nbegin\n  Println(IsPalindrome('arozaupalanalapuazora'));\n  Println(IsPalindrome('abcd'));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates pointers and references. Create a pointer to an integer, allocate memory, and assign a value. Show that you cannot directly assign a pointer to integer to a pointer to byte, but you can through a generic pointer. Print the byte representation of the integer. Then demonstrate object references with a simple class, showing that two references point to the same object and modifying one affects the other.",
+    "output": "type MyClass = class\npublic  \n  x: integer := 555;\nend;\n\nbegin\n  var pi: ^integer;\n  New(pi);\n  pi^ := 1023;\n  var pb: ^byte;\n  //pb := pi; // compiler error\n  var p: pointer;\n  p := pi;\n  pb := p;\n  Print(pb^); // byte representation of integer\n  loop 3 do\n  begin  \n    pb := pointer(integer(pb)+1); // analog of pb++\n    Print(pb^);\n  end;\n  Println;\n  var obj := new MyClass; // obj is a reference to object\n  // All references in .NET are under control of garbage collection\n  Println(obj);\n  var obj1 := obj; // another reference to the same object\n  obj1.x := 666;\n  Println(obj);\n  obj := nil; // zero reference\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that performs host introspection. Print the word size in bytes (size of integer). Check the system's endianness using System.BitConverter.IsLittleEndian and print whether the system is Little Endian or Big Endian.",
+    "output": "begin\n  Println($'Word size in bytes: {sizeof(integer)}');\n  if System.BitConverter.IsLittleEndian then\n    Println('Little Endian')\n  else Println('Big Endian')\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints the hostname of the current machine using System.Net.Dns.GetHostName.",
+    "output": "## System.Net.Dns.GetHostName.Print"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that generates an n x n identity matrix. Read an integer n from the user, then create and print a matrix where diagonal elements are 1 and all others are 0.",
+    "output": "begin\n  var n := ReadInteger;\n  var matrix := MatrGen(n,n,(i,j) -> i = j ? 1 : 0);\n  matrix.Println\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints positive infinity using real.PositiveInfinity.",
+    "output": "##\nWrite(real.PositiveInfinity);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that compares two integers. Read two integers from the user, then print whether the first is less than, greater than, or equal to the second.",
+    "output": "begin\n  var (a,b) := ReadInteger2('Enter a,b:');\n  if a < b then\n    Println($'{a} is less then {b}')\n  else if a > b then\n    Println($'{a} is greater then {b}')\n  else Println($'{a} is equal to then {b}')\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates manual iteration over arrays using GetEnumerator. Create an array of days of the week and a linked list of colors. Print both collections. Then manually move through the enumerator of the array, printing the 1st, 4th, and 5th elements.",
+    "output": "begin\n  var a: array of string := Arr('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');\n  var L: LinkedList<string> := LLst('Red','Orange','Yellow','Green','Blue','Purple');\n  a.Println;\n  L.Println;\n  \n  var it := a.GetEnumerator;\n  it.MoveNext;\n  Print(it.Current);\n  it.MoveNext; it.MoveNext; it.MoveNext;\n  Print(it.Current);\n  it.MoveNext;\n  Print(it.Current);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates a jump using goto to exit nested loops. Create a 3x4 matrix of random integers. Search for the value 10. If found, set a flag and use goto to jump to a label after the loops. Print whether 10 was found.",
+    "output": "label finish;\n\nbegin\n  var a := MatrRandomInteger(3,4);\n  var found := False;\n  for var i:=0 to a.RowCount-1 do\n  for var j:=0 to a.ColCount-1 do\n    if a[i,j] = 10 then\n    begin\n      found := True;\n      goto finish;\n    end;\nfinish:  \n  Print(found);   \nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that reads a key from the keyboard and checks if it's Y or N. Use console.ReadKey to read a key without requiring Enter. If the key is Y or N, print which key was pressed and exit. Otherwise, continue waiting.",
+    "output": "begin\n  repeat\n    var q := console.ReadKey;\n    if q.Key in |System.ConsoleKey.Y,System.ConsoleKey.N| then\n    begin  \n      Print($'{q.Key} pressed');\n      exit\n    end;  \n  until False;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates three ways to loop over multiple arrays simultaneously. Create three arrays: ['a','b','c'], ['A','B','C'], and [1,2,3]. First, use a traditional for loop. Second, use Zip with tuple destructuring. Third, use Zip with PrintLines.",
+    "output": "begin\n  var a1 := Arr('a','b','c');\n  var a2 := Arr('A','B','C');\n  var a3 := Arr(1,2,3);\n  for var i:=0 to a1.Length-1 do\n    Writeln(a1[i],a2[i],a3[i]);\n  Writeln;\n  foreach var (x,y,z) in a1.Zip(a2,a3) do\n    Writeln(x,y,z);\n  Writeln;\n  a1.Zip(a2,a3).PrintLines(t -> t[0]+t[1]+t[2]);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints numbers from 10 down to 0 using a for loop with downto.",
+    "output": "##\nfor var i:=10 downto 0 do\n  Print(i);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints a triangle pattern of asterisks. Use nested for loops: for i from 1 to 5, print i asterisks on each line.",
+    "output": "##\nfor var i:=1 to 5 do\nbegin\n  for var j:=1 to i do\n    Write('*');\n  Writeln\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that iterates over an array of strings using a foreach loop. Create an array ['Pascal', 'ABC', '.NET'] and print each element.",
+    "output": "##\nforeach var s in |'Pascal','ABC','.NET'| do\n  Print(s);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates for loops with custom step values. First, loop from 1 to 10 with step 2. Then, loop from 20 down to 1 with step -3. Print the results.",
+    "output": "begin\n  for var i:=1 to 10 step 2 do\n    Print(i);\n  Println;\n  for var i:=20 to 1 step -3 do\n    Print(i);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates regular expressions for two tasks: extracting text inside HTML tags and wrapping words in parentheses. First, find all text between <tag> and </tag> in a string with lazy quantifiers. Second, replace each word in a string with the same word enclosed in angle brackets.",
+    "output": "begin\n  // text in tag (lazy quantification)\n  var s := '<tag>abc</tag> def <tag>ghi</tag>';\n  foreach var m in s.Matches('(?<=<tag>)(.*?)(?=</tag>)') do\n    Println(m.Value, m.Index);\n  \n  // take words in parentheses\n  s := 'one two three four five';\n  Regex.Replace(s,'\\w+','<$0>').Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates three different ways to remove duplicate elements from an array. First, use an algorithm with a List and checking containment. Second, use the Distinct method. Third, use a HashSet. Test with the array [1,1,2,3,4,4].",
+    "output": "begin\n  // By algorithm\n  var nums := Arr(1, 1, 2, 3, 4, 4);\n  var unique := new List<integer>;\n  foreach var x in nums do\n    if x not in unique then\n      unique.Add(x);\n  unique.Println;\n  \n  // By method\n  var unique2 := nums.Distinct;\n  unique2.Println;\n  \n  // Using hash set\n  var unique3 := HSet(nums);\n  unique3.Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET procedure RemoveLines that removes a specified number of lines from a file starting at a given line. The procedure takes a filename, start line number, and count (default 1). It reads all lines, filters out the specified range (using 1-based indexing), and writes the result back to the same file. Test by removing lines 3 and 4 from 'a2.pas'.",
+    "output": "procedure RemoveLines(fname: string; start: integer; count: integer := 1);\nbegin\n  WriteAllLines(fname, \n    ReadAllLines(fname).Where((s,ind) -> ind not in start - 1 .. start + count - 2).ToArray)\nend;\n\nbegin\n  RemoveLines('a2.pas',3,2);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that renames files and directories using System.IO. Rename 'input.txt' to 'output.txt' and '\\input.txt' to '\\output.txt' (root directory). Also rename 'docs' to 'mydocs' and '\\docs' to '\\mydocs'.",
+    "output": "uses System.IO;\n\nbegin\n  &File.Move('input.txt','output.txt');\n  &File.Move('\\input.txt','\\output.txt');\n\n  Directory.Move('docs','mydocs');\n  Directory.Move('\\docs','\\mydocs');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that repeats a procedure a given number of times. Define a procedure Rep that takes an integer n and a procedure p, and executes p n times using the '*' operator overload for procedures. Define a procedure p that prints 'Hello'. Call Rep(3, p).",
+    "output": "procedure Rep(n: integer; p: procedure) := (p * n);\n\nprocedure p := Print('Hello');\n\nbegin\n  Rep(3,p);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that repeats a string using the multiplication operator. Print the string 'ha' repeated 5 times.",
+    "output": "##\nPrint('ha' * 5)"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that checks primality by trial division. Define a function IsPrime that handles N=1 as not prime. Test numbers from 1 to 1000 and print all primes found.",
+    "output": "function IsPrime(N: integer): boolean;\nbegin\n  if N = 1 then\n    Result := False\n  else Result := True;\n  for var i:=2 to N.Sqrt.Round do\n    if N.Divs(i) then\n    begin\n      Result := False;\n      exit\n    end;\nend;\n\nbegin\n  for var i:=1 to 1000 do\n    if IsPrime(i) then\n      Print(i)\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that performs prime decomposition of a large integer. Define a function Factors that takes a BigInteger and returns a list of its prime factors. Test with the number 600851475143.",
+    "output": "function Factors(N: BigInteger): List<BigInteger>;\nbegin\n  var lst := new List<BigInteger>;\n  if N = 1 then\n    lst.Add(N);\n  var i := 2bi;\n  while i * i <= N do\n  begin\n    while N mod i = 0 do\n    begin\n      lst.Add(i);\n      N := N div i;\n    end;\n    i += 1;\n  end;\n  if N >= 2 then\n    lst.Add(N);\n  Result := lst;\nend;\n\nbegin\n  Print(Factors(600851475143bi))\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements a queue data structure using linked nodes. Define a generic Node class and a MyQueue class with Enqueue, Dequeue, and IsEmpty methods. Test by enqueuing numbers 1 to 5, then dequeuing and printing them until empty, and finally checking if the queue is empty.",
+    "output": "type \n  Node<T> = auto class\n    data: T;\n    next: Node<T>;\n  end;\n  MyQueue<T> = class\n    head,tail: Node<T>;\n  public\n    procedure Enqueue(x: T);\n    begin\n      if tail = nil then\n      begin   \n        tail := new Node<T>(x,nil);\n        head := tail;\n      end  \n      else \n      begin  \n        tail.next := new Node<T>(x,nil);\n        tail := tail.next;\n      end;  \n    end;\n    function Dequeue(): T;\n    begin\n      Result := head.data;\n      head := head.Next;\n      if head = nil then\n        tail := nil;\n    end;\n    function IsEmpty: boolean := head = nil;\n  end;\n\nbegin\n  var q := new MyQueue<integer>;\n  for var i:=1 to 5 do\n    q.Enqueue(i);\n  while not q.IsEmpty do\n    Print(q.Dequeue);\n  Print(q.IsEmpty);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates using the built-in Queue collection. Create a Queue of integers, enqueue numbers 1 through 5, then dequeue and print them while the queue is not empty.",
+    "output": "begin\n  var q := new Queue<integer>;\n  for var i:=1 to 5 do\n    q.Enqueue(i);\n  while q.Count > 0 do\n    Print(q.Dequeue);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that is a quine (a program that prints its own source code). Use a short script syntax with a string variable that contains part of the code, then print it twice with appropriate splicing.",
+    "output": "## var a:='## var a:='';print(2*a[:12]+2*a[11:])';print(2*a[:12]+2*a[11:])"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that computes the radical of an integer (the product of its distinct prime factors). Define a function Divisors that returns a list of prime factors (with repetitions), then Radical uses Distinct and Product. Print radicals for numbers 1-50, then for 99999, 499999, and 999999. Also count numbers with 0-7 distinct prime factors up to 1,000,000.",
+    "output": "function Factors(N: integer): List<integer>;\nbegin\n  var lst := new List<integer>;\n  var i := 2;\n  while i * i <= N do\n  begin\n    while N.Divs(i) do\n    begin\n      if i not in lst then\n        lst.Add(i);\n      N := N div i;\n    end;\n    i += 1;\n  end;\n  if N >= 2 then\n    lst.Add(N);\n  Result := lst;\nend;\n\nfunction Radical(x: integer) := Factors(x).Product;\n\nbegin\n  for var i:=1 to 50 do\n  begin  \n    Write(Radical(i):3);\n    if i mod 10 = 0 then\n      Writeln;\n  end;  \n  Writeln;\n\n  Writeln('Radical(99999) = ',Radical(99999));\n  Writeln('Radical(499999) = ',Radical(499999));\n  Writeln('Radical(999999) = ',Radical(999999));\n  Writeln;\n\n  var a := |0| *8;  \n  for var i:=1 to 1000000 do\n    a[Factors(i).Count] += 1;\n  for var i:=0 to 7 do\n    Writeln($'{i}: {a[i]}');  \nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that reads an entire file as a string. Use ReadAllText with UTF8 encoding to read the file '_a.pas' and print its contents.",
+    "output": "##\nvar text := ReadAllText('_a.pas',Encoding.UTF8);\nPrint(text);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that reads a file character by character with UTF8 encoding. Open the file 'a.txt', read each character and print it until the end of the file, then close the file.",
+    "output": "begin\n  var f := OpenRead('a.txt',Encoding.UTF8);\n  while not f.Eof do\n    Print(f.ReadChar);\n  f.Close\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that reads a file line by line. Open the file '_a.pas', read each line and print it until the end of the file, then close the file.",
+    "output": "begin\n  var f := OpenRead('_a.pas');\n  while not f.Eof do\n    Println(f.ReadString);\n  f.Close\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that reads a specific line from a file. Use ReadLines to read the file '_a.pas', skip to line 3, take the first line after skipping, and print it.",
+    "output": "begin\n  var linenum := 3;\n  ReadLines('_a.pas').Skip(linenum-1).First.Print;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates real constants and mathematical functions. Print the values of E and Pi. For x = 2.5, print sqrt(x), ln(x), log base 10 of x, exp(x), abs(-x), floor(x), ceil(x). For y = 4.1, print x raised to the power y.",
+    "output": "##\nPrintln(E);\nPrintln(Pi);\nvar x := 2.5;\nPrintln(Sqrt(x));\nPrintln(Ln(x)); // natural logarithm\nPrintln(LogN(10,x)); // logarithm with base\nPrintln(Exp(x));\nPrintln(Abs(-x));\nPrintln(Floor(x));\nPrintln(Ceil(x));\nvar y := 4.1;\nPrintln(x ** y);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that uses reflection to list all methods of the integer type. Use System.Reflection.BindingFlags to include instance, static, public, and declared-only methods. Print each method using PrintLines.",
+    "output": "##\nuses System, System.Reflection;\n\nvar flags := BindingFlags.Instance or BindingFlags.Static\n            or BindingFlags.Public or BindingFlags.DeclaredOnly;\n            \ntypeof(integer).GetMethods(flags).PrintLines;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates reflection to get properties of a class. Define a MyClass with a private auto-property NumberPrivate and a public auto-property Number. Create an instance of the class. Use reflection with BindingFlags to get all declared properties (public and non-public) and print each property name and its value from the instance.",
+    "output": "uses System, System.Reflection;\n\ntype \n  MyClass = auto class\n  private  \n    auto property NumberPrivate: integer := 666;  \n  public\n    auto property Number: integer := 3;\n  end;\n\nbegin\n  var flags := BindingFlags.Instance or BindingFlags.Static\n            or BindingFlags.Public or BindingFlags.NonPublic\n            or BindingFlags.DeclaredOnly;\n            \n  var obj := new MyClass;          \n            \n  typeof(MyClass).GetProperties(flags).Select(p -> (p.Name,p.GetValue(obj))).PrintLines;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that reverses the words in each line of a multiline text. Define a multiline string containing the poem \"Ice and Fire\" by Robert Frost. Split the text into lines, then for each line split it into words, reverse the order of words, join them back into a string, and print each reversed line.",
+    "output": "begin\n  var text := '''\n    ---------- Ice and Fire ------------\n    \n    fire, in end will world the say Some\n    ice. in say Some\n    desire of tasted I've what From\n    fire. favor who those with hold I\n    \n    ... elided paragraph last ...\n    \n    Frost Robert -----------------------\n    ''';\n  text.ToLines.Select(line -> line.ToWords.Reverse.JoinToString).PrintLines\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that decodes URL-encoded strings. Create a function URLDecode that uses Uri.UnescapeDataString. Test with three examples: 'http%3A%2F%2Ffoo%20bar%2F', 'google.com/search?q=%60Abdu%27l-Bah%C3%A1', and '%25%32%35'.",
+    "output": "uses System;\n\nfunction URLDecode(s: string) := Uri.UnescapeDataString(s);\n\nbegin\n  Println(URLDecode('http%3A%2F%2Ffoo%20bar%2F'));\n  Println(URLDecode('google.com/search?q=%60Abdu%27l-Bah%C3%A1'));\n  Println(URLDecode('%25%32%35'));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that URL-encodes a string. Create a function URLEncode that uses Uri.EscapeDataString. Test by encoding 'http://foo bar/'.",
+    "output": "##\nfunction URLEncode(s: string) := System.Uri.EscapeDataString(s);\n\nPrintln(URLEncode('http://foo bar/'));"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that reads user input. Prompt the user to input a string, then prompt to input an integer. Store the results in variables s and n.",
+    "output": "##\nvar s := ReadString('Input a string:');\nvar n := ReadInteger('Input an integer:');"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that walks through a directory non-recursively. Use EnumerateFiles with the path 'C:\\PABCWork.NET' and the pattern '*.pas' to list all Pascal files in that directory. Print each file path.",
+    "output": "begin\n  var path := 'C:\\PABCWork.NET';\n  EnumerateFiles(path,'*.pas').PrintLines;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that generates RPG character attributes. Generate 6 attributes, each by rolling 4 six-sided dice and taking the sum of the highest 3. Repeat until the sum of all attributes is at least 75 and at least 2 attributes are 15 or higher. Print the valid attribute set, the sum, and the count of attributes >= 15.",
+    "output": "begin\n  repeat\n    var a := ArrGen(6, i -> ArrRandomInteger(4,1,6).Order.Skip(1).Sum);\n    var cnt := a.Count(x -> x >= 15);\n    if (a.Sum < 75) or (cnt < 2) then\n      continue;\n    a.Println;\n    Println($'Sum: {a.Sum}. Count of elements >= 15: {cnt}');\n    break;\n  until False;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that generates a sequence of primes by trial division. Define a function IsPrime that checks if a number is prime by testing divisors up to its square root. Print all primes between 2 and 100.",
+    "output": "##\nfunction IsPrime(n: integer) := (2..n.Sqrt.Round).All(i -> n.NotDivs(i));\n\n(2..100).Where(IsPrime).Println"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements a \"shape machine\" that repeatedly applies the transformation next = (prev + 3) * 0.86 to a starting number until the value stabilizes (prev equals next). Print each iteration's value and the number of iterations taken.",
+    "output": "begin\n  var count := 0;\n  var n := ReadInteger;\n  var next: real := n;\n  var prev: real;\n  repeat\n    Writeln(next);\n    prev := next;\n    next := (prev + 3) * 0.86;\n    count += 1;\n  until prev = next;\n  Writeln(count);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements the Sieve of Eratosthenes to find all primes up to N. Define a function Eratosthenes that returns a list of primes. Use an array of a custom enum type (nonprime, prime) to mark the sieve. Test by printing all primes up to 1000.",
+    "output": "function Eratosthenes(N: integer): List<integer>;\ntype primetype = (nonprime,prime);\nbegin\n  var sieve := |nonprime|*2 + |prime|*(N-1);\n  for var i:=2 to N.Sqrt.Round do\n    if sieve[i] = prime then\n      for var j := i*i to N step i do\n        sieve[j] := nonprime;\n  Result := new List<integer>;\n  for var i:=2 to N do\n    if sieve[i] = prime then\n      Result.Add(i);\nend;\n\nbegin\n  Eratosthenes(1000).Println\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that splits a string based on changes of character. Use the AdjacentGroup method to group consecutive identical characters, then join each group into a string and join the results with commas. Test with the string 'gHHH5YY++///\\'.",
+    "output": "##\nvar s := 'gHHH5YY++///\\';\ns.AdjacentGroup.Select(a -> a.JoinToString).JoinToString(', ').Print"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates stack operations. Create two stacks of integers. Push 1, 2, 3 onto the first stack. Print both stacks. Then pop all elements from the first stack and push them onto the second stack. Print both stacks again.",
+    "output": "begin\n  var st := new Stack<integer>;\n  var st1 := new Stack<integer>;\n  st.Push(1);\n  st.Push(2);\n  st.Push(3);\n  Println(st1,st);\n  while st.Count <> 0 do\n    st1.Push(st.Pop);\n  Println(st1,st);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds the limit of recursion by causing a stack overflow. Define a recursive procedure Recur that prints its parameter and calls itself with i+1. Call Recur(0) and observe how many iterations occur before stack overflow.",
+    "output": "procedure Recur(i: integer);\nbegin\n  System.Console.WriteLine(i);\n  Recur(i + 1);\nend;\n\nbegin\n  Recur(0);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints a stack trace. Define procedures qqq and ppp. In qqq, create a StackTrace object and print it. In ppp, call qqq. In the main program, call ppp to generate and print the stack trace.",
+    "output": "procedure qqq;\nbegin\n  var st := new System.Diagnostics.StackTrace();\n  Print(st);\nend;\n\nprocedure ppp;\nbegin\n  qqq;\nend;\n\nbegin\n  ppp\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates string concatenation using the += operator. Start with the string 'Pascal', append 'ABC', then append '.NET', and print the result.",
+    "output": "begin\n  var s := 'Pascal';\n  s += 'ABC';\n  s += '.NET';\n  s.Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that strips block comments from source code. Use a regular expression to match /* ... */ comments, handling multiline comments with any characters. Test with a multiline string containing sample code with various comments, and print the code with comments removed.",
+    "output": "begin\n  var s := '''\n  /**\n   * Some comments\n   * longer comments here that we can parse.\n   *\n   * Rahoo \n   */\n   function subroutine() {\n    a = /* inline comment */ b + c ;\n   }\n   /*/ <-- tricky comments */\n   \n   /**\n    * Another comment.\n    */\n    function something() {\n    }\n  ''';\n  Regex.Replace(s,'/\\*(\\n|\\r|\\r\\n|.)*?\\*/','').Print\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates trigonometric functions in both radians and degrees. For an angle of 60 degrees (π/3 radians), calculate and print sin, cos, tan, and their inverses. Use RadToDeg and DegToRad for conversions.",
+    "output": "begin\n  var rad := Pi/3;\n  var deg := RadToDeg(rad);\n  Println('=== Radians ===');\n  var (Si,Co,Ta) := (Sin(rad),Cos(rad),Tan(rad));\n  Println($'Sin({rad}) = {Si}');\n  Println($'Cos({rad}) = {Co}');\n  Println($'Tan({rad}) = {Ta}');\n  Println($'ArcSin({Si}) = {ArcSin(Si)}');\n  Println($'ArcCos({Co}) = {ArcCos(Co)}');\n  Println($'ArcTan({Ta}) = {ArcTan(Ta)}');\n  Println('=== Degrees ===');\n  var (SiD,CoD,TaD) := (Sin(DegToRad(deg)),Cos(DegToRad(deg)),Tan(DegToRad(deg)));\n  Println($'Sin({deg}) = {SiD}');\n  Println($'Cos({deg}) = {CoD}');\n  Println($'Tan({deg}) = {TaD}');\n  Println($'ArcSin({SiD}) = {RadToDeg(ArcSin(SiD))}');\n  Println($'ArcCos({CoD}) = {RadToDeg(ArcCos(CoD))}');\n  Println($'ArcTan({TaD}) = {RadToDeg(ArcTan(TaD))}');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET procedure TruncateFile that truncates a file to a specified length. Open the file as a file of byte, check if the requested length is not greater than the file size, set the position to that length, call Truncate, and close the file. Test by truncating 'aaa.txt' to 3 bytes.",
+    "output": "procedure TruncateFile(name: string; length: integer);\nbegin\n  var f: file of byte;\n  Reset(f,name);\n  if f.Size < length then\n    raise new System.ArgumentOutOfRangeException('length','The specified length is greater than length of the file');\n  f.Position := length;\n  f.Truncate;\n  f.Close;\nend;\n\nbegin\n  TruncateFile('aaa.txt',3);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates nullable value types (integer?). Create a function Gen that randomly returns either 777 or null. In the main program, call Gen and check if the result has a value using HasValue. Print the value if present, otherwise print 'No value'.",
+    "output": "function Gen: integer? := Random(2)=0 ? 777 : nil;\n\nbegin\n  var i: integer?;\n  i := Gen();\n  if i.HasValue then\n    Print(i.Value)\n  else Print('No value')\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates Unicode strings by using Greek suit symbols and mathematical symbols as variable names and strings. Create a string variable with Greek name κοστούμι containing '♥♦♣♠' and another with Chinese name 数学 containing '∂∉∑∜'. Print both strings.",
+    "output": "begin\n  var κοστούμι := '♥♦♣♠';\n  Print(κοστούμι);\n  var 数学 := '∂∉∑∜';\n  Print(数学);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates Unicode variable names by using the Greek letter Δ as a variable name. Assign 1 to Δ, increment it by 1, and print the result.",
+    "output": "begin\n  var Δ := 1;\n  Δ += 1;\n  Print(Δ);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that mimics the Unix 'ls' command for the current directory. Get all directories and files in the current directory, then strip the directory path prefix (including './') and print just the names.",
+    "output": "##\nvar dirName := $'.';\n(EnumerateDirectories(dirName) + EnumerateFiles(dirName)).Select(s -> s[dirName.Length+2:]).PrintLines;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements an accumulator factory. Create a function foo that takes a real number n and returns a function that takes a real number i, adds i to n, and returns the updated n. Test by creating an accumulator x with initial value 1, calling x(5), then creating another accumulator foo(3), and finally printing x(2.3).",
+    "output": "function foo(n: real): real -> real := \n  i -> begin\n    n += i;\n    Result := n;\n  end;\n\nbegin\n  var x := foo(1); \n  x(5); \n  foo(3);\n  print(x(2.3));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that computes the Ackermann function. Implement Ackermann(m,n) recursively with error checking for negative inputs. Test with m from 0 to 3 and n from 0 to 4, printing all results.",
+    "output": "function Ackermann(m,n: integer): integer;\nbegin\n  if (m < 0) or (n < 0) then\n    raise new System.ArgumentOutOfRangeException();\n  if m = 0 then\n    Result := n + 1\n  else if n = 0 then\n    Result := Ackermann(m - 1, 1)\n  else Result := Ackermann(m - 1, Ackermann(m, n - 1))\nend;\n\nbegin\n  for var m := 0 to 3 do\n  for var n := 0 to 4 do\n    Println($'Ackermann({m}, {n}) = {Ackermann(m,n)}');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates getting the address of a variable and modifying it through a pointer. Declare an integer i initialized to 3, create a pointer p to i, increment the value through p, and print both p^ and i.",
+    "output": "begin\n  var i: integer := 3;\n  var p: ^integer := @i;\n  p^ += 2;\n  Print(p^,i);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that computes the arithmetic-geometric mean (AGM) of two numbers. Create a function agm that iteratively updates a and g until they converge within a given epsilon. Compute and print the AGM of 1 and 1/√2 with the default epsilon.",
+    "output": "function agm(a,g: real; eps: real := 1e-10): real;\nbegin\n  var an := (a + g) / 2;\n  var gn := Sqrt(a * g);\n  while Abs(an - gn) > eps do\n    (an,gn) := ((an + gn) / 2, Sqrt(an * gn));\n  Result := an;\nend;\n\nbegin\n  Print(agm(1, 1 / Sqrt(2)))\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that creates and uses a dictionary. Create a dictionary with three animal entries: crocodile (2), kakadu (3), and elephant (1). Then print the dictionary.",
+    "output": "begin\n  var zoo: Dictionary<string,integer>;\n  zoo := Dict(('crocodile',2),('kakadu',3),('elephant',1));\n  zoo.Println\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that draws an Archimedean spiral using the PlotWPF and GraphWPF libraries. Create a window of size 600x600. Generate a sequence of t values from 0 to 20 with step 0.1. Compute x = t * cos(t) and y = t * sin(t) for each t. Create a line graph of these points in black.",
+    "output": "uses PlotWPF,GraphWPF;\n\nbegin\n  Window.SetSize(600,600);\n  var seq := Range(0,20,0.1);\n  var xx := seq.Select(t -> t * Cos(t));\n  var yy := seq.Select(t -> t * Sin(t));\n  LineGraphWPF.Create(xx,yy,Colors.Black);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates array usage. Show examples of static old-style arrays with 1-based indexing, dynamic arrays with 0-based indexing, array literals with resizing using SetLength and indexing from the end (^1), and List usage.",
+    "output": "begin\n  // Static old-style arrays\n  var a: array [1..3] of integer := (1,2,3);\n  Println(a[1]);\n  \n  // dynamic arrays - zero based indices\n  var a1: array of integer := new integer[3](1,3,5);\n  Println(a1[0]);\n  \n  // dynamic arrays \n  var a2 := |1,3,5|; // literal array\n  SetLength(a2,4);\n  a2[^1] := 7;       // \"push\" new value; ^1 - the first element from the end\n  \n  // Lists are dynamically resizing arrays\n  var lst := new List<integer>(a1);\n  lst.Add(7);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that recursively walks a directory and lists all files with a given extension. Use EnumerateAllFiles with the path 'C:\\PABCWork.NET' and pattern '*.pas' to recursively find all Pascal files. Print each file path.",
+    "output": "begin\n  var path := 'C:\\PABCWork.NET';\n  EnumerateAllFiles(path,'*.pas').PrintLines;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that simply creates a window using the GraphWPF unit. No additional code is needed beyond using the unit and an empty program body.",
+    "output": "uses GraphWPF;\n\nbegin\n  \nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that performs word frequency analysis on a text file. Read the file '135-0.txt', convert to lowercase, extract words using a regex pattern for word characters, count occurrences using EachCount, sort by frequency descending, take the top 10, and print the results.",
+    "output": "##\nReadAllText('135-0.txt').ToLower.MatchValues('\\w+').EachCount\n  .OrderByDescending(w -> w.Value).Take(10).PrintLines"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that wraps text to a specified line width. Create a function Wrap that processes a sequence of words and inserts spaces or newlines to keep lines within the width. Then create a wrapper that takes a string and line width. Test with a sample Lorem Ipsum text wrapped to 50 characters.",
+    "output": "function Wrap(words: sequence of string; lineWidth: integer): sequence of string;\nbegin\n  var currentWidth := 0;\n  foreach var word in words do\n  begin\n    if currentWidth <> 0 then\n      if currentWidth + word.Length < lineWidth then\n      begin\n        currentWidth += 1;\n        yield ' ';\n      end\n      else\n      begin\n        currentWidth := 0;\n        yield NewLine;\n      end;\n    currentWidth += word.Length;\n    yield word;\n  end;\nend;\n\nfunction Wrap(text: string; lineWidth: integer): string\n  := Wrap(text.ToWords(' '#13#10),lineWidth).JoinToString('');\n\nbegin\n  var text := '''\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius sapien\nvel purus hendrerit vehicula. Integer hendrerit viverra turpis, ac sagittis arcu\npharetra id. Sed dapibus enim non dui posuere sit amet rhoncus tellus\nconsectetur. Proin blandit lacus vitae nibh tincidunt cursus. Cum sociis natoque\npenatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam tincidunt\npurus at tortor tincidunt et aliquam dui gravida. Nulla consectetur sem vel\nfelis vulputate et imperdiet orci pharetra. Nam vel tortor nisi. Sed eget porta\ntortor. Aliquam suscipit lacus vel odio faucibus tempor. Sed ipsum est,\ncondimentum eget eleifend ac, ultricies non dui. Integer tempus, nunc sed\nvenenatis feugiat, augue orci pellentesque risus, nec pretium lacus enim eu\nnibh.\n'';\n  Wrap(text,50).Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that writes an entry to the Windows event log. Use the System.Diagnostics namespace. Check if a source 'MyApp' exists; if not, create it with the 'Application' log. Then write an entry 'Hello from PABC!' to the event log.",
+    "output": "uses System.Diagnostics;\n\nbegin\n  if not EventLog.SourceExists('MyApp') then\n    EventLog.CreateEventSource('MyApp', 'Application');\n  EventLog.WriteEntry('MyApp', 'Hello from PABC!');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates handling of various loop ranges, including invalid step values. Define a procedure DisplayRange that takes first, last, and step, and prints the range result or 'not allowed' for step=0. Test with a list of range tuples including (-2,2,1), (-2,2,0), (-2,2,-1), (-2,2,10), (2,-2,1), (2,2,1), (2,2,-1), (2,2,0), (0,0,0).",
+    "output": "procedure DisplayRange(first, last, step: integer);\nbegin\n  Print($'({first,2}, {last,2}, {step,2}):  ');\n  if step = 0 then\n    Println('not allowed')\n  else Println(Range(first, last, step));\nend;\n\nbegin\n  var ranges := |(-2, 2, 1), (-2, 2, 0), (-2, 2, -1),\n                 (-2, 2, 10), (2, -2, 1), (2, 2, 1),\n                 (2, 2, -1), (2, 2, 0), (0, 0, 0)|;\n  foreach var (f, l, s) in ranges do\n    DisplayRange(f,l,s);                 \nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that serializes an object to XML. Define a class ExampleXML with an XmlRoot attribute and an XmlElement field. Use XmlSerializer to serialize an instance to 'output.xml' without namespace declarations.",
+    "output": "{$reference System.Xml.Serialization.dll}\n{$reference System.Xml.dll}\nuses System.Xml;\nuses System.Xml.Serialization;\n\ntype\n  [XmlRoot('root')]\n  ExampleXML = class\n  public  \n    [XmlElementAttribute('element')]\n    element := 'My text';\n  end;\n\nbegin\n  var xmlnamespace := new XmlSerializerNamespaces();\n  xmlnamespace.Add('', ''); \n  var writer := XmlWriter.Create('output.xml');\n  (new XmlSerializer(typeof(ExampleXML))).Serialize(writer, new ExampleXML(), xmlnamespace);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that parses XML input and extracts attribute values. Use XDocument to parse a given XML string containing Student elements. Query all Student elements, select their Name attributes, and print each attribute value.",
+    "output": "{$reference System.Xml.Linq.dll}\n{$reference System.Xml.XDocument.dll}\nuses System.Xml.Linq;\n\nbegin\n  var XMLText := '''\n  <Students>\n  <Student Name=\"April\" Gender=\"F\" DateOfBirth=\"1989-01-02\" />\n  <Student Name=\"Bob\" Gender=\"M\"  DateOfBirth=\"1990-03-04\" />\n  <Student Name=\"Chad\" Gender=\"M\"  DateOfBirth=\"1991-05-06\" />\n  <Student Name=\"Dave\" Gender=\"M\"  DateOfBirth=\"1992-07-08\">\n    <Pet Type=\"dog\" Name=\"Rover\" />\n  </Student>\n  <Student DateOfBirth=\"1993-09-10\" Gender=\"F\" Name=\"&#x00C9;mily\" />\n  </Students>  \n  ''';\n  var xmlDoc := XDocument.Parse(XMLText);\n  var q := xmlDoc.Descendants('Student').Select(p -> p.Attribute('Name'));\n  q.PrintLines(item -> item.Value);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that generates XML output from a dictionary. Define a function CreateXML that takes a dictionary of character names and remarks, and returns an XML string with root 'CharacterRemarks' and 'Character' elements each with a Name attribute and the remark as content. Test with a dictionary containing April, Tam O'Shanter, and Emily.",
+    "output": "{$reference System.Xml.Linq.dll}\n{$reference System.Xml.XDocument.dll}\nuses System.Xml.Linq;\n\nfunction CreateXML(characterRemarks: Dictionary<string, string> ): string;\nbegin\n  var remarks := characterRemarks.Select(r -> new XElement('Character', r.Value, new XAttribute('Name', r.Key)));\n  var xml := new XElement('CharacterRemarks', remarks);\n  Result := xml.ToString;\nend;\n\nbegin\n  var characterRemarks := Dict(\n    ('April', 'Bubbly: I''m > Tam and <= Emily' ),\n    ( 'Tam O''Shanter', 'Burns: \"When chapman billies leave the street ...\"' ),\n    ( 'Emily', 'Short & shrift' )\n  );\n  var xml := CreateXML(characterRemarks);\n  Writeln(xml);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints the lyrics to \"99 Bottles of Beer\". Use a for loop from 99 down to 1, printing the standard verses with the appropriate bottle counts.",
+    "output": "begin\n  for var i:=99 to 1 step -1 do\n  begin\n    Println(i,'bottles of beer on the wall');\n    Println(i,'bottles of beer');\n    Println('Take one down, pass it around');\n    Println(i-1,'bottles of beer on the wall');\n    Println\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that computes 5^(4^(3^2)) using arbitrary-precision integers. Use the BigInteger literal (5bi) and the exponentiation operator ** to compute the result, and print it.",
+    "output": "begin\n  Print(5bi**integer(4**3**2))\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates abstract classes. Define an abstract class MyAbstract with an abstract procedure Proc1 and a concrete procedure Proc2. Create a derived class MyClass that overrides Proc1. Instantiate MyClass and call Proc1.",
+    "output": "type \n  MyAbstract = abstract class\n    public\n      procedure Proc1; abstract;\n      procedure Proc2;\n      begin\n      end;\n  end;\n  MyClass = class(MyAbstract)\n    public\n      procedure Proc1; override;\n      begin\n      end;\n  end;\n  \n\nbegin\n  var a := new MyClass;\n  a.Proc1;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that copies a string. Declare a string variable s with the value 'Hello'. Then create another variable s1 and assign it the value of s, demonstrating string copying.",
+    "output": "begin\n  var s: string := 'Hello';\n  var s1 := s;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that counts occurrences of a substring in a string. Define a function CountSubstrings that uses IndicesOf and Count. Test with 'the three truths' and substring 'th', and with 'ababababab' and substring 'abab'.",
+    "output": "function CountSubstrings(s,subs: string): integer := s.IndicesOf(subs).Count;\n\nbegin\n  Print(CountSubstrings('the three truths','th'));\n  Print(CountSubstrings('ababababab','abab'));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that creates and works with two-dimensional arrays at runtime. Read two integers m and n from the user. Create an integer array of size m x n. Set a[0,0] to 1 and a[m-1,n-1] to 55, then print the array. Also create and print a random m x n matrix using MatrRandomInteger.",
+    "output": "begin\n  var (m,n) := ReadInteger2;\n  var a: array[,] of integer := new integer[m,n];\n  a[0,0] := 1; a[m-1,n-1] := 55;\n  a.Println;\n  var a1 := MatrRandomInteger(m,n);\n  a1.Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that manipulates CSV data. Read lines from 'data.csv'. For each line, if it's the first line (header), append ',SUM'. Otherwise, append the sum of all integer values in that line. Write the modified lines to 'outdata.csv' and also print them to the console.",
+    "output": "begin\n  var lines := ReadLines('data.csv').Select((line,i) -> begin\n    if i = 0 then \n      Result := line + ',SUM'\n    else Result := line + ',' + line.Split(',').Sum(x -> x.ToInteger);\n  end);\n  WriteLines('outdata.csv',lines);\n  lines.PrintLines;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that generates random bracket expressions and checks if they are balanced. Define a function GenBracketExpr to create a string with n pairs of brackets randomly shuffled. Define IsBalanced to check bracket balance using a stack. Generate and test 10 random expressions with 2 to 5 pairs of brackets.",
+    "output": "function GenBracketExpr(n: integer): string;\nbegin\n  var a := Arr('[',']')*n;\n  Shuffle(a);\n  Result := a.JoinToString\nend;\n\nfunction IsBalanced(s: string): boolean;\nbegin\n  Result := True;\n  var st := new Stack<char>;\n  foreach var c in s do\n    if c = '[' then\n      st.Push(c)\n    else if (st.Count > 0) and (st.Peek = '[') then\n      st.Pop\n    else begin\n      Result := False;\n      exit\n    end;\nend;\n\nbegin\n  loop 10 do\n  begin\n    var s := GenBracketExpr(Random(2,5));\n    Println(s, IsBalanced(s));    \n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates terminal control functions from the CRT unit. Move the cursor to position (60,15), print 'PascalABC.NET', hide the cursor for 1 second, then show the cursor for 1 second.",
+    "output": "uses CRT;\n\nbegin\n  GotoXY(60,15);\n  Print('PascalABC.NET');\n  HideCursor;\n  Sleep(1000);\n  ShowCursor;\n  Sleep(1000);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that converts numbers to binary representation. For each number in the list [5, 50, 9000], print the number right-aligned in 4 spaces and its binary representation using Convert.ToString with base 2.",
+    "output": "begin\n  foreach var number in |5, 50, 9000| do\n    Writeln($'{number,4} - {Convert.ToString(number,2)}');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates boolean values. Declare a boolean variable b set to True. Convert it to an integer and store in i.",
+    "output": "begin\n  var b: boolean := True;\n  var i: integer := integer(b);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that breaks object-oriented privacy using reflection. Define a class MyClass with a private field x initialized to 5. Create an instance, then use reflection to get the private field and set its value to 777. Print the instance to verify the change.",
+    "output": "uses System.Reflection;\n\ntype MyClass = class\nprivate\n  x: integer := 5;\npublic \n  procedure PrintFields := Print(x);\nend;\n\nbegin\n  var a := new MyClass;\n  var fi := a.GetType.GetField('x', BindingFlags.Instance or BindingFlags.NonPublic);\n  fi.SetValue(a,777);\n  Print(a);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates calling instance and static methods. Define a Point class with x,y fields, a static RandomPoint method, and an instance Print method. Create a point (2,3) and print it. Then create a random point and print it.",
+    "output": "type \n  Point = auto class\n    x,y: real;\n    static function RandomPoint := new Point(Random(-10..10),Random(-10..10));\n    procedure Print;\n    begin\n      Writeln($'{x} {y}');\n    end;\n  end;\n\nbegin\n  var p := new Point(2,3);\n  p.Print; // instance method call\n  p := Point.RandomPoint; // static method call\n  p.Print;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates character codes. Get the code of character 'a' using the Code method, print it, then convert back to character using Chr and print that.",
+    "output": "begin\n  var c := 'a';\n  var i := c.Code;\n  Println(i);\n  Println(Chr(i))\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates various collection types. Create and use arrays (single and multi-dimensional), List, HashSet, SortedSet, Dictionary, SortedDictionary, Stack, and Queue with sample operations.",
+    "output": "begin\n  // build-in array\n  var a: array of integer := new integer[5] (1,2,3,4,5);\n  // build-in multidimensional array\n  var aa: array [,] of integer := new integer[4,3]((1,2,3),(4,5,6),(7,8,9),(1,2,3));\n  // List is a resizable array\n  var lst := new List<integer>(a);\n  lst.Add(1);\n  lst.AddRange(|2,3|);\n  // HashSet is an unordered set, SortedSet is ordered\n  var hs := new HashSet<integer>;\n  var ss := new SortedSet<integer>;\n  hs.Add(1); ss.Add(2);\n  // Dictionary is an unordered map, SortedDictionary is ordered\n  var d := new Dictionary<string,integer>;\n  d['str1'] := 1; d['str2'] := 3;\n  var sd := new SortedDictionary<string,integer>;\n  sd['str1'] := 1; sd['str2'] := 3;\n  \n  // Stack and Queue\n  var s := new Stack<integer>;\n  s.Push(1); s.Push(2); s.Push(3);\n  var q := new Queue<integer>;\n  q.Enqueue(1); q.Enqueue(2); q.Enqueue(3); \nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds the closest pair of points from a set of random points. Define a Point class with a Distance method. Generate 10 random points. Find the pair with minimum distance using Combinations(2) and MinBy. Print all points, the closest pair, and their distance.",
+    "output": "type Point = auto class\n  x,y: real;\n  function Distance(p: Point): real := Sqrt((x-p.x)**2 + (y-p.y)**2);\nend;\n\nfunction Pnt(x,y: real) := new Point(x,y);\n\nfunction RandomPoint: Point := Pnt(RandomReal(0,10),RandomReal(0,10));\n\nfunction ClosestPair(points: array of Point): (Point,Point);\nbegin\n  var pairs := points.Combinations(2);\n  var pair := pairs.MinBy(pair -> pair[0].Distance(pair[1]));\n  Result := (pair[0],pair[1]);\nend;\n\nbegin\n  var points := ArrGen(10,i -> RandomPoint);\n  points.Println;\n  \n  var ClPair := ClosestPair(points);\n  \n  Println(ClPair,ClPair[0].Distance(ClPair[1]));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints all command-line arguments passed to the program. Loop from 1 to ParamCount and print each argument using ParamStr.",
+    "output": "begin\n  for var i:=1 to ParamCount do\n    Print(ParamStr(i));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds the common directory path from a list of paths. Define a function CommonPrefix that finds common string prefixes from an array of string arrays. Then define CommonDirectoryPath that splits paths by separator and returns the common prefix joined. Test with three sample paths.",
+    "output": "function CommonPrefix(arrs: array of array of string): array of string;\nbegin\n  var min: integer := arrs.Min(a -> a.Length);\n  // Transpose this part\n  var at := ArrGen(min, j -> ArrGen(arrs.Length, i -> arrs[i][j]));\n  Result := at.TakeWhile(x -> x.Skip(1).All(y -> y = x.First)).Select(a -> a[0]).ToArray\nend;\n\nfunction CommonDirectoryPath(paths: array of string; sep: char := '/'): string;\nbegin\n  var arrs := paths.Select(a -> a.Split(sep)).ToArray;\n  Result := CommonPrefix(arrs).JoinToString(sep);\nend;\n\nbegin\n  Print(CommonDirectoryPath(|\n   '/home/user1/tmp/coverage/test',\n   '/home/user1/tmp/covert/operator',\n   '/home/user1/tmp/coven/members'|))\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that performs arithmetic operations on complex numbers. Create complex numbers a (1+2i) and b (3+4i) using Cplx. Demonstrate addition, subtraction, multiplication, division, negation, reciprocal, real/imaginary parts, conjugate, absolute value, and exponentiation.",
+    "output": "begin\n  var a := Cplx(1,2);\n  var b := Cplx(3,4);\n  Println(a + b);\n  Println(a - b);\n  Println(a * b);\n  Println(a / b);\n  Println(-a);\n  Println(1/a);\n  Println(a.Real,a.Imaginary);\n  Println(a.Conjugate);\n  Println(Abs(a));\n  Println(a ** b);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that compares lists of strings. Define functions AllEqual (all elements equal), IsSorted (list is non-decreasing), and IsStrictAscending (strictly increasing). Test with sample string arrays.",
+    "output": "function AllEqual(lst: sequence of string): boolean\n  := lst.All(x -> x = lst.First);\n  \nfunction IsSorted(lst: sequence of string): boolean\n  := lst.Order.SequenceEqual(lst);\n\nfunction IsStrictAscending(lst: sequence of string): boolean\n  := lst.Pairwise.All(x -> x[0] < x[1]);\n\nbegin\n  var strings := |'abc','abc','abc','abc'|;\n  Print(AllEqual(strings));\n  var strings1 := |'abc','abd','ade','aef'|;\n  Print(IsStrictAscending(strings1));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates compound types using both class and record. Define a Point class and a PointRec record, each with x,y fields and a constructor. Create instances of both and print their fields.",
+    "output": "type\n  Point = class\n    x,y: integer;\n    constructor(x,y: integer) := (Self.x,Self.y) := (x,y);\n  end;\n  PointRec = record\n    x,y: integer;\n    constructor(x,y: integer) := (Self.x,Self.y) := (x,y);\n  end;\n\nbegin\n  var p := new Point(2,3);\n  Println(p.x,p.y);\n  var pr := new PointRec(4,5);\n  Println(pr.x,pr.y);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates concurrent computing using tasks. Use System.Threading.Tasks to create three tasks that print 'Enjoy', 'Rosetta', and 'Code' in random order. Add a short sleep to allow tasks to complete before program exit.",
+    "output": "uses System.Threading.Tasks;\n\nbegin\n  Task.Run(() -> Print('Enjoy'));  \n  Task.Run(() -> Print('Rosetta'));  \n  Task.Run(() -> Print('Code'));\n  Sleep(100);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates constrained genericity with a generic Min function that requires the type to implement IComparable<T>. Define a Point record that implements IComparable<Point> (comparing x first, then y). Test Min on an array of points.",
+    "output": "function Min<T>(a: array of T): T; where T: IComparable<T>;\nbegin\n  Result := a[0];\n  for var i:=1 to a.Length - 1 do\n    if a[i].CompareTo(Result) < 0 then\n      Result := a[i];\nend;\n\ntype Point = record(IComparable<Point>)\n  x,y: integer;\n  constructor (xx,yy: integer) := (x,y) := (xx,yy);\n  function CompareTo(p: Point): integer;\n  begin\n    Result := x.CompareTo(p.x);\n    if Result = 0 then\n      Result := y.CompareTo(p.y);\n  end;  \nend;\n\nbegin\n  var a := Arr(new Point(2,3),new Point(1,4), new Point(3,1));\n  Print(Min(a));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that copies standard input to standard output using streams. Use Console.OpenStandardInput and CopyTo to copy to Console.OpenStandardOutput.",
+    "output": "##\nConsole.OpenStandardInput().CopyTo(Console.OpenStandardOutput());"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements a custom exponential function using Taylor series expansion. Define MyExp(x) that approximates e^x by summing terms until the term is less than 1e-15. Compare the result with the built-in Exp(1).",
+    "output": "function MyExp(x: real): real;\nconst eps = 1e-15;\nbegin\n  var y := 1.0;\n  var s := y;\n  var i := 1;\n  while y > eps do\n  begin\n    y *= x / i;\n    s += y;\n    i += 1;\n  end;\n  Result := s;\nend;\n\nbegin\n  Println(MyExp(1));\n  Println(Exp(1));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates extreme floating-point values. Show results of operations involving infinity and NaN: division by infinity, zero divided by zero, division by zero, comparisons, addition of infinities, NaN equality checks, and IsNaN detection.",
+    "output": "begin\n  Println(1.0/real.PositiveInfinity); // 0\n  Println(1.0/real.NegativeInfinity); // 0\n  Println(0.0/0.0);  // NaN\n  Println(1.0/0.0);  // Infinity \n  Println(-1.0/0.0); // -Infinity\n  Println(real.NegativeInfinity < real.PositiveInfinity); // True\n  Println(real.NegativeInfinity + real.PositiveInfinity); // NaN\n  Println(real.PositiveInfinity + real.PositiveInfinity); // Infinity\n  Println(real.PositiveInfinity / real.PositiveInfinity); // NaN\n  Println(Sqrt(-1)); // NaN\n  Println(real.NaN = real.NaN); // False\n  Println(real.IsNaN(Sqrt(-1))); // True\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that computes factorials using both iterative and recursive methods. Define FactIter and FactRec functions returning BigInteger. Test by printing factorials for numbers 1 through 20 using both methods.",
+    "output": "function FactIter(n: integer): BigInteger;\nbegin\n  Result := 1;\n  for var i:=2 to n do\n    Result *= i;\nend;\n\nfunction FactRec(n: integer): BigInteger;\nbegin\n  if n = 0 then\n    Result := 1\n  else Result := n * FactRec(n - 1);\nend;\n\n\nbegin\n  for var i:=1 to 20 do\n    Println(i,FactRec(i),FactIter(i));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that factorizes numbers into prime factors. Define a function Factorize that returns a list of prime factors (with repetitions). For numbers 1 through 22, print each number and its factorization using ' * ' as separator.",
+    "output": "function Factorize(x: integer): List<integer>;\nbegin\n  Result := new List<integer>;\n  if x = 1 then\n  begin  \n    Result.Add(1);\n    exit\n  end;  \n  var i := 2;\n  repeat\n    if x.Divs(i) then\n    begin\n      Result.Add(i);\n      x := x div i; \n    end\n    else i += 1;\n  until x = 1;\nend;\n\nbegin\n  var n := 22;\n  (1..n).PrintLines(x -> $'{x,3}: {Factorize(x).JoinToString('' * '')}')\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that gets the size of a file. Use System.IO.FileInfo to get the length of 'input.txt' and '/input.txt' (root directory) and print the sizes.",
+    "output": "uses System.IO;\n\nbegin\n  FileInfo.Create('input.txt').Length.Println;\n  FileInfo.Create('/input.txt').Length.Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements the Damm algorithm for checksum validation. Define a 10x10 matrix as given. Create a function Damn that processes each digit and returns true if the final interim value is 0. Test with numbers 5724, 5727, 112946, and 112949.",
+    "output": "var table := Matr(\n  |0, 3, 1, 7, 5, 9, 8, 6, 4, 2|,\n  |7, 0, 9, 2, 1, 5, 4, 8, 6, 3|,\n  |4, 2, 0, 6, 8, 7, 1, 3, 5, 9|,\n  |1, 7, 5, 0, 9, 8, 3, 4, 2, 6|,\n  |6, 1, 2, 3, 0, 4, 5, 9, 7, 8|,\n  |3, 6, 7, 4, 2, 0, 9, 5, 8, 1|,\n  |5, 8, 6, 9, 7, 2, 0, 1, 3, 4|,\n  |8, 9, 4, 5, 3, 6, 2, 0, 1, 7|,\n  |9, 4, 3, 8, 6, 1, 7, 2, 0, 5|,\n  |2, 5, 8, 1, 4, 3, 6, 7, 9, 0|\n);\n\nfunction Damn(s: string): boolean;\nbegin\n  var interim := 0;\n  foreach var c in s do\n    interim := table[interim, c.ToDigit];\n  Result := interim = 0;\nend;\n\nbegin\n  var numbers := Arr(5724, 5727, 112946, 112949);\n  foreach var num in numbers do\n    if Damn(num.ToString) then\n      Println(num, 'is valid')\n    else Println(num, 'is invalid')\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that formats the current date in two different ways. Get today's date using DateTime.Now.Date. Print it in ISO format (yyyy-MM-dd) and in long date format using the 'D' format specifier.",
+    "output": "begin\n  var today := DateTime.Now.Date;\n  Println(today.ToString('yyyy-MM-dd'));\n  Println($'{today:D}');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds all years between 2008 and 2121 where Christmas Day (December 25) falls on a Sunday. Use DateTime.Create and check DayOfWeek against Sunday.",
+    "output": "const Sunday = System.DayOfWeek.Sunday;\n\nbegin\n  (2008..2121).Where(y -> DateTime.Create(y,12,25).DayOfWeek = Sunday).Println\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that generates deceptive numbers. A deceptive number is a composite number n such that the repunit R_n (with n ones) is divisible by n. Generate and print the first 25 deceptive numbers.",
+    "output": "uses School;\n\nfunction Deceptives(num: integer): List<integer>;\nbegin\n  Result := new List<integer>;\n  var n := 2;\n  var r:BigInteger := 1;\n  while Result.Count < num do\n  begin\n    if not n.IsPrime and (r mod n = 0) then\n      Result.Add(n);\n    n += 1;\n    r := 10*r + 1;\n  end;\nend;\n\nbegin\n  Deceptives(25).Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that defines a constrained integer type (RangeInt) that only allows values from 1 to 10. Implement implicit conversion from integer, operators for +, -, *, div, mod, and /. Create two RangeInt variables (7 and 3) and demonstrate operations, including one that will cause an exception.",
+    "output": "type RangeInt = record\n  n: integer;\npublic\n  constructor(nn: integer);\n  begin\n    if nn not in 1..10 then\n      raise new System.ArgumentOutOfRangeException;\n    n := nn;\n  end;\n  function ToString: string; override := n.ToString;\n  static function operator implicit (n: integer): RangeInt := new RangeInt(n);\n  static function operator+(a,b: RangeInt): RangeInt := a.n + b.n;\n  static function operator-(a,b: RangeInt): RangeInt := a.n - b.n;\n  static function operator*(a,b: RangeInt): RangeInt := a.n * b.n;\n  static function operator/(a,b: RangeInt): real := a.n / b.n;\n  static function operator div(a,b: RangeInt): RangeInt := a.n div b.n;\n  static function operator mod(a,b: RangeInt): RangeInt := a.n mod b.n;\nend;\n\nfunction RInt(n: integer) := new RangeInt(n);\n\nbegin\n  var a: RangeInt := 7;\n  var b: RangeInt := 3;\n  Print(a + b, a - b, a div b, a mod b);\n  Print(a * b); // ArgumentOutOfRangeException exception\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds valid combinations of Police, Fire, and Sanitation departments. Police must be even and from 2 to 6, Fire and Sanitation from 1 to 7, all three numbers must be distinct, and they must sum to 12. Print all valid combinations with aligned columns.",
+    "output": "begin\n  Writeln('Police  Fire    Sanitation');\n  for var p := 2 to 6 step 2 do\n  for var f := 1 to 7 do   \n  for var s := 1 to 7 do   \n    if (p <> f) and (f <> s) and (p <> s) and (p + f + s = 12) then\n      Writeln($'{p,-8}{f,-8}{s,-8}');  \nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that generates descending primes. Define a recursive function DescendingSeq that generates numbers with descending digits. Use it to generate all such numbers, filter for primes, and print them in order.",
+    "output": "## \nuses School;\n\nfunction DescendingSeq(n: integer): sequence of integer;\nbegin\n  if n = 0 then\n    for var x := 9 downto 1 do\n      yield sequence DescendingSeq(x) + x\n  else for var x := n*10 + n mod 10 - 1 downto n*10  + 1 do\n    yield sequence DescendingSeq(x) + x;\nend;\n\nDescendingSeq(0).Order.Where(n -> n.IsPrime).Print;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that determines the type of sentence based on its last character. Define a function SentenceType that returns 'Q' for ?, 'E' for !, 'S' for ., and 'N' otherwise. Test with an array of sample sentences.",
+    "output": "function SentenceType(s: string): char;\nbegin\n  case s[^1] of\n    '?': Result := 'Q';\n    '!': Result := 'E';\n    '.': Result := 'S';\n    else Result := 'N';\n  end;\nend;\n\nbegin\n  var ss := Arr('hi there, how are you today?',\n    'I''d like to present to you the washing machine 9001.',\n    'You have been nominated to win one of these!',\n    'Just make sure you don''t break it');\n  foreach var s in ss do\n    Println(s,'->',SentenceType(s));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that calculates the tau function (number of divisors) for numbers 1 to 100. Define a function DivisorsCount that counts numbers from 1 to n that divide n. Print the results.",
+    "output": "##\nfunction DivisorsCount(n: integer) := Range(1,n).Count(i -> n.Divs(i));\n\nRange(1,100).Select(n -> DivisorsCount(n)).Println"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements a doubly linked list. Define a generic Node class and a MyLinkedList class with AddFirst, AddLast, AddAfter, PrintList (forward), and PrintBack (backward) methods. Test by creating a list, adding elements, and printing both directions.",
+    "output": "type Node<T> = auto class\n  data: T;\n  prev,next: Node<T>;\nend;\n\ntype \n  MyLinkedList<T> = class\n    first, last: Node<T>;\n    procedure AddFirst(x: T);\n    begin\n      if first = nil then\n      begin\n        first := new Node<T>(x,nil,nil);\n        last := first\n      end\n      else \n      begin\n        var p := new Node<T>(x,nil,first);\n        first.prev := p;\n        first := p;\n      end;\n    end;\n    procedure AddLast(x: T);\n    begin\n      if first = nil then\n      begin\n        first := new Node<T>(x,nil,nil);\n        last := first\n      end\n      else \n      begin\n        var p := new Node<T>(x,last,nil);\n        last.next := p;\n        last := p;\n      end;\n    end;\n    procedure AddAfter(p: Node<T>; x: T);\n    begin\n      if last = p then\n        AddLast(x)\n      else begin\n        var pp := new Node<T>(x,p,p.next);\n        p.next := pp;\n        pp.prev.next := pp;\n      end  \n    end;\n    procedure PrintList();\n    begin\n      var p := first;\n      while p<>nil do\n      begin\n        Print(p.data);\n        p := p.next;\n      end;\n    end;\n    procedure PrintBack();\n    begin\n      var p := last;\n      while p<>nil do\n      begin\n        Print(p.data);\n        p := p.prev;\n      end;\n    end;\n  end;\n\nbegin\n  var lst := new MyLinkedList<integer>;\n  lst.AddFirst(2); lst.AddFirst(3);\n  lst.AddLast(5);\n  lst.AddAfter(lst.first,555);\n  lst.PrintList;\n  Println;\n  lst.PrintBack;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that draws a single red pixel. Use the GraphWPF unit, set the window size to 320x240, and draw a red pixel at coordinates (100,100).",
+    "output": "uses GraphWPF;\n\nbegin\n  Window.SetSize(320,240);\n  SetPixel(100,100,Colors.Red);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates dynamic object behavior. Create a class Example that inherits DynamicObject and overrides TryInvokeMember to print the method name. Create an instance and (commented) show dynamic invocation.",
+    "output": "uses System.Dynamic;\n\ntype \n  Example = class(DynamicObject)\n    public \n    function TryInvokeMember(binder: InvokeMemberBinder; args: array of Object;\n      var res: object): boolean; override;\n    begin\n      res := nil;\n      Print(binder.Name);\n      Result := True;\n    end;\n  end;\n\nbegin\n  var ex := new Example;\n  \nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that is an empty program using the short script syntax (starting with ##).",
+    "output": "##"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates enumerations. Define an enumeration MyEnum with values One (default 0), Two (explicitly 2), and Three (explicitly 3). Declare a variable of type MyEnum set to One and print it.",
+    "output": "type MyEnum = (One, Two = 2, Three = 3);\n\nbegin\n  var my: MyEnum := One;\n  Print(my);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates first-class functions. Define functions Cube and CubeRoot. Create a generic Composition function that returns the composition of two functions of type T->T. Create arrays A containing Sin, Cos, Cube and B containing ArcSin, ArcCos, CubeRoot. Apply the composition of each pair to 0.5 and print the results. Also demonstrate the built-in composition operator (*) by zipping the arrays and applying to 0.5.",
+    "output": "function Cube(x: real) := x**3;\nfunction CubeRoot(x: real) := x**(1/3);\n\nfunction Composition<T>(f1,f2: T -> T): T -> T := x -> f1(f2(x));\n\nbegin\n  var A := Arr(Sin,Cos,Cube);\n  var B := Arr(ArcSin,ArcCos,CubeRoot);\n  for var i:=0 to A.Length-1 do\n    Println(Composition(A[i],B[i])(0.5));\n  \n  // Build-in composition f1 * f2\n  foreach var (f1,f2) in A.Zip(B) do\n  Println((f1 * f2)(0.5));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints 'Goodbye, World!' without a newline at the end using the Write function.",
+    "output": "##\nWrite('Goodbye, World!');"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates implicit type conversions. Define a class MyInt with an implicit conversion from integer. Then perform implicit conversions between shortint, smallint, integer, int64, and finally to MyInt.",
+    "output": "type MyInt = class\n  i: integer;\n  constructor (ii: integer) := i := ii;\n  static function operator implicit(i: integer): MyInt := new MyInt(i);\nend;\n\nbegin\n  var ssi: shortint := 1;\n  var si: smallint := ssi;\n  var i: integer := si;\n  var i64: int64 := i;\n  var my: MyInt := i;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that includes an external file using the {$include} directive. The included file 'a.inc' should contain a procedure or statement. The main program then calls Hello (assumed to be defined in the include file).",
+    "output": "{$include a.inc}\n\nbegin\n  Hello\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates multiple inheritance through interfaces. Define interfaces IMy1 and IMy2 with methods My1 and My2. Create a class MyClass that implements both interfaces, and a derived class MyClassD that inherits from MyClass. Create an instance of MyClassD and call both methods.",
+    "output": "type \n  IMy1 = interface\n    procedure My1;\n  end;\n  IMy2 = interface\n    procedure My2;\n  end;\n  MyClass = class(IMy1,IMy2)\n  public\n    procedure My1 := Writeln('My1');\n    procedure My2 := Writeln('My2');\n  end;\n  MyClassD = class(MyClass,IMy1,IMy2)\n  end;\n\nbegin\n  var my := new MyClassD;\n  my.My1; my.My2;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that reads and prints lines from a file until end-of-file. Open 'a.txt' for reading, read each line using ReadString, print it, then close the file.",
+    "output": "begin\n  var f := OpenRead('a.txt');\n  while not f.Eof do\n    Println(f.ReadString);\n  f.Close;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints an infinite integer sequence starting from 1 using the Step method.",
+    "output": "## 1.Step.Print"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates interface usage. Define an interface IMyInterface with procedures Proc1 and Proc2. Implement it in MyClass. Create an instance as the interface type and call both methods.",
+    "output": "type \n  IMyInterface = interface\n    procedure Proc1;\n    procedure Proc2;\n  end;\n  MyClass = class(IMyInterface)\n    public\n      procedure Proc1;\n      begin\n        Print(1);\n      end;\n      procedure Proc2;\n      begin\n        Print(2);\n      end;\n  end;\n  \n\nbegin\n  var a: IMyInterface := new MyClass;\n  a.Proc1;\n  a.Proc2;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that flattens a nested list structure. Define a recursive function Flatten that takes a List<object> and returns a flattened List<object> where nested lists are expanded. Test with a complex nested list containing integers and sublists.",
+    "output": "function Flatten(lst: List<object>): List<object>;\nbegin\n  Result := new List<object>;\n  foreach var x in lst do\n    if x is List<object> then\n      Result.Addrange(Flatten(x as List<object>))\n    else Result.Add(x)\nend;\n\nfunction LstObj(params a: array of object): List<Object> := new List<Object>(a);\n\nbegin\n  var lst := LstObj(1,LstObj(2,LstObj(3,4),LstObj(5,6)), LstObj(LstObj(7,8),9));\n  Println(lst);\n  Println(Flatten(lst));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints Floyd's triangle for a given number of rows. Define a procedure FloydTriangle that prints numbers in rows with appropriate spacing. Test with 5 rows and 14 rows.",
+    "output": "procedure FloydTriangle(rows: integer);\nbegin\n  var r := 1;\n  for var i:=1 to rows do\n  begin\n    for var j:=1 to i do\n    begin  \n      Write(r: (j>8 ? 4 : 3));\n      r += 1;\n    end;\n    Writeln\n  end;\nend;\n\nbegin\n  FloydTriangle(5);\n  Writeln;\n  FloydTriangle(14);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints a formatted numeric output. Define Pi as 3.1415926536. Print it with 2 decimal places, right-aligned in 8 characters, and then left-aligned in 8 characters with an exclamation mark.",
+    "output": "##\nvar Pi := 3.1415926536;\nPrintln($'{Pi,8:f2}');\nPrintln($'{Pi,-8:f2}!');"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that defines a simple function multiply that takes two real numbers and returns their sum (incorrectly named for demonstration).",
+    "output": "function multiply(a,b: real): real := a + b;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that computes the greatest common divisor (GCD) using both iterative and recursive Euclidean algorithms. Define GCD (iterative) and GCDRec (recursive). Test with pairs (72,30) and (49865,69811).",
+    "output": "function GCD(a,b: integer): integer;\nbegin\n  while b > 0 do\n    (a,b) := (b,a mod b);\n  Result := a;\nend;\n\nfunction GCDRec(a,b: integer): integer;\nbegin\n  if b = 0 then\n    Result := a\n  else Result := GCDRec(b, a mod b);  \nend;\n\nbegin\n  Println(GCD(72,30),GCDRec(72,30));\n  Println(GCD(49865, 69811),GCDRec(49865, 69811));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates a generic swap procedure. Define a procedure Swap<T> that swaps two variables of type T. Test with integers and strings.",
+    "output": "procedure Swap<T> (var a,b: T) := (a,b) := (b,a);\n\nbegin\n  var (i,j) := (1,2);\n  Swap(i,j);\n  Println(i,j);\n  var (s1,s2) := ('PascalABC.NET','Hello');\n  Swap(s1,s2);\n  Println(s1,s2);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that terminates early using Halt. In the main program, if a condition is true, call Halt so that subsequent code is not executed.",
+    "output": "begin\n  if True then\n    Halt;\n  Print(1);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that creates a dictionary from two arrays: keys and values. Define Keys array as ['aa','bb','cc'] and Values array as [1,2,3]. Use Zip to combine them and Dict to create the dictionary. Print the dictionary.",
+    "output": "begin\n  var Keys := Arr('aa','bb','cc');\n  var Values := Arr(1..3);\n  var dct := Dict(Keys.Zip(Values));\n  dct.Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints 'Goodbye, World!' to standard error using Console.Error.WriteLine.",
+    "output": "##\nConsole.Error.WriteLine('Goodbye, World!');"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that displays a graphical message box with the text 'Goodbye, World!' using Windows Forms.",
+    "output": "uses System.Windows.Forms;\n\nbegin\n  MessageBox.Show('Goodbye, World!');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints 'Hello World!' to a printer. Create a PrintDocument, handle the PrintPage event to draw the string, and call Print.",
+    "output": "{$reference 'System.Drawing.dll'}\n\nuses System.Drawing;\nuses System.Drawing.Printing;\n\nbegin\n  var doc := new PrintDocument();\n  doc.PrintPage += (s,e) -> begin\n    e.Graphics.DrawString('Hello World!', new Font('Arial', 14), Brushes.Black, 0, 0);\n  end;\n  doc.Print;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that checks if a string is numeric using integer.TryParse. Define a function IsNumeric that attempts to parse the string as an integer. Test with the string '123' and print a message if it is numeric.",
+    "output": "function IsNumeric(s: string): boolean;\nbegin\n  var i: integer;\n  Result := integer.TryParse(s,i)\nend;\n\nbegin\n  var s := '123';\n  if IsInteger(s) then\n    Print('string is numeric')\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that invokes a method on an object using reflection. Define a class MyClass with a method Hello that prints 'Hello'. Create an instance, get the MethodInfo for Hello, and invoke it with no arguments.",
+    "output": "type MyClass = class\npublic  \n  procedure Hello := Write('Hello');\nend;\n\nbegin\n  var obj := new MyClass;\n  var mi := typeof(MyClass).GetMethod('Hello');\n  mi.Invoke(obj,new object[0])\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates parametric polymorphism with a binary tree. Define a generic Node class with data and left/right children. Create a function CreateTree that generates a random integer tree of a given size. Define a generic procedure InfixTraverse that traverses the tree in-order and applies an action to each node. Test by creating a tree of size 10 and printing its data.",
+    "output": "type Node<T> = auto class\n  data: T;\n  left,right: Node<T>;\nend;\n\nfunction CreateTree(n: integer): Node<integer>;\nbegin\n  if n = 0 then\n    Result := nil\n  else \n    Result := new Node<integer>(\n      Random(100),\n      CreateTree((n-1) div 2),\n      CreateTree(n-1 - (n-1) div 2)\n    );\nend;\n\nprocedure InfixTraverse<T>(root: Node<T>; act: T -> ());\nbegin\n  if root = nil then\n    exit;\n  InfixTraverse(root.left,act);\n  act(root.data);\n  InfixTraverse(root.right,act);\nend;\n\nbegin\n  var tree := CreateTree(10);\n  Println(tree);\n  InfixTraverse(tree, x -> Print(x));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that defines a variadic procedure Output that can take any number of parameters of type object. It should print each parameter on a new line. Demonstrate by calling it with mixed types and also with an array of object.",
+    "output": "procedure Output(params arr: array of object);\nbegin\n  foreach var obj in arr do\n    Println(obj);\nend;\n\nbegin\n  Output(1,2.5,'z','PascalABC.NET');\n  var a: array of object := (1,2.5,'z','PascalABC.NET');\n  Output(a);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that picks a random element from an array. Create an array of strings ['cat','dog','wolf','zebra'] and print a random element using the RandomElement method.",
+    "output": "begin\n  var a := Arr('cat','dog','wolf','zebra');\n  a.RandomElement.Print\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that checks if a number is even or odd using both remainder and bitwise operations. Define functions IsOddRemainder, IsEvenRemainder, IsOddBitwise, IsEvenBitwise. Also use the built-in IsEven and IsOdd predicates. Test with the number 3.",
+    "output": "function IsOddRemainder(x: integer) := x mod 2 <> 0;\n\nfunction IsEvenRemainder(x: integer) := x mod 2 = 0;\n\nfunction IsOddBitwise(x: integer) := x and 1 = 1;\n\nfunction IsEvenBitwise(x: integer) := x and 1 = 0;\n\nbegin\n  var x := 3;\n  Println(x.IsEven,x.IsOdd); // Standard Predicates\n  Println(IsEvenRemainder(x),IsOddRemainder(x));\n  Println(IsEvenBitwise(x),IsOddBitwise(x));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that serializes and deserializes JSON. Use JavaScriptSerializer to convert a Dictionary of people to JSON, then deserialize it back. Also demonstrate deserializing a complex JSON object with an array property.",
+    "output": "{$reference System.Web.Extensions.dll}\nuses System.Web.Script.Serialization;\n\nbegin\n  var serializer := new JavaScriptSerializer;\n  var people := new Dictionary<string, object>;\n  people.Add('1', 'John');\n  people.Add('2', 'Susan');\n  var json := serializer.Serialize(people);\n  Println(json);\n  var res := serializer.Deserialize&<Dictionary<string, object>>(json);\n  Println(TypeName(res));\n  Println(res);\n  \n  var jsonObject := serializer.DeserializeObject('{ \"foo\": 1, \"bar\": [10, \"apples\"] }')\n    as Dictionary<string, object>;\n  Println(jsonObject);\n  var arr := jsonObject['bar'] as array of object;\n  arr.Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that computes the least common multiple (LCM) of two numbers. First define a GCD function using the Euclidean algorithm, then define LCM using the formula a / GCD(a,b) * b. Test with 12 and 18.",
+    "output": "function GCD(a,b: integer): integer;\nbegin\n  while b > 0 do\n    (a,b) := (b,a mod b);\n  Result := a;\nend;\n\nfunction LCM(a,b: integer): integer := a = 0 ? 0 : a div GCD(a,b) * b;\n\nbegin\n  Println(LCM(12,18));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds the longest common subsequence (LCS) of two strings. Implement the dynamic programming algorithm with a Lengths function to build the table and a recursive helper to reconstruct the LCS. Test with '1234' and '1224533324', and with 'thisisatest' and 'testing123testing'.",
+    "output": "function Lengths(x,y: string): array[,] of integer;\nbegin\n  var (m,n) := (x.Length,y.Length);\n  var C := new integer[m+1, n+1]; // filled with zeroes\n  for var i:=1 to m do\n  for var j:=1 to n do\n    if x[i] = y[j] then\n      C[i,j] := C[i-1,j-1] + 1\n    else C[i,j] := max(C[i,j-1], C[i-1,j]);\n  Result := C;\nend;\n\nfunction lcshelper(x,y: string; i,j: integer): string;\nbegin\n  var C := Lengths(x,y);\n  if (i = 0) or (j = 0) then\n    Result := ''\n  else if  X[i] = Y[j] then\n    Result := lcshelper(X, Y, i-1, j-1) + X[i]\n  else if C[i,j-1] > C[i-1,j] then\n    Result := lcshelper(X, Y, i, j-1)\n  else Result := lcshelper(X, Y, i-1, j)\nend;\n\nfunction lcs(x,y: string) := lcshelper(x,y,x.Length,y.Length);\n\nbegin\n  Println(lcs('1234','1224533324'));\n  Println(lcs('thisisatest','testing123testing'));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that connects to an LDAP directory. Reference the System.DirectoryServices.dll assembly and create a DirectoryEntry object with an LDAP path.",
+    "output": "{$reference System.DirectoryServices.dll}\n\nbegin\n  var objDE := new System.DirectoryServices.DirectoryEntry\n    ('LDAP://DC=onecity,DC=corp,DC=fabrikam,DC=com');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that compares string lengths. Take two strings 'Bye' and 'Hello', ensure s1 is the longer one, and print both with their lengths. Also create an array of animal names and sort them by descending length, printing each with its length.",
+    "output": "begin\n  var (s1,s2) := ('Bye','Hello');\n  if s1.Length < s2.Length then\n    Swap(s1,s2);\n  Println(s1,s1.Length);\n  Println(s2,s2.Length);\n  Println;\n  var strArr := |'wolf','cat','crocodile','tiger'|;\n  strArr.OrderByDescending(s -> s.Length).PrintLines(s -> $'{s,9} - {s.Length}');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that uses list comprehension to find Pythagorean triples. Use CartesianPower to generate triples (x,y,z) from 1 to 20, filter where x^2 + y^2 = z^2 and x < y, and print the results.",
+    "output": "##\n(1..20).CartesianPower(3).Where(\\(x,y,z) -> (x*x + y*y = z*z) and (x < y)).PrintLines"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that generates the lowercase ASCII alphabet. Create an array of characters from 'a' to 'z' and print it. Also create a string joining them with spaces.",
+    "output": "##\nvar a := Arr('a'..'z');\na.Println;\nvar s := ('a'..'z').JoinToString(' ');;\ns.Println"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements the Man or Boy test. Define a recursive function A that takes an integer k and five function parameters. Inside A, define a local function B that calls A recursively with decremented k. Test with A(10, 1, -1, -1, 1, 0) and print the result.",
+    "output": "function A(k: integer; x1, x2, x3, x4, x5: function: integer): integer;\nbegin\n  var B: function: integer;\n  B := () -> begin\n    k := k - 1;\n    Result := A(k, B, x1, x2, x3, x4);\n  end;\n  Result := if k <= 0 then x4() + x5() else B()\nend;\n\nbegin\n  Print(A(10, () -> 1, () -> -1, () -> -1, () -> 1, () -> 0))\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that applies a callback to each element of an array. Create an array of numbers 1 to 10, square each element using Select, convert back to array, and print each element using ForEach.",
+    "output": "begin\n  var a := Arr(1..10);\n  a := a.Select(x -> x * x).ToArray;\n  a.ForEach(x -> Print(x));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates memory allocation. Show stack allocation of local variables, heap allocation with New and Dispose, and garbage-collected array allocation.",
+    "output": "procedure ppp;\nbegin\n  var i,j: integer; // i,j are allocated automatically on the stack when we call procedure\nend;\n\nbegin\n  ppp;\n  var p: ^integer;\n  New(p); // memory is allocated on the heap\n  p^ := 666;\n  Dispose(p); // explicit memory deallocation\n  \n  var ri := new integer[5]; // memory is allocated on the heap\n  ri[0] := 555;\n  ri := nil; // memory is controlled by .NET garbage collector\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that displays the current mouse position. Use GraphWPF, set large font size, and handle OnMouseMove to clear the window and draw the mouse coordinates.",
+    "output": "##\nuses GraphWPF;\nFont.Size := 80;\nOnMouseMove := (x,y,mb) -> begin\n  Window.Clear;\n  DrawText(Window.ClientRect,$'{x,0:f0}, {y,0:f0}');\nend;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates nested functions. Define a procedure MakeList with a parameter separator and a local variable counter. Inside, define a nested procedure MakeItem that prints the counter with the separator and a word, then increments counter. Call MakeItem three times.",
+    "output": "procedure MakeList(separator: string);\n  var counter := 1;\n  procedure MakeItem;\n  begin\n    Write(counter, separator);\n    case counter of\n      1: Writeln('first');\n      2: Writeln('second');\n      3: Writeln('third');\n    end;\n    counter += 1;\n  end;\nbegin\n\tMakeItem;\n\tMakeItem;\n\tMakeItem;\nend;\n\nbegin\n  MakeList('. ');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that adds ordinal suffixes (st, nd, rd, th) to numbers. Define an array of suffixes and a function Nth that returns the number with the appropriate suffix. Test with ranges 0-24, 500-524, 700-724, and 1000-1024.",
+    "output": "var suffix := |'th', 'st', 'nd', 'rd'| + |'th'| * 6;\n\nfunction Nth(n: integer)\n  := $'{n}''' + if n mod 100 not in 11..19 then suffix[n mod 10] else 'th';\n\nbegin\n  ((0..24) + (500..524) + (700..724) + (1000..1024))\n    .Select(Nth).Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates a null object reference. Create an integer array and randomly set it to nil. Print the array (which may be nil).",
+    "output": "begin\n  var a := new integer[](1,2,3);\n  if Random(2) = 0 then\n    a := nil;\n  Print(a);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates object serialization. Define serializable classes Base and Derived with fields. Create a list containing mixed Base and Derived objects, serialize it to 'objects.dat', deserialize it back, and print both lists to verify they are the same.",
+    "output": "type \n  [Serializable]\n  Base = class\n  public  \n    fb: integer;\n    constructor (fb: integer) := Self.fb := fb;\n    function ToString: string; override := fb.ToString;\n  end;\n  \n  [Serializable]\n  Derived = class(Base)\n  public\n    fd: real;\n    constructor (fb: integer; fd: real);\n    begin\n      inherited Create(fb);\n      Self.fd := fd;\n    end;\n    function ToString: string; override := inherited ToString + ',' + fd.ToString;\n  end;\n\nbegin\n  var lst := new List<Base>;\n  lst.Add(new Base(3));\n  lst.Add(new Derived(4,5.5));\n  lst.Add(new Base(6));\n  lst.Add(new Derived(7,8.8));\n  lst.Println;\n  Serialize('objects.dat',lst);\n  var lst1 := DeSerialize('objects.dat') as List<Base>;\n  lst1.Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that generates all subsets of an array using recursion. Define a function AllSubSets that recursively builds subsets. Test with an array of integers 1 to 4 and print all subsets.",
+    "output": "function AllSubSets<T>(a: array of T; i: integer; lst: List<T>): sequence of List<T>;\nbegin\n  if i = a.Length then\n  begin  \n    yield lst;\n    exit;\n  end;  \n  lst.Add(a[i]);\n  yield sequence AllSubSets(a, i + 1, lst);\n  lst.RemoveAt(lst.Count-1);\n  yield sequence AllSubSets(a, i + 1, lst);\nend;\n\nbegin\n  AllSubSets(Arr(1..4),0,new List<integer>).Print;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that sorts three integer variables in ascending order. Define a procedure SortThree that takes three var parameters and sorts them using comparisons and swaps. Test with three random integers and print before and after sorting.",
+    "output": "procedure SortThree(var x,y,z: integer);\nbegin\n  if x > y then Swap(x, y);\n  if x > z then Swap(x, z);\n  if y > z then Swap(y, z);\nend;\n\nbegin\n  var (x,y,z) := Random3(1,10);\n  Println(x,y,z);\n  SortThree(x,y,z);\n  Assert((x <= y) and (y <= z));\n  Println(x,y,z);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that sorts an array of custom objects using a custom comparator. Define a Pair class with Name and Value string fields. Create an array of pairs and sort them by Name using a lambda comparator. Print the sorted array.",
+    "output": "type\n  Pair = auto class\n    Name,Value: string;\n  end;\n\nbegin\n  var a: array of Pair := (new Pair('ZZZ','333'),new Pair('XXX','222'),new Pair('YYY','111'));\n  Sort(a, (p1,p2) -> p1.Name < p2.Name);\n  Print(a);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that sorts an array of composite structures by different fields. Define a Pair class with Name and Value fields. Create an array of pairs and print them sorted by Name and then by Value using OrderBy.",
+    "output": "type\n  Pair = auto class\n    Name,Value: string;\n  end;\n\nbegin\n  var a: array of Pair := (new Pair('ZZZ','333'),new Pair('XXX','222'),new Pair('YYY','111'));\n  a.OrderBy(p -> p.Name).Println;\n  a.OrderBy(p -> p.Value).Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates different ways to create strings: a simple string, a string with quotes, and a string with characters specified by their codes.",
+    "output": "##\nvar s1 := 'Hello';\nvar s2 := 'quotes ''in'' string';\nvar s3 := 'chars with a'#13#10'given code in strings';"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates polymorphic copy. Define a Base class with a virtual Clone method and a Derived class that overrides Clone. Create a list containing mixed Base and Derived objects, clone each object into a new list, and print both lists to verify the copy.",
+    "output": "type \n  Base = class\n  public  \n    fb: integer;\n    constructor (fb: integer) := Self.fb := fb;\n    function ToString: string; override := fb.ToString;\n    function Clone: Base; virtual := new Base(fb);\n  end;\n  \n  Derived = class(Base)\n  public\n    fd: real;\n    constructor (fb: integer; fd: real);\n    begin\n      inherited Create(fb);\n      Self.fd := fd;\n    end;\n    function ToString: string; override := inherited ToString + ',' + fd.ToString;\n    function Clone: Base; override := new derived(fb,fd);\n  end;\n\nbegin\n  var lst := new List<Base>;\n  lst.Add(new Base(3));\n  lst.Add(new Derived(4,5.5));\n  lst.Add(new Base(6));\n  lst.Add(new Derived(7,8.8));\n  lst.Println;\n  var lst1 := new List<Base>;\n  foreach var obj in lst do\n    lst1.Add(obj.Clone);\n  lst1.Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates polymorphism with inheritance. Define a Point class with x and y properties and a virtual Print method. Define a Circle class that inherits from Point, adds an r property, and overrides Print. Create instances of both and call their Print methods.",
+    "output": "type\n  Point = class\n  public  \n    auto property x: real;\n    auto property y: real;\n    constructor (x,y: real);\n    begin\n      Self.x := x; Self.y := y;\n    end;\n    procedure Print; virtual;\n    begin\n      PABCSystem.Print(x,y);\n    end;\n  end;\n  Circle = class(Point)\n  public\n    auto property r: real;\n    constructor (x,y,r: real);\n    begin\n      inherited Create(x,y);\n      Self.r := r;\n    end;\n    procedure Print; override;\n    begin\n      inherited Print;\n      PABCSystem.Print(r);\n    end;\n  end;\n\nbegin\n  var p: Point := new Point(3,5);\n  var c: Circle := new Circle(10,8,4);\n  p.Print;\n  Println;\n  c.Print;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates an abstract class. Define an abstract class MyAbstract with an abstract method Proc1 and a concrete method Proc2. Create a derived class MyClass that overrides Proc1. Instantiate MyClass and call Proc1.",
+    "output": "type \n  MyAbstract = abstract class\n    public\n      procedure Proc1; abstract;\n      procedure Proc2;\n      begin\n      end;\n  end;\n  MyClass = class(MyAbstract)\n    public\n      procedure Proc1; override;\n      begin\n      end;\n  end;\n  \n\nbegin\n  var a := new MyClass;\n  a.Proc1;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that generates the power set of an array. Define a recursive function AllSubSets that builds all subsets. Test with an array of integers 1 to 4 and print all subsets.",
+    "output": "function AllSubSets<T>(a: array of T; i: integer; lst: List<T>): sequence of List<T>;\nbegin\n  if i = a.Length then\n  begin  \n    yield lst;\n    exit;\n  end;  \n  lst.Add(a[i]);\n  yield sequence AllSubSets(a, i + 1, lst);\n  lst.RemoveAt(lst.Count-1);\n  yield sequence AllSubSets(a, i + 1, lst);\nend;\n\nbegin\n  AllSubSets(Arr(1..4),0,new List<integer>).Print;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that removes duplicate elements from an array using a HashSet. Create an array with many duplicates, print it, convert to a HashSet and back to an array, and print the result.",
+    "output": "begin\n  var a := Arr(1,2,2,2,4,4,6,3,2,2,3,2,7,8,7);\n  a.Println;\n  a := HSet(a).ToArray;\n  a.Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that returns multiple values from a function. Define a function AddSub that returns a tuple containing the sum and difference of two real numbers. Call it with 5 and 3 and print both results.",
+    "output": "function AddSub(x,y: real): (real,real) := (x + y, x - y);\n\nbegin\n  var (a,s) := AddSub(5,3);\n  Print(a,s);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that reverses the gender of pronouns in sentences. Define arrays of words to replace and their replacements. Create a function ReverseGender that performs the replacements using regular expressions. Test with an array of sample sentences.",
+    "output": "var words := Arr('She', 'she', 'Her',  'her',  'hers', 'He',   'he',   'His',  'his',  'him');\nvar repls := Arr('He_', 'he_', 'His_', 'his_' ,'his_', 'She_', 'she_', 'Her_', 'her_', 'her_');\n\nfunction ReverseGender(s: string): string;\nbegin\n  foreach var (w,r) in words.Zip(repls) do\n    s := Regex.Replace(s,'\\b'+w+'\\b',r);\n  Result := s.Replace('_','');;\nend;\n\nbegin\n  var sentences := Arr(\n  'She was a soul stripper. She took his heart!',\n  'He was a soul stripper. He took her heart!',\n  'She wants what''s hers, he wants her and she wants him!',\n  'Her dog belongs to him but his dog is hers!'\n  );\n  foreach var sentence in sentences do\n    Println(ReverseGender(sentence));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that converts integers to Roman numerals. Define arrays of Arabic numbers and corresponding Roman numeral strings. Create a function ToRoman that builds the Roman representation. Test with a wide range of numbers from 1 to 3999.",
+    "output": "var anums := |1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1|;\nvar rnums := 'M CM D CD C XC L XL X IX V IV I'.split;\n\nfunction ToRoman(x: integer): string;\nbegin\n  Result := '';\n  foreach var (a,r) in anums.Zip(rnums) do\n  begin\n    var n := x div a;\n    x := x mod a;\n    Result += r * n;\n  end;\nend;\n\nbegin\n  var test := |1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 40,\n          50, 60, 69, 70, 80, 90, 99, 100, 200, 300, 400, 500, 600, 666, 700, 800, 900, 1000,\n          1009, 1444, 1666, 1945, 1997, 1999, 2000, 2008, 2010, 2011, 2500, 3000, 3999|;\n  foreach var x in test do\n    Println($'{x} - {ToRoman(x)}')\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements the ROT13 cipher. Define a function Rot13 that shifts letters by 13 positions, leaving other characters unchanged. Test with 'foo' and 'sbb'.",
+    "output": "function Rot13(s: string): string;\nbegin\n  var sb := new StringBuilder;\n  foreach var c in s do\n  begin\n    var c1 := c;\n    if c in 'a'..'z' then\n      c1 := Chr((c.Code - 'a'.Code + 13) mod 26 + 'a'.Code)\n    else if c in 'A'..'Z' then\n      c1 := Chr((c.Code - 'A'.Code + 13) mod 26 + 'A'.Code);\n    sb.Append(c1)\n  end;\n  Result := sb.ToString;\nend;\n\nbegin\n  Println(rot13('foo'));\n  Println(rot13('sbb'))\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that draws a rotating 3D cube using the Graph3D library. Create a green cube at the origin and start an infinite rotation animation around the Z-axis.",
+    "output": "uses Graph3D;\n\nbegin\n  var Cube := Box(Origin,Sz3D(3,3,3),Colors.Green);\n  Cube.AnimRotate(OrtZ,180).Forever.Begin\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that shuffles an array using the Fisher-Yates algorithm. Define a generic procedure Shuffle that randomly swaps elements. Test with an array of integers 1 through 9.",
+    "output": "procedure Shuffle<T>(a: array of T);\nbegin\n  for var i := a.Length - 1 downto 1 do\n    Swap(a[i], a[Random(i + 1)]);\nend;\n\nbegin\n  var a := Arr(1..9);\n  Shuffle(a);\n  a.Print;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that creates a simple windowed application using WPF. Create a stack panel with a button and a label. When the button is clicked, increment a counter and update the label.",
+    "output": "uses WPF;\n\nbegin\n  var mainpanel := Panels.StackPanel(200).AsMainContent;\n  var b := CreateButton('Click me!');\n  var lb := CreateLabel('0');\n  mainpanel.AddElements(b,lb);\n  b.Click += (o,e) -> begin\n    clicks += 1;\n    lb.Content := clicks;\n  end;  \nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements a singly linked list with element insertion. Define a generic Node class and a SinglyLinkedList class with AddFirst and AddAfter methods. Create a list, add elements, insert an element after the first, and print the list.",
+    "output": "type Node<T> = auto class\n  data: T;\n  next: Node<T>;\nend;\n\ntype \n  SinglyLinkedList<T> = class\n    first: Node<T>;\n    procedure AddFirst(x: T);\n    begin\n      first := new Node<T>(x,first);\n    end;\n    procedure AddAfter(p: Node<T>; x: T);\n    begin\n      p.next := new Node<T>(x,p.next);\n    end;\n    procedure PrintList();\n    begin\n      var p := first;\n      while p<>nil do\n      begin\n        Print(p.data);\n        p := p.next;\n      end;\n    end;\n  end;\n\nbegin\n  var lst := new SinglyLinkedList<integer>;\n  lst.AddFirst(2); lst.AddFirst(3);\n  lst.AddAfter(lst.first,555);\n  lst.PrintList;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that sleeps for a specified number of milliseconds. Read an integer from the user, print 'Sleeping...', sleep for that many milliseconds, then print 'Awake!'.",
+    "output": "begin\n  var ms := ReadInteger;\n  Print('Sleeping...');\n  Sleep(ms);\n  Print('Awake!');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that sorts an integer array using the built-in Sort procedure. Create an array [5,1,4,2,3], sort it, and print the result.",
+    "output": "##\nvar a := Arr(5,1,4,2,3);\nSort(a);\nPrint(a);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates string case conversion. Define a string variable with mixed case, then print it in lowercase and uppercase using ToLower and ToUpper methods.",
+    "output": "##\nvar s := 'exAmpLe sTrinG';\ns.ToLower.Println;\ns.ToUpper.Println;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that calculates the sum of elements below the main diagonal of a square matrix. Generate a 5x5 random integer matrix, print it, then compute and print the sum of elements where row index > column index.",
+    "output": "function SumBelowDiagonal(a: array [,] of integer): integer;\nbegin\n  var sum := 0;\n  for var i:=1 to a.RowCount-1 do\n  for var j:=0 to i-1 do \n    sum += a[i,j];\n  Result := sum;\nend;\n\nbegin\n  var a := MatrGen(5,5,(i,j) -> Random(1,5));\n  a.Println;\n  Print(SumBelowDiagonal(a));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that sums all multiples of 3 or 5 below 1000. Use a range and filter with Where, then sum the result.",
+    "output": "##\nvar n := 1000;\n(3..n-1).Where(i -> i.Divs(3) or i.Divs(5)).Sum.Println"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that computes the sum of the series 1/k^2 for k from 1 to 1000. Use Sum with a lambda expression.",
+    "output": "##\n(1..1000).Sum(k -> 1/k**2).Println"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that calculates the sum and product of an array of numbers from 1 to 9. Use the Sum and Product methods.",
+    "output": "##\nvar a := Arr(1..9);\nPrint(a.Sum,a.Product);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that calculates the sum of squares of elements in an array. Use the Sum method with a selector that squares each element.",
+    "output": "##\nvar vector := Arr(1,2,3,4,5,6,7);\nvector.Sum(x -> x * x).Println"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates string concatenation. Start with 'Pascal', append 'ABC' and then '.NET', and print the result.",
+    "output": "##\nvar s := 'Pascal';\ns := s + 'ABC' + '.NET';\nPrint(s);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates string interpolation. Define a variable extra with value 'little', then create a formatted string using $ interpolation that includes the variable, and print it.",
+    "output": "##\nvar extra := 'little';\nvar formatted := $'Mary has a {extra} lamb.';\nPrint(formatted);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that gets the length of a string in characters and in bytes (UTF-8). Use the string 'møøse' and print both Length and UTF-8 byte count.",
+    "output": "##\nvar s := 'møøse';\nPrint(s.Length);\nPrint(System.Text.Encoding.Utf8.GetByteCount(s));"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates various string matching operations. Check if a string starts with a substring, ends with a substring, contains a substring, find first and second occurrence indices, and get all occurrence indices using Matches.",
+    "output": "##\nPrintln('abcd'.StartsWith('ab'));\nPrintln('abcd'.EndsWith('cd'));\nvar abra := 'abracadabra';\nPrintln('bra' in abra);\nvar ind := abra.IndexOf('bra');\nvar ind1 := abra.IndexOf('bra', ind + 1);\nPrintln(ind,ind1);\nbra.Matches('bra').Select(m -> m.Index).Println"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prepends a character to a string. Start with '12345678', prepend '0', and print the result.",
+    "output": "##\nvar s := '12345678';\ns := '0' + s;\nPrint(s);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that strips a set of characters from a string. Define a function StripChars that removes all occurrences of characters in a given set. Test by removing 'a', 'e', 'i' from a sample sentence.",
+    "output": "function StripChars(s,chars: string): string\n  := s.Where(c -> c not in chars).JoinToString;\n\nbegin\n  Print(StripChars('She was a soul stripper. She took my heart!','aei'));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that strips control codes and extended characters from a string, keeping only characters with ASCII codes 32-126. Test with a string containing control characters.",
+    "output": "function StripControlCodes(s: string): string\n  := s.Where(c -> c.Code in 32..126).JoinToString;\n\nbegin\n  var s := #127'abc'#1#15#31'def'#12;\n  Print(StripControlCodes(s));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates trimming whitespace from a string. Create a string with leading and trailing tabs and spaces. Print it after TrimStart, TrimEnd, and Trim, each followed by a pipe character to show boundaries.",
+    "output": "begin\n  var s := #9'  abc  '#9;\n  Writeln(s.TrimStart,'|');\n  Writeln(s.TrimEnd,'|');\n  Writeln(s.Trim,'|');\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that removes comments from a string. Define a function RemoveComments that removes everything after a given delimiter. Test with '#' and ';' delimiters.",
+    "output": "function RemoveComments(s,delim: string): string\n  := Regex.Replace(s, delim + '.+', '');\n\nbegin\n  Writeln(RemoveComments('apples, pears # and bananas','#'));\n  Writeln(RemoveComments('apples, pears ; and bananas'';'));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements a substitution cipher. Use a given key string that maps each printable ASCII character to another. Define Encode and Decode functions. Test with a sample sentence.",
+    "output": "{$zerobasedstrings}\n\nvar key := ']kYV}(!7P$n5_0i R:?jOWtF/=-pe''AD&@r6%ZXs\"v*N[#wSl9zq2^+g;LoB`aGh{3.HIu4fbK)mU8|dMET><,Qc\\C1yxJ';\n  \nfunction Encode(s: string): string := s.Select(c -> key[c.code - 32]).JoinToString;\n\nfunction Decode(s: string): string := s.Select(c -> Char(key.IndexOf(c) + 32)).JoinToString;\n  \nbegin\n  var s := 'The quick brown fox jumps over the lazy dog, who barks VERY loudly!';\n  var enc := Encode(s);\n  Println('Encoded:  ' + enc);\n  Println('Decoded:  ' + Decode(enc))  \nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates various substring operations. Enable zero-based strings. Extract a substring of length m starting at position n, a substring from position n to the end, a substring from the beginning up to the second last character, and substrings starting from specific search positions.",
+    "output": "{$zerobasedstrings}\nconst \n  n = 3;\n  m = 2;\n\nbegin\n  var s := '0123456789';\n  Writeln(s.Substring(n, m));\n  Writeln(s[n:]);\n  Writeln(s[:^1]);\n  Writeln(s.Substring(s.IndexOf('3'), m));\n  Writeln(s.Substring(s.IndexOf('456'), m));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates substring slicing with zero-based strings. Print a string from index 1 to end, from start to second last, and from index 1 to second last.",
+    "output": "{$zerobasedstrings}\nbegin\n  var s := '0123456789';\n  Writeln(s[1:]);\n  Writeln(s[:^1]);\n  Writeln(s[1:^1]);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements the Sudan function. Define a recursive function F(n,x,y) according to the definition. Test with F(1,3,3) and print the result.",
+    "output": "function F(n,x,y: integer): integer;\nbegin\n  if n = 0 then\n    Result := x + y\n  else if y = 0 then\n    Result := x\n  else Result := F(n - 1, F(n, x, y - 1), F(n, x, y - 1) + y);\nend;\n\nbegin\n  F(1,3,3).Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates a union data type using explicit layout. Define a record with FieldOffset attributes to overlay different types (integer, real, DateTime) at the same memory location. Assign values to each field and print them.",
+    "output": "uses System.Runtime.InteropServices ;\n\ntype \n  [StructLayout(LayoutKind.Explicit)]\n  Union = record \n    [FieldOffset(0)]\n    i: integer;\n    [FieldOffset(0)]\n    r: real;\n    [FieldOffset(0)]\n    d: DateTime;\n  end;\n\nbegin\n  var x: Union;\n  x.i := 1;\n  Println(x.i);\n  x.r := 2.5;\n  Println(x.r);\n  x.d := DateTime.Now;\n  Println(x.d);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that sums the digits of an integer in a given base. Define a function SumDigits that repeatedly extracts digits. Test with decimal 1, decimal 1234, hexadecimal FE, and hexadecimal F0E.",
+    "output": "function SumDigits(n, base: integer): integer;\nbegin\n  var sum := 0;\n  while n > 0 do\n  begin\n    sum += n mod base;\n    n := n div base;\n  end;\n  Result := sum;\nend;\n\nbegin\n  Print(SumDigits(1, 10));\n  Print(SumDigits(1234, 10));\n  Print(SumDigits($FE, 16));\n  Print(SumDigits($F0E, 16));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that transliterates English text to Greek using a dictionary of replacements. Define a dictionary mapping English letter combinations to Greek characters. Test with three sample texts and print both original and transliterated versions.",
+    "output": "var repl := Dict(\n    ('ch', 'χ'), ('th', 'θ'), ('ps', 'ψ'), ('ph', 'f'), ('Ch', 'Χ'),\n    ('Th', 'Θ'), ('Ps', 'Ψ'), ('Ph', 'F'), ('ee', 'h'), ('ck', 'κ'), ('rh', 'r'), ('kh', 'χ'),\n    ('Kh', 'Χ'), ('oo', 'w'), \n    ($'a', 'α'), ($'b', 'β'), ($'c', 'κ'), ($'d', 'δ'), ($'e', 'ε'),\n    ($'f', 'φ'), ($'g', 'γ'), ($'h', 'η'), ($'i', 'ι'), ($'j', 'ι'), ($'k', 'κ'), ($'l', 'λ'),\n    ($'m', 'μ'), ($'n', 'ν'), ($'o', 'ο'), ($'p', 'π'), ($'q', 'κ'), ($'r', 'ρ'), ($'s', 'σ'),\n    ($'t', 'τ'), ($'u', 'υ'), ($'v', 'β'), ($'w', 'ω'), ($'x', 'ξ'), ($'y', 'υ'), ($'z', 'ζ'),\n    ($'D', 'Δ'), ($'F', 'Φ'), ($'G', 'Γ'), ($'J', 'I'), ($'L', 'Λ'), ($'P', 'Π'), ($'Q', 'Κ'),\n    ($'R', 'Ρ'), ($'S', 'Σ'), ($'Y', 'U'), ($'W', 'Ω'), ($'X', 'Ξ')\n);\n  \nvar texts := Arr(\n  'The quick brown fox jumped over the lazy dog.',\n\n  '''\n  I was looking at some rhododendrons in my back garden,\n  dressed in my khaki shorts, when the telephone rang.\n  \n  As I answered it, I cheerfully glimpsed that the July sun\n  caused a fragment of black pine wax to ooze on the velvet quilt\n  laying in my patio.\n  ''',\n\n  'sphinx of black quartz, judge my vow.'\n);\n  \nbegin\n  foreach var txt in texts do\n  begin\n    Println(txt); Println('=>');\n    var txt1 := txt;\n    foreach var pair in repl do\n      txt1 := txt1.Replace(pair.Key,pair.Value);\n    Println(txt1 + NewLine); \n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates tree traversal algorithms. Define a generic Node class and helper function ND to create nodes. Implement prefix, infix, postfix, and level-order traversal procedures. Test with a sample binary tree.",
+    "output": "type\n  Node<T> = auto class\n    data: T;\n    left,right: Node<T>;\n  end;\n  \nfunction ND<T>(data: T; left: Node<T> := nil; right: Node<T> := nil) \n  := new Node<T>(data,left,right);\n\nprocedure Prefix<T>(r: Node<T>);\nbegin\n  if r = nil then\n    exit;\n  Print(r.data);\n  Prefix(r.left);\n  Prefix(r.right);\nend;\n\nprocedure Infix<T>(r: Node<T>);\nbegin\n  if r = nil then\n    exit;\n  Infix(r.left);\n  Print(r.data);\n  Infix(r.right);\nend;\n\nprocedure Postfix<T>(r: Node<T>);\nbegin\n  if r = nil then\n    exit;\n  Postfix(r.left);\n  Postfix(r.right);\n  Print(r.data);\nend;\n\nprocedure LevelOrder<T>(r: Node<T>);\nbegin\n  if r = nil then\n    exit;\n  var q := new Queue<Node<T>>;\n  q.Enqueue(r);\n  while q.Count > 0 do\n  begin\n    var x := q.Dequeue;\n    Print(x.data);\n    if x.left <> nil then\n      q.Enqueue(x.Left);\n    if x.Right <> nil then\n      q.Enqueue(x.Right);\n  end;\nend;\n\nbegin\n  var root := ND(1,ND(2,ND(4,ND(7)),ND(5)),ND(3,ND(6,ND(8),ND(9))));\n  Println(root);\n  Prefix(root); Println;\n  Infix(root); Println;\n  Postfix(root); Println;\n  LevelOrder(root); Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that computes the two's complement of a number by using bitwise NOT and adding 1. Test with 56 and print the result.",
+    "output": "begin\n  var x := 56;\n  x := not x + 1;\n  Print(x);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates symmetric difference between two sets. Create two hash sets of names, compute the symmetric difference (union minus intersection), and also the individual differences.",
+    "output": "begin\n  var s1: HashSet<string> := HSet('John', 'Serena', 'Bob', 'Mary', 'Serena');\n  var s2 := HSet('Jim', 'Mary', 'John', 'Jim', 'Bob');\n  Println((s1 - s2) + (s2 - s1));\n  Println(s1 - s2);\n  Println(s2 - s1);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints the current system time using DateTime.Now.",
+    "output": "##\nPrint(DateTime.Now)"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements a command-line note-taking application. If no arguments are provided, display the contents of 'Notes.txt'. If arguments are provided, append the current date and time followed by each argument on a new line to 'Notes.txt'.",
+    "output": "begin\n  //Print(ParamStr(1));\n  if ParamCount = 0 then\n    System.IO.File.ReadAllText('Notes.txt').Print\n  else begin\n    System.IO.File.AppendAllText('Notes.txt',DateTime.Now.ToString);\n    var s := (1..ParamCount).Select(i -> ParamStr(i)+NewLine).JoinToString;\n    s := #9 + NewLine + s;\n    System.IO.File.AppendAllText('Notes.txt',s);\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that finds tau numbers (numbers divisible by the number of their divisors). Generate and print the first 100 tau numbers.",
+    "output": "##\nfunction DivisorsCount(n: integer) := Range(1,n).Count(i -> n.Divs(i));\n\nvar lst := new List<integer>;\nvar n := 1;\nwhile lst.Count < 100 do\nbegin\n  if n.Divs(DivisorsCount(n)) then\n    lst.Add(n);\n  n += 1;\nend;\nlst.Println;"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that converts temperature from Kelvin to Celsius, Fahrenheit, and Rankine. Read a Kelvin temperature from the user and print the conversions.",
+    "output": "##\nvar k := ReadReal('Enter Kelvin Temperature:');\nPrintln('Celsius:',k - 273.15);\nPrintln('Fahrenheit:',k * 1.8 - 459.67);\nPrintln('Rankine:',k * 1.8);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that sets console text and background colors. Print 'Red on Yellow' with red foreground and yellow background, then reset to white on black and print 'White on black'.",
+    "output": "##\nConsole.ForegroundColor := ConsoleColor.Red;\nConsole.BackgroundColor := ConsoleColor.Yellow;\nConsole.WriteLine('Red on Yellow');\nConsole.ForegroundColor := ConsoleColor.White;\nConsole.BackgroundColor := ConsoleColor.Black;\nConsole.WriteLine('White on black');"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that demonstrates terminal cursor movement using the CRT unit. Move the cursor to various positions with pauses between movements, including relative movements and moving to corners.",
+    "output": "uses CRT;\n\nbegin\n  GotoXY(60,15);\n  Sleep(1000);\n  GotoXY(WhereX + 1,WhereY);\n  Sleep(1000);\n  GotoXY(WhereX - 1,WhereY);\n  Sleep(1000);\n  GotoXY(WhereX,WhereY - 1);\n  Sleep(1000);\n  GotoXY(WhereX,WhereY + 1);\n  Sleep(1000);\n  GotoXY(1,WhereY + 1);\n  Sleep(1000);\n  GotoXY(WindowWidth,WhereY + 1);\n  Sleep(1000);\n  GotoXY(1,1);\n  Sleep(1000);\n  GotoXY(WindowWidth,WindowHeight);\n  Sleep(10000);\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that positions the cursor at column 3, row 6 and prints 'Hello' using the CRT unit.",
+    "output": "uses CRT;\n\nbegin\n  GotoXY(3,6);\n  Write('Hello')\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that displays the terminal dimensions (width and height) using the CRT unit.",
+    "output": "uses CRT;\n\nbegin\n  Println(WindowWidth,WindowHeight)\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that prints the pound symbol '£' using the CRT unit.",
+    "output": "uses CRT;\n\nbegin\n  Print('£')\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that tests a function using NUnit. Define a function IsPalindrome and create a test procedure with Assert.AreEqual and Assert.AreNotEqual to verify it works correctly.",
+    "output": "uses NUnitABC;\n\nfunction IsPalindrome(s: string) := s = s[::-1];\n\n[Test]\nprocedure Test1;\nbegin\n  Assert.AreEqual(IsPalindrome('abba'),True); \n  Assert.AreNotEqual(IsPalindrome('abcd'),True); \nend;\n\nbegin\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that times the execution of a function. Define a function LongTimeCalc that performs nested loops. Use MillisecondsDelta to measure and print the time taken to execute the function.",
+    "output": "function LongTimeCalc(n: integer): real;\nbegin\n  var sum := 0.0;\n  for var i:=1 to n do\n    for var j := 1 to n do\n      sum += 1/i/j;\n  Result := sum;  \nend;\n\nbegin\n  MillisecondsDelta;\n  LongTimeCalc(10000).Println;\n  MillisecondsDelta.Println;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that tokenizes a comma-separated string and rejoins it with periods. Start with 'Hello,How,Are,You,Today', split by commas, then join with periods and print.",
+    "output": "begin\n  var s := 'Hello,How,Are,You,Today';\n  var strings := s.Split(',');\n  Print(strings.JoinToString('.'));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that displays the top N (e.g., 3) highest-paid employees per department from a given dataset. Group the data by department, sort each group by salary descending, take the top 3, and print formatted results.",
+    "output": "begin\n  var data := |('Tyler Bennett', 'E10297', 32000, 'D101'),\n        ('John Rappl', 'E21437', 47000, 'D050'),\n        ('George Woltman', 'E00127', 53500, 'D101'),\n        ('Adam Smith', 'E63535', 18000, 'D202'),\n        ('Claire Buckman', 'E39876', 27800, 'D202'),\n        ('David McClellan', 'E04242', 41500, 'D101'),\n        ('Rich Holcomb', 'E01234', 49500, 'D202'),\n        ('Nathan Adams', 'E41298', 21900, 'D050'),\n        ('Richard Potter', 'E43128', 15900, 'D101'),\n        ('David Motsinger', 'E27002', 19250, 'D202'),\n        ('Tim Sampair', 'E03033', 27000, 'D101'),\n        ('Kim Arlich', 'E10001', 57000, 'D190'),\n        ('Timothy Grove', 'E16398', 29900, 'D190')|;\n\n  var N := 3;\n  foreach var group in data.GroupBy(rec -> rec[3]).OrderBy(gr -> gr.Key) do\n  begin\n    Println('Department',group.Key);\n    Println($'  Employee Name       Employee ID     Salary');\n    foreach var rec in group.OrderByDescending(x -> x[2]).Take(3) do\n      Println($'  {rec[0],-18}  {rec[1],-14}  {rec[2]}');\n    Println;\n  end;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that solves the Towers of Hanoi problem recursively. Define a procedure Hanoi that prints moves. Call with 5 disks from peg 1 to peg 3 using peg 2 as auxiliary.",
+    "output": "## procedure Hanoi(n,rfrom,rto,rwork: integer);\nbegin\n  if n = 0 then\n    exit;\n  Hanoi(n-1,rfrom,rwork,rto);\n  Print($'{rfrom}→{rto} ');\n  Hanoi(n-1,rwork,rto,rfrom);\nend;\nHanoi(5,1,3,2);"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements the Trabb Pardo-Knuth algorithm. Read 11 integers, reverse them, and for each apply f(x) = sqrt(x) + 5*x^3. Print the result or 'overflow' if greater than 400.",
+    "output": "function f(x:real) := Sqrt(x) + 5 *x ** 3;\n\nbegin\n  var seq := ReadArrInteger(11).Reverse;\n  foreach var x in seq do\n  begin  \n    var fx := f(x);\n    Println($'f({x}): {fx > 400 ? ''overflow'' : fx.ToString}');  \n  end;  \nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that merges two associative arrays (dictionaries). Create a base dictionary with items (name, price, color) and an update dictionary with (price, color, year). Merge them such that keys from the update override those from the base. Print the resulting dictionary.",
+    "output": "begin\n  var base := Dict(('name','Rocket Skates'),\n    ('price','12.75'),\n    ('color','yellow'));\n  \n  var update := Dict(('price','15.25'),\n    ('color','red'),\n    ('year','1974'));\n    \n  var merged := new Dictionary<string,string>;\n  foreach var kv in base.Concat(update) do\n    merged[kv.Key] := kv.Value;\n  merged.PrintLines\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that computes vector products including dot product, cross product, scalar triple product, and vector triple product. Use System.Numerics.Vector3 for 3D vectors. Test with vectors a=(3,4,5), b=(4,3,5), c=(-5,-12,-13).",
+    "output": "uses System.Numerics;\n\nfunction DotProduct(v1,v2: Vector3): real\n  := v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;\n\nfunction CrossProduct(v1,v2: Vector3): Vector3\n  := new Vector3(v1.y * v2.z - v1.z * v2.y, \n                 v1.z * v2.x - v1.x * v2.z,\n                 v1.x * v2.y - v1.y * v2.x);\n\nfunction ScalarTripleProduct(a,b,c: Vector3): real\n  := DotProduct(a, CrossProduct(b, c));\n                 \nfunction VectorTripleProduct(a,b,c: Vector3): Vector3\n  := CrossProduct(a, CrossProduct(b, c));\n\n\nbegin\n  var a := new Vector3(3,4,5);\n  var b := new Vector3(4,3,5);\n  var c := new Vector3(-5,-12,-13);\n  Writeln(DotProduct(a, b));\n  Writeln(CrossProduct(a, b));\n  Writeln(ScalarTripleProduct(a, b, c));\n  Writeln(VectorTripleProduct(a, b, c));\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that writes a string to a file. Use WriteAllText to write 'string' to 'a.txt'.",
+    "output": "##\nWriteAllText('a.txt','string');"
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that declares arrays of x and y values for writing to a file (the writing part is not implemented). The x array contains [1,2,3,1e11] and the y array contains corresponding values.",
+    "output": "begin\n  var x := | 1, 2, 3, 1e11 |;\n  var y := | 1, 1.4142135623730951, 1.7320508075688772, 316227.76601683791 |;\nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that creates a simple graphical user interface with WPF. Create a canvas as main content, add a text box and a button, and display a message box (note: the code has some errors in variable naming).",
+    "output": "uses WPF;\nuses System.Windows;\n\nbegin\n  var cc := CreateCanvas.AsMainContent;\n  var tb1 := CreateTextBox('Enter string: ',200,20);\n  var b1 := CreateButton('');\n  cc.Add(tb);\n  MessageBox.Show('sdghjsgdfj');\n  \nend."
+  },
+  {
+    "instruction": "Write a PascalABC.NET program that implements a 2D Vector class with overloaded operators. Define a Vector class with x,y fields, a constructor, and ToString override. Define extension methods for +, -, scalar multiplication (both directions), and division. Test with vectors (1,2) and (3,4).",
+    "output": "type \n  Vector = class\n    x,y: real;\n  public\n    constructor (xx,yy: real) := (x,y) := (xx,yy);\n    function ToString: string; override := $'({x},{y})';\n  end;\n  \nfunction operator+(v1,v2: Vector): Vector; extensionmethod\n  := new Vector(v1.x + v2.x, v1.y + v2.y);\n  \nfunction operator-(v1,v2: Vector): Vector; extensionmethod\n  := new Vector(v1.x - v2.x, v1.y - v2.y);\n\nfunction operator*(v: Vector; n: real): Vector; extensionmethod\n  := new Vector(v.x * n, v.y * n);\n\nfunction operator*(n: real; v: Vector): Vector; extensionmethod\n  := v * n;\n\nfunction operator/(v: Vector; n: real): Vector; extensionmethod\n  := new Vector(v.x / n, v.y / n);\n\nbegin\n  var v1 := new Vector(1,2);\n  var v2 := new Vector(3,4);\n  Println(v1 + v2);\n  Println(v1 - v2);\n  Println(v1 * 2.5, 2.5 * v1);\n  Println(v1 / 2);\nend."
+  }
+]

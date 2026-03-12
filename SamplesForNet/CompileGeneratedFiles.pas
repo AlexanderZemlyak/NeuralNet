@@ -14,22 +14,22 @@
 
 uses PascalABCCompiler;
 
-const filesCount = 60;
+const filesCount = 1310;
 
 begin
   
   Languages.Integration.LanguageIntegrator.LoadAllLanguages();
   
+  var comp := new Compiler();
+  
   for var i := 0 to filesCount - 1 do
   begin
 
-    var baseDir := 'C:\PABCWork.NET\SamplesForNet\';
+    var baseDir := 'C:\Users\alex\Desktop\Дипломная\NeuralNetForPascal\SamplesForNet\';
     
     var fileName := $'{i}.pas';
     
     var fullFilename := baseDir + fileName;
-    
-    var comp := new Compiler();
     
     var co: CompilerOptions := new CompilerOptions(fullFilename, CompilerOptions.OutputType.ConsoleApplicaton);
     co.Debug := false;
@@ -37,6 +37,7 @@ begin
     co.OutputDirectory := baseDir;
     co.UseDllForSystemUnits := false;
     co.RunWithEnvironment := false; 
+    
     comp.ErrorsList.Clear();
     comp.Warnings.Clear();
     
@@ -47,23 +48,23 @@ begin
       var err := comp.ErrorsList.Last();
       
       Println($'Ошибка при компиляции файла {fileName}:{NewLine}{err}{NewLine}');
-      //if not err.ToString().Contains('а ожидался идентификатор') then
-      //  System.IO.File.Create(baseDir + $'{i}.exe');
+//      if not err.ToString().Contains($'те же имена, что и переменные') then
+//        System.IO.File.Create(baseDir + $'{i}.exe');
     end
     else
     begin
-      var res := comp.ParseText(fullFileName, System.IO.File.ReadAllText(fullFilename), comp.ErrorsList, comp.Warnings);
-      var stat := new SyntaxVisitors.ABCStatisticsVisitor();
-      stat.ProcessNode(res);
-      
-      var nh, ph : integer;
-      stat.CalcHealth(nh, ph);
-      
-      if nh > 0 then
-      begin
-        Println('Bad code style in ' + fileName);
-        System.IO.File.Delete(baseDir + $'{i}.exe');
-      end;
+//      var res := comp.ParseText(fullFileName, System.IO.File.ReadAllText(fullFilename), comp.ErrorsList, comp.Warnings);
+//      var stat := new SyntaxVisitors.ABCStatisticsVisitor();
+//      stat.ProcessNode(res);
+//      
+//      var nh, ph : integer;
+//      stat.CalcHealth(nh, ph);
+//      
+//      if nh > 0 then
+//      begin
+//        Println('Bad code style in ' + fileName);
+//        System.IO.File.Delete(baseDir + $'{i}.exe');
+//      end;
     end;
     
     

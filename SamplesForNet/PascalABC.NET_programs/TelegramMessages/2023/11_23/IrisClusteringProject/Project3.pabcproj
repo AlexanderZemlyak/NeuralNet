@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project FileVersion="2" Name="Project3" MainFile="Project3.pas" OutputFileName="Project3.exe" OutputDirectory="" ProjectType="ConsoleApp" IncludeDebugInfo="True" GenerateXMLDoc="False" CommandLineArguments="" AppIcon="" DeleteEXE="True" DeletePDB="True" Product="" Company="" Trademark="" Copyright="" Title="" Description="" MajorVersion="0" MinorVersion="0" BuildVersion="0" RevisionVersion="0">
+  <Items>
+    <Item Type="SourceFile" Name="Project3.pas" Path="Project3.pas" />
+    <Item Type="Reference" AssemblyName="Accord" FullAssemblyName="Accord.dll" />
+    <Item Type="Reference" AssemblyName="Accord.DataSets" FullAssemblyName="Accord.DataSets.dll" />
+    <Item Type="Reference" AssemblyName="Accord.IO" FullAssemblyName="Accord.IO.dll" />
+    <Item Type="Reference" AssemblyName="Accord.Math.Core" FullAssemblyName="Accord.Math.Core.dll" />
+    <Item Type="Reference" AssemblyName="Accord.Math" FullAssemblyName="Accord.Math.dll" />
+    <Item Type="Reference" AssemblyName="Accord.MachineLearning" FullAssemblyName="Accord.MachineLearning.dll" />
+    <Item Type="Reference" AssemblyName="Accord.Statistics" FullAssemblyName="Accord.Statistics.dll" />
+  </Items>
+</Project>

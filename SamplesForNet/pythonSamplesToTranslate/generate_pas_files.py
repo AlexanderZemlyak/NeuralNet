@@ -26,15 +26,15 @@ def generate_pascal_files_from_json(json_data):
             
             file_content = generate_pascal_file_content(solution)
 
-            baseDir = 'C:\\PABCWork.NET\\SamplesForNet\\'
+            baseDir = 'C:\\Users\\alex\\Desktop\\Дипломная\\NeuralNetForPascal\\SamplesForNet\\'
 
             # Сохраняем файл
             filename = baseDir + str(i) + '.pas'
             with open(filename, 'w', encoding='utf-8') as f:
                 f.write(file_content)
             
-            if (os.path.exists(str(i) + '.exe')):
-                os.remove(str(i) + '.exe')        
+            if (os.path.exists(baseDir + str(i) + '.exe')):
+                os.remove(baseDir + str(i) + '.exe')        
         
             print(f'Создан файл: {filename}')
           
@@ -55,12 +55,15 @@ def generate_pascal_file_content(solution):
 
 {solution}
 
+begin
+end.
+
 '''
     return content
 
 if __name__ == "__main__":
 
-    filename = 'C:\\PABCWork.NET\\SamplesForNet\\CodeFeedbackFiltered\\CodeFeedback_translated_batch2.json'
+    filename = 'pascal_translated1801-3110.json'
   
     with open(filename, 'r', encoding='utf-8') as f:
         json_data = f.read()

@@ -42,7 +42,7 @@ You are a PascalABC.NET coding assistant. Follow these rules:
 
 @dataclass
 class ModelArguments:
-    model_name_or_path: Optional[str] = field(default="deepseek-ai/deepseek-coder-1.3b-instruct")  # Изменил на 1.3B для Colab
+    model_name_or_path: Optional[str] = field(default="deepseek-ai/deepseek-coder-1.3b-instruct")
 
 @dataclass
 class DataArguments:

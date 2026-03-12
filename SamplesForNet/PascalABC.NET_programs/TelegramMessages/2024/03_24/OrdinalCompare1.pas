@@ -1,0 +1,31 @@
+﻿##
+var a := |'Сова', 'колосс', 'собака', 'KОт'|;
+a.OrderBy(t -> t).Println;
+a.Order.Println;
+var b := Copy(a);
+Sort(b);
+b.Println;
+SortDescending(b);
+b.Println;
+var lst := Lst(a);
+Sort(a, x -> x);
+a.Println;
+SortDescending(a, x -> x);
+a.Println;
+Sort(lst);
+lst.Println;
+SortDescending(lst);
+lst.Println;
+Sort(lst,x->x);
+lst.Println;
+SortDescending(lst,x->x);
+lst.Println;
+a.Sort();
+a.Println;
+a.SortDescending();
+a.Println;
+a.Sort(x->x);
+a.Println;
+a.SortDescending(x->x);
+a.Println;
+

@@ -1,0 +1,2 @@
+﻿##
+EnumerateAllFiles('..\','*.pas').PrintLines

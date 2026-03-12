@@ -1,0 +1,54 @@
+Translate python code in json file to PascalABC.NET language. Use learn_pascalabcnet_in_y_minutes.txt file as a reference for modern PascalABC.NET approaches and best practices. Translate code using concepts from there. 
+
+Remember these rules:
+
+PascalABC.NET is case insensitive language.
+
+DO NOT write nested local functions, write helpers before main function if needed
+
+DO NOT USE variable names like result or string or integer, because these names are RESERVED.  
+
+Do not change function and variable names dramatically, just write them in Pascal case. 
+
+DO NOT change instruction strings in samples. (Only if you need to replace description of python-specific concept by PascalABC.NET equivalent, for example use array word instead of list when it is possible to use array in implementation)
+
+Local variables MUST NOT REUSE OR SHADOW the names of parameters, functions, or outer-scope variables.
+
+Use & prefix for any .NET identifier that matches a Pascal reserved keyword. For example call Array.Sort method as follows: “&Array.Sort”. For Match type usage write “&Match”.
+
+DO NOT declare variables before begin end block. Use “var variable := value;” approach, uniting declaration and initialization.
+
+Use {$zerobasedstrings} directive when you need to access char in the string by it's index.
+
+
+
+Write translated samples in a new json file with similar structure. 
+
+========================================
+
+Correct compilation errors listed further, which were thrown when samples from failed.json output strings were compiled. Use learn_pascalabcnet_in_y_minutes.txt file as a reference for modern PascalABC.NET approaches and best practices. 
+
+Remember these rules: 
+
+1) PascalABC.NET is case insensitive language. 
+
+2) DO NOT write nested local functions, write helpers before main function if needed 
+
+3) DO NOT USE variable names like result or string or integer, because these names are RESERVED. 
+
+4) Do not change function and variable names dramatically, just write them in Pascal case. 
+
+5) DO NOT change instruction strings in samples. 
+
+6) Local variables MUST NOT REUSE OR SHADOW the names of parameters, functions, or outer-scope variables.
+
+7) Use & prefix for any .NET identifier that matches a Pascal reserved keyword. For example call Array.Sort method as follows: “&Array.Sort”. For Match type usage write “&Match”.
+
+8) DO NOT declare variables before begin end block. Use “var variable := value;” approach, uniting declaration and initialization.
+
+
+
+Give me corrected samples from failed.json in the same format. You can divide them in batches outputing here incrementally (batch size recommendation - 10).
+
+
+

@@ -43,7 +43,7 @@ end.
 
 if __name__ == "__main__":
     
-    filename = 'C:\\PABCWork.NET\\SamplesForNet\\CodeFeedbackFiltered\\CodeFeedback_translated_batch1.json'
+    filename = 'pascal_translated1801-3110.json'
 
     new_json_data = []
 
@@ -52,11 +52,11 @@ if __name__ == "__main__":
 
     data = json.loads(json_data)
 
-    for i in range(250):
-        if not os.path.exists('C:\\PABCWork.NET\\SamplesForNet\\' + str(i) + '.exe'):
+    for i in range(1310):
+        if not os.path.exists('..\\' + str(i) + '.exe'):
             new_json_data.append(data[i])
 
     file_content = json.dumps(new_json_data)
 
-    with open('C:\\PABCWork.NET\\SamplesForNet\\temp\\failed.json', 'w', encoding='utf-8') as f:
+    with open('..\\temp\\failed.json', 'w', encoding='utf-8') as f:
         f.write(file_content)

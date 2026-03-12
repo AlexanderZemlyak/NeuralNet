@@ -1,0 +1,1 @@
+﻿## var q:='''';var s:='## var q:=;var s:=;Print(s[:11]+q+q+q+q+s[11:19]+q+s+q+s[19:])';Print(s[:11]+q+q+q+q+s[11:19]+q+s+q+s[19:])

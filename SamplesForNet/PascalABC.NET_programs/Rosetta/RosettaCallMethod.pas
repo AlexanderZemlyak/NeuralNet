@@ -1,0 +1,18 @@
+﻿// https://rosettacode.org/wiki/Call_an_object_method
+
+type 
+  Point = auto class
+    x,y: real;
+    static function RandomPoint := new Point(Random(-10..10),Random(-10..10));
+    procedure Print;
+    begin
+      Writeln($'{x} {y}');
+    end;
+  end;
+
+begin
+  var p := new Point(2,3);
+  p.Print; // instance method call
+  p := Point.RandomPoint; // static method call
+  p.Print;
+end.
