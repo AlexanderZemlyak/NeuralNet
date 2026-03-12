@@ -14,8 +14,6 @@ from peft import LoraConfig, get_peft_model, TaskType
 
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-
 
 IGNORE_INDEX = -100
 EOT_TOKEN = "<|EOT|>"
@@ -143,21 +141,17 @@ def train_tokenize_function(examples, tokenizer):
     return data_dict
 
 def train():
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+    
     parser = transformers.HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     
-    # Для одного GPU просто используем cuda:0
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    print(f"Using device: {device}")
-    print(f"GPU: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU'}")
+    training_args.local_rank = -1
+    training_args.n_gpu = 1
+    training_args.remove_unused_columns = False  # Критически важно!
     
     print('='*100)
     print("Training Arguments:", training_args)
-    print("Model Arguments:", model_args)
-    print("Data Arguments:", data_args)
-    
-    # Убираем distributed настройки
-    training_args.local_rank = -1
     
     tokenizer = transformers.AutoTokenizer.from_pretrained(
         model_args.model_name_or_path,
@@ -167,34 +161,28 @@ def train():
         trust_remote_code=True
     )
 
-    # Добавляем pad token если его нет
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-
-    print("PAD Token:", tokenizer.pad_token, tokenizer.pad_token_id)
-    print("BOS Token", tokenizer.bos_token, tokenizer.bos_token_id)
-    print("EOS Token", tokenizer.eos_token, tokenizer.eos_token_id)
-
-    print("Load tokenizer from {} over.".format(model_args.model_name_or_path))
 
     torch.cuda.empty_cache()
     gc.collect()
 
-    # Загрузка модели
+    # Загружаем модель с отключенным кэшем
     model = transformers.AutoModelForCausalLM.from_pretrained(
         model_args.model_name_or_path,
         torch_dtype=torch.bfloat16,
         trust_remote_code=True,
-        low_cpu_mem_usage=True
+        low_cpu_mem_usage=True,
+        device_map=None,
+        use_cache=False  # Отключаем кэш для обучения
     )
 
-    # Добавляем LoRA
     model = get_peft_model(model, lora_config)
+    model = model.cuda()
     
-    # Перемещаем модель на GPU
-    model = model.to(device)
-
-    print("Load LoRA model from {} over.".format(model_args.model_name_or_path))
+    # Проверяем, что все параметры на одном устройстве
+    devices = {str(param.device) for _, param in model.named_parameters()}
+    print(f"Parameters devices: {devices}")
 
     # Загрузка датасета
     raw_train_datasets = load_dataset(
@@ -204,7 +192,6 @@ def train():
         cache_dir=training_args.cache_dir
     )
     
-    # Токенизация датасета
     train_dataset = raw_train_datasets.map(
         train_tokenize_function,
         batched=True,
@@ -217,14 +204,10 @@ def train():
     )
 
     print("Training dataset samples:", len(train_dataset))
-    for index in random.sample(range(len(train_dataset)), min(2, len(train_dataset))):
-        print(f"Sample {index} of the training set: {train_dataset[index]['input_ids']}, {train_dataset[index]['labels']}.")
-        print(f"Sample {index} of the training set: {tokenizer.decode(list(train_dataset[index]['input_ids']))}.")
 
     data_collator = DataCollatorForSupervisedDataset(tokenizer=tokenizer)
     data_module = dict(train_dataset=train_dataset, eval_dataset=None, data_collator=data_collator)
 
-    # Включаем gradient checkpointing
     model.gradient_checkpointing_enable()
 
     trainer = Trainer(
