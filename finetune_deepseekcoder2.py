@@ -147,7 +147,6 @@ def train():
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     
     training_args.local_rank = -1
-    training_args.n_gpu = 1
     training_args.remove_unused_columns = False  # Критически важно!
     
     print('='*100)
