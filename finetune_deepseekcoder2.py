@@ -142,17 +142,18 @@ def train():
     parser = transformers.HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     
-    # Для Colab проверяем доступность GPU
-    if not torch.cuda.is_available():
-        raise RuntimeError("CUDA is not available in Colab!")
+    # Для одного GPU просто используем cuda:0
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(f"Using device: {device}")
+    print(f"GPU: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU'}")
     
     print('='*100)
     print("Training Arguments:", training_args)
     print("Model Arguments:", model_args)
     print("Data Arguments:", data_args)
     
-    # Инициализация distributed для DeepSpeed
-    training_args.local_rank = int(os.environ.get("LOCAL_RANK", 0))
+    # Убираем distributed настройки
+    training_args.local_rank = -1
     
     tokenizer = transformers.AutoTokenizer.from_pretrained(
         model_args.model_name_or_path,
@@ -175,17 +176,21 @@ def train():
     torch.cuda.empty_cache()
     gc.collect()
 
-    # Загрузка модели с поддержкой bf16 для DeepSpeed
+    # Загрузка модели
     model = transformers.AutoModelForCausalLM.from_pretrained(
         model_args.model_name_or_path,
-        torch_dtype=torch.bfloat16,  # Используем bf16 для DeepSpeed
+        torch_dtype=torch.bfloat16,
         trust_remote_code=True,
-        # device_map="auto"  # Автоматическое распределение по GPU
+        low_cpu_mem_usage=True
     )
 
+    # Добавляем LoRA
     model = get_peft_model(model, lora_config)
+    
+    # Перемещаем модель на GPU
+    model = model.to(device)
 
-    print("Load LoRa model from {} over.".format(model_args.model_name_or_path))
+    print("Load LoRA model from {} over.".format(model_args.model_name_or_path))
 
     # Загрузка датасета
     raw_train_datasets = load_dataset(
@@ -194,34 +199,34 @@ def train():
         split="train",
         cache_dir=training_args.cache_dir
     )
-        
-    # Токенизация датасета - УМЕНЬШАЕМ параметры для Colab
+    
+    # Токенизация датасета
     train_dataset = raw_train_datasets.map(
         train_tokenize_function,
         batched=True,
-        batch_size=1000,  # Уменьшил с 3000
-        num_proc=4,       # Уменьшил с 32 для Colab
+        batch_size=1000,
+        num_proc=4,
         remove_columns=raw_train_datasets.column_names,
         load_from_cache_file=True,
         desc="Running Encoding",
-        fn_kwargs={ "tokenizer": tokenizer }
+        fn_kwargs={"tokenizer": tokenizer}
     )
 
     print("Training dataset samples:", len(train_dataset))
-    for index in random.sample(range(len(train_dataset)), 2):  # Уменьшил с 3
+    for index in random.sample(range(len(train_dataset)), min(2, len(train_dataset))):
         print(f"Sample {index} of the training set: {train_dataset[index]['input_ids']}, {train_dataset[index]['labels']}.")
         print(f"Sample {index} of the training set: {tokenizer.decode(list(train_dataset[index]['input_ids']))}.")
 
     data_collator = DataCollatorForSupervisedDataset(tokenizer=tokenizer)
     data_module = dict(train_dataset=train_dataset, eval_dataset=None, data_collator=data_collator)
 
-    # Добавляем gradient checkpointing для экономии памяти
+    # Включаем gradient checkpointing
     model.gradient_checkpointing_enable()
 
     trainer = Trainer(
-        model=model, 
-        tokenizer=tokenizer, 
-        args=training_args, 
+        model=model,
+        tokenizer=tokenizer,
+        args=training_args,
         **data_module
     )
 
