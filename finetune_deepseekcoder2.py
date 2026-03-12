@@ -12,6 +12,10 @@ from datasets import load_dataset
 
 from peft import LoraConfig, get_peft_model, TaskType
 
+import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 
 IGNORE_INDEX = -100
 EOT_TOKEN = "<|EOT|>"
