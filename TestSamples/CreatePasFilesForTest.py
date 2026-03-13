@@ -64,12 +64,12 @@ end;
 
 if __name__ == "__main__":
     
-    filename = 'C:\PABCWork.NET\TestSamples\human_eval_pascal.json'
+    filename = 'human_eval_pascal.json'
   
     with open(filename, 'r', encoding='utf-8') as f:
         json_data = f.read()
     
-    with open('C:\PABCWork.NET\TestSamples\completions_LoRa_checkpoint-175(16-4).json', 'r', encoding='utf-8') as f:
+    with open('completions_LoRa12_03_2026_5000samples_checkpoint-350(16-4).json', 'r', encoding='utf-8') as f:
         completions_data = f.read()
 
     generate_pascal_files_from_json(json_data, completions_data)
