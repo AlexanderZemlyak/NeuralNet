@@ -20,14 +20,14 @@ EOT_TOKEN = "<|EOT|>"
 
 lora_config = LoraConfig(
     task_type=TaskType.CAUSAL_LM,
-    r=16,                    # Rank - достаточно для качества
-    lora_alpha=32,           # Alpha = 2x rank
-    lora_dropout=0.05,       # Минимальный dropout
+    r=64,
+    lora_alpha=128,           # Alpha = 2x rank
+    lora_dropout=0.05,
     target_modules=[
         "q_proj", "v_proj", "k_proj", "o_proj",
         "gate_proj", "up_proj", "down_proj"  # Все attention и MLP слои
     ],
-    bias="none",
+    bias="all",
     modules_to_save=["embed_tokens", "lm_head"]  # Важно! Сохраняем embedding и head
 )
 
