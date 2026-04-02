@@ -19998,5 +19998,1113 @@
   {
     "instruction": "Write a function to validate whether a binary tree is balanced or not. A binary tree is balanced if the height of the two subtrees of any node never differ by more than one.",
     "output": "type TreeNode = class\n  val: integer;\n  left: TreeNode;\n  right: TreeNode;\n  constructor Create(v: integer; l: TreeNode := nil; r: TreeNode := nil);\n  begin\n    val := v;\n    left := l;\n    right := r;\n  end;\nend;\n\nfunction IsBalanced(root: TreeNode): boolean;\n  function CheckHeight(node: TreeNode): integer;\n  begin\n    if node = nil then\n    begin\n      Result := 0;\n      exit;\n    end;\n    \n    var leftHeight := CheckHeight(node.left);\n    if leftHeight = -1 then\n    begin\n      Result := -1;\n      exit;\n    end;\n    \n    var rightHeight := CheckHeight(node.right);\n    if rightHeight = -1 then\n    begin\n      Result := -1;\n      exit;\n    end;\n    \n    if Abs(leftHeight - rightHeight) > 1 then\n    begin\n      Result := -1;\n      exit;\n    end;\n    \n    Result := max(leftHeight, rightHeight) + 1;\n  end;\nbegin\n  Result := CheckHeight(root) <> -1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if the first and last characters of a string are equal. Rules: always put {$zerobasedstrings} and index strings from 0.",
+    "output": "{$zerobasedstrings}\nfunction FirstLastEqual(s: string): boolean;\nbegin\n  if s.Length = 0 then\n  begin\n    Result := False;\n    exit;\n  end;\n  Result := s[0] = s[s.Length - 1];\nend;"
+  },
+  {
+    "instruction": "Write a function that counts uppercase Latin letters in a string. Rules: use {$zerobasedstrings}; iterate from index 0 to Length-1.",
+    "output": "{$zerobasedstrings}\nfunction CountUpperLatin(s: string): integer;\nbegin\n  Result := 0;\n  for var i := 0 to s.Length - 1 do\n    if (s[i] >= 'A') and (s[i] <= 'Z') then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that converts a real value to integer by truncation and returns it. Rule: real-to-integer conversion must be explicit.",
+    "output": "function TruncExplicit(x: real): integer;\nbegin\n  Result := integer(x);\nend;"
+  },
+  {
+    "instruction": "Write a function that converts List<integer> to array of integer. Rule: List must be converted explicitly using ToArray().",
+    "output": "function CopyListToArray(lst: List<integer>): array of integer;\nbegin\n  Result := lst.ToArray();\nend;"
+  },
+  {
+    "instruction": "Write a function that returns n! for n >= 0. Rule: do not call Factorial unless you implement it yourself.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then\n    raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do\n    Result *= i;\nend;"
+  },
+  {
+    "instruction": "Write a function that counts primes from 1 to n. Rule: IsPrime can be used only after importing School module.",
+    "output": "uses School;\n\nfunction CountPrimes(n: integer): integer;\nbegin\n  Result := 0;\n  for var i := 2 to n do\n    if IsPrime(i) then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function with if-then-else that returns max of two integers. Rule: do not put semicolon before else; use begin..end for multiple statements.",
+    "output": "function Max2(a, b: integer): integer;\nbegin\n  if a > b then\n  begin\n    Result := a;\n  end\n  else\n  begin\n    Result := b;\n  end;\nend;"
+  },
+  {
+    "instruction": "Write a function that checks whether a char is a vowel. Rule: a one-symbol literal in single quotes is char.",
+    "output": "function IsVowel(c: char): boolean;\nbegin\n  Result := (c = 'a') or (c = 'e') or (c = 'i') or (c = 'o') or (c = 'u') or\n            (c = 'A') or (c = 'E') or (c = 'I') or (c = 'O') or (c = 'U');\nend;"
+  },
+  {
+    "instruction": "Write a function that creates an array of chars containing 'a', 'b', 'c'. Rule: Arr arguments must have one type.",
+    "output": "function MakeCharArray(): array of char;\nbegin\n  Result := Arr('a', 'b', 'c');\nend;"
+  },
+  {
+    "instruction": "Write a function that creates an array of strings containing \"s1\", \"s2\", and string version of char 'c'. Rule: one-char literal is char, convert to string using interpolation.",
+    "output": "function MakeStringArray(): array of string;\nbegin\n  Result := Arr('s1', 's2', $'c');\nend;"
+  },
+  {
+    "instruction": "Write a function that sums rounded values from List<real>. Rules: convert List to array explicitly and convert each real to integer explicitly.",
+    "output": "function SumRounded(lst: List<real>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var x in a do\n    Result += integer(x);\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if string starts with digit and ends with digit. Rules: {$zerobasedstrings}, zero-based indexing.",
+    "output": "{$zerobasedstrings}\nfunction StartsAndEndsWithDigit(s: string): boolean;\nbegin\n  if s.Length = 0 then\n  begin\n    Result := False;\n    exit;\n  end;\n  var first := s[0];\n  var last := s[s.Length - 1];\n  Result := (first >= '0') and (first <= '9') and (last >= '0') and (last <= '9');\nend;"
+  },
+  {
+    "instruction": "Write a function that computes permutations count P(n, k)=n!/(n-k)!. Rule: implement Factorial before using it.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then\n    raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do\n    Result *= i;\nend;\n\nfunction Permutations(n, k: integer): integer;\nbegin\n  if (k < 0) or (k > n) then\n  begin\n    Result := 0;\n    exit;\n  end;\n  Result := Factorial(n) div Factorial(n - k);\nend;"
+  },
+  {
+    "instruction": "Write a function that checks if all numbers in an array are prime. Rule: if IsPrime is used, import School.",
+    "output": "uses School;\n\nfunction AllPrime(a: array of integer): boolean;\nbegin\n  foreach var x in a do\n    if not IsPrime(x) then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns first index of char c in string s, or -1 if absent. Rules: {$zerobasedstrings}, index from 0.",
+    "output": "{$zerobasedstrings}\nfunction FirstIndexOfChar(s: string; c: char): integer;\nbegin\n  for var i := 0 to s.Length - 1 do\n    if s[i] = c then\n    begin\n      Result := i;\n      exit;\n    end;\n  Result := -1;\nend;"
+  },
+  {
+    "instruction": "Write a function that compares two reals by converting both to integer explicitly and checking equality.",
+    "output": "function EqualByIntegerPart(a, b: real): boolean;\nbegin\n  Result := integer(a) = integer(b);\nend;"
+  },
+  {
+    "instruction": "Write a function that appends char c to string s and returns new string. Rule: char is not string, convert using interpolation.",
+    "output": "function AppendCharToString(s: string; c: char): string;\nbegin\n  Result := s + $'{c}';\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if n is prime, without School module. Rule: if IsPrime is not imported, implement prime logic manually.",
+    "output": "function IsPrimeLocal(n: integer): boolean;\nbegin\n  if n < 2 then\n  begin\n    Result := False;\n    exit;\n  end;\n  var d := 2;\n  while d * d <= n do\n  begin\n    if n mod d = 0 then\n    begin\n      Result := False;\n      exit;\n    end;\n    d += 1;\n  end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that classifies integer x as -1, 0, or 1. Rule: keep correct if-then-else syntax, no semicolon before else.",
+    "output": "function SignClass(x: integer): integer;\nbegin\n  if x < 0 then\n  begin\n    Result := -1;\n  end\n  else if x = 0 then\n  begin\n    Result := 0;\n  end\n  else\n  begin\n    Result := 1;\n  end;\nend;"
+  },
+  {
+    "instruction": "Write a function that takes List<char>, converts it to array explicitly, and counts vowels. Rules: explicit List->array conversion; char literals are char.",
+    "output": "function CountVowelsInList(lst: List<char>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var c in a do\n    if (c = 'a') or (c = 'e') or (c = 'i') or (c = 'o') or (c = 'u') then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns the second character of a non-empty string. Rules: always add {$zerobasedstrings}; string indexing must start from 0.",
+    "output": "{$zerobasedstrings}\nfunction SecondChar(s: string): char;\nbegin\n  if s.Length < 2 then raise new Exception('Too short');\n  Result := s[1];\nend;"
+  },
+  {
+    "instruction": "Write a function that checks whether a string starts with letter 'A'. Rules: {$zerobasedstrings}; use index 0 for first character.",
+    "output": "{$zerobasedstrings}\nfunction StartsWithA(s: string): boolean;\nbegin\n  Result := (s.Length > 0) and (s[0] = 'A');\nend;"
+  },
+  {
+    "instruction": "Write a function that returns last character of a string or '#'. Rules: {$zerobasedstrings}; zero-based indexing.",
+    "output": "{$zerobasedstrings}\nfunction LastOrHash(s: string): char;\nbegin\n  if s.Length = 0 then Result := '#'\n  else Result := s[s.Length - 1];\nend;"
+  },
+  {
+    "instruction": "Write a function that counts digits in a string. Rules: {$zerobasedstrings}; iterate from 0 to Length-1.",
+    "output": "{$zerobasedstrings}\nfunction CountDigits(s: string): integer;\nbegin\n  Result := 0;\n  for var i := 0 to s.Length - 1 do\n    if (s[i] >= '0') and (s[i] <= '9') then Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that finds first index of '-' in a string, or -1. Rules: {$zerobasedstrings}; zero-based indexes.",
+    "output": "{$zerobasedstrings}\nfunction FindDash(s: string): integer;\nbegin\n  for var i := 0 to s.Length - 1 do\n    if s[i] = '-' then begin Result := i; exit; end;\n  Result := -1;\nend;"
+  },
+  {
+    "instruction": "Write a function that checks if string is palindrome (case-sensitive). Rules: {$zerobasedstrings}; indexes from 0.",
+    "output": "{$zerobasedstrings}\nfunction IsPal(s: string): boolean;\nbegin\n  for var i := 0 to s.Length div 2 - 1 do\n    if s[i] <> s[s.Length - 1 - i] then begin Result := False; exit; end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if first char is uppercase Latin. Rules: {$zerobasedstrings}; use s[0].",
+    "output": "{$zerobasedstrings}\nfunction FirstUpper(s: string): boolean;\nbegin\n  if s.Length = 0 then begin Result := False; exit; end;\n  Result := (s[0] >= 'A') and (s[0] <= 'Z');\nend;"
+  },
+  {
+    "instruction": "Write a function that returns middle character for odd-length string, else '#'. Rules: {$zerobasedstrings}; zero-based indexing.",
+    "output": "{$zerobasedstrings}\nfunction MiddleChar(s: string): char;\nbegin\n  if (s.Length = 0) or (s.Length mod 2 = 0) then Result := '#'\n  else Result := s[s.Length div 2];\nend;"
+  },
+  {
+    "instruction": "Write a function that checks whether string ends with '.' Rules: {$zerobasedstrings}; use index Length-1.",
+    "output": "{$zerobasedstrings}\nfunction EndsWithDot(s: string): boolean;\nbegin\n  Result := (s.Length > 0) and (s[s.Length - 1] = '.');\nend;"
+  },
+  {
+    "instruction": "Write a function that counts lowercase letters in positions with even index. Rules: {$zerobasedstrings}; index from 0.",
+    "output": "{$zerobasedstrings}\nfunction CountLowerEvenPos(s: string): integer;\nbegin\n  Result := 0;\n  for var i := 0 to s.Length - 1 do\n    if (i mod 2 = 0) and (s[i] >= 'a') and (s[i] <= 'z') then Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that swaps first and last characters in a string if length >= 2. Rules: {$zerobasedstrings}; zero-based string access.",
+    "output": "{$zerobasedstrings}\nfunction SwapFirstLast(s: string): string;\nbegin\n  if s.Length < 2 then begin Result := s; exit; end;\n  var a := s.ToCharArray();\n  var t := a[0];\n  a[0] := a[a.Length - 1];\n  a[a.Length - 1] := t;\n  Result := new string(a);\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if all chars in string are same. Rules: {$zerobasedstrings}; compare using indexes from 0.",
+    "output": "{$zerobasedstrings}\nfunction AllSameChars(s: string): boolean;\nbegin\n  if s.Length < 2 then begin Result := True; exit; end;\n  for var i := 1 to s.Length - 1 do\n    if s[i] <> s[0] then begin Result := False; exit; end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that counts spaces in a string. Rules: {$zerobasedstrings}; loop from 0 to Length-1.",
+    "output": "{$zerobasedstrings}\nfunction CountSpaces(s: string): integer;\nbegin\n  Result := 0;\n  for var i := 0 to s.Length - 1 do if s[i] = ' ' then Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns substring from index 0 to k inclusive (if possible). Rules: {$zerobasedstrings}; indexing from 0.",
+    "output": "{$zerobasedstrings}\nfunction PrefixToK(s: string; k: integer): string;\nbegin\n  if (k < 0) or (s.Length = 0) then begin Result := ''; exit; end;\n  if k >= s.Length then k := s.Length - 1;\n  Result := s.Substring(0, k + 1);\nend;"
+  },
+  {
+    "instruction": "Write a function that counts transitions where s[i] <> s[i+1]. Rules: {$zerobasedstrings}; zero-based indexing.",
+    "output": "{$zerobasedstrings}\nfunction CountTransitions(s: string): integer;\nbegin\n  Result := 0;\n  for var i := 0 to s.Length - 2 do\n    if s[i] <> s[i + 1] then Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns integer part of average of two real numbers. Rule: real to integer conversion must be explicit.",
+    "output": "function AvgInt(a, b: real): integer;\nbegin\n  Result := integer((a + b) / 2.0);\nend;"
+  },
+  {
+    "instruction": "Write a function that sums integer parts of all real elements in array. Rule: each real->integer cast must be explicit.",
+    "output": "function SumIntParts(a: array of real): integer;\nbegin\n  Result := 0;\n  foreach var x in a do Result += integer(x);\nend;"
+  },
+  {
+    "instruction": "Write a function that converts real radius to integer diameter. Rule: no implicit real->integer conversion.",
+    "output": "function DiameterInt(r: real): integer;\nbegin\n  Result := integer(2.0 * r);\nend;"
+  },
+  {
+    "instruction": "Write a function that takes List<integer> and returns its reversed array copy. Rule: List must be explicitly converted with ToArray().",
+    "output": "function ReversedFromList(lst: List<integer>): array of integer;\nbegin\n  var a := lst.ToArray();\n  System.Array.Reverse(a);\n  Result := a;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns sum of List<integer>. Rule: convert List to array explicitly via ToArray().",
+    "output": "function SumList(lst: List<integer>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var x in a do Result += x;\nend;"
+  },
+  {
+    "instruction": "Write a function that converts List<real> to array of integer parts. Rules: explicit ToArray(); explicit integer(...) cast.",
+    "output": "function ListRealToIntArray(lst: List<real>): array of integer;\nbegin\n  var r := lst.ToArray();\n  SetLength(Result, r.Length);\n  for var i := 0 to r.Length - 1 do Result[i] := integer(r[i]);\nend;"
+  },
+  {
+    "instruction": "Write a function that rounds down each element of List<real> and sums them. Rules: List->array explicit, real->integer explicit.",
+    "output": "function SumFloorLike(lst: List<real>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var x in a do Result += integer(x);\nend;"
+  },
+  {
+    "instruction": "Write a function that multiplies integer part of real x by integer k. Rule: explicit cast required.",
+    "output": "function MulIntPart(x: real; k: integer): integer;\nbegin\n  Result := integer(x) * k;\nend;"
+  },
+  {
+    "instruction": "Write a function that gets List<integer>, returns array where each element is doubled. Rule: explicit ToArray conversion.",
+    "output": "function DoubleListToArray(lst: List<integer>): array of integer;\nbegin\n  var a := lst.ToArray();\n  for var i := 0 to a.Length - 1 do a[i] *= 2;\n  Result := a;\nend;"
+  },
+  {
+    "instruction": "Write a function that computes integer percentage p of real value x. Rule: real->integer conversion only explicit.",
+    "output": "function PercentInt(x: real; p: integer): integer;\nbegin\n  Result := integer(x * p / 100.0);\nend;"
+  },
+  {
+    "instruction": "Write a function that reads List<real> and returns max integer part. Rules: explicit ToArray and explicit integer cast.",
+    "output": "function MaxIntPart(lst: List<real>): integer;\nbegin\n  var a := lst.ToArray();\n  if a.Length = 0 then raise new Exception('Empty');\n  Result := integer(a[0]);\n  for var i := 1 to a.Length - 1 do\n    if integer(a[i]) > Result then Result := integer(a[i]);\nend;"
+  },
+  {
+    "instruction": "Write a function that computes distance score as integer(sqrt(x*x+y*y)). Rule: explicit real->integer conversion required.",
+    "output": "function DistScore(x, y: real): integer;\nbegin\n  Result := integer(Sqrt(x * x + y * y));\nend;"
+  },
+  {
+    "instruction": "Write a function that converts List<char> to array of char and returns first element or '#'. Rule: explicit ToArray conversion.",
+    "output": "function FirstCharFromList(lst: List<char>): char;\nbegin\n  var a := lst.ToArray();\n  if a.Length = 0 then Result := '#'\n  else Result := a[0];\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if at least one integer part of List<real> equals target. Rules: ToArray explicit; integer(...) explicit.",
+    "output": "function ContainsIntPart(lst: List<real>; target: integer): boolean;\nbegin\n  var a := lst.ToArray();\n  foreach var x in a do\n    if integer(x) = target then begin Result := True; exit; end;\n  Result := False;\nend;"
+  },
+  {
+    "instruction": "Write a function that counts primes from 2 to n using standard IsPrime. Rule: import School before using IsPrime.",
+    "output": "uses School;\n\nfunction CountPrimesToN(n: integer): integer;\nbegin\n  Result := 0;\n  for var i := 2 to n do if IsPrime(i) then Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that filters prime numbers from array using standard IsPrime. Rule: IsPrime requires School module.",
+    "output": "uses School;\n\nfunction PrimeOnly(a: array of integer): array of integer;\nbegin\n  var lst := new List<integer>();\n  foreach var x in a do if IsPrime(x) then lst.Add(x);\n  Result := lst.ToArray();\nend;"
+  },
+  {
+    "instruction": "Write a factorial function for non-negative n. Rule: Factorial must be implemented explicitly, not assumed from standard modules.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do Result *= i;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns binomial C(n, k). Rule: implement Factorial locally before using it.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do Result *= i;\nend;\n\nfunction Binom(n, k: integer): integer;\nbegin\n  if (k < 0) or (k > n) then begin Result := 0; exit; end;\n  Result := Factorial(n) div (Factorial(k) * Factorial(n - k));\nend;"
+  },
+  {
+    "instruction": "Write a local prime check function without School module. Rule: if School is not imported, IsPrime must be implemented manually.",
+    "output": "function IsPrimeLocal(n: integer): boolean;\nbegin\n  if n < 2 then begin Result := False; exit; end;\n  var d := 2;\n  while d * d <= n do\n  begin\n    if n mod d = 0 then begin Result := False; exit; end;\n    d += 1;\n  end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that sums all prime numbers in array using School.IsPrime. Rule: include uses School.",
+    "output": "uses School;\n\nfunction SumPrimes(a: array of integer): integer;\nbegin\n  Result := 0;\n  foreach var x in a do if IsPrime(x) then Result += x;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns n-th triangular factorial-like product 1*2*...*n. Rule: implement logic directly, do not call undefined Factorial.",
+    "output": "function Prod1ToN(n: integer): integer;\nbegin\n  if n < 0 then raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 1 to n do Result *= i;\nend;"
+  },
+  {
+    "instruction": "Write a function that counts twin primes up to n using IsPrime. Rule: IsPrime allowed only with uses School.",
+    "output": "uses School;\n\nfunction CountTwinPrimes(n: integer): integer;\nbegin\n  Result := 0;\n  for var p := 3 to n - 2 do\n    if IsPrime(p) and IsPrime(p + 2) then Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that computes arrangements A(n,k)=n!/(n-k)!. Rule: implement Factorial before use.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do Result *= i;\nend;\n\nfunction Arrange(n, k: integer): integer;\nbegin\n  if (k < 0) or (k > n) then begin Result := 0; exit; end;\n  Result := Factorial(n) div Factorial(n - k);\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if exactly one number in array is prime. Rule: use School module for IsPrime.",
+    "output": "uses School;\n\nfunction ExactlyOnePrime(a: array of integer): boolean;\nbegin\n  var c := 0;\n  foreach var x in a do if IsPrime(x) then c += 1;\n  Result := c = 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that computes double factorial n!! for n>=0. Rule: implement function explicitly (not from standard module).",
+    "output": "function DoubleFactorial(n: integer): integer;\nbegin\n  if n < 0 then raise new Exception('n must be non-negative');\n  Result := 1;\n  var k := n;\n  while k > 1 do begin Result *= k; k -= 2; end;\nend;"
+  },
+  {
+    "instruction": "Write max function using if-then-else. Rule: do not put semicolon before else.",
+    "output": "function MaxInt(a, b: integer): integer;\nbegin\n  if a > b then\n    Result := a\n  else\n    Result := b;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns -1,0,1 by sign. Rule: correct else-if chain syntax.",
+    "output": "function Sign3(x: integer): integer;\nbegin\n  if x < 0 then\n    Result := -1\n  else if x = 0 then\n    Result := 0\n  else\n    Result := 1;\nend;"
+  },
+  {
+    "instruction": "Write function absolute value with if-else and two statements in branch. Rule: for multiple statements use begin..end.",
+    "output": "function AbsWithTmp(x: integer): integer;\nbegin\n  if x < 0 then\n  begin\n    var y := -x;\n    Result := y;\n  end\n  else\n  begin\n    Result := x;\n  end;\nend;"
+  },
+  {
+    "instruction": "Write function that returns larger of three integers using nested if-else. Rule: avoid semicolon before else.",
+    "output": "function Max3(a, b, c: integer): integer;\nbegin\n  if (a >= b) and (a >= c) then\n    Result := a\n  else if (b >= a) and (b >= c) then\n    Result := b\n  else\n    Result := c;\nend;"
+  },
+  {
+    "instruction": "Write function that checks if integer is in [l, r]. Rule: proper if-then-else block and begin..end where needed.",
+    "output": "function InRange(x, l, r: integer): boolean;\nbegin\n  if l > r then\n  begin\n    Result := False;\n  end\n  else\n  begin\n    Result := (x >= l) and (x <= r);\n  end;\nend;"
+  },
+  {
+    "instruction": "Write function that clamps integer x to [0,100]. Rule: correct if-then-else without extra semicolon.",
+    "output": "function Clamp01_100(x: integer): integer;\nbegin\n  if x < 0 then\n    Result := 0\n  else if x > 100 then\n    Result := 100\n  else\n    Result := x;\nend;"
+  },
+  {
+    "instruction": "Write function that returns parity text 'even' or 'odd'. Rule: if-else syntax must be correct.",
+    "output": "function ParityText(x: integer): string;\nbegin\n  if x mod 2 = 0 then\n    Result := 'even'\n  else\n    Result := 'odd';\nend;"
+  },
+  {
+    "instruction": "Write function that checks strict increasing order for 3 numbers. Rule: use begin..end for multi-statement branch.",
+    "output": "function IsStrictInc3(a, b, c: integer): boolean;\nbegin\n  if (a < b) and (b < c) then\n  begin\n    Result := True;\n  end\n  else\n  begin\n    Result := False;\n  end;\nend;"
+  },
+  {
+    "instruction": "Write function that returns smallest non-negative among a,b or -1 if both negative. Rule: proper if-then-else chain.",
+    "output": "function SmallestNonNeg(a, b: integer): integer;\nbegin\n  if (a < 0) and (b < 0) then\n    Result := -1\n  else if a < 0 then\n    Result := b\n  else if b < 0 then\n    Result := a\n  else if a < b then\n    Result := a\n  else\n    Result := b;\nend;"
+  },
+  {
+    "instruction": "Write function that returns true if x divisible by 3 and 5, else false. Rule: do not break if-else with semicolon before else.",
+    "output": "function DivBy3And5(x: integer): boolean;\nbegin\n  if (x mod 3 = 0) and (x mod 5 = 0) then\n    Result := True\n  else\n    Result := False;\nend;"
+  },
+  {
+    "instruction": "Write function that checks whether char c is digit. Rule: one-symbol literal in single quotes is char.",
+    "output": "function IsDigitChar(c: char): boolean;\nbegin\n  Result := (c >= '0') and (c <= '9');\nend;"
+  },
+  {
+    "instruction": "Write function that creates char array with letters q,w,e. Rule: Arr arguments must be same type (char).",
+    "output": "function QweChars(): array of char;\nbegin\n  Result := Arr('q', 'w', 'e');\nend;"
+  },
+  {
+    "instruction": "Write function that creates string array containing \"a\", \"s\", and \"c\" strings. Rule: convert char to string with interpolation.",
+    "output": "function AbcStrings(): array of string;\nbegin\n  Result := Arr($'a', $'b', $'c');\nend;"
+  },
+  {
+    "instruction": "Write function that appends char c to end of string s. Rule: char is not string; convert explicitly using interpolation.",
+    "output": "function AppendC(s: string; c: char): string;\nbegin\n  Result := s + $'{c}';\nend;"
+  },
+  {
+    "instruction": "Write function that builds array of strings from chars a,b and word \"cat\". Rule: all Arr elements must be string, use interpolation for chars.",
+    "output": "function MixedToStrings(): array of string;\nbegin\n  Result := Arr($'a', $'b', 'cat');\nend;"
+  },
+  {
+    "instruction": "Write function that returns true if char c equals lowercase x. Rule: literal 'x' is char, not string.",
+    "output": "function IsLowerX(c: char): boolean;\nbegin\n  Result := c = 'x';\nend;"
+  },
+  {
+    "instruction": "Write function that creates array of chars for vowels. Rule: do not mix char and string in Arr.",
+    "output": "function VowelChars(): array of char;\nbegin\n  Result := Arr('a', 'e', 'i', 'o', 'u');\nend;"
+  },
+  {
+    "instruction": "Write function that returns string made of two chars c1 and c2. Rule: convert chars to string with interpolation.",
+    "output": "function TwoCharsToString(c1, c2: char): string;\nbegin\n  Result := $'{c1}{c2}';\nend;"
+  },
+  {
+    "instruction": "Write function that returns array of strings from chars '1','2','3'. Rule: chars must be converted to strings explicitly.",
+    "output": "function DigitStrings(): array of string;\nbegin\n  Result := Arr($'1', $'2', $'3');\nend;"
+  },
+  {
+    "instruction": "Write function that checks if char c is one of '+','-','*','/'. Rule: these literals are char values.",
+    "output": "function IsOpChar(c: char): boolean;\nbegin\n  Result := (c = '+') or (c = '-') or (c = '*') or (c = '/');\nend;"
+  },
+  {
+    "instruction": "Write function that returns true if first and last chars of string are vowels. Rules: {$zerobasedstrings}; char literals are char.",
+    "output": "{$zerobasedstrings}\nfunction EdgeVowels(s: string): boolean;\n  function V(c: char): boolean;\n  begin\n    Result := (c='a') or (c='e') or (c='i') or (c='o') or (c='u');\n  end;\nbegin\n  if s.Length = 0 then begin Result := False; exit; end;\n  Result := V(s[0]) and V(s[s.Length - 1]);\nend;"
+  },
+  {
+    "instruction": "Write function that takes List<real>, converts to array, and returns integer sum of positive elements only. Rules: ToArray explicit; integer cast explicit; correct if-else blocks.",
+    "output": "function SumPosIntParts(lst: List<real>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var x in a do\n    if x > 0 then\n      Result += integer(x)\n    else\n      Result += 0;\nend;"
+  },
+  {
+    "instruction": "Write function that counts prime digits in string (2,3,5,7). Rules: {$zerobasedstrings}; zero-based loop; char literals are char.",
+    "output": "{$zerobasedstrings}\nfunction CountPrimeDigitsChars(s: string): integer;\nbegin\n  Result := 0;\n  for var i := 0 to s.Length - 1 do\n    if (s[i] = '2') or (s[i] = '3') or (s[i] = '5') or (s[i] = '7') then Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write function that counts prime numbers in array using standard IsPrime. Rule: include uses School.",
+    "output": "uses School;\n\nfunction PrimeCountArr(a: array of integer): integer;\nbegin\n  Result := 0;\n  foreach var x in a do if IsPrime(x) then Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write function that computes sum of factorials from 1 to n. Rule: implement Factorial before usage.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do Result *= i;\nend;\n\nfunction SumFactorials(n: integer): integer;\nbegin\n  if n < 1 then begin Result := 0; exit; end;\n  Result := 0;\n  for var i := 1 to n do Result += Factorial(i);\nend;"
+  },
+  {
+    "instruction": "Write function that checks if a string has pattern letter-digit-letter at positions 0,1,2. Rules: {$zerobasedstrings}; use indexes 0..2; char comparisons.",
+    "output": "{$zerobasedstrings}\nfunction IsLdl(s: string): boolean;\nbegin\n  if s.Length < 3 then begin Result := False; exit; end;\n  var a := s[0]; var b := s[1]; var c := s[2];\n  Result := (a >= 'A') and (a <= 'z') and (b >= '0') and (b <= '9') and (c >= 'A') and (c <= 'z');\nend;"
+  },
+  {
+    "instruction": "Write function that converts List<char> to array and returns string concatenation. Rules: explicit ToArray; char to string via interpolation.",
+    "output": "function CharsListToString(lst: List<char>): string;\nbegin\n  var a := lst.ToArray();\n  Result := '';\n  foreach var c in a do Result += $'{c}';\nend;"
+  },
+  {
+    "instruction": "Write function that rounds each real in array to integer by explicit cast and returns max. Rule: no implicit conversion.",
+    "output": "function MaxIntCast(a: array of real): integer;\nbegin\n  if a.Length = 0 then raise new Exception('Empty');\n  Result := integer(a[0]);\n  for var i := 1 to a.Length - 1 do\n    if integer(a[i]) > Result then Result := integer(a[i]);\nend;"
+  },
+  {
+    "instruction": "Write function that checks if array of integers is mountain-like. Rule: correct if-then-else and begin..end in multi-statement blocks.",
+    "output": "function IsMountain(a: array of integer): boolean;\nbegin\n  if a.Length < 3 then begin Result := False; exit; end;\n  var i := 1;\n  while (i < a.Length) and (a[i] > a[i - 1]) do i += 1;\n  if (i = 1) or (i = a.Length) then begin Result := False; exit; end;\n  while (i < a.Length) and (a[i] < a[i - 1]) do i += 1;\n  Result := i = a.Length;\nend;"
+  },
+  {
+    "instruction": "Write function that returns true if first char equals given char c. Rules: {$zerobasedstrings}; char literal semantics.",
+    "output": "{$zerobasedstrings}\nfunction StartsWithChar(s: string; c: char): boolean;\nbegin\n  Result := (s.Length > 0) and (s[0] = c);\nend;"
+  },
+  {
+    "instruction": "Write function that creates string array from words and one char exclamation mark. Rules: Arr element types must match; convert char to string.",
+    "output": "function WordsWithBang(): array of string;\nbegin\n  Result := Arr('go', 'now', $'!');\nend;"
+  },
+  {
+    "instruction": "Write function that returns integer score from real x and y: integer(x)+integer(y). Rule: explicit conversions only.",
+    "output": "function ScoreXY(x, y: real): integer;\nbegin\n  Result := integer(x) + integer(y);\nend;"
+  },
+  {
+    "instruction": "Write function that uses School.IsPrime to return first prime >= n. Rule: include uses School before IsPrime call.",
+    "output": "uses School;\n\nfunction FirstPrimeFrom(n: integer): integer;\nbegin\n  var x := n;\n  while not IsPrime(x) do x += 1;\n  Result := x;\nend;"
+  },
+  {
+    "instruction": "Write function that returns n! parity (0 even, 1 odd). Rule: implement Factorial explicitly and then use it.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do Result *= i;\nend;\n\nfunction FactParity(n: integer): integer;\nbegin\n  Result := Factorial(n) mod 2;\nend;"
+  },
+  {
+    "instruction": "Write function that counts places where s[i] is uppercase and s[i+1] is lowercase. Rules: {$zerobasedstrings}; loop by zero-based indexes.",
+    "output": "{$zerobasedstrings}\nfunction CountUpperLowerPairs(s: string): integer;\nbegin\n  Result := 0;\n  for var i := 0 to s.Length - 2 do\n    if (s[i] >= 'A') and (s[i] <= 'Z') and (s[i + 1] >= 'a') and (s[i + 1] <= 'z') then Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write function that from List<integer> returns true if first element is positive. Rule: List to array conversion must be explicit.",
+    "output": "function FirstPositive(lst: List<integer>): boolean;\nbegin\n  var a := lst.ToArray();\n  Result := (a.Length > 0) and (a[0] > 0);\nend;"
+  },
+  {
+    "instruction": "Write function that classifies real x as negative/zero/positive integer class. Rules: explicit integer cast; valid if-else syntax.",
+    "output": "function RealSignClass(x: real): integer;\nbegin\n  var ix := integer(x);\n  if ix < 0 then\n    Result := -1\n  else if ix = 0 then\n    Result := 0\n  else\n    Result := 1;\nend;"
+  },
+  {
+    "instruction": "Write function that checks if char c is hexadecimal digit. Rule: single-quoted one-symbol literal is char.",
+    "output": "function IsHexChar(c: char): boolean;\nbegin\n  Result := ((c >= '0') and (c <= '9')) or ((c >= 'A') and (c <= 'F')) or ((c >= 'a') and (c <= 'f'));\nend;"
+  },
+  {
+    "instruction": "Write function that returns array of strings from chars '[' and ']' and word mid. Rule: convert chars to strings in Arr.",
+    "output": "function BracketWords(): array of string;\nbegin\n  Result := Arr($'[', 'mid', $']');\nend;"
+  },
+  {
+    "instruction": "Write function that sums integer parts of absolute values from List<real>. Rules: explicit ToArray and explicit integer cast.",
+    "output": "function SumAbsInt(lst: List<real>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var x in a do Result += integer(Abs(x));\nend;"
+  },
+  {
+    "instruction": "Write function that checks if integer n is prime without School by local implementation. Rule: do not call undefined IsPrime.",
+    "output": "function IsPrimeStandalone(n: integer): boolean;\nbegin\n  if n < 2 then begin Result := False; exit; end;\n  for var d := 2 to integer(Sqrt(n)) do\n    if n mod d = 0 then begin Result := False; exit; end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write function that returns true if first and last elements of List<char> are equal. Rule: convert List to array explicitly.",
+    "output": "function FirstLastEqualCharList(lst: List<char>): boolean;\nbegin\n  var a := lst.ToArray();\n  Result := (a.Length > 0) and (a[0] = a[a.Length - 1]);\nend;"
+  },
+  {
+    "instruction": "Write function that returns first and last chars of string as a string. Rules: {$zerobasedstrings}; char to string interpolation.",
+    "output": "{$zerobasedstrings}\nfunction FirstLastAsString(s: string): string;\nbegin\n  if s.Length = 0 then begin Result := ''; exit; end;\n  Result := $'{s[0]}{s[s.Length - 1]}';\nend;"
+  },
+  {
+    "instruction": "Write function that creates array of chars from operators and checks count. Rule: char literals must stay char.",
+    "output": "function OpArrayLen(): integer;\nbegin\n  var a := Arr('+', '-', '*', '/');\n  Result := a.Length;\nend;"
+  },
+  {
+    "instruction": "Write function that creates array of strings from two words and char dot. Rule: convert char to string in Arr.",
+    "output": "function WordsDot(): array of string;\nbegin\n  Result := Arr('left', 'right', $'.');\nend;"
+  },
+  {
+    "instruction": "Write function that computes integer perimeter from real sides a,b,c. Rule: explicit real->integer conversion only.",
+    "output": "function PerimInt(a, b, c: real): integer;\nbegin\n  Result := integer(a + b + c);\nend;"
+  },
+  {
+    "instruction": "Write function that counts primes among integer parts of List<real>. Rules: explicit ToArray, explicit integer cast, uses School for IsPrime.",
+    "output": "uses School;\n\nfunction CountPrimeIntParts(lst: List<real>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var x in a do if IsPrime(integer(x)) then Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write function that computes n! and returns true if it is greater than m. Rule: Factorial must be implemented explicitly.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do Result *= i;\nend;\n\nfunction FactGreaterThan(n, m: integer): boolean;\nbegin\n  Result := Factorial(n) > m;\nend;"
+  },
+  {
+    "instruction": "Write function that checks if second char is vowel. Rules: {$zerobasedstrings}; second char is index 1.",
+    "output": "{$zerobasedstrings}\nfunction SecondIsVowel(s: string): boolean;\nbegin\n  if s.Length < 2 then begin Result := False; exit; end;\n  var c := s[1];\n  Result := (c='a') or (c='e') or (c='i') or (c='o') or (c='u');\nend;"
+  },
+  {
+    "instruction": "Write function that returns array of integer parts from real array. Rule: every cast must be explicit integer(...).",
+    "output": "function RealArrayToInts(a: array of real): array of integer;\nbegin\n  SetLength(Result, a.Length);\n  for var i := 0 to a.Length - 1 do Result[i] := integer(a[i]);\nend;"
+  },
+  {
+    "instruction": "Write function that returns true if n is prime and n+2 is prime using School.IsPrime. Rule: include uses School.",
+    "output": "uses School;\n\nfunction IsTwinStart(n: integer): boolean;\nbegin\n  Result := IsPrime(n) and IsPrime(n + 2);\nend;"
+  },
+  {
+    "instruction": "Write function that returns text \"ok\" if x>0 else \"bad\" with two statements in each branch. Rule: begin..end required for multiple statements.",
+    "output": "function LabelByPos(x: integer): string;\nbegin\n  if x > 0 then\n  begin\n    var t := 'ok';\n    Result := t;\n  end\n  else\n  begin\n    var t := 'bad';\n    Result := t;\n  end;\nend;"
+  },
+  {
+    "instruction": "Write function that creates string from char c repeated twice. Rule: char must be converted to string explicitly.",
+    "output": "function RepeatChar2(c: char): string;\nbegin\n  Result := $'{c}{c}';\nend;"
+  },
+  {
+    "instruction": "Write function that checks whether List<integer> converted array is strictly increasing. Rule: explicit ToArray conversion.",
+    "output": "function IncList(lst: List<integer>): boolean;\nbegin\n  var a := lst.ToArray();\n  for var i := 1 to a.Length - 1 do\n    if a[i] <= a[i - 1] then begin Result := False; exit; end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write function that returns true if integer part of real x is even. Rule: explicit integer cast.",
+    "output": "function IntPartEven(x: real): boolean;\nbegin\n  Result := integer(x) mod 2 = 0;\nend;"
+  },
+  {
+    "instruction": "Write function that checks if string starts and ends with same char c. Rules: {$zerobasedstrings}; zero-based indexing.",
+    "output": "{$zerobasedstrings}\nfunction StartsEndsWith(s: string; c: char): boolean;\nbegin\n  Result := (s.Length > 0) and (s[0] = c) and (s[s.Length - 1] = c);\nend;"
+  },
+  {
+    "instruction": "Write function that computes sum of first n primes using School.IsPrime. Rule: import School module.",
+    "output": "uses School;\n\nfunction SumFirstNPrimes(n: integer): integer;\nbegin\n  Result := 0;\n  var found := 0;\n  var x := 2;\n  while found < n do\n  begin\n    if IsPrime(x) then\n    begin\n      Result += x;\n      found += 1;\n    end;\n    x += 1;\n  end;\nend;"
+  },
+  {
+    "instruction": "Write function that computes factorial ratio n!/(n-1)! for n>=1. Rule: implement Factorial locally before call.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do Result *= i;\nend;\n\nfunction FactRatio(n: integer): integer;\nbegin\n  if n < 1 then raise new Exception('n must be >= 1');\n  Result := Factorial(n) div Factorial(n - 1);\nend;"
+  },
+  {
+    "instruction": "Write function that creates array of strings from chars '(' and ')' and word x. Rule: convert chars to strings with interpolation.",
+    "output": "function ParenX(): array of string;\nbegin\n  Result := Arr($'(', $'x', $')');\nend;"
+  },
+  {
+    "instruction": "Write function that classifies char c as vowel/consonant/non-letter with if-else chain. Rule: correct semicolon placement before else.",
+    "output": "function CharClass(c: char): string;\nbegin\n  if ((c >= 'A') and (c <= 'Z')) or ((c >= 'a') and (c <= 'z')) then\n  begin\n    if (c='a') or (c='e') or (c='i') or (c='o') or (c='u') or (c='A') or (c='E') or (c='I') or (c='O') or (c='U') then\n      Result := 'vowel'\n    else\n      Result := 'consonant';\n  end\n  else\n    Result := 'non-letter';\nend;"
+  },
+  {
+    "instruction": "Write function that checks whether integer part of each real in List<real> is positive. Rules: explicit ToArray and integer cast.",
+    "output": "function AllPosIntParts(lst: List<real>): boolean;\nbegin\n  var a := lst.ToArray();\n  foreach var x in a do\n    if integer(x) <= 0 then begin Result := False; exit; end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write function that returns first non-prime from array or -1 using School.IsPrime. Rule: include uses School.",
+    "output": "uses School;\n\nfunction FirstNonPrime(a: array of integer): integer;\nbegin\n  foreach var x in a do\n    if not IsPrime(x) then begin Result := x; exit; end;\n  Result := -1;\nend;"
+  },
+  {
+    "instruction": "Write function that returns concatenation of chars from List<char>. Rule: explicit List->array conversion and char->string conversion.",
+    "output": "function JoinChars(lst: List<char>): string;\nbegin\n  var a := lst.ToArray();\n  Result := '';\n  for var i := 0 to a.Length - 1 do Result += $'{a[i]}';\nend;"
+  },
+  {
+    "instruction": "Write function that returns true if string has at least one repeated adjacent char. Rules: {$zerobasedstrings}; indexes from 0.",
+    "output": "{$zerobasedstrings}\nfunction HasAdjRepeat(s: string): boolean;\nbegin\n  for var i := 0 to s.Length - 2 do\n    if s[i] = s[i + 1] then begin Result := True; exit; end;\n  Result := False;\nend;"
+  },
+  {
+    "instruction": "Write function that computes integer area from real width and height. Rule: explicit cast only.",
+    "output": "function AreaInt(w, h: real): integer;\nbegin\n  Result := integer(w * h);\nend;"
+  },
+  {
+    "instruction": "Write function that returns true if factorial of n is even. Rule: implement Factorial, do not assume predefined function.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do Result *= i;\nend;\n\nfunction IsFactEven(n: integer): boolean;\nbegin\n  Result := Factorial(n) mod 2 = 0;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if a string starts with digit. Rules: add {$zerobasedstrings}; string indexes are zero-based.",
+    "output": "{$zerobasedstrings}\nfunction StartsWithDigit(s: string): boolean;\nbegin\n  Result := (s.Length > 0) and (s[0] >= '0') and (s[0] <= '9');\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if a string ends with lowercase letter. Rules: {$zerobasedstrings}; use index Length-1.",
+    "output": "{$zerobasedstrings}\nfunction EndsWithLower(s: string): boolean;\nbegin\n  Result := (s.Length > 0) and (s[s.Length - 1] >= 'a') and (s[s.Length - 1] <= 'z');\nend;"
+  },
+  {
+    "instruction": "Write a function that counts occurrences of character c in string s. Rules: {$zerobasedstrings}; iterate from 0 to Length-1.",
+    "output": "{$zerobasedstrings}\nfunction CountChar(s: string; c: char): integer;\nbegin\n  Result := 0;\n  for var i := 0 to s.Length - 1 do\n    if s[i] = c then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns first index of uppercase letter in string, or -1. Rules: {$zerobasedstrings}; zero-based indexing.",
+    "output": "{$zerobasedstrings}\nfunction FirstUpperIndex(s: string): integer;\nbegin\n  for var i := 0 to s.Length - 1 do\n    if (s[i] >= 'A') and (s[i] <= 'Z') then\n    begin\n      Result := i;\n      exit;\n    end;\n  Result := -1;\nend;"
+  },
+  {
+    "instruction": "Write a function that checks whether adjacent characters are all different. Rules: {$zerobasedstrings}; compare s[i] and s[i+1].",
+    "output": "{$zerobasedstrings}\nfunction NoAdjacentEqual(s: string): boolean;\nbegin\n  for var i := 0 to s.Length - 2 do\n    if s[i] = s[i + 1] then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that converts real x to integer and adds integer y. Rule: real to integer conversion must be explicit.",
+    "output": "function AddIntPart(x: real; y: integer): integer;\nbegin\n  Result := integer(x) + y;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns integer average of two reals. Rule: use explicit cast integer(...).",
+    "output": "function AvgRealToInt(a, b: real): integer;\nbegin\n  Result := integer((a + b) / 2.0);\nend;"
+  },
+  {
+    "instruction": "Write a function that sums integer parts of positive reals in array. Rule: each real to integer conversion must be explicit.",
+    "output": "function SumPositiveIntParts(a: array of real): integer;\nbegin\n  Result := 0;\n  foreach var x in a do\n    if x > 0 then\n      Result += integer(x);\nend;"
+  },
+  {
+    "instruction": "Write a function that converts List<integer> to array and returns its length. Rule: List to array conversion must be explicit with ToArray().",
+    "output": "function ListLenAsArrayLen(lst: List<integer>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := a.Length;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns max value from List<integer>. Rule: first convert List to array explicitly.",
+    "output": "function MaxFromList(lst: List<integer>): integer;\nbegin\n  var a := lst.ToArray();\n  if a.Length = 0 then\n    raise new Exception('Empty list');\n  Result := a[0];\n  for var i := 1 to a.Length - 1 do\n    if a[i] > Result then\n      Result := a[i];\nend;"
+  },
+  {
+    "instruction": "Write a function that converts List<real> to array of integer parts. Rules: explicit ToArray(); explicit integer(...) casts.",
+    "output": "function IntPartsFromList(lst: List<real>): array of integer;\nbegin\n  var a := lst.ToArray();\n  SetLength(Result, a.Length);\n  for var i := 0 to a.Length - 1 do\n    Result[i] := integer(a[i]);\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if all integer parts of List<real> are non-negative. Rules: ToArray explicit; real to integer explicit.",
+    "output": "function AllIntPartsNonNeg(lst: List<real>): boolean;\nbegin\n  var a := lst.ToArray();\n  foreach var x in a do\n    if integer(x) < 0 then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that computes factorial for n>=0. Rule: implement Factorial directly, do not assume it exists in standard modules.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then\n    raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do\n    Result *= i;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns sum of factorials from 1 to n. Rule: implement Factorial before usage.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then\n    raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do\n    Result *= i;\nend;\n\nfunction SumFacts(n: integer): integer;\nbegin\n  if n < 1 then\n  begin\n    Result := 0;\n    exit;\n  end;\n  Result := 0;\n  for var i := 1 to n do\n    Result += Factorial(i);\nend;"
+  },
+  {
+    "instruction": "Write a function that checks primality using School.IsPrime. Rule: import School module before calling IsPrime.",
+    "output": "uses School;\n\nfunction IsPrimeStd(n: integer): boolean;\nbegin\n  Result := IsPrime(n);\nend;"
+  },
+  {
+    "instruction": "Write a function that counts primes in array using standard IsPrime. Rule: include uses School.",
+    "output": "uses School;\n\nfunction CountPrimesArray(a: array of integer): integer;\nbegin\n  Result := 0;\n  foreach var x in a do\n    if IsPrime(x) then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns first prime number in array or -1. Rule: use School module for IsPrime.",
+    "output": "uses School;\n\nfunction FirstPrimeOrMinusOne(a: array of integer): integer;\nbegin\n  foreach var x in a do\n    if IsPrime(x) then\n    begin\n      Result := x;\n      exit;\n    end;\n  Result := -1;\nend;"
+  },
+  {
+    "instruction": "Write a function max of two integers using if then else. Rule: do not put semicolon before else.",
+    "output": "function Max2(a, b: integer): integer;\nbegin\n  if a > b then\n    Result := a\n  else\n    Result := b;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns 1 if x>0 else 0. Rule: correct if then else syntax.",
+    "output": "function IsPositiveFlag(x: integer): integer;\nbegin\n  if x > 0 then\n    Result := 1\n  else\n    Result := 0;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns absolute value with two statements in branch. Rule: begin end is required for multiple statements.",
+    "output": "function AbsValue(x: integer): integer;\nbegin\n  if x < 0 then\n  begin\n    var y := -x;\n    Result := y;\n  end\n  else\n  begin\n    Result := x;\n  end;\nend;"
+  },
+  {
+    "instruction": "Write a function that clamps x to interval [10, 20]. Rule: keep proper else-if chain syntax.",
+    "output": "function Clamp10_20(x: integer): integer;\nbegin\n  if x < 10 then\n    Result := 10\n  else if x > 20 then\n    Result := 20\n  else\n    Result := x;\nend;"
+  },
+  {
+    "instruction": "Write a function that checks if char c is vowel. Rule: one-symbol literal in single quotes is char.",
+    "output": "function IsVowelChar(c: char): boolean;\nbegin\n  Result := (c = 'a') or (c = 'e') or (c = 'i') or (c = 'o') or (c = 'u') or\n            (c = 'A') or (c = 'E') or (c = 'I') or (c = 'O') or (c = 'U');\nend;"
+  },
+  {
+    "instruction": "Write a function that creates array of chars: '+', '-', '='. Rule: Arr arguments must have same type.",
+    "output": "function OpChars(): array of char;\nbegin\n  Result := Arr('+', '-', '=');\nend;"
+  },
+  {
+    "instruction": "Write a function that creates array of strings from two words and char '!'. Rule: convert char to string using interpolation.",
+    "output": "function WordsAndBang(): array of string;\nbegin\n  Result := Arr('run', 'test', $'!');\nend;"
+  },
+  {
+    "instruction": "Write a function that appends char c to string s. Rule: char is not string, convert it explicitly.",
+    "output": "function AppendChar(s: string; c: char): string;\nbegin\n  Result := s + $'{c}';\nend;"
+  },
+  {
+    "instruction": "Write a function that returns a string built from chars a and b. Rule: use interpolation for char to string conversion.",
+    "output": "function PairChars(a, b: char): string;\nbegin\n  Result := $'{a}{b}';\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if first and last chars are equal. Rules: {$zerobasedstrings}; zero-based string indexing.",
+    "output": "{$zerobasedstrings}\nfunction FirstLastSame(s: string): boolean;\nbegin\n  Result := (s.Length > 0) and (s[0] = s[s.Length - 1]);\nend;"
+  },
+  {
+    "instruction": "Write a function that counts consonants in string. Rules: {$zerobasedstrings}; iterate by indexes from 0.",
+    "output": "{$zerobasedstrings}\nfunction CountConsonants(s: string): integer;\n  function IsLetter(c: char): boolean;\n  begin\n    Result := ((c >= 'a') and (c <= 'z')) or ((c >= 'A') and (c <= 'Z'));\n  end;\n  function IsVowel(c: char): boolean;\n  begin\n    Result := (c='a') or (c='e') or (c='i') or (c='o') or (c='u') or\n              (c='A') or (c='E') or (c='I') or (c='O') or (c='U');\n  end;\nbegin\n  Result := 0;\n  for var i := 0 to s.Length - 1 do\n    if IsLetter(s[i]) and not IsVowel(s[i]) then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns index of last occurrence of char c, or -1. Rules: {$zerobasedstrings}; index from 0.",
+    "output": "{$zerobasedstrings}\nfunction LastIndexOfChar(s: string; c: char): integer;\nbegin\n  for var i := s.Length - 1 downto 0 do\n    if s[i] = c then\n    begin\n      Result := i;\n      exit;\n    end;\n  Result := -1;\nend;"
+  },
+  {
+    "instruction": "Write a function that computes integer Manhattan distance between two real points. Rule: cast real to integer explicitly.",
+    "output": "function ManhattanInt(x1, y1, x2, y2: real): integer;\nbegin\n  Result := integer(Abs(x1 - x2) + Abs(y1 - y2));\nend;"
+  },
+  {
+    "instruction": "Write a function that rounds down each List<real> element to integer and returns sum of even results. Rules: ToArray explicit; integer(...) explicit.",
+    "output": "function SumEvenIntParts(lst: List<real>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var x in a do\n  begin\n    var v := integer(x);\n    if v mod 2 = 0 then\n      Result += v;\n  end;\nend;"
+  },
+  {
+    "instruction": "Write a function that checks if all numbers in array are prime. Rule: import School and use IsPrime.",
+    "output": "uses School;\n\nfunction AllPrimeArray(a: array of integer): boolean;\nbegin\n  foreach var x in a do\n    if not IsPrime(x) then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns permutation count P(n,k)=n!/(n-k)!. Rule: implement Factorial before using it.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then\n    raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do\n    Result *= i;\nend;\n\nfunction PermCount(n, k: integer): integer;\nbegin\n  if (k < 0) or (k > n) then\n  begin\n    Result := 0;\n    exit;\n  end;\n  Result := Factorial(n) div Factorial(n - k);\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if integer part of real x is prime. Rule: explicit cast and School.IsPrime usage.",
+    "output": "uses School;\n\nfunction IntPartIsPrime(x: real): boolean;\nbegin\n  Result := IsPrime(integer(x));\nend;"
+  },
+  {
+    "instruction": "Write a function that creates string array from chars 'a','b','c'. Rule: char literals must be converted to string explicitly for string array.",
+    "output": "function CharStringsABC(): array of string;\nbegin\n  Result := Arr($'a', $'b', $'c');\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if middle character is digit. Rules: {$zerobasedstrings}; zero-based indexing.",
+    "output": "{$zerobasedstrings}\nfunction MiddleIsDigit(s: string): boolean;\nbegin\n  if s.Length = 0 then\n  begin\n    Result := False;\n    exit;\n  end;\n  var m := s.Length div 2;\n  Result := (s[m] >= '0') and (s[m] <= '9');\nend;"
+  },
+  {
+    "instruction": "Write a function that checks whether integer array is strictly decreasing. Rule: correct begin end and if-else syntax.",
+    "output": "function IsStrictDecreasing(a: array of integer): boolean;\nbegin\n  for var i := 1 to a.Length - 1 do\n    if a[i] >= a[i - 1] then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns integer score integer(a*0.6 + b*0.4). Rule: explicit real to integer conversion required.",
+    "output": "function WeightedScore(a, b: real): integer;\nbegin\n  Result := integer(a * 0.6 + b * 0.4);\nend;"
+  },
+  {
+    "instruction": "Write a function that joins List<char> into a string with commas between characters. Rule: explicit ToArray; char to string conversion when concatenating.",
+    "output": "function JoinCharsComma(lst: List<char>): string;\nbegin\n  var a := lst.ToArray();\n  Result := '';\n  for var i := 0 to a.Length - 1 do\n  begin\n    if i > 0 then\n      Result += ',';\n    Result += $'{a[i]}';\n  end;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if string has exactly one uppercase letter. Rules: {$zerobasedstrings}; zero-based indexing.",
+    "output": "{$zerobasedstrings}\nfunction ExactlyOneUpper(s: string): boolean;\nbegin\n  var cnt := 0;\n  for var i := 0 to s.Length - 1 do\n    if (s[i] >= 'A') and (s[i] <= 'Z') then\n      cnt += 1;\n  Result := cnt = 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns day number in year for a given month and day (non-leap year). Rules: use clear if-then-else blocks with begin end for multi-statement branches.",
+    "output": "function DayOfYear(month, day: integer): integer;\nbegin\n  var days := Arr(31,28,31,30,31,30,31,31,30,31,30,31);\n  if (month < 1) or (month > 12) then\n    raise new Exception('Invalid month');\n  if (day < 1) or (day > days[month - 1]) then\n    raise new Exception('Invalid day');\n  Result := day;\n  for var i := 0 to month - 2 do\n    Result += days[i];\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if year is leap. Rules: keep correct if-then-else syntax, no semicolon before else.",
+    "output": "function IsLeapYear(y: integer): boolean;\nbegin\n  if y mod 400 = 0 then\n    Result := True\n  else if y mod 100 = 0 then\n    Result := False\n  else\n    Result := y mod 4 = 0;\nend;"
+  },
+  {
+    "instruction": "Write a function that computes Euclidean distance between two points and returns integer part. Rule: real to integer conversion must be explicit.",
+    "output": "function DistInt(x1, y1, x2, y2: real): integer;\nbegin\n  Result := integer(Sqrt(Sqr(x2 - x1) + Sqr(y2 - y1)));\nend;"
+  },
+  {
+    "instruction": "Write a function that computes area of triangle by Heron formula and returns integer part. Rule: cast real to integer explicitly.",
+    "output": "function TriangleAreaInt(a, b, c: real): integer;\nbegin\n  var p := (a + b + c) / 2.0;\n  var s := Sqrt(p * (p - a) * (p - b) * (p - c));\n  Result := integer(s);\nend;"
+  },
+  {
+    "instruction": "Write a function that converts List<integer> of temperatures to array and returns average as real. Rule: List must be converted explicitly with ToArray().",
+    "output": "function AvgTemp(lst: List<integer>): real;\nbegin\n  var a := lst.ToArray();\n  if a.Length = 0 then\n    raise new Exception('Empty list');\n  var sum := 0;\n  foreach var x in a do\n    sum += x;\n  Result := sum / a.Length;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if string represents a 5-digit postal code. Rules: add {$zerobasedstrings}; index from 0.",
+    "output": "{$zerobasedstrings}\nfunction IsPostal5(s: string): boolean;\nbegin\n  if s.Length <> 5 then\n  begin\n    Result := False;\n    exit;\n  end;\n  for var i := 0 to 4 do\n    if (s[i] < '0') or (s[i] > '9') then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns count of words separated by single spaces. Rules: {$zerobasedstrings}; zero-based string indexing.",
+    "output": "{$zerobasedstrings}\nfunction CountWordsSimple(s: string): integer;\nbegin\n  if s.Length = 0 then\n  begin\n    Result := 0;\n    exit;\n  end;\n  Result := 1;\n  for var i := 0 to s.Length - 2 do\n    if (s[i] = ' ') and (s[i + 1] <> ' ') then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if string has balanced parentheses (). Rules: {$zerobasedstrings}; char literals are char.",
+    "output": "{$zerobasedstrings}\nfunction BalancedParens(s: string): boolean;\nbegin\n  var bal := 0;\n  for var i := 0 to s.Length - 1 do\n  begin\n    if s[i] = '(' then\n      bal += 1\n    else if s[i] = ')' then\n      bal -= 1;\n    if bal < 0 then\n    begin\n      Result := False;\n      exit;\n    end;\n  end;\n  Result := bal = 0;\nend;"
+  },
+  {
+    "instruction": "Write a function that converts List<real> of prices to array and returns integer sum of integer parts. Rules: explicit ToArray and integer(...) casts.",
+    "output": "function PriceIntSum(lst: List<real>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var p in a do\n    Result += integer(p);\nend;"
+  },
+  {
+    "instruction": "Write a function that creates array of strings for labels A, B, C from char literals. Rule: convert char to string explicitly with interpolation.",
+    "output": "function LabelsABC(): array of string;\nbegin\n  Result := Arr($'A', $'B', $'C');\nend;"
+  },
+  {
+    "instruction": "Write a function that returns sign text for number: negative, zero, positive. Rule: keep if-then-else syntax correct.",
+    "output": "function SignText(x: integer): string;\nbegin\n  if x < 0 then\n    Result := 'negative'\n  else if x = 0 then\n    Result := 'zero'\n  else\n    Result := 'positive';\nend;"
+  },
+  {
+    "instruction": "Write a function that computes factorial digit sum n! and sum of its decimal digits. Rule: implement Factorial explicitly before using it.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then\n    raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do\n    Result *= i;\nend;\n\nfunction FactorialDigitSum(n: integer): integer;\nbegin\n  var x := Factorial(n);\n  Result := 0;\n  while x > 0 do\n  begin\n    Result += x mod 10;\n    x := x div 10;\n  end;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns count of prime numbers from 1 to n. Rule: if IsPrime is used, import School module.",
+    "output": "uses School;\n\nfunction PrimeCountTo(n: integer): integer;\nbegin\n  Result := 0;\n  for var i := 2 to n do\n    if IsPrime(i) then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if all characters in string are hexadecimal digits. Rules: {$zerobasedstrings}; iterate from 0.",
+    "output": "{$zerobasedstrings}\nfunction AllHexChars(s: string): boolean;\nbegin\n  for var i := 0 to s.Length - 1 do\n  begin\n    var c := s[i];\n    var ok := ((c >= '0') and (c <= '9')) or ((c >= 'A') and (c <= 'F')) or ((c >= 'a') and (c <= 'f'));\n    if not ok then\n    begin\n      Result := False;\n      exit;\n    end;\n  end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns median of three integers. Rule: use proper if-else chain without syntax errors around else.",
+    "output": "function Median3(a, b, c: integer): integer;\nbegin\n  if (a >= b) and (a <= c) or (a >= c) and (a <= b) then\n    Result := a\n  else if (b >= a) and (b <= c) or (b >= c) and (b <= a) then\n    Result := b\n  else\n    Result := c;\nend;"
+  },
+  {
+    "instruction": "Write a function that converts List<char> to array and returns reversed string. Rules: explicit ToArray conversion; char to string by interpolation.",
+    "output": "function ReverseCharsToString(lst: List<char>): string;\nbegin\n  var a := lst.ToArray();\n  Result := '';\n  for var i := a.Length - 1 downto 0 do\n    Result += $'{a[i]}';\nend;"
+  },
+  {
+    "instruction": "Write a function that checks if string is valid simple time format HH:MM. Rules: {$zerobasedstrings}; zero-based indexing.",
+    "output": "{$zerobasedstrings}\nfunction IsTimeHHMM(s: string): boolean;\nbegin\n  if s.Length <> 5 then begin Result := False; exit; end;\n  if s[2] <> ':' then begin Result := False; exit; end;\n  if (s[0] < '0') or (s[0] > '9') or (s[1] < '0') or (s[1] > '9') then begin Result := False; exit; end;\n  if (s[3] < '0') or (s[3] > '9') or (s[4] < '0') or (s[4] > '9') then begin Result := False; exit; end;\n  var hh := integer(s[0]) - integer('0');\n  hh := hh * 10 + (integer(s[1]) - integer('0'));\n  var mm := integer(s[3]) - integer('0');\n  mm := mm * 10 + (integer(s[4]) - integer('0'));\n  Result := (hh >= 0) and (hh <= 23) and (mm >= 0) and (mm <= 59);\nend;"
+  },
+  {
+    "instruction": "Write a function that computes integer speed from real distance and real time. Rule: real to integer conversion must be explicit.",
+    "output": "function SpeedInt(distance, timeHours: real): integer;\nbegin\n  if timeHours = 0.0 then\n    raise new Exception('Division by zero');\n  Result := integer(distance / timeHours);\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if integer array is arithmetic progression. Rule: use begin end for multi-statement logic blocks.",
+    "output": "function IsArithmetic(a: array of integer): boolean;\nbegin\n  if a.Length <= 2 then\n  begin\n    Result := True;\n    exit;\n  end;\n  var d := a[1] - a[0];\n  for var i := 2 to a.Length - 1 do\n    if a[i] - a[i - 1] <> d then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns string from char c wrapped in brackets. Rule: char must be converted to string explicitly.",
+    "output": "function BracketChar(c: char): string;\nbegin\n  Result := $'[{c}]';\nend;"
+  },
+  {
+    "instruction": "Write a function that checks if all numbers in List<integer> are even. Rule: convert List to array explicitly with ToArray().",
+    "output": "function AllEvenList(lst: List<integer>): boolean;\nbegin\n  var a := lst.ToArray();\n  foreach var x in a do\n    if x mod 2 <> 0 then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns integer part of geometric mean sqrt(a*b). Rule: explicit cast from real to integer.",
+    "output": "function GeoMeanInt(a, b: real): integer;\nbegin\n  Result := integer(Sqrt(a * b));\nend;"
+  },
+  {
+    "instruction": "Write a function that counts vowels in string. Rules: {$zerobasedstrings}; char literals are char; indexes start at 0.",
+    "output": "{$zerobasedstrings}\nfunction CountVowels(s: string): integer;\nbegin\n  Result := 0;\n  for var i := 0 to s.Length - 1 do\n    if (s[i] = 'a') or (s[i] = 'e') or (s[i] = 'i') or (s[i] = 'o') or (s[i] = 'u') or\n       (s[i] = 'A') or (s[i] = 'E') or (s[i] = 'I') or (s[i] = 'O') or (s[i] = 'U') then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if n is prime and n+2 is prime. Rule: IsPrime can be used with School module import.",
+    "output": "uses School;\n\nfunction IsTwinPrimeStart(n: integer): boolean;\nbegin\n  Result := IsPrime(n) and IsPrime(n + 2);\nend;"
+  },
+  {
+    "instruction": "Write a function that computes combinations C(n,2). Rule: implement Factorial explicitly before using it.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then\n    raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do\n    Result *= i;\nend;\n\nfunction Comb2(n: integer): integer;\nbegin\n  if n < 2 then\n    Result := 0\n  else\n    Result := Factorial(n) div (Factorial(2) * Factorial(n - 2));\nend;"
+  },
+  {
+    "instruction": "Write a function that validates simple identifier: first char letter or underscore, others letter/digit/underscore. Rules: {$zerobasedstrings}; index from 0.",
+    "output": "{$zerobasedstrings}\nfunction IsSimpleIdentifier(s: string): boolean;\n  function IsLetter(c: char): boolean;\n  begin\n    Result := ((c >= 'a') and (c <= 'z')) or ((c >= 'A') and (c <= 'Z'));\n  end;\nbegin\n  if s.Length = 0 then begin Result := False; exit; end;\n  var c0 := s[0];\n  if not (IsLetter(c0) or (c0 = '_')) then begin Result := False; exit; end;\n  for var i := 1 to s.Length - 1 do\n  begin\n    var c := s[i];\n    var ok := IsLetter(c) or ((c >= '0') and (c <= '9')) or (c = '_');\n    if not ok then begin Result := False; exit; end;\n  end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that converts List<real> coordinates [x,y] to integer point array of length 2. Rules: List to array explicit; real to integer explicit.",
+    "output": "function PointIntFromList(lst: List<real>): array of integer;\nbegin\n  var a := lst.ToArray();\n  if a.Length < 2 then\n    raise new Exception('Need at least 2 values');\n  Result := Arr(integer(a[0]), integer(a[1]));\nend;"
+  },
+  {
+    "instruction": "Write a function that creates string array with symbols '+', '-', and word sum. Rule: do not mix char and string types in Arr without conversion.",
+    "output": "function SymbolsAndWord(): array of string;\nbegin\n  Result := Arr($'+', $'-', 'sum');\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if integer number is within [a,b], inclusive. Rule: proper if then else formatting and begin end where needed.",
+    "output": "function InSegment(x, a, b: integer): boolean;\nbegin\n  if a <= b then\n  begin\n    Result := (x >= a) and (x <= b);\n  end\n  else\n  begin\n    Result := (x >= b) and (x <= a);\n  end;\nend;"
+  },
+  {
+    "instruction": "Write a function that counts how many integer parts of real values are equal to zero in List<real>. Rules: explicit ToArray and integer(...) casts.",
+    "output": "function CountZeroIntParts(lst: List<real>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var x in a do\n    if integer(x) = 0 then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if string is all lowercase Latin letters. Rules: {$zerobasedstrings}; iterate with zero-based indexes.",
+    "output": "{$zerobasedstrings}\nfunction AllLowerLatin(s: string): boolean;\nbegin\n  if s.Length = 0 then begin Result := False; exit; end;\n  for var i := 0 to s.Length - 1 do\n    if (s[i] < 'a') or (s[i] > 'z') then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that computes integer checksum of string as sum of character codes. Rules: {$zerobasedstrings}; indexes from 0.",
+    "output": "{$zerobasedstrings}\nfunction Checksum(s: string): integer;\nbegin\n  Result := 0;\n  for var i := 0 to s.Length - 1 do\n    Result += integer(s[i]);\nend;"
+  },
+  {
+    "instruction": "Write a function that calculates final price after percent discount. Rule: convert real result to integer explicitly.",
+    "output": "function FinalPrice(price: real; discountPercent: integer): integer;\nbegin\n  if (discountPercent < 0) or (discountPercent > 100) then\n    raise new Exception('Invalid discount');\n  Result := integer(price * (100 - discountPercent) / 100.0);\nend;"
+  },
+  {
+    "instruction": "Write a function that calculates VAT amount as integer from real price and integer vat percent. Rule: real to integer cast must be explicit.",
+    "output": "function VatAmount(price: real; vatPercent: integer): integer;\nbegin\n  Result := integer(price * vatPercent / 100.0);\nend;"
+  },
+  {
+    "instruction": "Write a function that computes cashback points as integer(price/10). Rule: no implicit real to integer conversion.",
+    "output": "function CashbackPoints(price: real): integer;\nbegin\n  Result := integer(price / 10.0);\nend;"
+  },
+  {
+    "instruction": "Write a function that sums integer parts of monthly payments from List<real>. Rules: convert List to array explicitly and cast real to integer explicitly.",
+    "output": "function SumPaymentIntParts(lst: List<real>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var x in a do\n    Result += integer(x);\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if account code has format AA-9999. Rules: add {$zerobasedstrings} and use zero-based string indexing.",
+    "output": "{$zerobasedstrings}\nfunction IsAccountCode(s: string): boolean;\nbegin\n  if s.Length <> 7 then begin Result := False; exit; end;\n  Result := (s[0] >= 'A') and (s[0] <= 'Z') and\n            (s[1] >= 'A') and (s[1] <= 'Z') and\n            (s[2] = '-') and\n            (s[3] >= '0') and (s[3] <= '9') and\n            (s[4] >= '0') and (s[4] <= '9') and\n            (s[5] >= '0') and (s[5] <= '9') and\n            (s[6] >= '0') and (s[6] <= '9');\nend;"
+  },
+  {
+    "instruction": "Write a function that parses sign character '+' or '-' and returns 1 or -1. Rule: one-symbol literals in single quotes are char.",
+    "output": "function SignFromChar(c: char): integer;\nbegin\n  if c = '+' then\n    Result := 1\n  else if c = '-' then\n    Result := -1\n  else\n    Result := 0;\nend;"
+  },
+  {
+    "instruction": "Write a function that builds string array of CSV headers from chars X, Y and word total. Rule: convert char to string explicitly.",
+    "output": "function CsvHeaders(): array of string;\nbegin\n  Result := Arr($'X', $'Y', 'total');\nend;"
+  },
+  {
+    "instruction": "Write a function that counts commas in a CSV line. Rules: {$zerobasedstrings}; index from 0.",
+    "output": "{$zerobasedstrings}\nfunction CountCommas(line: string): integer;\nbegin\n  Result := 0;\n  for var i := 0 to line.Length - 1 do\n    if line[i] = ',' then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that checks if CSV line has exactly 3 fields separated by commas. Rule: use correct if-then-else syntax.",
+    "output": "function Has3CsvFields(line: string): boolean;\nbegin\n  var parts := line.Split(',');\n  if parts.Length = 3 then\n    Result := True\n  else\n    Result := False;\nend;"
+  },
+  {
+    "instruction": "Write a function that converts List<integer> scores to array and returns average score as real. Rule: List to array conversion must be explicit.",
+    "output": "function AvgScore(lst: List<integer>): real;\nbegin\n  var a := lst.ToArray();\n  if a.Length = 0 then raise new Exception('Empty');\n  var s := 0;\n  foreach var x in a do s += x;\n  Result := s / a.Length;\nend;"
+  },
+  {
+    "instruction": "Write a function that checks if student code starts with letter 'S' and ends with digit. Rules: {$zerobasedstrings}; zero-based indexing.",
+    "output": "{$zerobasedstrings}\nfunction IsStudentCode(s: string): boolean;\nbegin\n  if s.Length < 2 then begin Result := False; exit; end;\n  var last := s[s.Length - 1];\n  Result := (s[0] = 'S') and (last >= '0') and (last <= '9');\nend;"
+  },
+  {
+    "instruction": "Write a function that computes grade category by score: <60 fail, <80 pass, else excellent. Rule: keep if-else chain syntax correct.",
+    "output": "function GradeCategory(score: integer): string;\nbegin\n  if score < 60 then\n    Result := 'fail'\n  else if score < 80 then\n    Result := 'pass'\n  else\n    Result := 'excellent';\nend;"
+  },
+  {
+    "instruction": "Write a function that computes number of permutations P(n,k)=n!/(n-k)!. Rule: implement Factorial explicitly before usage.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do Result *= i;\nend;\n\nfunction Permutations(n, k: integer): integer;\nbegin\n  if (k < 0) or (k > n) then begin Result := 0; exit; end;\n  Result := Factorial(n) div Factorial(n - k);\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if exam seat number is prime. Rule: use IsPrime only with School module import.",
+    "output": "uses School;\n\nfunction IsPrimeSeat(n: integer): boolean;\nbegin\n  Result := IsPrime(n);\nend;"
+  },
+  {
+    "instruction": "Write a function that counts prime IDs in array. Rule: import School for IsPrime.",
+    "output": "uses School;\n\nfunction CountPrimeIds(a: array of integer): integer;\nbegin\n  Result := 0;\n  foreach var x in a do\n    if IsPrime(x) then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that appends delimiter char to the end of a token string. Rule: char must be converted to string explicitly.",
+    "output": "function AppendDelimiter(token: string; d: char): string;\nbegin\n  Result := token + $'{d}';\nend;"
+  },
+  {
+    "instruction": "Write a function that creates array of chars for separators comma, semicolon, colon. Rule: Arr arguments must have the same type.",
+    "output": "function Separators(): array of char;\nbegin\n  Result := Arr(',', ';', ':');\nend;"
+  },
+  {
+    "instruction": "Write a function that checks if text starts with '#' marker. Rules: {$zerobasedstrings}; first character index is 0.",
+    "output": "{$zerobasedstrings}\nfunction StartsWithHash(s: string): boolean;\nbegin\n  Result := (s.Length > 0) and (s[0] = '#');\nend;"
+  },
+  {
+    "instruction": "Write a function that validates code pattern LLL-LL where L is uppercase letter. Rules: {$zerobasedstrings}; use char comparisons.",
+    "output": "{$zerobasedstrings}\nfunction IsCode3_2(s: string): boolean;\n  function IsUpper(c: char): boolean;\n  begin\n    Result := (c >= 'A') and (c <= 'Z');\n  end;\nbegin\n  if s.Length <> 6 then begin Result := False; exit; end;\n  Result := IsUpper(s[0]) and IsUpper(s[1]) and IsUpper(s[2]) and\n            (s[3] = '-') and IsUpper(s[4]) and IsUpper(s[5]);\nend;"
+  },
+  {
+    "instruction": "Write a function that computes integer discount amount from real price and percent. Rule: real-to-integer conversion must be explicit.",
+    "output": "function DiscountAmount(price: real; p: integer): integer;\nbegin\n  Result := integer(price * p / 100.0);\nend;"
+  },
+  {
+    "instruction": "Write a function that converts List<real> of weights to integer total kilograms by truncation. Rules: explicit ToArray and explicit integer(...) casts.",
+    "output": "function TotalKgInt(lst: List<real>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var w in a do\n    Result += integer(w);\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if all chars in string are digits. Rules: {$zerobasedstrings}; zero-based loop.",
+    "output": "{$zerobasedstrings}\nfunction AllDigits(s: string): boolean;\nbegin\n  if s.Length = 0 then begin Result := False; exit; end;\n  for var i := 0 to s.Length - 1 do\n    if (s[i] < '0') or (s[i] > '9') then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if exactly one comma exists in line. Rules: {$zerobasedstrings}; correct indexing.",
+    "output": "{$zerobasedstrings}\nfunction HasExactlyOneComma(line: string): boolean;\nbegin\n  var c := 0;\n  for var i := 0 to line.Length - 1 do\n    if line[i] = ',' then c += 1;\n  Result := c = 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that wraps a char into quotes and returns string like \"'a'\". Rule: char to string conversion must be explicit.",
+    "output": "function QuotedChar(c: char): string;\nbegin\n  Result := $'''{c}''';\nend;"
+  },
+  {
+    "instruction": "Write a function that computes simple monthly payment integer(total/months). Rule: explicit cast from real to integer.",
+    "output": "function MonthlyPay(total: real; months: integer): integer;\nbegin\n  if months <= 0 then raise new Exception('months must be > 0');\n  Result := integer(total / months);\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if integer array is non-decreasing. Rule: begin end for multi-statement blocks where needed.",
+    "output": "function IsNonDecreasing(a: array of integer): boolean;\nbegin\n  for var i := 1 to a.Length - 1 do\n    if a[i] < a[i - 1] then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that creates array of strings for status letters O, K and word done. Rule: char values must be converted to strings explicitly.",
+    "output": "function StatusLabels(): array of string;\nbegin\n  Result := Arr($'O', $'K', 'done');\nend;"
+  },
+  {
+    "instruction": "Write a function that checks if line ends with semicolon. Rules: {$zerobasedstrings}; use index Length-1.",
+    "output": "{$zerobasedstrings}\nfunction EndsWithSemicolon(s: string): boolean;\nbegin\n  Result := (s.Length > 0) and (s[s.Length - 1] = ';');\nend;"
+  },
+  {
+    "instruction": "Write a function that returns count of uppercase letters in positions with odd index. Rules: {$zerobasedstrings}; indexes start at 0.",
+    "output": "{$zerobasedstrings}\nfunction CountUpperOddIndex(s: string): integer;\nbegin\n  Result := 0;\n  for var i := 0 to s.Length - 1 do\n    if (i mod 2 = 1) and (s[i] >= 'A') and (s[i] <= 'Z') then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that computes C(n,3). Rule: implement Factorial explicitly before use.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do Result *= i;\nend;\n\nfunction Comb3(n: integer): integer;\nbegin\n  if n < 3 then\n    Result := 0\n  else\n    Result := Factorial(n) div (Factorial(3) * Factorial(n - 3));\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if invoice id contains only hex chars and has length 8. Rules: {$zerobasedstrings}; zero-based indexing.",
+    "output": "{$zerobasedstrings}\nfunction IsHexId8(s: string): boolean;\nbegin\n  if s.Length <> 8 then begin Result := False; exit; end;\n  for var i := 0 to 7 do\n  begin\n    var c := s[i];\n    var ok := ((c >= '0') and (c <= '9')) or ((c >= 'A') and (c <= 'F')) or ((c >= 'a') and (c <= 'f'));\n    if not ok then begin Result := False; exit; end;\n  end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that checks if integer value from real sensor reading exceeds threshold. Rule: explicit integer cast.",
+    "output": "function IntReadingAbove(x: real; threshold: integer): boolean;\nbegin\n  Result := integer(x) > threshold;\nend;"
+  },
+  {
+    "instruction": "Write a function that converts List<integer> to array and returns minimal element. Rule: explicit ToArray conversion is required.",
+    "output": "function MinFromList(lst: List<integer>): integer;\nbegin\n  var a := lst.ToArray();\n  if a.Length = 0 then raise new Exception('Empty');\n  Result := a[0];\n  for var i := 1 to a.Length - 1 do\n    if a[i] < Result then Result := a[i];\nend;"
+  },
+  {
+    "instruction": "Write a function that checks if string has pattern digit-digit-digit. Rules: {$zerobasedstrings}; use indices 0..2.",
+    "output": "{$zerobasedstrings}\nfunction IsThreeDigits(s: string): boolean;\nbegin\n  if s.Length <> 3 then begin Result := False; exit; end;\n  Result := (s[0] >= '0') and (s[0] <= '9') and\n            (s[1] >= '0') and (s[1] <= '9') and\n            (s[2] >= '0') and (s[2] <= '9');\nend;"
+  },
+  {
+    "instruction": "Write a function that returns text class for balance value: low, medium, high. Rule: preserve correct if-else syntax without semicolon before else.",
+    "output": "function BalanceClass(v: integer): string;\nbegin\n  if v < 100 then\n    Result := 'low'\n  else if v < 1000 then\n    Result := 'medium'\n  else\n    Result := 'high';\nend;"
+  },
+  {
+    "instruction": "Write a function that builds an array of chars for YES initials Y,E,S. Rule: keep all Arr arguments same type.",
+    "output": "function YesChars(): array of char;\nbegin\n  Result := Arr('Y', 'E', 'S');\nend;"
+  },
+  {
+    "instruction": "Write a function that returns joined representation of two chars with slash, like a/b. Rule: convert chars to string explicitly.",
+    "output": "function JoinCharsSlash(a, b: char): string;\nbegin\n  Result := $'{a}/{b}';\nend;"
+  },
+  {
+    "instruction": "Write a function that counts prime numbers among integer parts of real array. Rules: explicit integer cast; use School module for IsPrime.",
+    "output": "uses School;\n\nfunction CountPrimeIntParts(a: array of real): integer;\nbegin\n  Result := 0;\n  foreach var x in a do\n    if IsPrime(integer(x)) then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if string is a valid simple decimal number with one optional leading minus and digits only otherwise. Rules: {$zerobasedstrings}; zero-based indexing.",
+    "output": "{$zerobasedstrings}\nfunction IsSimpleIntText(s: string): boolean;\nbegin\n  if s.Length = 0 then begin Result := False; exit; end;\n  var start := 0;\n  if s[0] = '-' then\n  begin\n    if s.Length = 1 then begin Result := False; exit; end;\n    start := 1;\n  end;\n  for var i := start to s.Length - 1 do\n    if (s[i] < '0') or (s[i] > '9') then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that calculates integer loyalty tier points from real turnover and integer bonus percent. Rule: explicit cast from real to integer.",
+    "output": "function TierPoints(turnover: real; bonusPercent: integer): integer;\nbegin\n  Result := integer(turnover * bonusPercent / 100.0);\nend;"
+  },
+  {
+    "instruction": "Write a function that checks whether a string starts with '[' and ends with ']'. Rules: add {$zerobasedstrings}; use zero-based indexing.",
+    "output": "{$zerobasedstrings}\nfunction IsBracketWrapped(s: string): boolean;\nbegin\n  Result := (s.Length >= 2) and (s[0] = '[') and (s[s.Length - 1] = ']');\nend;"
+  },
+  {
+    "instruction": "Write a function that counts dots in a string. Rules: {$zerobasedstrings}; iterate from index 0 to Length-1.",
+    "output": "{$zerobasedstrings}\nfunction CountDots(s: string): integer;\nbegin\n  Result := 0;\n  for var i := 0 to s.Length - 1 do\n    if s[i] = '.' then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if a text contains exactly one '@'. Rules: {$zerobasedstrings}; zero-based char access.",
+    "output": "{$zerobasedstrings}\nfunction HasExactlyOneAt(s: string): boolean;\nbegin\n  var c := 0;\n  for var i := 0 to s.Length - 1 do\n    if s[i] = '@' then\n      c += 1;\n  Result := c = 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if string length is even and first char equals last char. Rules: {$zerobasedstrings}; indexing from 0.",
+    "output": "{$zerobasedstrings}\nfunction EvenLenAndSameEdges(s: string): boolean;\nbegin\n  Result := (s.Length > 0) and (s.Length mod 2 = 0) and (s[0] = s[s.Length - 1]);\nend;"
+  },
+  {
+    "instruction": "Write a function that converts real temperature to integer by truncation. Rule: real to integer conversion must be explicit.",
+    "output": "function TempToInt(t: real): integer;\nbegin\n  Result := integer(t);\nend;"
+  },
+  {
+    "instruction": "Write a function that computes integer average of all values in List<real>. Rules: convert List to array explicitly; cast to integer explicitly.",
+    "output": "function AvgIntFromRealList(lst: List<real>): integer;\nbegin\n  var a := lst.ToArray();\n  if a.Length = 0 then raise new Exception('Empty list');\n  var s: real := 0.0;\n  foreach var x in a do s += x;\n  Result := integer(s / a.Length);\nend;"
+  },
+  {
+    "instruction": "Write a function that returns sum of integers from List<integer>. Rule: convert List to array explicitly with ToArray().",
+    "output": "function SumIntList(lst: List<integer>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var x in a do Result += x;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns array of doubled integer parts from List<real>. Rules: explicit ToArray; explicit integer(...) cast.",
+    "output": "function DoubleIntParts(lst: List<real>): array of integer;\nbegin\n  var a := lst.ToArray();\n  SetLength(Result, a.Length);\n  for var i := 0 to a.Length - 1 do\n    Result[i] := integer(a[i]) * 2;\nend;"
+  },
+  {
+    "instruction": "Write a function that classifies score as low/ok/high for ranges <40, <80, otherwise. Rule: keep if-then-else syntax correct.",
+    "output": "function ScoreBand(score: integer): string;\nbegin\n  if score < 40 then\n    Result := 'low'\n  else if score < 80 then\n    Result := 'ok'\n  else\n    Result := 'high';\nend;"
+  },
+  {
+    "instruction": "Write a function that returns absolute difference between two integers using if-else. Rule: no semicolon before else.",
+    "output": "function AbsDiff(a, b: integer): integer;\nbegin\n  if a >= b then\n    Result := a - b\n  else\n    Result := b - a;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if char c is one of delimiters ',', ';', '|'. Rule: one-symbol literals are char.",
+    "output": "function IsDelimiter(c: char): boolean;\nbegin\n  Result := (c = ',') or (c = ';') or (c = '|');\nend;"
+  },
+  {
+    "instruction": "Write a function that appends char suffix to a string token. Rule: char is not string, convert with interpolation.",
+    "output": "function AppendSuffix(token: string; suffix: char): string;\nbegin\n  Result := token + $'{suffix}';\nend;"
+  },
+  {
+    "instruction": "Write a function that creates array of strings from chars 'X','Y' and word \"sum\". Rule: convert char to string explicitly.",
+    "output": "function XYSumLabels(): array of string;\nbegin\n  Result := Arr($'X', $'Y', 'sum');\nend;"
+  },
+  {
+    "instruction": "Write a function that creates array of chars for braces '{', '}'. Rule: Arr arguments should have one consistent type.",
+    "output": "function BraceChars(): array of char;\nbegin\n  Result := Arr('{', '}');\nend;"
+  },
+  {
+    "instruction": "Write a function that counts prime numbers in array. Rule: IsPrime can be used with School module import.",
+    "output": "uses School;\n\nfunction CountPrimes(a: array of integer): integer;\nbegin\n  Result := 0;\n  foreach var x in a do\n    if IsPrime(x) then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if at least one element in array is prime. Rule: import School before using IsPrime.",
+    "output": "uses School;\n\nfunction AnyPrime(a: array of integer): boolean;\nbegin\n  foreach var x in a do\n    if IsPrime(x) then\n    begin\n      Result := True;\n      exit;\n    end;\n  Result := False;\nend;"
+  },
+  {
+    "instruction": "Write a function that computes factorial for n >= 0. Rule: implement Factorial explicitly before using it.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do\n    Result *= i;\nend;"
+  },
+  {
+    "instruction": "Write a function that computes sum of binomial coefficients C(n,0)+...+C(n,n) using Factorial. Rule: Factorial must be implemented in the code.",
+    "output": "function Factorial(n: integer): integer;\nbegin\n  if n < 0 then raise new Exception('n must be non-negative');\n  Result := 1;\n  for var i := 2 to n do Result *= i;\nend;\n\nfunction Binom(n, k: integer): integer;\nbegin\n  if (k < 0) or (k > n) then\n  begin\n    Result := 0;\n    exit;\n  end;\n  Result := Factorial(n) div (Factorial(k) * Factorial(n - k));\nend;\n\nfunction SumBinomRow(n: integer): integer;\nbegin\n  Result := 0;\n  for var k := 0 to n do\n    Result += Binom(n, k);\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if text has exactly two colons ':'. Rules: {$zerobasedstrings}; iterate from 0.",
+    "output": "{$zerobasedstrings}\nfunction HasTwoColons(s: string): boolean;\nbegin\n  var c := 0;\n  for var i := 0 to s.Length - 1 do\n    if s[i] = ':' then c += 1;\n  Result := c = 2;\nend;"
+  },
+  {
+    "instruction": "Write a function that validates format DD-MM (digits and one dash in the middle). Rules: {$zerobasedstrings}; zero-based indexes.",
+    "output": "{$zerobasedstrings}\nfunction IsDDMM(s: string): boolean;\nbegin\n  if s.Length <> 5 then begin Result := False; exit; end;\n  Result := (s[0] >= '0') and (s[0] <= '9') and\n            (s[1] >= '0') and (s[1] <= '9') and\n            (s[2] = '-') and\n            (s[3] >= '0') and (s[3] <= '9') and\n            (s[4] >= '0') and (s[4] <= '9');\nend;"
+  },
+  {
+    "instruction": "Write a function that returns first non-space character or '#'. Rules: {$zerobasedstrings}; index strings from 0.",
+    "output": "{$zerobasedstrings}\nfunction FirstNonSpace(s: string): char;\nbegin\n  for var i := 0 to s.Length - 1 do\n    if s[i] <> ' ' then\n    begin\n      Result := s[i];\n      exit;\n    end;\n  Result := '#';\nend;"
+  },
+  {
+    "instruction": "Write a function that checks whether all chars are lowercase letters or underscore. Rules: {$zerobasedstrings}; char literals are char.",
+    "output": "{$zerobasedstrings}\nfunction LowerOrUnderscore(s: string): boolean;\nbegin\n  if s.Length = 0 then begin Result := False; exit; end;\n  for var i := 0 to s.Length - 1 do\n  begin\n    var c := s[i];\n    if not (((c >= 'a') and (c <= 'z')) or (c = '_')) then\n    begin\n      Result := False;\n      exit;\n    end;\n  end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that converts two real numbers to integer point and returns Manhattan distance from origin. Rule: casts must be explicit.",
+    "output": "function ManhattanFromOrigin(x, y: real): integer;\nbegin\n  var xi := integer(x);\n  var yi := integer(y);\n  Result := Abs(xi) + Abs(yi);\nend;"
+  },
+  {
+    "instruction": "Write a function that converts List<integer> to array and counts values greater than threshold. Rule: use ToArray() explicitly.",
+    "output": "function CountGreater(lst: List<integer>; t: integer): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var x in a do\n    if x > t then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that rounds down real values from List<real> and returns count of even integer parts. Rules: explicit ToArray and explicit integer(...).",
+    "output": "function CountEvenIntParts(lst: List<real>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var x in a do\n    if integer(x) mod 2 = 0 then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if integer array is strictly increasing. Rule: use begin end for multi-statement branches.",
+    "output": "function IsStrictInc(a: array of integer): boolean;\nbegin\n  for var i := 1 to a.Length - 1 do\n    if a[i] <= a[i - 1] then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns parity text \"even\" or \"odd\" for integer part of real x. Rule: real->integer conversion only explicit.",
+    "output": "function IntPartParity(x: real): string;\nbegin\n  if integer(x) mod 2 = 0 then\n    Result := 'even'\n  else\n    Result := 'odd';\nend;"
+  },
+  {
+    "instruction": "Write a function that returns string made from three chars c1,c2,c3. Rule: chars must be converted to string explicitly.",
+    "output": "function ThreeChars(c1, c2, c3: char): string;\nbegin\n  Result := $'{c1}{c2}{c3}';\nend;"
+  },
+  {
+    "instruction": "Write a function that creates string array from chars '<' and '>' and token \"id\". Rule: avoid mixing char and string in Arr without conversion.",
+    "output": "function TagTokens(): array of string;\nbegin\n  Result := Arr($'<', 'id', $'>');\nend;"
+  },
+  {
+    "instruction": "Write a function that checks if first and second characters are both digits. Rules: {$zerobasedstrings}; second char is index 1.",
+    "output": "{$zerobasedstrings}\nfunction FirstTwoDigits(s: string): boolean;\nbegin\n  if s.Length < 2 then begin Result := False; exit; end;\n  Result := (s[0] >= '0') and (s[0] <= '9') and (s[1] >= '0') and (s[1] <= '9');\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if the last two characters are the same. Rules: {$zerobasedstrings}; zero-based indexing.",
+    "output": "{$zerobasedstrings}\nfunction LastTwoEqual(s: string): boolean;\nbegin\n  Result := (s.Length >= 2) and (s[s.Length - 1] = s[s.Length - 2]);\nend;"
+  },
+  {
+    "instruction": "Write a function that computes integer area of circle from real radius. Rule: explicit cast from real to integer.",
+    "output": "function CircleAreaInt(r: real): integer;\nbegin\n  Result := integer(System.Math.PI * r * r);\nend;"
+  },
+  {
+    "instruction": "Write a function that computes weighted integer score from real exam and project values: 0.7 and 0.3 weights. Rule: cast explicitly.",
+    "output": "function WeightedInt(exam, project: real): integer;\nbegin\n  Result := integer(exam * 0.7 + project * 0.3);\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if all elements in List<integer> are positive. Rule: convert List to array explicitly.",
+    "output": "function AllPositiveList(lst: List<integer>): boolean;\nbegin\n  var a := lst.ToArray();\n  foreach var x in a do\n    if x <= 0 then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that checks whether integer part of each real in array is less than limit. Rule: real to integer conversion must be explicit.",
+    "output": "function AllIntPartsLess(a: array of real; limit: integer): boolean;\nbegin\n  foreach var x in a do\n    if integer(x) >= limit then\n    begin\n      Result := False;\n      exit;\n    end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns count of prime numbers among integer parts of List<real>. Rules: explicit ToArray; explicit integer cast; use School for IsPrime.",
+    "output": "uses School;\n\nfunction PrimeIntPartsCount(lst: List<real>): integer;\nbegin\n  var a := lst.ToArray();\n  Result := 0;\n  foreach var x in a do\n    if IsPrime(integer(x)) then\n      Result += 1;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns number of trailing zeros in n! for n>=0. Rule: Factorial is not needed; implement logic directly and keep if-else syntax correct.",
+    "output": "function TrailingZerosFact(n: integer): integer;\nbegin\n  if n < 0 then\n    raise new Exception('n must be non-negative');\n  Result := 0;\n  var p := 5;\n  while p <= n do\n  begin\n    Result += n div p;\n    p *= 5;\n  end;\nend;"
+  },
+  {
+    "instruction": "Write a function that checks if text has alternating letters and digits starting with a letter. Rules: {$zerobasedstrings}; index from 0.",
+    "output": "{$zerobasedstrings}\nfunction AlternatingLetterDigit(s: string): boolean;\nbegin\n  if s.Length = 0 then begin Result := False; exit; end;\n  for var i := 0 to s.Length - 1 do\n  begin\n    var c := s[i];\n    if i mod 2 = 0 then\n    begin\n      if not (((c >= 'a') and (c <= 'z')) or ((c >= 'A') and (c <= 'Z'))) then\n      begin\n        Result := False;\n        exit;\n      end;\n    end\n    else\n    begin\n      if (c < '0') or (c > '9') then\n      begin\n        Result := False;\n        exit;\n      end;\n    end;\n  end;\n  Result := True;\nend;"
+  },
+  {
+    "instruction": "Write a function that returns true if character c is one of brackets ()[]{}. Rule: one-symbol single-quoted literals are char.",
+    "output": "function IsBracketChar(c: char): boolean;\nbegin\n  Result := (c = '(') or (c = ')') or (c = '[') or (c = ']') or (c = '{') or (c = '}');\nend;"
   }
 ]

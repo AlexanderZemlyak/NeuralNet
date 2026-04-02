@@ -12,9 +12,10 @@ python3 finetune_deepseekcoder2.py \
     --warmup_steps 50 \
     --logging_steps 10 \
 	--weight_decay 0.001 \
-    --max_grad_norm 0.8 \	
-    --lr_scheduler_type "cosine" \
+    --max_grad_norm 0.8 \
+	--lr_scheduler_type "cosine" \
     --gradient_checkpointing True \
     --report_to "tensorboard" \
     --bf16 True \
-    --model_max_length 1024
+    --model_max_length 1024 \
+	--save_only_model True

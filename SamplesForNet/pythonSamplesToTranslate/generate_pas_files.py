@@ -51,8 +51,6 @@ def generate_pascal_file_content(solution):
     """Генерирует содержимое Pascal файла"""
     content = f'''
 // Auto-generated from JSON
-{"{$zerobasedstrings}"}{usesSystem}
-
 {solution}
 
 begin
@@ -63,7 +61,7 @@ end.
 
 if __name__ == "__main__":
 
-    filename = 'pascal_translated1801-3110.json'
+    filename = 'SamplesToFixGenerationErrors\\first_five_error_blocks.json'
   
     with open(filename, 'r', encoding='utf-8') as f:
         json_data = f.read()
