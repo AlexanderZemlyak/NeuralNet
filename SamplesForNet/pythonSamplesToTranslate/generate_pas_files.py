@@ -26,7 +26,7 @@ def generate_pascal_files_from_json(json_data):
             
             file_content = generate_pascal_file_content(solution)
 
-            baseDir = 'C:\\Users\\alex\\Desktop\\Дипломная\\NeuralNetForPascal\\SamplesForNet\\'
+            baseDir = 'D:\\DesktopFiles\\Дипломная\\NeuralNetForPascal\\SamplesForNet\\'
 
             # Сохраняем файл
             filename = baseDir + str(i) + '.pas'
@@ -47,21 +47,24 @@ def generate_pascal_file_content(solution):
 
     if re.match(r"uses (\w| |,|\.)*\bSystem\b(,|;)", solution) != None:
         usesSystem = ""
+    
+    postfix = 'begin\nend.\n'
+
+    if solution.strip().startswith("##\n") or solution.strip().endswith("end."):
+        postfix = ""
 
     """Генерирует содержимое Pascal файла"""
     content = f'''
 // Auto-generated from JSON
 {solution}
 
-begin
-end.
-
+{postfix}
 '''
     return content
 
 if __name__ == "__main__":
 
-    filename = 'SamplesToFixGenerationErrors\\first_five_error_blocks.json'
+    filename = 'all_samples.json'
   
     with open(filename, 'r', encoding='utf-8') as f:
         json_data = f.read()

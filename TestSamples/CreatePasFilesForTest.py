@@ -44,7 +44,7 @@ def generate_pascal_file_content(task_id, prompt, solution, test):
     """Генерирует содержимое Pascal файла"""
     content = f'''// {task_id}
 // Auto-generated from JSON
-{"{$zerobasedstrings}"}
+//{"{$zerobasedstrings}"}
 uses System;
 
 // type Variant = object;
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     with open(filename, 'r', encoding='utf-8') as f:
         json_data = f.read()
     
-    with open('completions_LoRa14_03_2026_5000samples_checkpoint-250(16-4).json', 'r', encoding='utf-8') as f:
+    with open('completions_LoRa07_04_2026_5000samples+errors_fix_checkpoint-150(16-4).json', 'r', encoding='utf-8') as f:
         completions_data = f.read()
 
     generate_pascal_files_from_json(json_data, completions_data)

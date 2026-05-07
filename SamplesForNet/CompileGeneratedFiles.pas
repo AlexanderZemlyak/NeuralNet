@@ -12,7 +12,7 @@
 //{$reference System.Windows.Forms.dll}
 //{$reference LanguageIntegrator.dll}
 
-uses PascalABCCompiler;
+uses PascalABCCompiler, Newtonsoft;
 
 const filesCount = 1310;
 

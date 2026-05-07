@@ -15,4 +15,5 @@ python3 finetune_deepseekcoder2.py \
     --gradient_checkpointing True \
     --report_to "tensorboard" \
     --bf16 True \
-    --model_max_length 1024
+    --model_max_length 1024 \
+	--save_only_model True
