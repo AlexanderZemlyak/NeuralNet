@@ -4,8 +4,8 @@ deepspeed --num_gpus 2 finetune_deepseekcoder2_normal+enriched.py \
     --data_path ./train_data_normal+enriched.json \
     --output_dir ./LoRa \
     --num_train_epochs 5 \
-    --per_device_train_batch_size 16 \
-    --gradient_accumulation_steps 4 \
+    --per_device_train_batch_size 64 \
+    --gradient_accumulation_steps 1 \
     --save_strategy "steps" \
     --save_steps 25 \
     --learning_rate 2e-4 \
