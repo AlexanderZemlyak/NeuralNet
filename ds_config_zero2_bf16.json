@@ -7,8 +7,10 @@
     "enabled": true
   },
   "zero_optimization": {
-    "stage": 1,
+    "stage": 2,
+    "allgather_partitions": true,
     "reduce_scatter": true,
+    "allgather_bucket_size": 200000000,
     "reduce_bucket_size": 200000000,
     "overlap_comm": true,
     "contiguous_gradients": true
