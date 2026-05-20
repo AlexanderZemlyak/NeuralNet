@@ -1,11 +1,9 @@
 import copy
-import random
 from dataclasses import dataclass, field
 from typing import Optional, Dict, Sequence
 
 import torch
 import gc
-import torch.distributed
 import transformers
 from transformers import Trainer
 from datasets import load_dataset
@@ -167,6 +165,9 @@ def train():
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     
     training_args.remove_unused_columns = False  # Критически важно!
+
+    if training_args.output_dir:
+        os.makedirs(training_args.output_dir, exist_ok=True)
     
     print('='*100)
     print("Training Arguments:", training_args)
