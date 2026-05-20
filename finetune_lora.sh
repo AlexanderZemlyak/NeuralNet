@@ -17,4 +17,4 @@ deepspeed --num_gpus 2 finetune_deepseekcoder2_normal+enriched.py \
     --bf16 True \
     --model_max_length 2048 \
     --save_only_model True \
-    --deepspeed ./ds_config_zero2_bf16.json
+    --deepspeed ./ds_config_zero1_bf16.json
