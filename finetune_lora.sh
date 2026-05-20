@@ -1,5 +1,5 @@
 #!bash
-python3 finetune_deepseekcoder2.py \
+deepspeed --num_gpus 2 finetune_deepseekcoder2_normal+enriched.py \
     --model_name_or_path deepseek-ai/deepseek-coder-1.3b-instruct \
     --data_path ./train_data.json \
     --output_dir ./LoRa \
@@ -16,4 +16,5 @@ python3 finetune_deepseekcoder2.py \
     --report_to "tensorboard" \
     --bf16 True \
     --model_max_length 1024 \
-	--save_only_model True
+    --save_only_model True \
+    --deepspeed ./ds_config_zero2_bf16.json

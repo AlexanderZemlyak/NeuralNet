@@ -18,6 +18,9 @@ def generate_pascal_files_from_json(json_data, completions_json):
             
             stripped_solution = solution.strip('\n ')
 
+            if stripped_solution.startswith('```pascal'):
+                stripped_solution = stripped_solution.replace('```pascal', '').replace('```', '')
+
             stripped_solution = re.sub(r"begin(?:(?!\bbegin\b)[\s\S])+?end\.", '', stripped_solution)
 
             if stripped_solution.startswith('function') and stripped_solution.find(f'function {entry_point}') != -1:
@@ -69,7 +72,7 @@ if __name__ == "__main__":
     with open(filename, 'r', encoding='utf-8') as f:
         json_data = f.read()
     
-    with open('completions_LoRa07_04_2026_5000samples+errors_fix_checkpoint-150(16-4).json', 'r', encoding='utf-8') as f:
+    with open('completions_LoRa08_05_2026_5000samples_enriched_checkpoint-100_full_prompt(16-4).json', 'r', encoding='utf-8') as f:
         completions_data = f.read()
 
     generate_pascal_files_from_json(json_data, completions_data)

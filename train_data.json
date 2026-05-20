@@ -21106,5 +21106,221 @@
   {
     "instruction": "Write a function that returns true if character c is one of brackets ()[]{}. Rule: one-symbol single-quoted literals are char.",
     "output": "function IsBracketChar(c: char): boolean;\nbegin\n  Result := (c = '(') or (c = ')') or (c = '[') or (c = ']') or (c = '{') or (c = '}');\nend;"
+  },
+  {
+    "instruction": "Show that a single-quoted one-character literal is char, not string, and how to get a one-character string",
+    "output": "begin\n  var c: char := 'c';\n  var s: string := $'c';\n  Println(c.GetType); // char\n  Println(s.GetType); // string\nend."
+  },
+  {
+    "instruction": "Demonstrate that 'a' is char and must be converted to string explicitly if needed",
+    "output": "begin\n  var c := 'a';\n  var s := c.ToString;\n  Println(c, ' ', s);\nend."
+  },
+  {
+    "instruction": "Illustrate that a one-character string literal requires $'' to force string",
+    "output": "begin\n  var c: char := 'z';\n  var s: string := $'z';\n  Println(c, ' ', s);\nend."
+  },
+  {
+    "instruction": "Show implicit char to string conversion and explicit string to char extraction",
+    "output": "begin\n  var c: char := 'x';\n  var s: string := c; // char -> string is implicit\n  var c2: char := s[1];\n  Println(s, ' ', c2);\nend."
+  },
+  {
+    "instruction": "Explain that implicit real to integer conversion does not work and show correct explicit conversion",
+    "output": "begin\n  var r: real := 3.75;\n  var i: integer := Trunc(r); // explicit conversion\n  Println(i);\nend."
+  },
+  {
+    "instruction": "Show that integer converts to real implicitly, but real to integer needs Round",
+    "output": "begin\n  var i: integer := 7;\n  var r: real := i; // implicit\n  var j: integer := Round(3.2); // explicit\n  Println(r, ' ', j);\nend."
+  },
+  {
+    "instruction": "Demonstrate that List<T> cannot be assigned to array of T without explicit conversion",
+    "output": "uses System.Collections.Generic;\n\nbegin\n  var L := new List<integer>();\n  L.Add(1); L.Add(2);\n  var a: array of integer := L.ToArray; // explicit\n  Println(a);\nend."
+  },
+  {
+    "instruction": "Demonstrate that array of T cannot be assigned to List<T> without explicit conversion",
+    "output": "uses System.Collections.Generic;\n\nbegin\n  var a := [3,4,5];\n  var L := a.ToList; // explicit\n  L.Add(6);\n  Println(L);\nend."
+  },
+  {
+    "instruction": "Show integer division and modulo with integer type",
+    "output": "begin\n  var a: integer := 7;\n  Println(a div 2); // 3\n  Println(a mod 2); // 1\nend."
+  },
+  {
+    "instruction": "Demonstrate boolean operations and type boolean",
+    "output": "begin\n  var b1: boolean := True;\n  var b2: boolean := False;\n  Println(b1 and b2);\n  Println(b1 or b2);\n  Println(not b2);\nend."
+  },
+  {
+    "instruction": "Use Ord and Chr to show char code conversions",
+    "output": "begin\n  var c: char := 'A';\n  var i: integer := Ord(c);\n  Println(i);\n  Println(Chr(i+1));\nend."
+  },
+  {
+    "instruction": "Demonstrate type enum and using it in a case statement",
+    "output": "type Days = (Mon,Tue,Wed,Thu,Fri,Sat,Sun);\n\nbegin\n  var d: Days := Fri;\n  case d of\n    Sat,Sun: Println('Weekend');\n    else Println('Workday');\n  end;\nend."
+  },
+  {
+    "instruction": "Show use of a set of char and in operator",
+    "output": "begin\n  var vowels: set of char := SetOf('a','e','i','o','u','y');\n  var c: char := 'e';\n  Println(c in vowels);\nend."
+  },
+  {
+    "instruction": "Show range usage with in for integer values",
+    "output": "begin\n  var x := 5;\n  Println(x in 1..9);\nend."
+  },
+  {
+    "instruction": "Create a record type and access its fields",
+    "output": "type\n  Point2D = record\n    x,y: real;\n  end;\n\nbegin\n  var p: Point2D;\n  p.x := 1.5;\n  p.y := -2.0;\n  Println(p.x, ' ', p.y);\nend."
+  },
+  {
+    "instruction": "Demonstrate tuple assignment and type inference",
+    "output": "begin\n  var (a,b) := (10, 20);\n  var (x,y) := (1.5, -3.0);\n  Println(a, ' ', b);\n  Println(x, ' ', y);\nend."
+  },
+  {
+    "instruction": "Show BigInteger literal suffix and exponentiation",
+    "output": "begin\n  var bi := 2bi;\n  var p := bi ** 10;\n  Println(p);\nend."
+  },
+  {
+    "instruction": "Demonstrate that string is not the same as array of char",
+    "output": "begin\n  var s: string := 'abc';\n  var c: char := s[2];\n  Println(c); // 'b'\n  var a: array of char := s.ToCharArray;\n  c := a[2]; \n  Println(c); // 'c'\nend."
+  },
+  {
+    "instruction": "Explain that 'c' is char, not string, and length of string needs $''",
+    "output": "begin\n  var c := 'c';\n  var s := $'c';\n  Println(c.GetType); // char\n  Println(s.Length); // 1\nend."
+  },
+  {
+    "instruction": "Demonstrate explicit casting from real to integer using integer(...)",
+    "output": "begin\n  var r: real := 9.9;\n  var i: integer := integer(r);\n  Println(i);\nend."
+  },
+  {
+    "instruction": "Show explicit string to integer conversion with ToInteger",
+    "output": "begin\n  var s := '42';\n  var i := s.ToInteger;\n  Println(i);\nend."
+  },
+  {
+    "instruction": "Show explicit string to real conversion with ToReal",
+    "output": "begin\n  var s := '3.14';\n  var r := s.ToReal;\n  Println(r);\nend."
+  },
+  {
+    "instruction": "Demonstrate integer overflow safe type selection with int64",
+    "output": "begin\n  var a: int64 := 10000000000;\n  var b: int64 := 20000000000;\n  Println(a + b);\nend."
+  },
+  {
+    "instruction": "Show unsigned types and bit shift operations",
+    "output": "begin\n  var x: longword := 1;\n  Println(x shl 3);\n  Println(x shr 1);\nend."
+  },
+  {
+    "instruction": "Demonstrate that real to integer implicit assignment is not allowed and use Trunc",
+    "output": "begin\n  var r: real := 2.99;\n  var i := Trunc(r);\n  Println(i);\nend."
+  },
+  {
+    "instruction": "Explain that List<real> is not array of real and must be converted",
+    "output": "uses System.Collections.Generic;\n\nbegin\n  var L := new List<real>();\n  L.Add(1.1); L.Add(2.2);\n  var a: array of real := L.ToArray;\n  Println(a);\nend."
+  },
+  {
+    "instruction": "Show that array of integer is not List<integer> without conversion",
+    "output": "uses System.Collections.Generic;\n\nbegin\n  var a := [1,2,3];\n  var L: List<integer> := a.ToList;\n  Println(L.Count);\nend."
+  },
+  {
+    "instruction": "Demonstrate string interpolation and resulting type string",
+    "output": "begin\n  var x := 5;\n  var s := $'x = {x}';\n  Println(s); // x = 5\nend."
+  },
+  {
+    "instruction": "Show single-quoted one-character literal is char in a typed variable",
+    "output": "begin\n  var c: char := 'Q';\n  Println(c);\nend."
+  },
+  {
+    "instruction": "Use if-expression and show type inference to integer",
+    "output": "begin\n  var a := 3;\n  var b := 5;\n  var m := if a < b then a else b;\n  Println(m);\nend."
+  },
+  {
+    "instruction": "Show array of integer and foreach loop type",
+    "output": "begin\n  var a: array of integer := [2,4,6];\n  foreach var x in a do\n    Print(x);\nend."
+  },
+  {
+    "instruction": "Demonstrate that 'c' is char and string ToInteger method requires explicit string",
+    "output": "begin\n  var c := '1';\n  var s := c.ToString;\n  Println(s.ToInteger); // 1\nend."
+  },
+  {
+    "instruction": "Show use of set of integer and membership test",
+    "output": "begin\n  var s: set of integer := SetOf(1,3,5,7);\n  Println(3 in s);\nend."
+  },
+  {
+    "instruction": "Demonstrate using array of real and explicit conversion from integer to real",
+    "output": "begin\n  var a: array of real := [1,2,3].Select(x->real(x)).ToArray;\n  Println(a);\nend."
+  },
+  {
+    "instruction": "Show that string cannot be assigned to char without indexing",
+    "output": "begin\n  var s := 'abc';\n  var c := s[1];\n  Println(c);\nend."
+  },
+  {
+    "instruction": "Demonstrate type inference with var and tuple assignment to real",
+    "output": "begin\n  var (x,y) := (1.0, 2.5);\n  Println(x + y);\nend."
+  },
+  {
+    "instruction": "Show explicit downcast using class inheritance",
+    "output": "type\n  Person = class end;\n  Student = class(Person) end;\n\nbegin\n  var p: Person := new Student;\n  Println(p.GetType); // Student\n  var s: Student := Student(p);\n  Println(s.GetType); // Student\nend."
+  },
+  {
+    "instruction": "Demonstrate that integer and real are different types in mixed arithmetic",
+    "output": "begin\n  var i: integer := 5;\n  var r: real := 2.5;\n  var x := i + r; // result is real\n  Println(x);\nend."
+  },
+  {
+    "instruction": "Show usage of byte type and it's range",
+    "output": "begin\n  var b: byte := 255; // valid byte range is 0..255\n  Println(b);\nend."
+  },
+  {
+    "instruction": "Explain that char range is allowed and in operator works for char",
+    "output": "begin\n  var c: char := 'g';\n  Println(c in 'a'..'z');\nend."
+  },
+  {
+    "instruction": "Demonstrate string as sequence of char using indexing and Length",
+    "output": "begin\n  var s: string := 'hello';\n  Println(s[1]); // h\n  Println(s.Length); // 5\nend."
+  },
+  {
+    "instruction": "Show that boolean is required for while condition",
+    "output": "begin\n  var i := 0;\n  while i < 3 do\n  begin\n    Print(i);\n    i += 1;\n  end;\nend."
+  },
+  {
+    "instruction": "Demonstrate array of char and building a string",
+    "output": "begin\n  var a: array of char := ['P','A','B','C'];\n  var s := new string(a);\n  Println(s);\nend."
+  },
+  {
+    "instruction": "Show explicit conversion from integer to string with ToString",
+    "output": "begin\n  var i := 123;\n  var s := i.ToString;\n  Println(s); // 123\nend."
+  },
+  {
+    "instruction": "Demonstrate that a one-character literal is char and cannot be concatenated to string without conversion",
+    "output": "begin\n  var c: char := 'x';\n  var s: string := 'value: ' + c.ToString;\n  Println(s); // value: x\nend."
+  },
+  {
+    "instruction": "Show that real to integer implicit assignment is not allowed and use Round",
+    "output": "begin\n  var r: real := 6.4;\n  var i: integer := Round(r);\n  Println(i); // 6\nend."
+  },
+  {
+    "instruction": "Demonstrate integer range checking using in and not in",
+    "output": "begin\n  var x := 12;\n  Println(x in 1..10); // False\n  Println(x not in 1..10); // True\nend."
+  },
+  {
+    "instruction": "Use List<string> and convert it to array of string explicitly",
+    "output": "uses System.Collections.Generic;\n\nbegin\n  var L := new List<string>();\n  L.Add('a'); L.Add('b');\n  var a: array of string := L.ToArray;\n  Println(a); // [a, b]\nend."
+  },
+  {
+    "instruction": "Show that array of string cannot be assigned to List<string> without ToList",
+    "output": "uses System.Collections.Generic;\n\nbegin\n  var a := Arr('one','two');\n  var L: List<string> := a.ToList;\n  Println(L.Count); // 2\nend."
+  },
+  {
+    "instruction": "Demonstrate char arithmetic using Ord and Chr",
+    "output": "begin\n  var c: char := 'a';\n  var next := Chr(Ord(c)+1);\n  Println(next); // b\nend."
+  },
+  {
+    "instruction": "Show explicit use of real function to create a real from integer",
+    "output": "begin\n  var i: integer := 3;\n  var r := real(i);\n  Println(r); // 3.0\nend."
+  },
+  {
+    "instruction": "Demonstrate that List<integer> to array of integer implicit conversion does not work and show correct conversion",
+    "output": "uses System.Collections.Generic;\n\nbegin\n  var L := new List<integer>();\n  L.Add(10); L.Add(20);\n  var a := L.ToArray; // explicit\n  Println(a); // [10, 20]\nend."
+  },
+  {
+    "instruction": "Demonstrate that 'c' is char, and if you want a string, use $'' or ToString",
+    "output": "begin\n  var c: char := 'c';\n  var s1: string := $'c';\n  var s2: string := c.ToString;\n  Println(s1, ' ', s2); // c c\nend."
+  },
+  {
+    "instruction": "Show integer and real comparison and type inference of boolean",
+    "output": "begin\n  var a: integer := 5;\n  var b: real := 5.0;\n  var eq := a = b;\n  Println(eq); // True\nend."
   }
 ]
