@@ -22,13 +22,11 @@ begin
   var comp := new Compiler();
   
   var filePath := 'D:\DesktopFiles\Дипломная\NeuralNetForPascal\train_data.json';
-  var jsonFromFile := &File.ReadAllText(filePath);
+  var jsonFromFile := &File.ReadAllText(filePath, System.Text.Encoding.UTF8);
   
   var samples := Newtonsoft.Json.JsonConvert.DeserializeObject&<List<Dictionary<string, string>>>(jsonFromFile);
   
-  var filesCount := 5277;
-  
-  for var i := 0 to filesCount - 1 do
+  for var i := 0 to samples.Count - 1 do
   begin
 
     // var oldOutput := samples[i]['output'];
@@ -64,7 +62,7 @@ begin
   
   var updatedJson := Newtonsoft.Json.JsonConvert.SerializeObject(samples, Newtonsoft.Json.Formatting.Indented);
   
-  var newFilePath := 'D:\DesktopFiles\Дипломная\NeuralNetForPascal\train_data_enriched.json';
+  var newFilePath := 'D:\DesktopFiles\Дипломная\NeuralNetForPascal\train_data_enriched2.json';
   
-  WriteAllText(newFilePath, updatedJson);
+  WriteAllText(newFilePath, updatedJson, System.Text.Encoding.UTF8);
 end.

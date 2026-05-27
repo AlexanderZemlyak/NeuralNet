@@ -338,11 +338,11 @@ def load_custom_problems(path):
 if __name__ == "__main__":
     problems = load_custom_problems('human_eval_pascal.json')
 
-    test_single_problem(lora_path="../LoRa/checkpoint-100", lang='pascalabc.net', standard_problems=False, problems=problems, ind=0)
+    test_single_problem(lora_path="../LoRa/checkpoint-350", lang='pascalabc.net', standard_problems=False, problems=problems, ind=0)
 
     # completions = test_all_problems("deepseek-ai/deepseek-coder-1.3b-instruct", "../LoRa/checkpoint-100", 'pascalabc.net', False, problems)
 
-    filename = 'completions_LoRa21_05_2026_10000samples_normal+enriched_checkpoint-100(16-1).json'
+    filename = 'completions_LoRa21_05_2026_10000samples_normal+enriched_checkpoint-350(16-1).json'
     # with open(filename, 'w', encoding='utf-8') as f:
     #     json.dump(completions, f, ensure_ascii=False, indent=2)
 

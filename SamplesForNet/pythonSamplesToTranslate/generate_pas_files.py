@@ -55,7 +55,6 @@ def generate_pascal_file_content(solution):
 
     """Генерирует содержимое Pascal файла"""
     content = f'''
-// Auto-generated from JSON
 {solution}
 
 {postfix}
@@ -64,7 +63,7 @@ def generate_pascal_file_content(solution):
 
 if __name__ == "__main__":
 
-    filename = 'all_samples.json'
+    filename = '../train_data.json'
   
     with open(filename, 'r', encoding='utf-8') as f:
         json_data = f.read()
