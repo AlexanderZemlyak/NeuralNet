@@ -48,7 +48,7 @@ def load_model_and_tokenizer(model_path = "deepseek-ai/deepseek-coder-1.3b-instr
     if tokenizer.pad_token is None:
       tokenizer.pad_token = tokenizer.eos_token
 
-    add_special_tokens(tokenizer, model)
+    # add_special_tokens(tokenizer, model)
 
     # Загружаем LoRA адаптеры
     if lora_path != None:
@@ -70,7 +70,7 @@ Please continue to complete the function. You are not allowed to modify the give
 ```
 '''.strip().format(languge.lower(), question.strip())
 
-def generate_one_completion(model, tokenizer, example, max_new_tokens=1024, temperature=0.0, lang = 'python'):
+def generate_one_completion(model, tokenizer, example, max_new_tokens=2048, temperature=0.0, lang = 'python'):
     """Генерация одного решения для задачи"""
     prompt = example['prompt']
 
@@ -338,11 +338,11 @@ def load_custom_problems(path):
 if __name__ == "__main__":
     problems = load_custom_problems('human_eval_pascal.json')
 
-    test_single_problem(lora_path="../LoRa/checkpoint-350", lang='pascalabc.net', standard_problems=False, problems=problems, ind=0)
+    # test_single_problem(lora_path="../LoRa/checkpoint-350", lang='pascalabc.net', standard_problems=False, problems=problems, ind=0)
 
-    # completions = test_all_problems("deepseek-ai/deepseek-coder-1.3b-instruct", "../LoRa/checkpoint-100", 'pascalabc.net', False, problems)
+    completions = test_all_problems("deepseek-ai/deepseek-coder-1.3b-instruct", "../LoRa/checkpoint-150", 'pascalabc.net', False, problems)
 
-    filename = 'completions_LoRa21_05_2026_10000samples_normal+enriched_checkpoint-350(16-1).json'
-    # with open(filename, 'w', encoding='utf-8') as f:
-    #     json.dump(completions, f, ensure_ascii=False, indent=2)
+    filename = 'completions_LoRa03_06_2026_5000samples_enriched2_checkpoint-150(16-4).json'
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(completions, f, ensure_ascii=False, indent=2)
 

@@ -72,7 +72,7 @@ if __name__ == "__main__":
     with open(filename, 'r', encoding='utf-8') as f:
         json_data = f.read()
     
-    with open('completions_LoRa21_05_2026_10000samples_normal+enriched_checkpoint-500(16-1).json', 'r', encoding='utf-8') as f:
+    with open('completions_LoRa21_05_2026_10000samples_normal+enriched_checkpoint-650(16-1).json', 'r', encoding='utf-8') as f:
         completions_data = f.read()
 
     generate_pascal_files_from_json(json_data, completions_data)
